@@ -3,6 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import monkey from "vite-plugin-monkey";
+import pkg from "./package.json";
 
 export default defineConfig({
 	resolve: {
@@ -18,17 +19,13 @@ export default defineConfig({
 			userscript: {
 				name: "NamaYTyping YouTube",
 				namespace: "https://greasyfork.org/users/302934",
-				version: "1.0.0",
+				version: pkg.version,
 				description:
 					"YTypingの変換ありタイピングにYouTube Liveチャットから参加できる拡張機能",
 				match: ["https://ytyping.net/*"],
 				grant: ["GM_xmlhttpRequest", "unsafeWindow"],
 				connect: ["www.youtube.com"],
 				license: "MIT",
-				downloadURL:
-					"https://update.greasyfork.org/scripts/576187/NamaYTyping%20YouTube.user.js",
-				updateURL:
-					"https://update.greasyfork.org/scripts/576187/NamaYTyping%20YouTube.meta.js",
 			},
 		}),
 	],

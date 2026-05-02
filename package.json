@@ -1,11 +1,11 @@
 {
   "name": "namaytyping",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "node scripts/bump-version.js && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
