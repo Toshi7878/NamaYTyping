@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-declare const unsafeWindow: Window;
+import { unsafeWindow } from "$";
 
 export function useWindowProperty<K extends keyof Window>(
 	key: K,

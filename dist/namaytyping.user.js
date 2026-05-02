@@ -1,11 +1,10 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.19
+// @version      1.0.20
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
-// @sandbox      raw
 // @connect      www.youtube.com
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
@@ -12493,6 +12492,9 @@
     __proto__: null,
     default: React
   }, [reactExports]);
+  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
+  var _monkeyWindow = (() => window)();
   var reactDomExports = requireReactDom();
   function r(e) {
     var t, f, n = "";
@@ -14479,17 +14481,17 @@ stroke: [{
   }
   function useWindowProperty(key) {
     const [value, setValue] = reactExports.useState(
-      () => unsafeWindow[key]
+      () => _unsafeWindow[key]
     );
     reactExports.useEffect(() => {
-      if (unsafeWindow[key] !== void 0) {
-        setValue(unsafeWindow[key]);
+      if (_unsafeWindow[key] !== void 0) {
+        setValue(_unsafeWindow[key]);
         return;
       }
-      Object.defineProperty(unsafeWindow, key, {
+      Object.defineProperty(_unsafeWindow, key, {
         configurable: true,
         set(newValue) {
-          Object.defineProperty(unsafeWindow, key, {
+          Object.defineProperty(_unsafeWindow, key, {
             configurable: true,
             writable: true,
             value: newValue
@@ -14498,16 +14500,14 @@ stroke: [{
         }
       });
       return () => {
-        const desc = Object.getOwnPropertyDescriptor(unsafeWindow, key);
+        const desc = Object.getOwnPropertyDescriptor(_unsafeWindow, key);
         if (desc?.set) {
-          delete unsafeWindow[key];
+          delete _unsafeWindow[key];
         }
       };
     }, [key]);
     return value;
   }
-  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  var _monkeyWindow = (() => window)();
   function getClientVersion() {
     const d = new Date(Date.now() - 864e5);
     const mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -14731,16 +14731,16 @@ jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
       {
         onChat: (messages) => onChat(messages, chatStatesRef.current),
-        onConnect: () => unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
+        onConnect: () => _unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
         onEnd: () => onEnd(chatStatesRef.current),
-        onError: (e) => unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
+        onError: (e) => _unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
       }
     );
   };
   function onChat(messages, chatStates) {
     for (const m of messages) {
       const state = getChatState(m.author, chatStates);
-      const result = unsafeWindow.__ytyping_ime?.evaluateImeInput({
+      const result = _unsafeWindow.__ytyping_ime?.evaluateImeInput({
         value: m.message,
         currentWordIndex: state.currentWordIndex,
         wordResults: state.wordResults
@@ -14756,14 +14756,14 @@ jsxRuntimeExports.jsx(
         typeCount: state.typeCount + result.typeCountDelta,
         wordResults: newWordResults
       });
-      unsafeWindow.__ytyping_ime?.addNotifications(
+      _unsafeWindow.__ytyping_ime?.addNotifications(
         result.notificationsToAppend.map((n) => `${m.author}: ${n}`)
       );
     }
   }
   function onEnd(chatStates) {
     chatStates.forEach(({ author, typeCount }) => {
-      unsafeWindow.__ytyping_ime?.addUserResult({
+      _unsafeWindow.__ytyping_ime?.addUserResult({
         name: author,
         typeCount
       });
@@ -15273,7 +15273,7 @@ jsxRuntimeExports.jsx(
   }
   const getInitialMode = () => {
     try {
-      const stored = unsafeWindow.sessionStorage.getItem("mapLinkMode");
+      const stored = _unsafeWindow.sessionStorage.getItem("mapLinkMode");
       return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
     } catch {
       return "type";
@@ -15303,7 +15303,7 @@ jsxRuntimeExports.jsx(
                 onCheckedChange: (checked) => {
                   const newMode = checked ? "ime" : "type";
                   setMode(newMode);
-                  unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
+                  _unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
                 }
               }
             )
