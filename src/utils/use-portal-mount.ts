@@ -30,22 +30,40 @@ function attachShadowWithStyles(host: HTMLDivElement): ShadowRoot {
  */
 export function usePortalMount(
 	selector: string,
-	options?: { position: InsertPosition },
+	options: { position: InsertPosition },
 ): Element | ShadowRoot | null {
 	const position = options?.position;
 	const [mountEl, setMountEl] = useState<Element | ShadowRoot | null>(null);
 
 	useEffect(() => {
 		if (position !== undefined) {
-			const target = document.querySelector(selector);
-			if (!target) return;
+			let host: HTMLDivElement | null = null;
+			let shadow: ShadowRoot | null = null;
 
-			const host = document.createElement("div");
-			target.insertAdjacentElement(position, host);
-			setMountEl(attachShadowWithStyles(host));
+			function update() {
+				const target = document.querySelector(selector);
+				if (!target) {
+					setMountEl(null);
+					return;
+				}
+				if (host?.isConnected) return;
+
+				if (!host) {
+					host = document.createElement("div");
+					shadow = attachShadowWithStyles(host);
+				}
+				target.insertAdjacentElement(position, host);
+				setMountEl(shadow);
+			}
+
+			update();
+
+			const observer = new MutationObserver(update);
+			observer.observe(document.body, { childList: true, subtree: true });
 
 			return () => {
-				host.remove();
+				observer.disconnect();
+				host?.remove();
 				setMountEl(null);
 			};
 		}

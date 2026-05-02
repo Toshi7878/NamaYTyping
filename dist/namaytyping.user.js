@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NamaYTyping YouTube
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.4
+// @version      1.0.6
 // @description  YTypingの変換ありタイピングにYouTube Liveチャットから参加できる拡張機能
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14443,13 +14443,28 @@ stroke: [{
     const [mountEl, setMountEl] = reactExports.useState(null);
     reactExports.useEffect(() => {
       if (position !== void 0) {
-        const target = document.querySelector(selector);
-        if (!target) return;
-        const host = document.createElement("div");
-        target.insertAdjacentElement(position, host);
-        setMountEl(attachShadowWithStyles(host));
+        let update2 = function() {
+          const target = document.querySelector(selector);
+          if (!target) {
+            setMountEl(null);
+            return;
+          }
+          if (host?.isConnected) return;
+          if (!host) {
+            host = document.createElement("div");
+            shadow = attachShadowWithStyles(host);
+          }
+          target.insertAdjacentElement(position, host);
+          setMountEl(shadow);
+        };
+        let host = null;
+        let shadow = null;
+        update2();
+        const observer2 = new MutationObserver(update2);
+        observer2.observe(document.body, { childList: true, subtree: true });
         return () => {
-          host.remove();
+          observer2.disconnect();
+          host?.remove();
           setMountEl(null);
         };
       }
