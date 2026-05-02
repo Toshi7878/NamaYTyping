@@ -30,6 +30,7 @@ export const NamaTypingContainer = () => {
 
 function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 	for (const m of messages) {
+		console.log("onChat", m.author, ":", m.message);
 		const state = getChatState(m.author, chatStates);
 
 		const result = unsafeWindow.__ytyping_ime?.evaluateImeInput({
