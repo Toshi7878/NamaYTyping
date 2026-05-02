@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { extractYouTubeLiveId } from "@/utils/extract-youtube-id";
 import { usePortalMount } from "@/utils/use-portal-mount";
+import { useWindowProperty } from "@/utils/use-window-property";
 import {
 	type ChatMessage,
 	startLiveChat,
@@ -64,10 +65,16 @@ const useLiveChatSession = (
 ) => {
 	const [isStarted, setIsStarted] = useState(false);
 	const unsubscribeRef = useRef<(() => void) | null>(null);
+	const ime = useWindowProperty("__ytyping_ime");
 
 	useEffect(() => {
+		if (!ime) return;
+
 		function startClient(_event: Event) {
-			const rawValue = inputRef.current?.value.trim() ?? "";
+			const rawValue =
+				sessionStorage.getItem(STORAGE_KEY) ??
+				inputRef.current?.value.trim() ??
+				"";
 			const liveId = extractYouTubeLiveId(rawValue);
 			setIsStarted(true);
 
@@ -87,24 +94,18 @@ const useLiveChatSession = (
 			onEnd();
 		}
 
-		const ime = unsafeWindow.__ytyping_ime;
-		if (ime) {
-			ime.removeEventListener("start", startClient);
-			ime.addEventListener("start", startClient);
-			ime.removeEventListener("end", handleEnd);
-			ime.addEventListener("end", handleEnd);
-		}
+		ime.removeEventListener("start", startClient);
+		ime.addEventListener("start", startClient);
+		ime.removeEventListener("end", handleEnd);
+		ime.addEventListener("end", handleEnd);
 
 		return () => {
 			unsubscribeRef.current?.();
 			unsubscribeRef.current = null;
-			const imeOnCleanup = unsafeWindow.__ytyping_ime;
-			if (imeOnCleanup) {
-				imeOnCleanup.removeEventListener("start", startClient);
-				imeOnCleanup.removeEventListener("end", handleEnd);
-			}
+			ime.removeEventListener("start", startClient);
+			ime.removeEventListener("end", handleEnd);
 		};
-	}, [inputRef, onChat, onConnect, onError, onEnd]);
+	}, [ime, inputRef, onChat, onConnect, onError, onEnd]);
 
 	return { isStarted };
 };
