@@ -1,7 +1,7 @@
 import type { WordResult } from "lyrics-ime-typing-engine";
 import { useRef } from "react";
 import type { ChatMessage } from "@/utils/youtube-live-chat-client";
-import { pageWindow as unsafeWindow } from "@/utils/page-window";
+import { unsafeWindow } from "$";
 import { ImeLiveChatConnector } from "./ime-live-chat-connerctor";
 
 interface ChatState {
