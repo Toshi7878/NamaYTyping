@@ -5,7 +5,7 @@ import { usePortalMount } from "@/utils/use-portal-mount";
 
 const getInitialMode = () => {
 	try {
-		const stored = sessionStorage.getItem("mapLinkMode");
+		const stored = unsafeWindow.sessionStorage.getItem("mapLinkMode");
 		return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
 	} catch {
 		return "type";
