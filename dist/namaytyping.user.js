@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.17
+// @version      1.0.18
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14477,6 +14477,33 @@ stroke: [{
     }, [selector, position]);
     return mountEl;
   }
+  function useWindowProperty(key) {
+    const [value, setValue] = reactExports.useState(() => window[key]);
+    reactExports.useEffect(() => {
+      if (window[key] !== void 0) {
+        setValue(window[key]);
+        return;
+      }
+      Object.defineProperty(window, key, {
+        configurable: true,
+        set(newValue) {
+          Object.defineProperty(window, key, {
+            configurable: true,
+            writable: true,
+            value: newValue
+          });
+          setValue(newValue);
+        }
+      });
+      return () => {
+        const desc = Object.getOwnPropertyDescriptor(window, key);
+        if (desc?.set) {
+          delete window[key];
+        }
+      };
+    }, [key]);
+    return value;
+  }
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var _monkeyWindow = (() => window)();
   function getClientVersion() {
@@ -14663,9 +14690,11 @@ jsxRuntimeExports.jsx(
   const useLiveChatSession = (inputRef, onConnect, onChat2, onError, onEnd2) => {
     const [isStarted, setIsStarted] = reactExports.useState(false);
     const unsubscribeRef = reactExports.useRef(null);
+    const ime = useWindowProperty("__ytyping_ime");
     reactExports.useEffect(() => {
+      if (!ime) return;
       function startClient(_event) {
-        const rawValue = inputRef.current?.value.trim() ?? "";
+        const rawValue = sessionStorage.getItem(STORAGE_KEY) ?? inputRef.current?.value.trim() ?? "";
         const liveId = extractYouTubeLiveId(rawValue);
         setIsStarted(true);
         if (!liveId) return;
@@ -14681,23 +14710,17 @@ jsxRuntimeExports.jsx(
         setIsStarted(false);
         onEnd2();
       }
-      const ime = unsafeWindow.__ytyping_ime;
-      if (ime) {
-        ime.removeEventListener("start", startClient);
-        ime.addEventListener("start", startClient);
-        ime.removeEventListener("end", handleEnd);
-        ime.addEventListener("end", handleEnd);
-      }
+      ime.removeEventListener("start", startClient);
+      ime.addEventListener("start", startClient);
+      ime.removeEventListener("end", handleEnd);
+      ime.addEventListener("end", handleEnd);
       return () => {
         unsubscribeRef.current?.();
         unsubscribeRef.current = null;
-        const imeOnCleanup = unsafeWindow.__ytyping_ime;
-        if (imeOnCleanup) {
-          imeOnCleanup.removeEventListener("start", startClient);
-          imeOnCleanup.removeEventListener("end", handleEnd);
-        }
+        ime.removeEventListener("start", startClient);
+        ime.removeEventListener("end", handleEnd);
       };
-    }, [inputRef, onChat2, onConnect, onError, onEnd2]);
+    }, [ime, inputRef, onChat2, onConnect, onError, onEnd2]);
     return { isStarted };
   };
   const NamaTypingContainer = () => {
