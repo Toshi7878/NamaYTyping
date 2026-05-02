@@ -1,5 +1,6 @@
 import type { WordResult } from "lyrics-ime-typing-engine";
 import { useRef } from "react";
+import type { ChatMessage } from "@/utils/youtube-live-chat-client";
 import { LiveChatConnector } from "./live-chat-connerctor";
 
 interface ChatState {
@@ -27,12 +28,7 @@ export function NamaTypingContainer({ host }: Props) {
 	);
 }
 
-function onChat(
-	messages: Parameters<
-		React.ComponentProps<typeof LiveChatConnector>["onChat"]
-	>[0],
-	chatStates: Map<string, ChatState>,
-) {
+function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 	for (const m of messages) {
 		const state = getChatState(m.author, chatStates);
 
