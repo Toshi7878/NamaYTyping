@@ -1,5 +1,6 @@
-import { ImeModeToggle } from "./features/ImeModeToggle";
+import { ClientOnly } from "./components/client-only";
 import { NamaTypingContainer } from "./features/nama-typing/container";
+import { ImeModeToggle } from "./features/typing-link-mode";
 import { usePathname } from "./utils/spa-navigate";
 
 interface Props {
@@ -12,7 +13,9 @@ export default function App({ host }: Props) {
 	if (!isImePage) return null;
 	return (
 		<>
-			<ImeModeToggle />
+			<ClientOnly>
+				<ImeModeToggle />
+			</ClientOnly>
 			{isImePage && <NamaTypingContainer host={host} />}
 		</>
 	);
