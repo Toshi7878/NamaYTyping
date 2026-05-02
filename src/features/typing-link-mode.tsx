@@ -4,11 +4,18 @@ import { Switch } from "@/components/ui/switch";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import { unsafeWindow } from "$";
 
+const getInitialMode = () => {
+	try {
+		const stored = unsafeWindow.sessionStorage.getItem("mapLinkMode");
+		return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
+	} catch {
+		return "type";
+	}
+};
+
 export const ImeModeSwitch = () => {
 	const id = useId();
-	const [mode, setMode] = useState<"ime" | "type">(
-		unsafeWindow.__ytyping?.getMapLinkMode?.() ?? "type",
-	);
+	const [mode, setMode] = useState<"ime" | "type">(getInitialMode());
 	const mountEl = usePortalMount("#right-nav-icons", {
 		position: "afterbegin",
 	});

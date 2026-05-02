@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NamaYTyping YouTube
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.7
+// @version      1.0.8
 // @description  YTypingの変換ありタイピングにYouTube Liveチャットから参加できる拡張機能
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -15219,11 +15219,17 @@ jsxRuntimeExports.jsx(
       }
     );
   }
+  const getInitialMode = () => {
+    try {
+      const stored = _unsafeWindow.sessionStorage.getItem("mapLinkMode");
+      return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
+    } catch {
+      return "type";
+    }
+  };
   const ImeModeSwitch = () => {
     const id = reactExports.useId();
-    const [mode, setMode] = reactExports.useState(
-      _unsafeWindow.__ytyping?.getMapLinkMode?.() ?? "type"
-    );
+    const [mode, setMode] = reactExports.useState(getInitialMode());
     const mountEl = usePortalMount("#right-nav-icons", {
       position: "afterbegin"
     });
