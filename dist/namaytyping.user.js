@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.12
+// @version      1.0.13
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -12492,8 +12492,7 @@
     __proto__: null,
     default: React
   }, [reactExports]);
-  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
+  const pageWindow = new Function("return unsafeWindow")();
   var reactDomExports = requireReactDom();
   function r(e) {
     var t, f, n = "";
@@ -14478,6 +14477,7 @@ stroke: [{
     }, [selector, position]);
     return mountEl;
   }
+  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   function getClientVersion() {
     const d = new Date(Date.now() - 864e5);
     const mm = String(d.getMonth() + 1).padStart(2, "0");
@@ -14664,7 +14664,7 @@ jsxRuntimeExports.jsx(
     const unsubscribeRef = reactExports.useRef(null);
     reactExports.useEffect(() => {
       function startClient(_event) {
-        const rawValue = sessionStorage.getItem(STORAGE_KEY) ?? inputRef.current?.value.trim() ?? "";
+        const rawValue = inputRef.current?.value.trim() ?? "";
         const liveId = extractYouTubeLiveId(rawValue);
         setIsStarted(true);
         if (!liveId) return;
@@ -14680,7 +14680,7 @@ jsxRuntimeExports.jsx(
         setIsStarted(false);
         onEnd2();
       }
-      const ime = _unsafeWindow.__ytyping_ime;
+      const ime = pageWindow.__ytyping_ime;
       if (ime) {
         ime.removeEventListener("start", startClient);
         ime.addEventListener("start", startClient);
@@ -14690,7 +14690,7 @@ jsxRuntimeExports.jsx(
       return () => {
         unsubscribeRef.current?.();
         unsubscribeRef.current = null;
-        const imeOnCleanup = _unsafeWindow.__ytyping_ime;
+        const imeOnCleanup = pageWindow.__ytyping_ime;
         if (imeOnCleanup) {
           imeOnCleanup.removeEventListener("start", startClient);
           imeOnCleanup.removeEventListener("end", handleEnd);
@@ -14705,16 +14705,16 @@ jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
       {
         onChat: (messages) => onChat(messages, chatStatesRef.current),
-        onConnect: () => _unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
+        onConnect: () => pageWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
         onEnd: () => onEnd(chatStatesRef.current),
-        onError: (e) => _unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
+        onError: (e) => pageWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
       }
     );
   };
   function onChat(messages, chatStates) {
     for (const m of messages) {
       const state = getChatState(m.author, chatStates);
-      const result = _unsafeWindow.__ytyping_ime?.evaluateImeInput({
+      const result = pageWindow.__ytyping_ime?.evaluateImeInput({
         value: m.message,
         currentWordIndex: state.currentWordIndex,
         wordResults: state.wordResults
@@ -14730,14 +14730,14 @@ jsxRuntimeExports.jsx(
         typeCount: state.typeCount + result.typeCountDelta,
         wordResults: newWordResults
       });
-      _unsafeWindow.__ytyping_ime?.addNotifications(
+      pageWindow.__ytyping_ime?.addNotifications(
         result.notificationsToAppend.map((n) => `${m.author}: ${n}`)
       );
     }
   }
   function onEnd(chatStates) {
     chatStates.forEach(({ author, typeCount }) => {
-      _unsafeWindow.__ytyping_ime?.addUserResult({
+      pageWindow.__ytyping_ime?.addUserResult({
         name: author,
         typeCount
       });
@@ -14745,7 +14745,7 @@ jsxRuntimeExports.jsx(
   }
   function getChatState(author, chatStatesRef) {
     if (!chatStatesRef.has(author)) {
-      const initWordResults = _unsafeWindow.__ytyping_ime?.getBuiltMap()?.initWordResults ?? [];
+      const initWordResults = pageWindow.__ytyping_ime?.getBuiltMap()?.initWordResults ?? [];
       chatStatesRef.set(author, {
         author,
         currentWordIndex: 0,
@@ -15247,7 +15247,7 @@ jsxRuntimeExports.jsx(
   }
   const getInitialMode = () => {
     try {
-      const stored = _unsafeWindow.sessionStorage.getItem("mapLinkMode");
+      const stored = pageWindow.sessionStorage.getItem("mapLinkMode");
       return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
     } catch {
       return "type";
@@ -15277,7 +15277,7 @@ jsxRuntimeExports.jsx(
                 onCheckedChange: (checked) => {
                   const newMode = checked ? "ime" : "type";
                   setMode(newMode);
-                  _unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
+                  pageWindow.__ytyping?.setMapLinkMode?.(newMode);
                 }
               }
             )

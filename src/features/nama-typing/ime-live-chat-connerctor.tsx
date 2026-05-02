@@ -2,12 +2,12 @@ import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { extractYouTubeLiveId } from "@/utils/extract-youtube-id";
+import { pageWindow as unsafeWindow } from "@/utils/page-window";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import {
 	type ChatMessage,
 	startLiveChat,
 } from "@/utils/youtube-live-chat-client";
-import { unsafeWindow } from "$";
 
 const STORAGE_KEY = "yt-live-chat-url";
 
@@ -68,10 +68,7 @@ const useLiveChatSession = (
 
 	useEffect(() => {
 		function startClient(_event: Event) {
-			const rawValue =
-				sessionStorage.getItem(STORAGE_KEY) ??
-				inputRef.current?.value.trim() ??
-				"";
+			const rawValue = inputRef.current?.value.trim() ?? "";
 			const liveId = extractYouTubeLiveId(rawValue);
 			setIsStarted(true);
 
