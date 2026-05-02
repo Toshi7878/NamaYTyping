@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { Switch } from "@/components/ui/switch";
 import { usePortalMount } from "@/utils/use-portal-mount";
+
 const getInitialMode = () => {
 	try {
 		const stored = sessionStorage.getItem("mapLinkMode");
@@ -35,7 +36,7 @@ export const ImeModeSwitch = () => {
 				onCheckedChange={(checked) => {
 					const newMode = checked ? "ime" : "type";
 					setMode(newMode);
-					window.__ytyping?.setMapLinkMode?.(newMode);
+					unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
 				}}
 			/>
 		</label>,

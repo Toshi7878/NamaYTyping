@@ -17,11 +17,11 @@ export const NamaTypingContainer = () => {
 		<ImeLiveChatConnector
 			onChat={(messages) => onChat(messages, chatStatesRef.current)}
 			onConnect={() =>
-				window.__ytyping?.toast.success("ライブチャットに接続しました")
+				unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました")
 			}
 			onEnd={() => onEnd(chatStatesRef.current)}
 			onError={(e) =>
-				window.__ytyping?.toast.error(`接続エラー: ${e.message}`)
+				unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
 			}
 		/>
 	);
@@ -31,7 +31,7 @@ function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 	for (const m of messages) {
 		const state = getChatState(m.author, chatStates);
 
-		const result = window.__ytyping_ime?.evaluateImeInput({
+		const result = unsafeWindow.__ytyping_ime?.evaluateImeInput({
 			value: m.message,
 			currentWordIndex: state.currentWordIndex,
 			wordResults: state.wordResults,
@@ -50,7 +50,7 @@ function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 			wordResults: newWordResults,
 		});
 
-		window.__ytyping_ime?.addNotifications(
+		unsafeWindow.__ytyping_ime?.addNotifications(
 			result.notificationsToAppend.map((n) => `${m.author}: ${n}`),
 		);
 	}
@@ -58,7 +58,7 @@ function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 
 function onEnd(chatStates: Map<string, ChatState>) {
 	chatStates.forEach(({ author, typeCount }) => {
-		window.__ytyping_ime?.addUserResult({
+		unsafeWindow.__ytyping_ime?.addUserResult({
 			name: author,
 			typeCount,
 		});

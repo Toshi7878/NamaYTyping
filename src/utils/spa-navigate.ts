@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { monkeyWindow } from "$";
 
 interface NavigationInfo {
 	pathname: string;
@@ -37,8 +38,8 @@ function createSPANavigate() {
 		dispatch();
 	};
 
-	window.addEventListener("popstate", dispatch);
-	window.addEventListener("load", dispatch);
+	monkeyWindow.addEventListener("popstate", dispatch);
+	monkeyWindow.addEventListener("load", dispatch);
 
 	return {
 		on(fn: NavigationListener): void {
