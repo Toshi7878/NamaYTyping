@@ -16,9 +16,13 @@ export const NamaTypingContainer = () => {
 	return (
 		<LiveChatConnector
 			onChat={(messages) => onChat(messages, chatStatesRef.current)}
-			onConnect={onConnect}
+			onConnect={() =>
+				unsafeWindow.__ytyping?.toast.success("接続に成功しました")
+			}
 			onEnd={() => onEnd(chatStatesRef.current)}
-			onError={onError}
+			onError={(e) =>
+				unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
+			}
 		/>
 	);
 };
@@ -52,10 +56,6 @@ function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 	}
 }
 
-function onConnect() {
-	unsafeWindow.__ytyping?.toast.success("接続に成功しました");
-}
-
 function onEnd(chatStates: Map<string, ChatState>) {
 	chatStates.forEach(({ author, typeCount }) => {
 		unsafeWindow.__ytyping_ime?.addUserResult({
@@ -63,10 +63,6 @@ function onEnd(chatStates: Map<string, ChatState>) {
 			typeCount,
 		});
 	});
-}
-
-function onError(e: Error) {
-	unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`);
 }
 
 function getChatState(
