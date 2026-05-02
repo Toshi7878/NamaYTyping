@@ -41,6 +41,13 @@ export const ImeLiveChatConnector = ({
 			ref={inputRef}
 			defaultValue={sessionStorage.getItem(STORAGE_KEY) ?? ""}
 			onChange={(e) => sessionStorage.setItem(STORAGE_KEY, e.target.value)}
+			onPaste={(e) => {
+				const liveId = extractYouTubeLiveId(e.clipboardData.getData("text"));
+				if (!liveId) return;
+				e.preventDefault();
+				e.currentTarget.value = liveId;
+				sessionStorage.setItem(STORAGE_KEY, liveId);
+			}}
 			placeholder="YouTube Live URL or ID"
 			className="w-48 fixed bottom-4 right-4"
 			size="sm"
