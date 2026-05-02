@@ -7,7 +7,7 @@ import {
 } from "@/utils/youtube-live-chat-client";
 import { unsafeWindow } from "$";
 
-interface Props {
+interface LiveChatConnectorProps {
 	host: HTMLDivElement;
 	onConnect: () => void;
 	onChat: (messages: ChatMessage[]) => void;
@@ -15,13 +15,13 @@ interface Props {
 	onEnd: () => void;
 }
 
-export function LiveChatConnector({
+export const LiveChatConnector = ({
 	host,
 	onConnect,
 	onChat,
 	onError,
 	onEnd,
-}: Props) {
+}: LiveChatConnectorProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { isConnected } = useLiveChatSession(
 		host,
@@ -35,7 +35,7 @@ export function LiveChatConnector({
 	if (isConnected) return null;
 
 	return <Input ref={inputRef} placeholder="YouTube Live URL or ID" />;
-}
+};
 
 export function useLiveChatSession(
 	host: HTMLDivElement,

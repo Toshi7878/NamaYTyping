@@ -9,6 +9,7 @@ interface Props {
 export default function App({ host }: Props) {
 	const pathname = usePathname();
 	const isImePage = pathname.startsWith("/ime/");
+
 	return (
 		<>
 			<ImeModeToggle />
