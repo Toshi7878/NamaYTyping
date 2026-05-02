@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         NamaYTyping YouTube
+// @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.8
-// @description  YTypingの変換ありタイピングにYouTube Liveチャットから参加できる拡張機能
+// @version      1.0.9
+// @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
 // @connect      www.youtube.com
