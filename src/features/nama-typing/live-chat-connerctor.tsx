@@ -9,19 +9,19 @@ import {
 } from "@/utils/youtube-live-chat-client";
 import { unsafeWindow } from "$";
 
-interface LiveChatConnectorProps {
+interface ImeLiveChatConnectorProps {
 	onConnect: () => void;
 	onChat: (messages: ChatMessage[]) => void;
 	onError: (error: Error) => void;
 	onEnd: () => void;
 }
 
-export const LiveChatConnector = ({
+export const ImeLiveChatConnector = ({
 	onConnect,
 	onChat,
 	onError,
 	onEnd,
-}: LiveChatConnectorProps) => {
+}: ImeLiveChatConnectorProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const mountEl = usePortalMount("body", { position: "beforeend" });
 	const { isConnected } = useLiveChatSession(
