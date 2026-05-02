@@ -24,7 +24,7 @@ export const ImeLiveChatConnector = ({
 }: ImeLiveChatConnectorProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const mountEl = usePortalMount("body", { position: "beforeend" });
-	const { isConnected } = useLiveChatSession(
+	const { isStarted } = useLiveChatSession(
 		inputRef,
 		onConnect,
 		onChat,
@@ -32,7 +32,7 @@ export const ImeLiveChatConnector = ({
 		onEnd,
 	);
 
-	if (isConnected || !mountEl) return null;
+	if (isStarted || !mountEl) return null;
 
 	return createPortal(
 		<Input
@@ -52,26 +52,36 @@ const useLiveChatSession = (
 	onError: (error: Error) => void,
 	onEnd: () => void,
 ) => {
-	const [isConnected, setIsConnected] = useState(false);
+	const [isStarted, setIsStarted] = useState(false);
 	const unsubscribeRef = useRef<(() => void) | null>(null);
 
 	useEffect(() => {
 		function startClient(_event: Event) {
 			const liveId = extractYouTubeLiveId(inputRef.current?.value.trim() ?? "");
-			setIsConnected(true);
+			setIsStarted(true);
 
 			if (!liveId) return;
 
 			unsubscribeRef.current?.();
-			unsubscribeRef.current = startLiveChat({ liveId, onChat, onConnect, onError });
+			unsubscribeRef.current = startLiveChat({
+				liveId,
+				onChat,
+				onConnect,
+				onError,
+			});
+		}
+
+		function handleEnd() {
+			setIsStarted(false);
+			onEnd();
 		}
 
 		const ime = unsafeWindow.__ytyping_ime;
 		if (ime) {
 			ime.removeEventListener("start", startClient);
 			ime.addEventListener("start", startClient);
-			ime.removeEventListener("end", onEnd);
-			ime.addEventListener("end", onEnd);
+			ime.removeEventListener("end", handleEnd);
+			ime.addEventListener("end", handleEnd);
 		}
 
 		return () => {
@@ -80,10 +90,10 @@ const useLiveChatSession = (
 			const imeOnCleanup = unsafeWindow.__ytyping_ime;
 			if (imeOnCleanup) {
 				imeOnCleanup.removeEventListener("start", startClient);
-				imeOnCleanup.removeEventListener("end", onEnd);
+				imeOnCleanup.removeEventListener("end", handleEnd);
 			}
 		};
 	}, [inputRef, onChat, onConnect, onError, onEnd]);
 
-	return { isConnected };
+	return { isStarted };
 };
