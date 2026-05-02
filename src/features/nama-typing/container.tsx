@@ -1,6 +1,7 @@
 import type { WordResult } from "lyrics-ime-typing-engine";
 import { useRef } from "react";
 import type { ChatMessage } from "@/utils/youtube-live-chat-client";
+import { unsafeWindow } from "$";
 import { ImeLiveChatConnector } from "./ime-live-chat-connerctor";
 
 interface ChatState {
@@ -17,7 +18,7 @@ export const NamaTypingContainer = () => {
 		<ImeLiveChatConnector
 			onChat={(messages) => onChat(messages, chatStatesRef.current)}
 			onConnect={() =>
-				unsafeWindow.__ytyping?.toast.success("接続に成功しました")
+				unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました")
 			}
 			onEnd={() => onEnd(chatStatesRef.current)}
 			onError={(e) =>
