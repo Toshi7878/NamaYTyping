@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.11
+// @version      1.0.12
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14664,7 +14664,8 @@ jsxRuntimeExports.jsx(
     const unsubscribeRef = reactExports.useRef(null);
     reactExports.useEffect(() => {
       function startClient(_event) {
-        const liveId = extractYouTubeLiveId(inputRef.current?.value.trim() ?? "");
+        const rawValue = sessionStorage.getItem(STORAGE_KEY) ?? inputRef.current?.value.trim() ?? "";
+        const liveId = extractYouTubeLiveId(rawValue);
         setIsStarted(true);
         if (!liveId) return;
         unsubscribeRef.current?.();
