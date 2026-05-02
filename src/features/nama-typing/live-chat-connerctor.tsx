@@ -5,7 +5,7 @@ import { extractYouTubeLiveId } from "@/utils/extract-youtube-id";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import {
 	type ChatMessage,
-	YTLiveChatClient,
+	startLiveChat,
 } from "@/utils/youtube-live-chat-client";
 import { unsafeWindow } from "$";
 
@@ -53,26 +53,17 @@ const useLiveChatSession = (
 	onEnd: () => void,
 ) => {
 	const [isConnected, setIsConnected] = useState(false);
-	const clientRef = useRef<YTLiveChatClient | null>(null);
+	const unsubscribeRef = useRef<(() => void) | null>(null);
 
 	useEffect(() => {
-		async function startClient(_event: Event) {
+		function startClient(_event: Event) {
 			const liveId = extractYouTubeLiveId(inputRef.current?.value.trim() ?? "");
 			setIsConnected(true);
 
 			if (!liveId) return;
 
-			clientRef.current?.stop();
-
-			const client = new YTLiveChatClient({
-				liveId,
-				onChat,
-				onConnect,
-				onError,
-			});
-
-			clientRef.current = client;
-			await client.start();
+			unsubscribeRef.current?.();
+			unsubscribeRef.current = startLiveChat({ liveId, onChat, onConnect, onError });
 		}
 
 		const ime = unsafeWindow.__ytyping_ime;
@@ -84,8 +75,8 @@ const useLiveChatSession = (
 		}
 
 		return () => {
-			clientRef.current?.stop();
-			clientRef.current = null;
+			unsubscribeRef.current?.();
+			unsubscribeRef.current = null;
 			const imeOnCleanup = unsafeWindow.__ytyping_ime;
 			if (imeOnCleanup) {
 				imeOnCleanup.removeEventListener("start", startClient);

@@ -114,7 +114,7 @@ function getContinuationFromLiveId(liveId: string): Promise<string> {
 
 // ---- YTLiveChatClient ----------------------------------------------------
 
-export class YTLiveChatClient {
+class YTLiveChatClient {
 	private readonly _liveId: string;
 	private readonly _onChat: (messages: ChatMessage[]) => void;
 	private readonly _onError: (error: Error) => void;
@@ -152,10 +152,6 @@ export class YTLiveChatClient {
 		this._timer = null;
 		this._continuation = null;
 		this._startedAt = 0;
-	}
-
-	isAlive(): boolean {
-		return this._alive;
 	}
 
 	private _poll(): void {
@@ -222,4 +218,11 @@ export class YTLiveChatClient {
 			this._alive = false;
 		}
 	}
+}
+
+export function startLiveChat(options: YTLiveChatClientOptions): () => void {
+	const client = new YTLiveChatClient(options);
+	client.start();
+	const unsubscribe = () => client.stop();
+	return unsubscribe;
 }
