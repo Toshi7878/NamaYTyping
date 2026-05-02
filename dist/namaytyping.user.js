@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NamaYTyping YouTube
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.3
+// @version      1.0.4
 // @description  YTypingの変換ありタイピングにYouTube Liveチャットから参加できる拡張機能
 // @license      MIT
 // @match        https://ytyping.net/*
