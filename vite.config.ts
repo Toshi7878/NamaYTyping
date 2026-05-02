@@ -17,11 +17,11 @@ export default defineConfig({
 		monkey({
 			entry: "src/main.tsx",
 			userscript: {
-				name: "NamaYTyping YouTube",
+				name: "namaYTyping",
 				namespace: "https://greasyfork.org/users/302934",
 				version: pkg.version,
 				description:
-					"YTypingの変換ありタイピングにYouTube Liveチャットから参加できる拡張機能",
+					"変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト",
 				match: ["https://ytyping.net/*"],
 				grant: ["GM_xmlhttpRequest", "unsafeWindow"],
 				connect: ["www.youtube.com"],
