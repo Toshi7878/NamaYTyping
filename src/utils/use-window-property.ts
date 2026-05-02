@@ -1,20 +1,24 @@
 import { useEffect, useState } from "react";
 
+declare const unsafeWindow: Window;
+
 export function useWindowProperty<K extends keyof Window>(
 	key: K,
 ): Window[K] | undefined {
-	const [value, setValue] = useState<Window[K] | undefined>(() => window[key]);
+	const [value, setValue] = useState<Window[K] | undefined>(
+		() => unsafeWindow[key],
+	);
 
 	useEffect(() => {
-		if (window[key] !== undefined) {
-			setValue(window[key]);
+		if (unsafeWindow[key] !== undefined) {
+			setValue(unsafeWindow[key]);
 			return;
 		}
 
-		Object.defineProperty(window, key, {
+		Object.defineProperty(unsafeWindow, key, {
 			configurable: true,
 			set(newValue: Window[K]) {
-				Object.defineProperty(window, key, {
+				Object.defineProperty(unsafeWindow, key, {
 					configurable: true,
 					writable: true,
 					value: newValue,
@@ -24,9 +28,11 @@ export function useWindowProperty<K extends keyof Window>(
 		});
 
 		return () => {
-			const desc = Object.getOwnPropertyDescriptor(window, key);
+			const desc = Object.getOwnPropertyDescriptor(unsafeWindow, key);
 			if (desc?.set) {
-				delete (window as unknown as Record<string, unknown>)[key as string];
+				delete (unsafeWindow as unknown as Record<string, unknown>)[
+					key as string
+				];
 			}
 		};
 	}, [key]);

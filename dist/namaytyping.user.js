@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.18
+// @version      1.0.19
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14478,16 +14478,18 @@ stroke: [{
     return mountEl;
   }
   function useWindowProperty(key) {
-    const [value, setValue] = reactExports.useState(() => window[key]);
+    const [value, setValue] = reactExports.useState(
+      () => unsafeWindow[key]
+    );
     reactExports.useEffect(() => {
-      if (window[key] !== void 0) {
-        setValue(window[key]);
+      if (unsafeWindow[key] !== void 0) {
+        setValue(unsafeWindow[key]);
         return;
       }
-      Object.defineProperty(window, key, {
+      Object.defineProperty(unsafeWindow, key, {
         configurable: true,
         set(newValue) {
-          Object.defineProperty(window, key, {
+          Object.defineProperty(unsafeWindow, key, {
             configurable: true,
             writable: true,
             value: newValue
@@ -14496,9 +14498,9 @@ stroke: [{
         }
       });
       return () => {
-        const desc = Object.getOwnPropertyDescriptor(window, key);
+        const desc = Object.getOwnPropertyDescriptor(unsafeWindow, key);
         if (desc?.set) {
-          delete window[key];
+          delete unsafeWindow[key];
         }
       };
     }, [key]);
