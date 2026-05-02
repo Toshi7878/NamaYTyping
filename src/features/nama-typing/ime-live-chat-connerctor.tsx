@@ -9,6 +9,8 @@ import {
 } from "@/utils/youtube-live-chat-client";
 import { unsafeWindow } from "$";
 
+const STORAGE_KEY = "yt-live-chat-url";
+
 interface ImeLiveChatConnectorProps {
 	onConnect: () => void;
 	onChat: (messages: ChatMessage[]) => void;
@@ -37,6 +39,8 @@ export const ImeLiveChatConnector = ({
 	return createPortal(
 		<Input
 			ref={inputRef}
+			defaultValue={sessionStorage.getItem(STORAGE_KEY) ?? ""}
+			onChange={(e) => sessionStorage.setItem(STORAGE_KEY, e.target.value)}
 			placeholder="YouTube Live URL or ID"
 			className="w-48 fixed bottom-4 right-4"
 			size="sm"
