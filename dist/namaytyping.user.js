@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.10
+// @version      1.0.9
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14478,20 +14478,14 @@ stroke: [{
     }, [selector, position]);
     return mountEl;
   }
-  function getClientVersion() {
-    const d = new Date(Date.now() - 864e5);
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `2.${d.getFullYear()}${mm}${dd}.01.00`;
-  }
   function getContinuationFromLiveId(liveId) {
     return new Promise((resolve, reject) => {
       _GM_xmlhttpRequest({
         method: "GET",
-        url: `https://www.youtube.com/live_chat?is_popout=1&v=${liveId}`,
+        url: `https://www.youtube.com/watch?v=${liveId}`,
         onload(res) {
           const match = res.responseText.match(
-            /(?:window\s*\[\s*["']ytInitialData["']\s*\]|window\.ytInitialData|ytInitialData)\s*=\s*({.+?})\s*;<\/script>/s
+            /ytInitialData\s*=\s*({.+?})\s*;<\/script>/s
           );
           if (!match) return reject(new Error("ytInitialData not found"));
           let data;
@@ -14500,7 +14494,7 @@ stroke: [{
           } catch {
             return reject(new Error("Failed to parse ytInitialData"));
           }
-          const continuations = data?.contents?.liveChatRenderer?.continuations ?? data?.contents?.twoColumnWatchNextResults?.conversationBar?.liveChatRenderer?.continuations;
+          const continuations = data?.contents?.twoColumnWatchNextResults?.conversationBar?.liveChatRenderer?.continuations;
           const continuation = continuations?.[0]?.invalidationContinuationData?.continuation ?? continuations?.[0]?.reloadContinuationData?.continuation;
           if (!continuation) return reject(new Error("continuation not found"));
           resolve(continuation);
@@ -14520,7 +14514,6 @@ stroke: [{
     _continuation = null;
     _timer = null;
     _startedAt = 0;
-    _visitorData = null;
     constructor({ liveId, onChat: onChat2, onError, onConnect }) {
       if (!liveId) throw new Error("liveId is required");
       this._liveId = liveId;
@@ -14546,31 +14539,20 @@ stroke: [{
       this._timer = null;
       this._continuation = null;
       this._startedAt = 0;
-      this._visitorData = null;
     }
     _poll() {
       if (!this._alive || this._continuation === null) return;
-      const requestStart = Date.now();
       _GM_xmlhttpRequest({
         method: "POST",
         url: "https://www.youtube.com/youtubei/v1/live_chat/get_live_chat",
         headers: { "Content-Type": "application/json" },
         data: JSON.stringify({
-          context: {
-            client: {
-              clientName: "WEB",
-              clientVersion: getClientVersion(),
-              ...this._visitorData ? { visitorData: this._visitorData } : {}
-            }
-          },
+          context: { client: { clientName: "WEB", clientVersion: "2.20240101" } },
           continuation: this._continuation
         }),
         onload: (res) => {
           try {
-            this._handle(
-              JSON.parse(res.responseText),
-              requestStart
-            );
+            this._handle(JSON.parse(res.responseText));
           } catch (e) {
             this._onError(e instanceof Error ? e : new Error(String(e)));
           }
@@ -14580,9 +14562,7 @@ stroke: [{
         }
       });
     }
-    _handle(json, requestStart) {
-      const visitorData = json?.responseContext?.visitorData;
-      if (visitorData) this._visitorData = visitorData;
+    _handle(json) {
       const lcc = json?.continuationContents?.liveChatContinuation;
       if (!lcc) {
         this._alive = false;
@@ -14590,10 +14570,7 @@ stroke: [{
       }
       const cont = lcc.continuations?.[0];
       const next = cont?.invalidationContinuationData?.continuation ?? cont?.timedContinuationData?.continuation;
-      const timeout = Math.min(
-        cont?.invalidationContinuationData?.timeoutMs ?? cont?.timedContinuationData?.timeoutMs ?? 5e3,
-        5e3
-      );
+      const timeout = cont?.invalidationContinuationData?.timeoutMs ?? cont?.timedContinuationData?.timeoutMs ?? 5e3;
       if (next) this._continuation = next;
       const messages = (lcc.actions ?? []).map((a) => a?.addChatItemAction?.item?.liveChatTextMessageRenderer).filter((r2) => r2 !== void 0).filter((r2) => Number(r2.timestampUsec) > this._startedAt).map((r2) => ({
         id: r2.id,
@@ -14605,10 +14582,8 @@ stroke: [{
         )
       }));
       if (messages.length > 0) this._onChat(messages);
-      const elapsed = Date.now() - requestStart;
-      const delay = Math.max(0, timeout - elapsed);
       if (this._alive && next) {
-        this._timer = setTimeout(() => this._poll(), delay);
+        this._timer = setTimeout(() => this._poll(), timeout);
       } else {
         this._alive = false;
       }
@@ -14712,7 +14687,6 @@ jsxRuntimeExports.jsx(
   };
   function onChat(messages, chatStates) {
     for (const m of messages) {
-      console.log("onChat", m.author, ":", m.message);
       const state = getChatState(m.author, chatStates);
       const result = _unsafeWindow.__ytyping_ime?.evaluateImeInput({
         value: m.message,

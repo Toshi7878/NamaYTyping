@@ -17,9 +17,6 @@ interface YtInitialData {
 				};
 			};
 		};
-		liveChatRenderer?: {
-			continuations?: YtContinuationItem[];
-		};
 	};
 }
 
@@ -79,21 +76,14 @@ export interface StartOptions {
 
 // ---- Internal helpers ----------------------------------------------------
 
-function getClientVersion(): string {
-	const d = new Date(Date.now() - 86_400_000);
-	const mm = String(d.getMonth() + 1).padStart(2, "0");
-	const dd = String(d.getDate()).padStart(2, "0");
-	return `2.${d.getFullYear()}${mm}${dd}.01.00`;
-}
-
 function getContinuationFromLiveId(liveId: string): Promise<string> {
 	return new Promise((resolve, reject) => {
 		GM_xmlhttpRequest({
 			method: "GET",
-			url: `https://www.youtube.com/live_chat?is_popout=1&v=${liveId}`,
+			url: `https://www.youtube.com/watch?v=${liveId}`,
 			onload(res) {
 				const match = res.responseText.match(
-					/(?:window\s*\[\s*["']ytInitialData["']\s*\]|window\.ytInitialData|ytInitialData)\s*=\s*({.+?})\s*;<\/script>/s,
+					/ytInitialData\s*=\s*({.+?})\s*;<\/script>/s,
 				);
 				if (!match) return reject(new Error("ytInitialData not found"));
 
@@ -105,7 +95,6 @@ function getContinuationFromLiveId(liveId: string): Promise<string> {
 				}
 
 				const continuations =
-					data?.contents?.liveChatRenderer?.continuations ??
 					data?.contents?.twoColumnWatchNextResults?.conversationBar
 						?.liveChatRenderer?.continuations;
 
@@ -135,7 +124,6 @@ class YTLiveChatClient {
 	private _continuation: string | null = null;
 	private _timer: ReturnType<typeof setTimeout> | null = null;
 	private _startedAt = 0;
-	private _visitorData: string | null = null;
 
 	constructor({ liveId, onChat, onError, onConnect }: YTLiveChatClientOptions) {
 		if (!liveId) throw new Error("liveId is required");
@@ -164,33 +152,22 @@ class YTLiveChatClient {
 		this._timer = null;
 		this._continuation = null;
 		this._startedAt = 0;
-		this._visitorData = null;
 	}
 
 	private _poll(): void {
 		if (!this._alive || this._continuation === null) return;
-		const requestStart = Date.now();
 
 		GM_xmlhttpRequest({
 			method: "POST",
 			url: "https://www.youtube.com/youtubei/v1/live_chat/get_live_chat",
 			headers: { "Content-Type": "application/json" },
 			data: JSON.stringify({
-				context: {
-					client: {
-						clientName: "WEB",
-						clientVersion: getClientVersion(),
-						...(this._visitorData ? { visitorData: this._visitorData } : {}),
-					},
-				},
+				context: { client: { clientName: "WEB", clientVersion: "2.20240101" } },
 				continuation: this._continuation,
 			}),
 			onload: (res) => {
 				try {
-					this._handle(
-						JSON.parse(res.responseText) as LiveChatResponse,
-						requestStart,
-					);
+					this._handle(JSON.parse(res.responseText) as LiveChatResponse);
 				} catch (e) {
 					this._onError(e instanceof Error ? e : new Error(String(e)));
 				}
@@ -201,11 +178,7 @@ class YTLiveChatClient {
 		});
 	}
 
-	private _handle(json: LiveChatResponse, requestStart: number): void {
-		const visitorData = (json as { responseContext?: { visitorData?: string } })
-			?.responseContext?.visitorData;
-		if (visitorData) this._visitorData = visitorData;
-
+	private _handle(json: LiveChatResponse): void {
 		const lcc = json?.continuationContents?.liveChatContinuation;
 		if (!lcc) {
 			this._alive = false;
@@ -216,12 +189,10 @@ class YTLiveChatClient {
 		const next =
 			cont?.invalidationContinuationData?.continuation ??
 			cont?.timedContinuationData?.continuation;
-		const timeout = Math.min(
+		const timeout =
 			cont?.invalidationContinuationData?.timeoutMs ??
-				cont?.timedContinuationData?.timeoutMs ??
-				5000,
-			5000,
-		);
+			cont?.timedContinuationData?.timeoutMs ??
+			5000;
 
 		if (next) this._continuation = next;
 
@@ -241,11 +212,8 @@ class YTLiveChatClient {
 
 		if (messages.length > 0) this._onChat(messages);
 
-		const elapsed = Date.now() - requestStart;
-		const delay = Math.max(0, timeout - elapsed);
-
 		if (this._alive && next) {
-			this._timer = setTimeout(() => this._poll(), delay);
+			this._timer = setTimeout(() => this._poll(), timeout);
 		} else {
 			this._alive = false;
 		}
