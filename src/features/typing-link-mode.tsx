@@ -1,23 +1,31 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { Switch } from "@/components/ui/switch";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import { unsafeWindow } from "$";
 
-export const ImeModeToggle = () => {
+export const ImeModeSwitch = () => {
+	const id = useId();
 	const [mode, setMode] = useState<"ime" | "type">(
 		unsafeWindow.__ytyping?.getMapLinkMode?.() ?? "type",
 	);
-	const mountEl = usePortalMount("#right-nav-icons", "afterbegin");
+	const mountEl = usePortalMount("#right-nav-icons", {
+		position: "afterbegin",
+	});
+
 	if (!mountEl) return null;
 
 	const isIme = mode === "ime";
 	return createPortal(
-		<div className="inline-flex items-center gap-1.5 mx-1">
-			<span className="text-[11px] font-semibold text-secondary-foreground tracking-wide min-w-8 text-center select-none">
+		<label
+			htmlFor={id}
+			className="inline-flex items-center gap-1 mx-1 cursor-pointer group"
+		>
+			<span className="text-xs font-semibold text-header-foreground/80 group-hover:text-header-foreground tracking-wide min-w-8 text-center select-none">
 				{isIme ? "IME" : "TYPE"}
 			</span>
 			<Switch
+				id={id}
 				checked={isIme}
 				onCheckedChange={(checked) => {
 					const newMode = checked ? "ime" : "type";
@@ -25,7 +33,7 @@ export const ImeModeToggle = () => {
 					unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
 				}}
 			/>
-		</div>,
+		</label>,
 		mountEl,
 	);
 };

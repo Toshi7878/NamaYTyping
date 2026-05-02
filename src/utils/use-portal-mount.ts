@@ -1,51 +1,65 @@
 import { useEffect, useState } from "react";
+import styles from "@/index.css?inline";
+
+const styleSheetCache = new Map<string, CSSStyleSheet>();
+
+function getStyleSheet(css: string): CSSStyleSheet {
+	if (!styleSheetCache.has(css)) {
+		const sheet = new CSSStyleSheet();
+		sheet.replaceSync(css);
+		styleSheetCache.set(css, sheet);
+	}
+	// biome-ignore lint/style/noNonNullAssertion: <>
+	return styleSheetCache.get(css)!;
+}
+
+function attachShadowWithStyles(host: HTMLDivElement): ShadowRoot {
+	const shadow = host.attachShadow({ mode: "open" });
+	shadow.adoptedStyleSheets = [getStyleSheet(styles)];
+	return shadow;
+}
 
 /**
  * @param selector - 挿入先を特定する CSS セレクター
- * @param position - 挿入位置
+ * @param options.position - 挿入位置を指定すると Shadow DOM ホストを生成してスタイルを注入する。
  *   - `"beforebegin"` : 対象要素の直前（兄弟として）
  *   - `"afterbegin"`  : 対象要素の子の先頭
  *   - `"beforeend"`   : 対象要素の子の末尾
  *   - `"afterend"`    : 対象要素の直後（兄弟として）
- * @returns 挿入した `div`。対象要素が未検出の間は `null`
+ * @returns マウント先の要素。対象要素が未検出の間は `null`
  */
 export function usePortalMount(
 	selector: string,
-	position: InsertPosition,
-): HTMLDivElement | null {
-	const [mountEl, setMountEl] = useState<HTMLDivElement | null>(null);
+	options?: { position: InsertPosition },
+): Element | ShadowRoot | null {
+	const position = options?.position;
+	const [mountEl, setMountEl] = useState<Element | ShadowRoot | null>(null);
 
 	useEffect(() => {
-		let el: HTMLDivElement | null = null;
-
-		function tryMount() {
+		if (position !== undefined) {
 			const target = document.querySelector(selector);
-			if (!target || el?.isConnected) return;
+			if (!target) return;
 
-			const div = document.createElement("div");
-			div.style.display = "contents";
-			target.insertAdjacentElement(position, div);
-			el = div;
-			setMountEl(div);
+			const host = document.createElement("div");
+			target.insertAdjacentElement(position, host);
+			setMountEl(attachShadowWithStyles(host));
+
+			return () => {
+				host.remove();
+				setMountEl(null);
+			};
 		}
 
-		tryMount();
+		function update() {
+			setMountEl(document.querySelector(selector));
+		}
 
-		const observer = new MutationObserver(() => {
-			if (!el?.isConnected) {
-				el = null;
-				setMountEl(null);
-			}
-			tryMount();
-		});
+		update();
+
+		const observer = new MutationObserver(update);
 		observer.observe(document.body, { childList: true, subtree: true });
 
-		return () => {
-			observer.disconnect();
-			el?.remove();
-			el = null;
-			setMountEl(null);
-		};
+		return () => observer.disconnect();
 	}, [selector, position]);
 
 	return mountEl;

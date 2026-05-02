@@ -1,6 +1,8 @@
 import { type RefObject, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { extractYouTubeLiveId } from "@/utils/extract-youtube-id";
+import { usePortalMount } from "@/utils/use-portal-mount";
 import {
 	type ChatMessage,
 	YTLiveChatClient,
@@ -21,6 +23,7 @@ export const LiveChatConnector = ({
 	onEnd,
 }: LiveChatConnectorProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
+	const mountEl = usePortalMount("body", { position: "beforeend" });
 	const { isConnected } = useLiveChatSession(
 		inputRef,
 		onConnect,
@@ -29,9 +32,17 @@ export const LiveChatConnector = ({
 		onEnd,
 	);
 
-	if (isConnected) return null;
+	if (isConnected || !mountEl) return null;
 
-	return <Input ref={inputRef} placeholder="YouTube Live URL or ID" />;
+	return createPortal(
+		<Input
+			ref={inputRef}
+			placeholder="YouTube Live URL or ID"
+			className="w-48 fixed bottom-4 right-4"
+			size="sm"
+		/>,
+		mountEl,
+	);
 };
 
 const useLiveChatSession = (

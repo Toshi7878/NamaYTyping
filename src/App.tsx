@@ -1,5 +1,5 @@
 import { NamaTypingContainer } from "./features/nama-typing/container";
-import { ImeModeToggle } from "./features/typing-link-mode";
+import { ImeModeSwitch } from "./features/typing-link-mode";
 import { usePathname } from "./utils/spa-navigate";
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
 
 	return (
 		<>
-			<ImeModeToggle />
+			<ImeModeSwitch />
 			{isImePage && <NamaTypingContainer />}
 		</>
 	);
