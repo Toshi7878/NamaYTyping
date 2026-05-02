@@ -68,10 +68,7 @@ const useLiveChatSession = (
 
 	useEffect(() => {
 		function startClient(_event: Event) {
-			const rawValue =
-				sessionStorage.getItem(STORAGE_KEY) ??
-				inputRef.current?.value.trim() ??
-				"";
+			const rawValue = inputRef.current?.value.trim() ?? "";
 			const liveId = extractYouTubeLiveId(rawValue);
 			setIsStarted(true);
 
