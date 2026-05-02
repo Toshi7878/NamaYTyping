@@ -7,7 +7,6 @@ import {
 	type ChatMessage,
 	startLiveChat,
 } from "@/utils/youtube-live-chat-client";
-import { unsafeWindow } from "$";
 
 const STORAGE_KEY = "yt-live-chat-url";
 
@@ -88,7 +87,7 @@ const useLiveChatSession = (
 			onEnd();
 		}
 
-		const ime = unsafeWindow.__ytyping_ime;
+		const ime = window.__ytyping_ime;
 		if (ime) {
 			ime.removeEventListener("start", startClient);
 			ime.addEventListener("start", startClient);
@@ -99,7 +98,7 @@ const useLiveChatSession = (
 		return () => {
 			unsubscribeRef.current?.();
 			unsubscribeRef.current = null;
-			const imeOnCleanup = unsafeWindow.__ytyping_ime;
+			const imeOnCleanup = window.__ytyping_ime;
 			if (imeOnCleanup) {
 				imeOnCleanup.removeEventListener("start", startClient);
 				imeOnCleanup.removeEventListener("end", handleEnd);
