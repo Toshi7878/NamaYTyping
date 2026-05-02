@@ -10,11 +10,7 @@ interface ChatState {
 	wordResults: WordResult[];
 }
 
-interface Props {
-	host: HTMLDivElement;
-}
-
-export function NamaTypingContainer({ host }: Props) {
+export const NamaTypingContainer = () => {
 	const chatStatesRef = useRef(new Map<string, ChatState>());
 
 	return (
@@ -23,10 +19,9 @@ export function NamaTypingContainer({ host }: Props) {
 			onConnect={onConnect}
 			onEnd={() => onEnd(chatStatesRef.current)}
 			onError={onError}
-			host={host}
 		/>
 	);
-}
+};
 
 function onChat(messages: ChatMessage[], chatStates: Map<string, ChatState>) {
 	for (const m of messages) {

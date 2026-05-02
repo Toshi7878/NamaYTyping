@@ -8,7 +8,6 @@ import {
 import { unsafeWindow } from "$";
 
 interface LiveChatConnectorProps {
-	host: HTMLDivElement;
 	onConnect: () => void;
 	onChat: (messages: ChatMessage[]) => void;
 	onError: (error: Error) => void;
@@ -16,7 +15,6 @@ interface LiveChatConnectorProps {
 }
 
 export const LiveChatConnector = ({
-	host,
 	onConnect,
 	onChat,
 	onError,
@@ -24,7 +22,6 @@ export const LiveChatConnector = ({
 }: LiveChatConnectorProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const { isConnected } = useLiveChatSession(
-		host,
 		inputRef,
 		onConnect,
 		onChat,
@@ -37,24 +34,20 @@ export const LiveChatConnector = ({
 	return <Input ref={inputRef} placeholder="YouTube Live URL or ID" />;
 };
 
-export function useLiveChatSession(
-	host: HTMLDivElement,
+const useLiveChatSession = (
 	inputRef: RefObject<HTMLInputElement | null>,
 	onConnect: () => void,
 	onChat: (messages: ChatMessage[]) => void,
 	onError: (error: Error) => void,
 	onEnd: () => void,
-) {
+) => {
 	const [isConnected, setIsConnected] = useState(false);
 	const clientRef = useRef<YTLiveChatClient | null>(null);
-	const observerRef = useRef<MutationObserver | null>(null);
 
 	useEffect(() => {
 		async function startClient(_event: Event) {
 			const liveId = extractYouTubeLiveId(inputRef.current?.value.trim() ?? "");
 			setIsConnected(true);
-			observerRef.current?.disconnect();
-			observerRef.current = null;
 
 			if (!liveId) return;
 
@@ -79,24 +72,16 @@ export function useLiveChatSession(
 			ime.addEventListener("end", onEnd);
 		}
 
-		const obs = new MutationObserver(() => {
-			if (!host.isConnected) document.documentElement.appendChild(host);
-		});
-		obs.observe(document.documentElement, { childList: true, subtree: true });
-		observerRef.current = obs;
-
 		return () => {
 			clientRef.current?.stop();
 			clientRef.current = null;
-			observerRef.current?.disconnect();
-			observerRef.current = null;
 			const imeOnCleanup = unsafeWindow.__ytyping_ime;
 			if (imeOnCleanup) {
 				imeOnCleanup.removeEventListener("start", startClient);
 				imeOnCleanup.removeEventListener("end", onEnd);
 			}
 		};
-	}, [host, inputRef, onChat, onConnect, onError, onEnd]);
+	}, [inputRef, onChat, onConnect, onError, onEnd]);
 
 	return { isConnected };
-}
+};
