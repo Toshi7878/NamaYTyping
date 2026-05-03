@@ -21,7 +21,7 @@ function onChat(messages: ChatMessage[]) {
 	if (!ime) return;
 
 	for (const m of messages) {
-		const userResult = ime.getUserResult(m.id);
+		const userResult = ime.getUserResult(m.author);
 
 		const result = ime.handleImeInput({
 			value: m.message,
@@ -29,7 +29,7 @@ function onChat(messages: ChatMessage[]) {
 			wordResults: userResult?.wordResults,
 		});
 
-		ime.updateUserResult(m.id, {
+		ime.updateUserResult(m.author, {
 			name: m.author,
 			typeCountDelta: result.typeCountDelta,
 			newWordResults: result.newWordResults,

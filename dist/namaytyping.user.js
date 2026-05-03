@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.1
+// @version      1.1.2
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14737,13 +14737,13 @@ jsxRuntimeExports.jsx(
     const ime = _unsafeWindow.__ytyping_ime;
     if (!ime) return;
     for (const m of messages) {
-      const userResult = ime.getUserResult(m.id);
+      const userResult = ime.getUserResult(m.author);
       const result = ime.handleImeInput({
         value: m.message,
         currentWordIndex: userResult?.currentWordIndex,
         wordResults: userResult?.wordResults
       });
-      ime.updateUserResult(m.id, {
+      ime.updateUserResult(m.author, {
         name: m.author,
         typeCountDelta: result.typeCountDelta,
         newWordResults: result.newWordResults,
