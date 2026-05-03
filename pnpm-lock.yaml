@@ -126,6 +126,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: 1.0.0
         version: 1.0.0
+      lyrics-ime-typing-engine:
+        specifier: 'catalog:'
+        version: 1.2.11
       tailwindcss:
         specifier: 'catalog:'
         version: 4.2.4
