@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.0.20
+// @version      1.1.1
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -12486,15 +12486,15 @@
   }
   var clientExports = requireClient();
   const ReactDOM = getDefaultExportFromCjs(clientExports);
+  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
+  var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
+  var _monkeyWindow = (() => window)();
   var reactExports = requireReact();
   const React = getDefaultExportFromCjs(reactExports);
   const React$1 = _mergeNamespaces$1({
     __proto__: null,
     default: React
   }, [reactExports]);
-  var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
-  var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
-  var _monkeyWindow = (() => window)();
   var reactDomExports = requireReactDom();
   function r(e) {
     var t, f, n = "";
@@ -14413,7 +14413,8 @@ stroke: [{
     /youtu\.be\/([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    /studio\.youtube\.com\/video\/([a-zA-Z0-9_-]{11})/
   ];
   function extractYouTubeLiveId(input) {
     const trimmed = input.trim();
@@ -14654,8 +14655,7 @@ stroke: [{
   const ImeLiveChatConnector = ({
     onConnect,
     onChat: onChat2,
-    onError,
-    onEnd: onEnd2
+    onError
   }) => {
     const inputRef = reactExports.useRef(null);
     const mountEl = usePortalMount("body", { position: "beforeend" });
@@ -14663,8 +14663,7 @@ stroke: [{
       inputRef,
       onConnect,
       onChat2,
-      onError,
-      onEnd2
+      onError
     );
     if (isStarted || !mountEl) return null;
     return reactDomExports.createPortal(
@@ -14689,14 +14688,14 @@ jsxRuntimeExports.jsx(
       mountEl
     );
   };
-  const useLiveChatSession = (inputRef, onConnect, onChat2, onError, onEnd2) => {
+  const useLiveChatSession = (inputRef, onConnect, onChat2, onError) => {
     const [isStarted, setIsStarted] = reactExports.useState(false);
     const unsubscribeRef = reactExports.useRef(null);
     const ime = useWindowProperty("__ytyping_ime");
     reactExports.useEffect(() => {
       if (!ime) return;
       function startClient(_event) {
-        const rawValue = sessionStorage.getItem(STORAGE_KEY) ?? inputRef.current?.value.trim() ?? "";
+        const rawValue = inputRef.current?.value ?? "";
         const liveId = extractYouTubeLiveId(rawValue);
         setIsStarted(true);
         if (!liveId) return;
@@ -14710,7 +14709,6 @@ jsxRuntimeExports.jsx(
       }
       function handleEnd() {
         setIsStarted(false);
-        onEnd2();
       }
       ime.removeEventListener("start", startClient);
       ime.addEventListener("start", startClient);
@@ -14722,68 +14720,39 @@ jsxRuntimeExports.jsx(
         ime.removeEventListener("start", startClient);
         ime.removeEventListener("end", handleEnd);
       };
-    }, [ime, inputRef, onChat2, onConnect, onError, onEnd2]);
+    }, [ime, inputRef, onChat2, onConnect, onError]);
     return { isStarted };
   };
   const NamaTypingContainer = () => {
-    const chatStatesRef = reactExports.useRef( new Map());
     return jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
       {
-        onChat: (messages) => onChat(messages, chatStatesRef.current),
+        onChat: (messages) => onChat(messages),
         onConnect: () => _unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
-        onEnd: () => onEnd(chatStatesRef.current),
         onError: (e) => _unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
       }
     );
   };
-  function onChat(messages, chatStates) {
+  function onChat(messages) {
+    const ime = _unsafeWindow.__ytyping_ime;
+    if (!ime) return;
     for (const m of messages) {
-      const state = getChatState(m.author, chatStates);
-      const result = _unsafeWindow.__ytyping_ime?.evaluateImeInput({
+      const userResult = ime.getUserResult(m.id);
+      const result = ime.handleImeInput({
         value: m.message,
-        currentWordIndex: state.currentWordIndex,
-        wordResults: state.wordResults
+        currentWordIndex: userResult?.currentWordIndex,
+        wordResults: userResult?.wordResults
       });
-      if (!result) continue;
-      const newWordResults = [...state.wordResults];
-      for (const { index, result: wordResult } of result.wordResultUpdates) {
-        newWordResults[index] = wordResult;
-      }
-      chatStates.set(m.author, {
-        ...state,
-        currentWordIndex: result.nextWordIndex ?? state.currentWordIndex,
-        typeCount: state.typeCount + result.typeCountDelta,
-        wordResults: newWordResults
+      ime.updateUserResult(m.id, {
+        name: m.author,
+        typeCountDelta: result.typeCountDelta,
+        newWordResults: result.newWordResults,
+        nextWordIndex: result.nextWordIndex
       });
-      _unsafeWindow.__ytyping_ime?.addNotifications(
-        result.notificationsToAppend.map((n) => `${m.author}: ${n}`)
+      ime.addNotifications(
+        result.appendNotifications.map((n) => `${m.author}: ${n}`)
       );
     }
-  }
-  function onEnd(chatStates) {
-    chatStates.forEach(({ author, typeCount }) => {
-      _unsafeWindow.__ytyping_ime?.addUserResult({
-        name: author,
-        typeCount
-      });
-    });
-  }
-  function getChatState(author, chatStatesRef) {
-    if (!chatStatesRef.has(author)) {
-      const initWordResults = window.__ytyping_ime?.getBuiltMap()?.initWordResults ?? [];
-      chatStatesRef.set(author, {
-        author,
-        currentWordIndex: 0,
-        typeCount: 0,
-        wordResults: initWordResults
-      });
-    }
-    const state = chatStatesRef.get(author);
-    if (!state) {
-      throw new Error(`Chat state not found for author: ${author}`);
-    }
-    return state;
   }
   function setRef(ref, value) {
     if (typeof ref === "function") {

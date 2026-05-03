@@ -15,14 +15,12 @@ interface ImeLiveChatConnectorProps {
 	onConnect: () => void;
 	onChat: (messages: ChatMessage[]) => void;
 	onError: (error: Error) => void;
-	onEnd: () => void;
 }
 
 export const ImeLiveChatConnector = ({
 	onConnect,
 	onChat,
 	onError,
-	onEnd,
 }: ImeLiveChatConnectorProps) => {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const mountEl = usePortalMount("body", { position: "beforeend" });
@@ -31,7 +29,6 @@ export const ImeLiveChatConnector = ({
 		onConnect,
 		onChat,
 		onError,
-		onEnd,
 	);
 
 	if (isStarted || !mountEl) return null;
@@ -61,7 +58,6 @@ const useLiveChatSession = (
 	onConnect: () => void,
 	onChat: (messages: ChatMessage[]) => void,
 	onError: (error: Error) => void,
-	onEnd: () => void,
 ) => {
 	const [isStarted, setIsStarted] = useState(false);
 	const unsubscribeRef = useRef<(() => void) | null>(null);
@@ -88,7 +84,6 @@ const useLiveChatSession = (
 
 		function handleEnd() {
 			setIsStarted(false);
-			onEnd();
 		}
 
 		ime.removeEventListener("start", startClient);
@@ -102,7 +97,7 @@ const useLiveChatSession = (
 			ime.removeEventListener("start", startClient);
 			ime.removeEventListener("end", handleEnd);
 		};
-	}, [ime, inputRef, onChat, onConnect, onError, onEnd]);
+	}, [ime, inputRef, onChat, onConnect, onError]);
 
 	return { isStarted };
 };

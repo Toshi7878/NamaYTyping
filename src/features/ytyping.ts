@@ -1,14 +1,44 @@
-import type { evaluateImeInput, WordResult } from "lyrics-ime-typing-engine";
+import type { UserResult, WordResult } from "lyrics-ime-typing-engine";
 
 interface YTypingIme extends EventTarget {
-	getBuiltMap(): { initWordResults: WordResult[] } | null;
-	evaluateImeInput(params: {
-		value: string;
-		currentWordIndex: number;
+	getUserResult: (id: string) => UserResult | undefined;
+	getResultRanking: () => {
+		rank: number;
+		name: string;
+		score: number;
 		wordResults: WordResult[];
-	}): ReturnType<typeof evaluateImeInput>;
+		currentWordIndex: number;
+	}[];
+	updateUserResult: (
+		id: string,
+		{
+			name,
+			typeCountDelta,
+			newWordResults,
+			nextWordIndex,
+		}: {
+			name: string;
+			typeCountDelta: number;
+			newWordResults: WordResult[];
+			nextWordIndex: number;
+		},
+	) => void;
+	handleImeInput: ({
+		value,
+		currentWordIndex,
+		wordResults,
+	}: {
+		value: string;
+		currentWordIndex: number | undefined;
+		wordResults: WordResult[] | undefined;
+	}) => {
+		newWordResults: WordResult[];
+		typeCountDelta: number;
+		typeCountStatsDelta: number;
+		nextWordIndex: number;
+		appendNotifications: string[];
+	};
 	addNotifications(notifications: string[]): void;
-	addUserResult(result: { name: string; typeCount: number }): void;
 }
 
 interface YTyping {
