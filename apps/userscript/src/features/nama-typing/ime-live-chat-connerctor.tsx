@@ -1,6 +1,5 @@
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Input } from "@/components/ui/input";
 import { extractYouTubeLiveId } from "@/utils/extract-youtube-id";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import { useWindowProperty } from "@/utils/use-window-property";
@@ -8,6 +7,7 @@ import {
 	type ChatMessage,
 	startLiveChat,
 } from "@/utils/youtube-live-chat-client";
+import { Input } from "@repo/ui";
 
 const STORAGE_KEY = "yt-live-chat-url";
 
