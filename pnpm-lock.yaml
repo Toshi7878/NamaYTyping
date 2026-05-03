@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  apps/userscript:
     dependencies:
       '@fontsource-variable/geist':
         specifier: ^5.2.8
@@ -51,6 +53,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.4.13
         version: 2.4.13
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
       '@types/node':
         specifier: ^25.6.0
         version: 25.6.0
@@ -75,6 +80,8 @@ importers:
       vite-plugin-monkey:
         specifier: ^7.1.1
         version: 7.1.9(postcss@8.5.13)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0))
+
+  packages/typescript-config: {}
 
 packages:
 
