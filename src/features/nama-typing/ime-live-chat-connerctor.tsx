@@ -71,10 +71,7 @@ const useLiveChatSession = (
 		if (!ime) return;
 
 		function startClient(_event: Event) {
-			const rawValue =
-				sessionStorage.getItem(STORAGE_KEY) ??
-				inputRef.current?.value.trim() ??
-				"";
+			const rawValue = inputRef.current?.value ?? "";
 			const liveId = extractYouTubeLiveId(rawValue);
 			setIsStarted(true);
 
