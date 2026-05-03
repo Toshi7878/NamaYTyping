@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "lyrics-ime-typing-engine": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
