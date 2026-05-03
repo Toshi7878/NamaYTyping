@@ -4,20 +4,25 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    "./cn": "./src/cn.ts",
+    "./dialog": "./src/dialog.tsx",
+    "./icons": "./src/icons.ts",
+    "./input": "./src/input.tsx",
+    "./switch": "./src/switch.tsx"
   },
   "peerDependencies": {
-    "react": "^19.0.0"
+    "react": "catalog:"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lucide-react": "^1.14.0",
     "radix-ui": "^1.4.3",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/react": "^19.0.0",
-    "typescript": "^5.0.0"
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
   }
 }

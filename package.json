@@ -5,5 +5,8 @@
     "dev": "pnpm -F userscript dev",
     "build": "pnpm -F userscript build",
     "preview": "pnpm -F userscript preview"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.13"
   }
 }

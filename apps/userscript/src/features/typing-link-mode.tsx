@@ -2,7 +2,7 @@ import { useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import { unsafeWindow } from "$";
-import { Switch } from "@repo/ui";
+import { Switch } from "@repo/ui/switch";
 
 const getInitialMode = () => {
 	try {

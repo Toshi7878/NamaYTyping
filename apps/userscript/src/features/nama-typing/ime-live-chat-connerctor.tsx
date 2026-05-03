@@ -7,7 +7,7 @@ import {
 	type ChatMessage,
 	startLiveChat,
 } from "@/utils/youtube-live-chat-client";
-import { Input } from "@repo/ui";
+import { Input } from "@repo/ui/input";
 
 const STORAGE_KEY = "yt-live-chat-url";
 

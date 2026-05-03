@@ -2,6 +2,7 @@
   "folders": [
     { "name": "root", "path": "." },
     { "name": "web", "path": "apps/web" },
-    { "name": "userscript", "path": "apps/userscript" }
+    { "name": "userscript", "path": "apps/userscript" },
+    { "name": "ui", "path": "packages/ui" }
   ]
 }
