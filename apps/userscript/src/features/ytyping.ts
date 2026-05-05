@@ -46,7 +46,6 @@ interface YTyping {
 		success(message: string): void;
 		error(message: string): void;
 	};
-	getMapLinkMode: () => "ime" | "type";
 	setMapLinkMode?(mode: "ime" | "type"): void;
 }
 
