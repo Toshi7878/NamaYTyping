@@ -46,7 +46,7 @@ interface YTyping {
 		success(message: string): void;
 		error(message: string): void;
 	};
-	setMapLinkMode?(mode: "ime" | "type"): void;
+	setTypingLinkMode?(mode: "ime" | "type"): void;
 }
 
 declare global {

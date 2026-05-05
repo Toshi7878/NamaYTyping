@@ -1,12 +1,12 @@
+import { Switch } from "@repo/ui/switch";
 import { useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import { unsafeWindow } from "$";
-import { Switch } from "@repo/ui/switch";
 
 const getInitialMode = () => {
 	try {
-		const stored = unsafeWindow.sessionStorage.getItem("mapLinkMode");
+		const stored = unsafeWindow.sessionStorage.getItem("typingLinkMode");
 		return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
 	} catch {
 		return "type";
@@ -37,7 +37,7 @@ export const ImeModeSwitch = () => {
 				onCheckedChange={(checked) => {
 					const newMode = checked ? "ime" : "type";
 					setMode(newMode);
-					unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
+					unsafeWindow.__ytyping?.setTypingLinkMode?.(newMode);
 				}}
 			/>
 		</label>,
