@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.7
+// @version      1.1.8
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -15242,7 +15242,7 @@ jsxRuntimeExports.jsx(
   }
   const getInitialMode = () => {
     try {
-      const stored = _unsafeWindow.sessionStorage.getItem("mapLinkMode");
+      const stored = _unsafeWindow.sessionStorage.getItem("typingLinkMode");
       return JSON.parse(stored ?? "null") === "ime" ? "ime" : "type";
     } catch {
       return "type";
@@ -15272,7 +15272,7 @@ jsxRuntimeExports.jsx(
                 onCheckedChange: (checked) => {
                   const newMode = checked ? "ime" : "type";
                   setMode(newMode);
-                  _unsafeWindow.__ytyping?.setMapLinkMode?.(newMode);
+                  _unsafeWindow.__ytyping?.setTypingLinkMode?.(newMode);
                 }
               }
             )
