@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.19
+// @version      1.1.20
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -19996,34 +19996,32 @@ jsxRuntimeExports.jsx(ItemText, { children }),
   }
   function openHttpStream(url, onData, onDone, onError) {
     let processedLength = 0;
+    const handleBuffer = (response) => {
+      if (!(response instanceof ArrayBuffer) || response.byteLength === 0) return;
+      const buf = new Uint8Array(response);
+      if (buf.length > processedLength) {
+        onData(buf.subarray(processedLength));
+        processedLength = buf.length;
+      }
+    };
     const handle = _GM_xmlhttpRequest({
       method: "GET",
       url,
-      headers: { "Sec-Fetch-Mode": "no-cors" },
+      headers: { Priority: "u=1, i" },
       responseType: "arraybuffer",
       onprogress(res) {
-        if (!res.response) return;
-        const buf = new Uint8Array(res.response);
-        if (buf.length > processedLength) {
-          onData(buf.subarray(processedLength));
-          processedLength = buf.length;
-        }
+        handleBuffer(res.response);
       },
       onload(res) {
         if (res.status !== 0 && res.status >= 400) {
           onError(new Error(`HTTP ${res.status}`));
           return;
         }
-        if (res.response) {
-          const buf = new Uint8Array(res.response);
-          if (buf.length > processedLength) {
-            onData(buf.subarray(processedLength));
-          }
-        }
+        handleBuffer(res.response);
         onDone();
       },
       onerror(res) {
-        onError(new Error(`HTTP stream network error: status=${res.status}`));
+        onError(new Error(`HTTP stream error: status=${res.status}`));
       }
     });
     return handle;
@@ -20166,19 +20164,23 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       this._messageStreamHandle = openHttpStream(
         url,
         (data) => {
-          splitter.addData(data);
-          for (const chunk of splitter.read()) {
-            const entry = decodeChunkedEntry(chunk);
-            if (entry.segmentUri) {
-              if (!this._connectedOnce) {
-                this._connectedOnce = true;
-                this._onConnect({ liveId: this._liveId });
+          try {
+            splitter.addData(data);
+            for (const chunk of splitter.read()) {
+              const entry = decodeChunkedEntry(chunk);
+              if (entry.segmentUri) {
+                if (!this._connectedOnce) {
+                  this._connectedOnce = true;
+                  this._onConnect({ liveId: this._liveId });
+                }
+                this._startSegment(entry.segmentUri);
               }
-              this._startSegment(entry.segmentUri);
+              if (entry.nextAt !== void 0) {
+                this._nextStreamAt = String(entry.nextAt);
+              }
             }
-            if (entry.nextAt !== void 0) {
-              this._nextStreamAt = String(entry.nextAt);
-            }
+          } catch (e) {
+            this._onError(e instanceof Error ? e : new Error(String(e)));
           }
         },
         () => {

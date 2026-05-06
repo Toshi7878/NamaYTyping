@@ -374,34 +374,33 @@ function openHttpStream(
 ): AbortHandle {
 	let processedLength = 0;
 
+	const handleBuffer = (response: unknown) => {
+		if (!(response instanceof ArrayBuffer) || response.byteLength === 0) return;
+		const buf = new Uint8Array(response);
+		if (buf.length > processedLength) {
+			onData(buf.subarray(processedLength));
+			processedLength = buf.length;
+		}
+	};
+
 	const handle = GM_xmlhttpRequest({
 		method: "GET",
 		url,
-		headers: { "Sec-Fetch-Mode": "no-cors" },
+		headers: { Priority: "u=1, i" },
 		responseType: "arraybuffer",
 		onprogress(res) {
-			if (!res.response) return;
-			const buf = new Uint8Array(res.response as ArrayBuffer);
-			if (buf.length > processedLength) {
-				onData(buf.subarray(processedLength));
-				processedLength = buf.length;
-			}
+			handleBuffer(res.response);
 		},
 		onload(res) {
 			if (res.status !== 0 && res.status >= 400) {
 				onError(new Error(`HTTP ${res.status}`));
 				return;
 			}
-			if (res.response) {
-				const buf = new Uint8Array(res.response as ArrayBuffer);
-				if (buf.length > processedLength) {
-					onData(buf.subarray(processedLength));
-				}
-			}
+			handleBuffer(res.response);
 			onDone();
 		},
 		onerror(res) {
-			onError(new Error(`HTTP stream network error: status=${res.status}`));
+			onError(new Error(`HTTP stream error: status=${res.status}`));
 		},
 	});
 
@@ -565,19 +564,23 @@ class NiconicoLiveChatClient {
 		this._messageStreamHandle = openHttpStream(
 			url,
 			(data) => {
-				splitter.addData(data);
-				for (const chunk of splitter.read()) {
-					const entry = decodeChunkedEntry(chunk);
-					if (entry.segmentUri) {
-						if (!this._connectedOnce) {
-							this._connectedOnce = true;
-							this._onConnect({ liveId: this._liveId });
+				try {
+					splitter.addData(data);
+					for (const chunk of splitter.read()) {
+						const entry = decodeChunkedEntry(chunk);
+						if (entry.segmentUri) {
+							if (!this._connectedOnce) {
+								this._connectedOnce = true;
+								this._onConnect({ liveId: this._liveId });
+							}
+							this._startSegment(entry.segmentUri);
 						}
-						this._startSegment(entry.segmentUri);
+						if (entry.nextAt !== undefined) {
+							this._nextStreamAt = String(entry.nextAt);
+						}
 					}
-					if (entry.nextAt !== undefined) {
-						this._nextStreamAt = String(entry.nextAt);
-					}
+				} catch (e) {
+					this._onError(e instanceof Error ? e : new Error(String(e)));
 				}
 			},
 			() => {
