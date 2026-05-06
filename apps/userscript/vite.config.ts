@@ -24,7 +24,7 @@ export default defineConfig({
 					"変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト",
 				match: ["https://ytyping.net/*"],
 				grant: ["GM_xmlhttpRequest", "unsafeWindow"],
-				connect: ["www.youtube.com"],
+				connect: ["www.youtube.com", "*.nicovideo.jp"],
 				license: "MIT",
 			},
 		}),

@@ -78,6 +78,7 @@ export const ImeLiveChatConnector = ({
 					const p = v as Platform;
 					setPlatform(p);
 					setStorageValue(p, inputRef.current?.value ?? "");
+					localStorage.setItem(STORAGE_KEY_PLATFORM, p);
 				}}
 			>
 				<SelectTrigger size="sm">
