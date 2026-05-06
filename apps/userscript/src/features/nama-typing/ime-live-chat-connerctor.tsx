@@ -63,8 +63,8 @@ export const ImeLiveChatConnector = ({
 				onPaste={(e) => {
 					const value = e.clipboardData.getData("text");
 					const liveId = extractLiveId(platform, value);
-					if (!liveId) return;
 					e.preventDefault();
+					if (!liveId) return;
 					e.currentTarget.value = liveId;
 					setStorageValue(platform, liveId);
 				}}
