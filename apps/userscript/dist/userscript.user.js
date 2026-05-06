@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.16
+// @version      1.1.17
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -20360,8 +20360,8 @@ jsxRuntimeExports.jsx(
             onPaste: (e) => {
               const value = e.clipboardData.getData("text");
               const liveId = extractLiveId(platform2, value);
-              if (!liveId) return;
               e.preventDefault();
+              if (!liveId) return;
               e.currentTarget.value = liveId;
               setStorageValue(platform2, liveId);
             },
