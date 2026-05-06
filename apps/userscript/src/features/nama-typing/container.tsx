@@ -21,6 +21,7 @@ function onChat(messages: ChatMessage[]) {
 	if (!ime) return;
 
 	for (const m of messages) {
+		console.log(m);
 		const userResult = ime.getUserResult(m.author);
 
 		const result = ime.handleImeInput({

@@ -54,7 +54,7 @@ export const ImeLiveChatConnector = ({
 	if (isStarted || !mountEl) return null;
 
 	return createPortal(
-		<div className="fixed bottom-4 right-4 flex gap-1">
+		<div className="fixed bottom-4 right-4 flex flex-col gap-1">
 			<Input
 				key={platform}
 				ref={inputRef}
