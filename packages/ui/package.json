@@ -8,6 +8,7 @@
     "./dialog": "./src/dialog.tsx",
     "./icons": "./src/icons.ts",
     "./input": "./src/input.tsx",
+    "./select": "./src/select.tsx",
     "./switch": "./src/switch.tsx"
   },
   "peerDependencies": {

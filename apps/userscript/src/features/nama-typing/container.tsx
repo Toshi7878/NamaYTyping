@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/utils/youtube-live-chat-client";
+import type { ChatMessage } from "@/lib/youtube-live-chat-client";
 import { unsafeWindow } from "$";
 import { ImeLiveChatConnector } from "./ime-live-chat-connerctor";
 

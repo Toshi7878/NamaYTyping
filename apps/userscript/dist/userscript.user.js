@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.8
+// @version      1.1.11
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -85,12 +85,12 @@
     hasRequiredScheduler_production = 1;
     (function(exports$1) {
       function push(heap, node) {
-        var index = heap.length;
+        var index2 = heap.length;
         heap.push(node);
-        a: for (; 0 < index; ) {
-          var parentIndex = index - 1 >>> 1, parent = heap[parentIndex];
+        a: for (; 0 < index2; ) {
+          var parentIndex = index2 - 1 >>> 1, parent = heap[parentIndex];
           if (0 < compare(parent, node))
-            heap[parentIndex] = node, heap[index] = parent, index = parentIndex;
+            heap[parentIndex] = node, heap[index2] = parent, index2 = parentIndex;
           else break a;
         }
       }
@@ -102,12 +102,12 @@
         var first = heap[0], last = heap.pop();
         if (last !== first) {
           heap[0] = last;
-          a: for (var index = 0, length = heap.length, halfLength = length >>> 1; index < halfLength; ) {
-            var leftIndex = 2 * (index + 1) - 1, left = heap[leftIndex], rightIndex = leftIndex + 1, right = heap[rightIndex];
+          a: for (var index2 = 0, length = heap.length, halfLength = length >>> 1; index2 < halfLength; ) {
+            var leftIndex = 2 * (index2 + 1) - 1, left = heap[leftIndex], rightIndex = leftIndex + 1, right = heap[rightIndex];
             if (0 > compare(left, last))
-              rightIndex < length && 0 > compare(right, left) ? (heap[index] = right, heap[rightIndex] = last, index = rightIndex) : (heap[index] = left, heap[leftIndex] = last, index = leftIndex);
+              rightIndex < length && 0 > compare(right, left) ? (heap[index2] = right, heap[rightIndex] = last, index2 = rightIndex) : (heap[index2] = left, heap[leftIndex] = last, index2 = leftIndex);
             else if (rightIndex < length && 0 > compare(right, last))
-              heap[index] = right, heap[rightIndex] = last, index = rightIndex;
+              heap[index2] = right, heap[rightIndex] = last, index2 = rightIndex;
             else break a;
           }
         }
@@ -397,7 +397,7 @@
     assign(pureComponentPrototype, Component.prototype);
     pureComponentPrototype.isPureReactComponent = true;
     var isArrayImpl = Array.isArray;
-    function noop() {
+    function noop3() {
     }
     var ReactSharedInternals = { H: null, A: null, T: null, S: null }, hasOwnProperty = Object.prototype.hasOwnProperty;
     function ReactElement(type, key, props) {
@@ -423,8 +423,8 @@
       });
     }
     var userProvidedKeyEscapeRegex = /\/+/g;
-    function getElementKey(element, index) {
-      return "object" === typeof element && null !== element && null != element.key ? escape("" + element.key) : index.toString(36);
+    function getElementKey(element, index2) {
+      return "object" === typeof element && null !== element && null != element.key ? escape("" + element.key) : index2.toString(36);
     }
     function resolveThenable(thenable) {
       switch (thenable.status) {
@@ -433,7 +433,7 @@
         case "rejected":
           throw thenable.reason;
         default:
-          switch ("string" === typeof thenable.status ? thenable.then(noop, noop) : (thenable.status = "pending", thenable.then(
+          switch ("string" === typeof thenable.status ? thenable.then(noop3, noop3) : (thenable.status = "pending", thenable.then(
             function(fulfilledValue) {
               "pending" === thenable.status && (thenable.status = "fulfilled", thenable.value = fulfilledValue);
             },
@@ -525,9 +525,9 @@
     }
     function mapChildren(children, func, context) {
       if (null == children) return children;
-      var result = [], count = 0;
+      var result = [], count2 = 0;
       mapIntoArray(children, result, "", "", function(child) {
-        return func.call(context, child, count++);
+        return func.call(context, child, count2++);
       });
       return result;
     }
@@ -606,8 +606,8 @@
     react_production.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = ReactSharedInternals;
     react_production.__COMPILER_RUNTIME = {
       __proto__: null,
-      c: function(size) {
-        return ReactSharedInternals.H.useMemoCache(size);
+      c: function(size2) {
+        return ReactSharedInternals.H.useMemoCache(size2);
       }
     };
     react_production.cache = function(fn) {
@@ -696,7 +696,7 @@
       try {
         var returnValue = scope(), onStartTransitionFinish = ReactSharedInternals.S;
         null !== onStartTransitionFinish && onStartTransitionFinish(currentTransition, returnValue);
-        "object" === typeof returnValue && null !== returnValue && "function" === typeof returnValue.then && returnValue.then(noop, reportGlobalError);
+        "object" === typeof returnValue && null !== returnValue && "function" === typeof returnValue.then && returnValue.then(noop3, reportGlobalError);
       } catch (error) {
         reportGlobalError(error);
       } finally {
@@ -794,21 +794,21 @@
       }
       return "Minified React error #" + code + "; visit " + url + " for the full message or use the non-minified dev environment for full errors and additional helpful warnings.";
     }
-    function noop() {
+    function noop3() {
     }
     var Internals = {
       d: {
-        f: noop,
+        f: noop3,
         r: function() {
           throw Error(formatProdErrorMessage(522));
         },
-        D: noop,
-        C: noop,
-        L: noop,
-        m: noop,
-        X: noop,
-        S: noop,
-        M: noop
+        D: noop3,
+        C: noop3,
+        L: noop3,
+        m: noop3,
+        X: noop3,
+        S: noop3,
+        M: noop3
       },
       p: 0,
       findDOMNode: null
@@ -1132,16 +1132,16 @@
       data: null,
       method: null,
       action: null
-    }, valueStack = [], index = -1;
+    }, valueStack = [], index2 = -1;
     function createCursor(defaultValue) {
       return { current: defaultValue };
     }
     function pop(cursor) {
-      0 > index || (cursor.current = valueStack[index], valueStack[index] = null, index--);
+      0 > index2 || (cursor.current = valueStack[index2], valueStack[index2] = null, index2--);
     }
     function push(cursor, value) {
-      index++;
-      valueStack[index] = cursor.current;
+      index2++;
+      valueStack[index2] = cursor.current;
       cursor.current = value;
     }
     var contextStackCursor = createCursor(null), contextFiberStackCursor = createCursor(null), rootInstanceStackCursor = createCursor(null), hostTransitionProviderCursor = createCursor(null);
@@ -2491,14 +2491,14 @@
       for (; node && node.firstChild; ) node = node.firstChild;
       return node;
     }
-    function getNodeForCharacterOffset(root2, offset) {
+    function getNodeForCharacterOffset(root2, offset2) {
       var node = getLeafNode(root2);
       root2 = 0;
       for (var nodeEnd; node; ) {
         if (3 === node.nodeType) {
           nodeEnd = root2 + node.textContent.length;
-          if (root2 <= offset && nodeEnd >= offset)
-            return { node, offset: offset - root2 };
+          if (root2 <= offset2 && nodeEnd >= offset2)
+            return { node, offset: offset2 - root2 };
           root2 = nodeEnd;
         }
         a: {
@@ -2640,9 +2640,9 @@
       sourceFiber.lanes |= lane;
       var alternate = sourceFiber.alternate;
       null !== alternate && (alternate.lanes |= lane);
-      for (var isHidden = false, parent = sourceFiber.return; null !== parent; )
-        parent.childLanes |= lane, alternate = parent.alternate, null !== alternate && (alternate.childLanes |= lane), 22 === parent.tag && (sourceFiber = parent.stateNode, null === sourceFiber || sourceFiber._visibility & 1 || (isHidden = true)), sourceFiber = parent, parent = parent.return;
-      return 3 === sourceFiber.tag ? (parent = sourceFiber.stateNode, isHidden && null !== update && (isHidden = 31 - clz32(lane), sourceFiber = parent.hiddenUpdates, alternate = sourceFiber[isHidden], null === alternate ? sourceFiber[isHidden] = [update] : alternate.push(update), update.lane = lane | 536870912), parent) : null;
+      for (var isHidden2 = false, parent = sourceFiber.return; null !== parent; )
+        parent.childLanes |= lane, alternate = parent.alternate, null !== alternate && (alternate.childLanes |= lane), 22 === parent.tag && (sourceFiber = parent.stateNode, null === sourceFiber || sourceFiber._visibility & 1 || (isHidden2 = true)), sourceFiber = parent, parent = parent.return;
+      return 3 === sourceFiber.tag ? (parent = sourceFiber.stateNode, isHidden2 && null !== update && (isHidden2 = 31 - clz32(lane), sourceFiber = parent.hiddenUpdates, alternate = sourceFiber[isHidden2], null === alternate ? sourceFiber[isHidden2] = [update] : alternate.push(update), update.lane = lane | 536870912), parent) : null;
     }
     function getRootForUpdatedFiber(sourceFiber) {
       if (50 < nestedUpdateCount)
@@ -2819,7 +2819,7 @@
       treeForkProvider = workInProgress2;
       treeForkCount = totalChildren;
     }
-    function pushTreeId(workInProgress2, totalChildren, index2) {
+    function pushTreeId(workInProgress2, totalChildren, index3) {
       idStack[idStackIndex++] = treeContextId;
       idStack[idStackIndex++] = treeContextOverflow;
       idStack[idStackIndex++] = treeContextProvider;
@@ -2828,17 +2828,17 @@
       workInProgress2 = treeContextOverflow;
       var baseLength = 32 - clz32(baseIdWithLeadingBit) - 1;
       baseIdWithLeadingBit &= ~(1 << baseLength);
-      index2 += 1;
+      index3 += 1;
       var length = 32 - clz32(totalChildren) + baseLength;
       if (30 < length) {
         var numberOfOverflowBits = baseLength - baseLength % 5;
         length = (baseIdWithLeadingBit & (1 << numberOfOverflowBits) - 1).toString(32);
         baseIdWithLeadingBit >>= numberOfOverflowBits;
         baseLength -= numberOfOverflowBits;
-        treeContextId = 1 << 32 - clz32(totalChildren) + baseLength | index2 << baseLength | baseIdWithLeadingBit;
+        treeContextId = 1 << 32 - clz32(totalChildren) + baseLength | index3 << baseLength | baseIdWithLeadingBit;
         treeContextOverflow = length + workInProgress2;
       } else
-        treeContextId = 1 << length | index2 << baseLength | baseIdWithLeadingBit, treeContextOverflow = workInProgress2;
+        treeContextId = 1 << length | index3 << baseLength | baseIdWithLeadingBit, treeContextOverflow = workInProgress2;
     }
     function pushMaterializedTreeId(workInProgress2) {
       null !== workInProgress2.return && (pushTreeFork(workInProgress2, 1), pushTreeId(workInProgress2, 1, 0));
@@ -3224,9 +3224,9 @@
       thenable = thenable.status;
       return "fulfilled" === thenable || "rejected" === thenable;
     }
-    function trackUsedThenable(thenableState2, thenable, index2) {
-      index2 = thenableState2[index2];
-      void 0 === index2 ? thenableState2.push(thenable) : index2 !== thenable && (thenable.then(noop$1, noop$1), thenable = index2);
+    function trackUsedThenable(thenableState2, thenable, index3) {
+      index3 = thenableState2[index3];
+      void 0 === index3 ? thenableState2.push(thenable) : index3 !== thenable && (thenable.then(noop$1, noop$1), thenable = index3);
       switch (thenable.status) {
         case "fulfilled":
           return thenable.value;
@@ -3290,10 +3290,10 @@
     }
     var thenableState$1 = null, thenableIndexCounter$1 = 0;
     function unwrapThenable(thenable) {
-      var index2 = thenableIndexCounter$1;
+      var index3 = thenableIndexCounter$1;
       thenableIndexCounter$1 += 1;
       null === thenableState$1 && (thenableState$1 = []);
-      return trackUsedThenable(thenableState$1, thenable, index2);
+      return trackUsedThenable(thenableState$1, thenable, index3);
     }
     function coerceRef(workInProgress2, element) {
       element = element.props.ref;
@@ -4127,12 +4127,12 @@
       return { lastEffect: null, events: null, stores: null, memoCache: null };
     }
     function useThenable(thenable) {
-      var index2 = thenableIndexCounter;
+      var index3 = thenableIndexCounter;
       thenableIndexCounter += 1;
       null === thenableState && (thenableState = []);
-      thenable = trackUsedThenable(thenableState, thenable, index2);
-      index2 = currentlyRenderingFiber;
-      null === (null === workInProgressHook ? index2.memoizedState : workInProgressHook.next) && (index2 = index2.alternate, ReactSharedInternals.H = null === index2 || null === index2.memoizedState ? HooksDispatcherOnMount : HooksDispatcherOnUpdate);
+      thenable = trackUsedThenable(thenableState, thenable, index3);
+      index3 = currentlyRenderingFiber;
+      null === (null === workInProgressHook ? index3.memoizedState : workInProgressHook.next) && (index3 = index3.alternate, ReactSharedInternals.H = null === index3 || null === index3.memoizedState ? HooksDispatcherOnMount : HooksDispatcherOnUpdate);
       return thenable;
     }
     function use(usable) {
@@ -4142,7 +4142,7 @@
       }
       throw Error(formatProdErrorMessage(438, String(usable)));
     }
-    function useMemoCache(size) {
+    function useMemoCache(size2) {
       var memoCache = null, updateQueue = currentlyRenderingFiber.updateQueue;
       null !== updateQueue && (memoCache = updateQueue.memoCache);
       if (null == memoCache) {
@@ -4159,7 +4159,7 @@
       updateQueue.memoCache = memoCache;
       updateQueue = memoCache.data[memoCache.index];
       if (void 0 === updateQueue)
-        for (updateQueue = memoCache.data[memoCache.index] = Array(size), current = 0; current < size; current++)
+        for (updateQueue = memoCache.data[memoCache.index] = Array(size2), current = 0; current < size2; current++)
           updateQueue[current] = REACT_MEMO_CACHE_SENTINEL;
       memoCache.index++;
       return updateQueue;
@@ -4731,7 +4731,7 @@
         ReactDOMSharedInternals.p = previousPriority, null !== prevTransition && null !== currentTransition.types && (prevTransition.types = currentTransition.types), ReactSharedInternals.T = prevTransition;
       }
     }
-    function noop() {
+    function noop3() {
     }
     function startHostTransition(formFiber, pendingState, action, formData) {
       if (5 !== formFiber.tag) throw Error(formatProdErrorMessage(476));
@@ -4741,7 +4741,7 @@
         queue,
         pendingState,
         sharedNotPendingObject,
-        null === action ? noop : function() {
+        null === action ? noop3 : function() {
           requestFormReset$1(formFiber);
           return action(formData);
         }
@@ -10956,7 +10956,7 @@
     }
     function estimateBandwidth() {
       if ("function" === typeof performance.getEntriesByType) {
-        for (var count = 0, bits = 0, resourceEntries = performance.getEntriesByType("resource"), i = 0; i < resourceEntries.length; i++) {
+        for (var count2 = 0, bits = 0, resourceEntries = performance.getEntriesByType("resource"), i = 0; i < resourceEntries.length; i++) {
           var entry = resourceEntries[i], transferSize = entry.transferSize, initiatorType = entry.initiatorType, duration = entry.duration;
           if (transferSize && duration && isLikelyStaticResource(initiatorType)) {
             initiatorType = 0;
@@ -10969,13 +10969,13 @@
             }
             --i;
             bits += 8 * (transferSize + initiatorType) / (entry.duration / 1e3);
-            count++;
-            if (10 < count) break;
+            count2++;
+            if (10 < count2) break;
           }
         }
-        if (0 < count) return bits / count / 1e6;
+        if (0 < count2) return bits / count2 / 1e6;
       }
-      return navigator.connection && (count = navigator.connection.downlink, "number" === typeof count) ? count : 5;
+      return navigator.connection && (count2 = navigator.connection.downlink, "number" === typeof count2) ? count2 : 5;
     }
     var eventsEnabled = null, selectionInformation = null;
     function getOwnerDocumentFromRootContainer(rootContainerElement) {
@@ -11059,12 +11059,12 @@
       } while (node);
       retryIfBlockedOn(hydrationInstance);
     }
-    function hideOrUnhideDehydratedBoundary(suspenseInstance, isHidden) {
+    function hideOrUnhideDehydratedBoundary(suspenseInstance, isHidden2) {
       var node = suspenseInstance;
       suspenseInstance = 0;
       do {
         var nextNode = node.nextSibling;
-        1 === node.nodeType ? isHidden ? (node._stashedDisplay = node.style.display, node.style.display = "none") : (node.style.display = node._stashedDisplay || "", "" === node.getAttribute("style") && node.removeAttribute("style")) : 3 === node.nodeType && (isHidden ? (node._stashedText = node.nodeValue, node.nodeValue = "") : node.nodeValue = node._stashedText || "");
+        1 === node.nodeType ? isHidden2 ? (node._stashedDisplay = node.style.display, node.style.display = "none") : (node.style.display = node._stashedDisplay || "", "" === node.getAttribute("style") && node.removeAttribute("style")) : 3 === node.nodeType && (isHidden2 ? (node._stashedText = node.nodeValue, node.nodeValue = "") : node.nodeValue = node._stashedText || "");
         if (nextNode && 8 === nextNode.nodeType)
           if (node = nextNode.data, "/$" === node)
             if (0 === suspenseInstance) break;
@@ -12485,260 +12485,10 @@
     return client.exports;
   }
   var clientExports = requireClient();
-  const ReactDOM = getDefaultExportFromCjs(clientExports);
+  const ReactDOM$1 = getDefaultExportFromCjs(clientExports);
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   var _monkeyWindow = (() => window)();
-  var reactExports = requireReact();
-  const React = getDefaultExportFromCjs(reactExports);
-  const React$1 = _mergeNamespaces$1({
-    __proto__: null,
-    default: React
-  }, [reactExports]);
-  var reactDomExports = requireReactDom();
-  const PATTERNS = [
-    /[?&]v=([a-zA-Z0-9_-]{11})/,
-    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
-    /studio\.youtube\.com\/video\/([a-zA-Z0-9_-]{11})/
-  ];
-  function extractYouTubeLiveId(input) {
-    const trimmed = input.trim();
-    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
-    for (const pattern of PATTERNS) {
-      const match = trimmed.match(pattern)?.[1];
-      if (match) return match;
-    }
-    return void 0;
-  }
-  const styles = '@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-animation-delay:0s;--tw-animation-direction:normal;--tw-animation-duration:initial;--tw-animation-fill-mode:none;--tw-animation-iteration-count:1;--tw-enter-blur:0;--tw-enter-opacity:1;--tw-enter-rotate:0;--tw-enter-scale:1;--tw-enter-translate-x:0;--tw-enter-translate-y:0;--tw-exit-blur:0;--tw-exit-opacity:1;--tw-exit-rotate:0;--tw-exit-scale:1;--tw-exit-translate-x:0;--tw-exit-translate-y:0}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-yellow-500:oklch(79.5% .184 86.047);--color-yellow-600:oklch(68.1% .162 75.834);--color-green-500:oklch(72.3% .219 149.579);--color-green-600:oklch(62.7% .194 149.214);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height: 1.5 ;--font-weight-medium:500;--font-weight-semibold:600;--tracking-wide:.025em;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-scheme:var(--color-scheme);--opacity-word-correct:var(--opacity-word-correct)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.start{inset-inline-start:var(--spacing)}.end{inset-inline-end:var(--spacing)}.right-4{right:calc(var(--spacing) * 4)}.bottom-4{bottom:calc(var(--spacing) * 4)}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.container{width:100%}@media(min-width:40rem){.container{max-width:40rem}}@media(min-width:48rem){.container{max-width:48rem}}@media(min-width:64rem){.container{max-width:64rem}}@media(min-width:80rem){.container{max-width:80rem}}@media(min-width:96rem){.container{max-width:96rem}}.mx-1{margin-inline:calc(var(--spacing) * 1)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-\\[1\\.15rem\\]{height:1.15rem}.w-8{width:calc(var(--spacing) * 8)}.w-48{width:calc(var(--spacing) * 48)}.w-full{width:100%}.min-w-0{min-width:calc(var(--spacing) * 0)}.min-w-8{min-width:calc(var(--spacing) * 8)}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.resize{resize:both}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.gap-1{gap:calc(var(--spacing) * 1)}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-solid{--tw-border-style:solid;border-style:solid}.border-blue-500{border-color:var(--color-blue-500)}.border-border,.border-border\\/50{border-color:var(--border)}@supports (color:color-mix(in lab,red,red)){.border-border\\/50{border-color:color-mix(in oklab,var(--border) 50%,transparent)}}.border-destructive{border-color:var(--destructive)}.border-green-500{border-color:var(--color-green-500)}.border-input{border-color:var(--input)}.border-transparent{border-color:#0000}.border-yellow-500{border-color:var(--color-yellow-500)}.bg-background{background-color:var(--background)}.bg-input{background-color:var(--input)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-2{padding-block:calc(var(--spacing) * 2)}.text-center{text-align:center}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.text-header-foreground,.text-header-foreground\\/80{color:var(--header-foreground)}@supports (color:color-mix(in lab,red,red)){.text-header-foreground\\/80{color:color-mix(in oklab,var(--header-foreground) 80%,transparent)}}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}.zoom-in{--tw-enter-scale:0}.zoom-out{--tw-exit-scale:0}@media(hover:hover){.group-hover\\:text-header-foreground:is(:where(.group):hover *){color:var(--header-foreground)}}.selection\\:bg-primary ::selection{background-color:var(--primary)}.selection\\:bg-primary::selection{background-color:var(--primary)}.selection\\:text-primary-foreground ::selection{color:var(--primary-foreground)}.selection\\:text-primary-foreground::selection{color:var(--primary-foreground)}.file\\:inline-flex::file-selector-button{display:inline-flex}.file\\:h-7::file-selector-button{height:calc(var(--spacing) * 7)}.file\\:border-0::file-selector-button{border-style:var(--tw-border-style);border-width:0}.file\\:bg-transparent::file-selector-button{background-color:#0000}.file\\:text-sm::file-selector-button{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.file\\:font-medium::file-selector-button{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.file\\:text-foreground::file-selector-button{color:var(--foreground)}.placeholder\\:text-muted-foreground::placeholder{color:var(--muted-foreground)}.focus-visible\\:border-blue-600:focus-visible{border-color:var(--color-blue-600)}.focus-visible\\:border-green-600:focus-visible{border-color:var(--color-green-600)}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:border-yellow-600:focus-visible{border-color:var(--color-yellow-600)}.focus-visible\\:ring-\\[2px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:#3080ff80}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-blue-500) 50%, transparent)}}.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:#00c75880}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-green-500) 50%, transparent)}}.focus-visible\\:ring-ring:focus-visible,.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:#edb20080}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-yellow-500) 50%, transparent)}}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[state\\=checked\\]\\:translate-x-\\[calc\\(100\\%-2px\\)\\][data-state=checked]{--tw-translate-x: calc(100% - 2px) ;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * 0);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-input[data-state=unchecked]{background-color:var(--input)}@media(min-width:48rem){.md\\:text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}}@media(prefers-color-scheme:dark){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=checked\\]\\:bg-primary-foreground[data-state=checked]{background-color:var(--primary-foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-foreground[data-state=unchecked]{background-color:var(--foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:color-mix(in oklab,var(--input) 80%,transparent)}}}}@property --tw-animation-delay{syntax:"*";inherits:false;initial-value:0s}@property --tw-animation-direction{syntax:"*";inherits:false;initial-value:normal}@property --tw-animation-duration{syntax:"*";inherits:false}@property --tw-animation-fill-mode{syntax:"*";inherits:false;initial-value:none}@property --tw-animation-iteration-count{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-translate-y{syntax:"*";inherits:false;initial-value:0}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}';
-  const styleSheetCache = new Map();
-  function getStyleSheet(css) {
-    if (!styleSheetCache.has(css)) {
-      const sheet = new CSSStyleSheet();
-      sheet.replaceSync(css);
-      styleSheetCache.set(css, sheet);
-    }
-    return styleSheetCache.get(css);
-  }
-  function attachShadowWithStyles(host) {
-    const shadow = host.attachShadow({ mode: "open" });
-    shadow.adoptedStyleSheets = [getStyleSheet(styles)];
-    return shadow;
-  }
-  function usePortalMount(selector, options) {
-    const position = options?.position;
-    const [mountEl, setMountEl] = reactExports.useState(null);
-    reactExports.useEffect(() => {
-      if (position !== void 0) {
-        let update2 = function() {
-          const target = document.querySelector(selector);
-          if (!target) {
-            setMountEl(null);
-            return;
-          }
-          if (host?.isConnected) return;
-          if (!host) {
-            host = document.createElement("div");
-            shadow = attachShadowWithStyles(host);
-          }
-          target.insertAdjacentElement(position, host);
-          setMountEl(shadow);
-        };
-        let host = null;
-        let shadow = null;
-        update2();
-        const observer2 = new MutationObserver(update2);
-        observer2.observe(document.body, { childList: true, subtree: true });
-        return () => {
-          observer2.disconnect();
-          host?.remove();
-          setMountEl(null);
-        };
-      }
-      function update() {
-        setMountEl(document.querySelector(selector));
-      }
-      update();
-      const observer = new MutationObserver(update);
-      observer.observe(document.body, { childList: true, subtree: true });
-      return () => observer.disconnect();
-    }, [selector, position]);
-    return mountEl;
-  }
-  function useWindowProperty(key) {
-    const [value, setValue] = reactExports.useState(
-      () => _unsafeWindow[key]
-    );
-    reactExports.useEffect(() => {
-      if (_unsafeWindow[key] !== void 0) {
-        setValue(_unsafeWindow[key]);
-        return;
-      }
-      Object.defineProperty(_unsafeWindow, key, {
-        configurable: true,
-        set(newValue) {
-          Object.defineProperty(_unsafeWindow, key, {
-            configurable: true,
-            writable: true,
-            value: newValue
-          });
-          setValue(newValue);
-        }
-      });
-      return () => {
-        const desc = Object.getOwnPropertyDescriptor(_unsafeWindow, key);
-        if (desc?.set) {
-          delete _unsafeWindow[key];
-        }
-      };
-    }, [key]);
-    return value;
-  }
-  function getClientVersion() {
-    const d = new Date(Date.now() - 864e5);
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const dd = String(d.getDate()).padStart(2, "0");
-    return `2.${d.getFullYear()}${mm}${dd}.01.00`;
-  }
-  function getContinuationFromLiveId(liveId) {
-    return new Promise((resolve, reject) => {
-      _GM_xmlhttpRequest({
-        method: "GET",
-        url: `https://www.youtube.com/live_chat?is_popout=1&v=${liveId}`,
-        onload(res) {
-          const match = res.responseText.match(
-            /(?:window\s*\[\s*["']ytInitialData["']\s*\]|window\.ytInitialData|ytInitialData)\s*=\s*({.+?})\s*;<\/script>/s
-          );
-          if (!match) return reject(new Error("ytInitialData not found"));
-          let data;
-          try {
-            data = JSON.parse(match[1]);
-          } catch {
-            return reject(new Error("Failed to parse ytInitialData"));
-          }
-          const continuations = data?.contents?.liveChatRenderer?.continuations ?? data?.contents?.twoColumnWatchNextResults?.conversationBar?.liveChatRenderer?.continuations;
-          const continuation = continuations?.[0]?.invalidationContinuationData?.continuation ?? continuations?.[0]?.reloadContinuationData?.continuation ?? continuations?.[0]?.timedContinuationData?.continuation;
-          if (!continuation) return reject(new Error("continuation not found"));
-          resolve(continuation);
-        },
-        onerror(e) {
-          reject(new Error(`Network error: ${e.status}`));
-        }
-      });
-    });
-  }
-  class YTLiveChatClient {
-    _liveId;
-    _onChat;
-    _onError;
-    _onConnect;
-    _alive = false;
-    _continuation = null;
-    _timer = null;
-    _startedAt = 0;
-    _visitorData = null;
-    constructor({ liveId, onChat: onChat2, onError, onConnect }) {
-      if (!liveId) throw new Error("liveId is required");
-      this._liveId = liveId;
-      this._onChat = onChat2 ?? (() => void 0);
-      this._onError = onError ?? console.error;
-      this._onConnect = onConnect ?? (() => void 0);
-    }
-    async start({ skipExisting = true } = {}) {
-      if (this._alive) return;
-      try {
-        this._continuation = await getContinuationFromLiveId(this._liveId);
-        this._startedAt = skipExisting ? Date.now() * 1e3 : 0;
-        this._alive = true;
-        this._onConnect({ liveId: this._liveId });
-        this._poll();
-      } catch (e) {
-        this._onError(e instanceof Error ? e : new Error(String(e)));
-      }
-    }
-    stop() {
-      this._alive = false;
-      if (this._timer !== null) clearTimeout(this._timer);
-      this._timer = null;
-      this._continuation = null;
-      this._startedAt = 0;
-      this._visitorData = null;
-    }
-    _poll() {
-      if (!this._alive || this._continuation === null) return;
-      const requestStart = Date.now();
-      _GM_xmlhttpRequest({
-        method: "POST",
-        url: "https://www.youtube.com/youtubei/v1/live_chat/get_live_chat",
-        headers: { "Content-Type": "application/json" },
-        data: JSON.stringify({
-          context: {
-            client: {
-              clientName: "WEB",
-              clientVersion: getClientVersion(),
-              ...this._visitorData ? { visitorData: this._visitorData } : {}
-            }
-          },
-          continuation: this._continuation
-        }),
-        onload: (res) => {
-          try {
-            this._handle(
-              JSON.parse(res.responseText),
-              requestStart
-            );
-          } catch (e) {
-            this._onError(e instanceof Error ? e : new Error(String(e)));
-          }
-        },
-        onerror: (e) => {
-          this._onError(new Error(`Network error: ${e.status}`));
-        }
-      });
-    }
-    _handle(json, requestStart) {
-      const visitorData = json?.responseContext?.visitorData;
-      if (visitorData) this._visitorData = visitorData;
-      const lcc = json?.continuationContents?.liveChatContinuation;
-      if (!lcc) {
-        this._alive = false;
-        return;
-      }
-      const cont = lcc.continuations?.[0];
-      const next = cont?.invalidationContinuationData?.continuation ?? cont?.timedContinuationData?.continuation;
-      const timeout = Math.min(
-        cont?.invalidationContinuationData?.timeoutMs ?? cont?.timedContinuationData?.timeoutMs ?? 5e3,
-        5e3
-      );
-      if (next) this._continuation = next;
-      const messages = (lcc.actions ?? []).map((a) => a?.addChatItemAction?.item?.liveChatTextMessageRenderer).filter((r2) => r2 !== void 0).filter((r2) => Number(r2.timestampUsec) > this._startedAt).map((r2) => ({
-        id: r2.id,
-        author: r2.authorName?.simpleText ?? "",
-        message: r2.message?.runs?.map((run) => run.text ?? "").join("") ?? "",
-        timestampUsec: r2.timestampUsec,
-        isMember: !!r2.authorBadges?.some(
-          (b) => b.liveChatAuthorBadgeRenderer?.icon?.iconType === "MEMBER"
-        )
-      }));
-      if (messages.length > 0) this._onChat(messages);
-      const elapsed = Date.now() - requestStart;
-      const delay = Math.max(0, timeout - elapsed);
-      if (this._alive && next) {
-        this._timer = setTimeout(() => this._poll(), delay);
-      } else {
-        this._alive = false;
-      }
-    }
-  }
-  function startLiveChat(options) {
-    const client2 = new YTLiveChatClient(options);
-    client2.start();
-    const unsubscribe = () => client2.stop();
-    return unsubscribe;
-  }
   function r(e) {
     var t, f, n = "";
     if ("string" == typeof e || "number" == typeof e) n += e;
@@ -13011,16 +12761,16 @@
       let modifierStart = 0;
       let postfixModifierPosition;
       const len = className.length;
-      for (let index = 0; index < len; index++) {
-        const currentCharacter = className[index];
+      for (let index2 = 0; index2 < len; index2++) {
+        const currentCharacter = className[index2];
         if (bracketDepth === 0 && parenDepth === 0) {
           if (currentCharacter === MODIFIER_SEPARATOR) {
-            modifiers.push(className.slice(modifierStart, index));
-            modifierStart = index + 1;
+            modifiers.push(className.slice(modifierStart, index2));
+            modifierStart = index2 + 1;
             continue;
           }
           if (currentCharacter === "/") {
-            postfixModifierPosition = index;
+            postfixModifierPosition = index2;
             continue;
           }
         }
@@ -13060,8 +12810,8 @@ baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER)
   };
   const createSortModifiers = (config) => {
     const modifierWeights = new Map();
-    config.orderSensitiveModifiers.forEach((mod, index) => {
-      modifierWeights.set(mod, 1e6 + index);
+    config.orderSensitiveModifiers.forEach((mod, index2) => {
+      modifierWeights.set(mod, 1e6 + index2);
     });
     return (modifiers) => {
       const result = [];
@@ -13105,8 +12855,8 @@ baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER)
     const classGroupsInConflict = [];
     const classNames = classList.trim().split(SPLIT_CLASSES_REGEX);
     let result = "";
-    for (let index = classNames.length - 1; index >= 0; index -= 1) {
-      const originalClassName = classNames[index];
+    for (let index2 = classNames.length - 1; index2 >= 0; index2 -= 1) {
+      const originalClassName = classNames[index2];
       const {
         isExternal,
         modifiers,
@@ -13149,12 +12899,12 @@ baseClassNameWithImportantModifier.startsWith(IMPORTANT_MODIFIER)
     return result;
   };
   const twJoin = (...classLists) => {
-    let index = 0;
+    let index2 = 0;
     let argument;
     let resolvedValue;
     let string = "";
-    while (index < classLists.length) {
-      if (argument = classLists[index++]) {
+    while (index2 < classLists.length) {
+      if (argument = classLists[index2++]) {
         if (resolvedValue = toValue(argument)) {
           string && (string += " ");
           string += resolvedValue;
@@ -14640,120 +14390,110 @@ stroke: [{
       }
     }
   );
-  function Input({ className, type, variant, size, ...props }) {
+  function Input({ className, type, variant, size: size2, ...props }) {
     return jsxRuntimeExports.jsx(
       "input",
       {
         type,
         "data-slot": "input",
-        className: cn(inputVariants({ variant, size }), className),
+        className: cn(inputVariants({ variant, size: size2 }), className),
         ...props
       }
     );
   }
-  const STORAGE_KEY = "yt-live-chat-url";
-  const ImeLiveChatConnector = ({
-    onConnect,
-    onChat: onChat2,
-    onError
-  }) => {
-    const inputRef = reactExports.useRef(null);
-    const mountEl = usePortalMount("body", { position: "beforeend" });
-    const { isStarted } = useLiveChatSession(
-      inputRef,
-      onConnect,
-      onChat2,
-      onError
-    );
-    if (isStarted || !mountEl) return null;
-    return reactDomExports.createPortal(
-jsxRuntimeExports.jsx(
-        Input,
+  var reactExports = requireReact();
+  const React = getDefaultExportFromCjs(reactExports);
+  const React$1 = _mergeNamespaces$1({
+    __proto__: null,
+    default: React
+  }, [reactExports]);
+  const mergeClasses = (...classes) => classes.filter((className, index2, array) => {
+    return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index2;
+  }).join(" ").trim();
+  const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+  const toCamelCase = (string) => string.replace(
+    /^([A-Z])|[\s-_]+(\w)/g,
+    (match, p1, p2) => p2 ? p2.toUpperCase() : p1.toLowerCase()
+  );
+  const toPascalCase = (string) => {
+    const camelCase = toCamelCase(string);
+    return camelCase.charAt(0).toUpperCase() + camelCase.slice(1);
+  };
+  var defaultAttributes = {
+    xmlns: "http://www.w3.org/2000/svg",
+    width: 24,
+    height: 24,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round"
+  };
+  const hasA11yProp = (props) => {
+    for (const prop in props) {
+      if (prop.startsWith("aria-") || prop === "role" || prop === "title") {
+        return true;
+      }
+    }
+    return false;
+  };
+  const LucideContext = reactExports.createContext({});
+  const useLucideContext = () => reactExports.useContext(LucideContext);
+  const Icon$1 = reactExports.forwardRef(
+    ({ color, size: size2, strokeWidth, absoluteStrokeWidth, className = "", children, iconNode, ...rest }, ref) => {
+      const {
+        size: contextSize = 24,
+        strokeWidth: contextStrokeWidth = 2,
+        absoluteStrokeWidth: contextAbsoluteStrokeWidth = false,
+        color: contextColor = "currentColor",
+        className: contextClass = ""
+      } = useLucideContext() ?? {};
+      const calculatedStrokeWidth = absoluteStrokeWidth ?? contextAbsoluteStrokeWidth ? Number(strokeWidth ?? contextStrokeWidth) * 24 / Number(size2 ?? contextSize) : strokeWidth ?? contextStrokeWidth;
+      return reactExports.createElement(
+        "svg",
         {
-          ref: inputRef,
-          defaultValue: sessionStorage.getItem(STORAGE_KEY) ?? "",
-          onChange: (e) => sessionStorage.setItem(STORAGE_KEY, e.target.value),
-          onPaste: (e) => {
-            const liveId = extractYouTubeLiveId(e.clipboardData.getData("text"));
-            if (!liveId) return;
-            e.preventDefault();
-            e.currentTarget.value = liveId;
-            sessionStorage.setItem(STORAGE_KEY, liveId);
-          },
-          placeholder: "YouTube Live URL or ID",
-          className: "w-48 fixed bottom-4 right-4",
-          size: "sm"
-        }
-      ),
-      mountEl
-    );
-  };
-  const useLiveChatSession = (inputRef, onConnect, onChat2, onError) => {
-    const [isStarted, setIsStarted] = reactExports.useState(false);
-    const unsubscribeRef = reactExports.useRef(null);
-    const ime = useWindowProperty("__ytyping_ime");
-    reactExports.useEffect(() => {
-      if (!ime) return;
-      function startClient(_event) {
-        const rawValue = inputRef.current?.value ?? "";
-        const liveId = extractYouTubeLiveId(rawValue);
-        setIsStarted(true);
-        if (!liveId) return;
-        unsubscribeRef.current?.();
-        unsubscribeRef.current = startLiveChat({
-          liveId,
-          onChat: onChat2,
-          onConnect,
-          onError
-        });
-      }
-      function handleEnd() {
-        setIsStarted(false);
-      }
-      ime.removeEventListener("start", startClient);
-      ime.addEventListener("start", startClient);
-      ime.removeEventListener("end", handleEnd);
-      ime.addEventListener("end", handleEnd);
-      return () => {
-        unsubscribeRef.current?.();
-        unsubscribeRef.current = null;
-        ime.removeEventListener("start", startClient);
-        ime.removeEventListener("end", handleEnd);
-      };
-    }, [ime, inputRef, onChat2, onConnect, onError]);
-    return { isStarted };
-  };
-  const NamaTypingContainer = () => {
-    return jsxRuntimeExports.jsx(
-      ImeLiveChatConnector,
-      {
-        onChat: (messages) => onChat(messages),
-        onConnect: () => _unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
-        onError: (e) => _unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
-      }
-    );
-  };
-  function onChat(messages) {
-    const ime = _unsafeWindow.__ytyping_ime;
-    if (!ime) return;
-    for (const m of messages) {
-      const userResult = ime.getUserResult(m.author);
-      const result = ime.handleImeInput({
-        value: m.message,
-        currentWordIndex: userResult?.currentWordIndex,
-        wordResults: userResult?.wordResults
-      });
-      ime.updateUserResult(m.author, {
-        name: m.author,
-        typeCountDelta: result.typeCountDelta,
-        newWordResults: result.newWordResults,
-        nextWordIndex: result.nextWordIndex
-      });
-      ime.addNotifications(
-        result.appendNotifications.map((n) => `${m.author}: ${n}`)
+          ref,
+          ...defaultAttributes,
+          width: size2 ?? contextSize ?? defaultAttributes.width,
+          height: size2 ?? contextSize ?? defaultAttributes.height,
+          stroke: color ?? contextColor,
+          strokeWidth: calculatedStrokeWidth,
+          className: mergeClasses("lucide", contextClass, className),
+          ...!children && !hasA11yProp(rest) && { "aria-hidden": "true" },
+          ...rest
+        },
+        [
+          ...iconNode.map(([tag, attrs]) => reactExports.createElement(tag, attrs)),
+          ...Array.isArray(children) ? children : [children]
+        ]
       );
     }
-  }
+  );
+  const createLucideIcon = (iconName, iconNode) => {
+    const Component = reactExports.forwardRef(
+      ({ className, ...props }, ref) => reactExports.createElement(Icon$1, {
+        ref,
+        iconNode,
+        className: mergeClasses(
+          `lucide-${toKebabCase(toPascalCase(iconName))}`,
+          `lucide-${iconName}`,
+          className
+        ),
+        ...props
+      })
+    );
+    Component.displayName = toPascalCase(iconName);
+    return Component;
+  };
+  const __iconNode$2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+  const Check = createLucideIcon("check", __iconNode$2);
+  const __iconNode$1 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+  const ChevronDown = createLucideIcon("chevron-down", __iconNode$1);
+  const __iconNode = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+  const ChevronUp = createLucideIcon("chevron-up", __iconNode);
+  var reactDomExports = requireReactDom();
+  const ReactDOM = getDefaultExportFromCjs(reactDomExports);
   function setRef(ref, value) {
     if (typeof ref === "function") {
       return ref(value);
@@ -14888,33 +14628,62 @@ function createSlotClone(ownerName) {
     "ul"
   ];
   var Primitive = NODES.reduce((primitive, node) => {
-    const Slot = createSlot(`Primitive.${node}`);
-    const Node = reactExports.forwardRef((props, forwardedRef) => {
+    const Slot2 = createSlot(`Primitive.${node}`);
+    const Node2 = reactExports.forwardRef((props, forwardedRef) => {
       const { asChild, ...primitiveProps } = props;
-      const Comp = asChild ? Slot : node;
+      const Comp = asChild ? Slot2 : node;
       if (typeof window !== "undefined") {
         window[ Symbol.for("radix-ui")] = true;
       }
       return jsxRuntimeExports.jsx(Comp, { ...primitiveProps, ref: forwardedRef });
     });
-    Node.displayName = `Primitive.${node}`;
-    return { ...primitive, [node]: Node };
+    Node2.displayName = `Primitive.${node}`;
+    return { ...primitive, [node]: Node2 };
   }, {});
+  function dispatchDiscreteCustomEvent(target, event) {
+    if (target) reactDomExports.flushSync(() => target.dispatchEvent(event));
+  }
+  var VISUALLY_HIDDEN_STYLES = Object.freeze({
+position: "absolute",
+    border: 0,
+    width: 1,
+    height: 1,
+    padding: 0,
+    margin: -1,
+    overflow: "hidden",
+    clip: "rect(0, 0, 0, 0)",
+    whiteSpace: "nowrap",
+    wordWrap: "normal"
+  });
+  var NAME$1 = "VisuallyHidden";
+  var VisuallyHidden = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      return jsxRuntimeExports.jsx(
+        Primitive.span,
+        {
+          ...props,
+          ref: forwardedRef,
+          style: { ...VISUALLY_HIDDEN_STYLES, ...props.style }
+        }
+      );
+    }
+  );
+  VisuallyHidden.displayName = NAME$1;
   function createContextScope(scopeName, createContextScopeDeps = []) {
     let defaultContexts = [];
     function createContext3(rootComponentName, defaultContext) {
       const BaseContext = reactExports.createContext(defaultContext);
-      const index = defaultContexts.length;
+      const index2 = defaultContexts.length;
       defaultContexts = [...defaultContexts, defaultContext];
       const Provider = (props) => {
         const { scope, children, ...context } = props;
-        const Context = scope?.[scopeName]?.[index] || BaseContext;
+        const Context = scope?.[scopeName]?.[index2] || BaseContext;
         const value = reactExports.useMemo(() => context, Object.values(context));
         return jsxRuntimeExports.jsx(Context.Provider, { value, children });
       };
       Provider.displayName = rootComponentName + "Provider";
       function useContext2(consumerName, scope) {
-        const Context = scope?.[scopeName]?.[index] || BaseContext;
+        const Context = scope?.[scopeName]?.[index2] || BaseContext;
         const context = reactExports.useContext(Context);
         if (context) return context;
         if (defaultContext !== void 0) return defaultContext;
@@ -14956,6 +14725,68 @@ function createSlotClone(ownerName) {
     };
     createScope.scopeName = baseScope.scopeName;
     return createScope;
+  }
+  function createCollection(name) {
+    const PROVIDER_NAME = name + "CollectionProvider";
+    const [createCollectionContext, createCollectionScope2] = createContextScope(PROVIDER_NAME);
+    const [CollectionProviderImpl, useCollectionContext] = createCollectionContext(
+      PROVIDER_NAME,
+      { collectionRef: { current: null }, itemMap: new Map() }
+    );
+    const CollectionProvider = (props) => {
+      const { scope, children } = props;
+      const ref = React.useRef(null);
+      const itemMap = React.useRef( new Map()).current;
+      return jsxRuntimeExports.jsx(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
+    };
+    CollectionProvider.displayName = PROVIDER_NAME;
+    const COLLECTION_SLOT_NAME = name + "CollectionSlot";
+    const CollectionSlotImpl = createSlot(COLLECTION_SLOT_NAME);
+    const CollectionSlot = React.forwardRef(
+      (props, forwardedRef) => {
+        const { scope, children } = props;
+        const context = useCollectionContext(COLLECTION_SLOT_NAME, scope);
+        const composedRefs = useComposedRefs(forwardedRef, context.collectionRef);
+        return jsxRuntimeExports.jsx(CollectionSlotImpl, { ref: composedRefs, children });
+      }
+    );
+    CollectionSlot.displayName = COLLECTION_SLOT_NAME;
+    const ITEM_SLOT_NAME = name + "CollectionItemSlot";
+    const ITEM_DATA_ATTR = "data-radix-collection-item";
+    const CollectionItemSlotImpl = createSlot(ITEM_SLOT_NAME);
+    const CollectionItemSlot = React.forwardRef(
+      (props, forwardedRef) => {
+        const { scope, children, ...itemData } = props;
+        const ref = React.useRef(null);
+        const composedRefs = useComposedRefs(forwardedRef, ref);
+        const context = useCollectionContext(ITEM_SLOT_NAME, scope);
+        React.useEffect(() => {
+          context.itemMap.set(ref, { ref, ...itemData });
+          return () => void context.itemMap.delete(ref);
+        });
+        return jsxRuntimeExports.jsx(CollectionItemSlotImpl, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
+      }
+    );
+    CollectionItemSlot.displayName = ITEM_SLOT_NAME;
+    function useCollection2(scope) {
+      const context = useCollectionContext(name + "CollectionConsumer", scope);
+      const getItems = React.useCallback(() => {
+        const collectionNode = context.collectionRef.current;
+        if (!collectionNode) return [];
+        const orderedNodes = Array.from(collectionNode.querySelectorAll(`[${ITEM_DATA_ATTR}]`));
+        const items = Array.from(context.itemMap.values());
+        const orderedItems = items.sort(
+          (a, b) => orderedNodes.indexOf(a.ref.current) - orderedNodes.indexOf(b.ref.current)
+        );
+        return orderedItems;
+      }, [context.collectionRef, context.itemMap]);
+      return getItems;
+    }
+    return [
+      { Provider: CollectionProvider, Slot: CollectionSlot, ItemSlot: CollectionItemSlot },
+      useCollection2,
+      createCollectionScope2
+    ];
   }
   function composeEventHandlers(originalEventHandler, ourEventHandler, { checkForDefaultPrevented = true } = {}) {
     return function handleEvent(event) {
@@ -15031,6 +14862,1246 @@ function createSlotClone(ownerName) {
   function isFunction(value) {
     return typeof value === "function";
   }
+  var useReactId = React$1[" useId ".trim().toString()] || (() => void 0);
+  var count$1 = 0;
+  function useId(deterministicId) {
+    const [id, setId] = reactExports.useState(useReactId());
+    useLayoutEffect2(() => {
+      setId((reactId) => reactId ?? String(count$1++));
+    }, [deterministicId]);
+    return (id ? `radix-${id}` : "");
+  }
+  var DirectionContext = reactExports.createContext(void 0);
+  function useDirection(localDir) {
+    const globalDir = reactExports.useContext(DirectionContext);
+    return localDir || globalDir || "ltr";
+  }
+  function useCallbackRef$1(callback) {
+    const callbackRef = reactExports.useRef(callback);
+    reactExports.useEffect(() => {
+      callbackRef.current = callback;
+    });
+    return reactExports.useMemo(() => (...args) => callbackRef.current?.(...args), []);
+  }
+  function useEscapeKeydown(onEscapeKeyDownProp, ownerDocument = globalThis?.document) {
+    const onEscapeKeyDown = useCallbackRef$1(onEscapeKeyDownProp);
+    reactExports.useEffect(() => {
+      const handleKeyDown = (event) => {
+        if (event.key === "Escape") {
+          onEscapeKeyDown(event);
+        }
+      };
+      ownerDocument.addEventListener("keydown", handleKeyDown, { capture: true });
+      return () => ownerDocument.removeEventListener("keydown", handleKeyDown, { capture: true });
+    }, [onEscapeKeyDown, ownerDocument]);
+  }
+  var DISMISSABLE_LAYER_NAME = "DismissableLayer";
+  var CONTEXT_UPDATE = "dismissableLayer.update";
+  var POINTER_DOWN_OUTSIDE = "dismissableLayer.pointerDownOutside";
+  var FOCUS_OUTSIDE = "dismissableLayer.focusOutside";
+  var originalBodyPointerEvents;
+  var DismissableLayerContext = reactExports.createContext({
+    layers: new Set(),
+    layersWithOutsidePointerEventsDisabled: new Set(),
+    branches: new Set()
+  });
+  var DismissableLayer = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const {
+        disableOutsidePointerEvents = false,
+        onEscapeKeyDown,
+        onPointerDownOutside,
+        onFocusOutside,
+        onInteractOutside,
+        onDismiss,
+        ...layerProps
+      } = props;
+      const context = reactExports.useContext(DismissableLayerContext);
+      const [node, setNode] = reactExports.useState(null);
+      const ownerDocument = node?.ownerDocument ?? globalThis?.document;
+      const [, force] = reactExports.useState({});
+      const composedRefs = useComposedRefs(forwardedRef, (node2) => setNode(node2));
+      const layers = Array.from(context.layers);
+      const [highestLayerWithOutsidePointerEventsDisabled] = [...context.layersWithOutsidePointerEventsDisabled].slice(-1);
+      const highestLayerWithOutsidePointerEventsDisabledIndex = layers.indexOf(highestLayerWithOutsidePointerEventsDisabled);
+      const index2 = node ? layers.indexOf(node) : -1;
+      const isBodyPointerEventsDisabled = context.layersWithOutsidePointerEventsDisabled.size > 0;
+      const isPointerEventsEnabled = index2 >= highestLayerWithOutsidePointerEventsDisabledIndex;
+      const pointerDownOutside = usePointerDownOutside((event) => {
+        const target = event.target;
+        const isPointerDownOnBranch = [...context.branches].some((branch) => branch.contains(target));
+        if (!isPointerEventsEnabled || isPointerDownOnBranch) return;
+        onPointerDownOutside?.(event);
+        onInteractOutside?.(event);
+        if (!event.defaultPrevented) onDismiss?.();
+      }, ownerDocument);
+      const focusOutside = useFocusOutside((event) => {
+        const target = event.target;
+        const isFocusInBranch = [...context.branches].some((branch) => branch.contains(target));
+        if (isFocusInBranch) return;
+        onFocusOutside?.(event);
+        onInteractOutside?.(event);
+        if (!event.defaultPrevented) onDismiss?.();
+      }, ownerDocument);
+      useEscapeKeydown((event) => {
+        const isHighestLayer = index2 === context.layers.size - 1;
+        if (!isHighestLayer) return;
+        onEscapeKeyDown?.(event);
+        if (!event.defaultPrevented && onDismiss) {
+          event.preventDefault();
+          onDismiss();
+        }
+      }, ownerDocument);
+      reactExports.useEffect(() => {
+        if (!node) return;
+        if (disableOutsidePointerEvents) {
+          if (context.layersWithOutsidePointerEventsDisabled.size === 0) {
+            originalBodyPointerEvents = ownerDocument.body.style.pointerEvents;
+            ownerDocument.body.style.pointerEvents = "none";
+          }
+          context.layersWithOutsidePointerEventsDisabled.add(node);
+        }
+        context.layers.add(node);
+        dispatchUpdate();
+        return () => {
+          if (disableOutsidePointerEvents && context.layersWithOutsidePointerEventsDisabled.size === 1) {
+            ownerDocument.body.style.pointerEvents = originalBodyPointerEvents;
+          }
+        };
+      }, [node, ownerDocument, disableOutsidePointerEvents, context]);
+      reactExports.useEffect(() => {
+        return () => {
+          if (!node) return;
+          context.layers.delete(node);
+          context.layersWithOutsidePointerEventsDisabled.delete(node);
+          dispatchUpdate();
+        };
+      }, [node, context]);
+      reactExports.useEffect(() => {
+        const handleUpdate = () => force({});
+        document.addEventListener(CONTEXT_UPDATE, handleUpdate);
+        return () => document.removeEventListener(CONTEXT_UPDATE, handleUpdate);
+      }, []);
+      return jsxRuntimeExports.jsx(
+        Primitive.div,
+        {
+          ...layerProps,
+          ref: composedRefs,
+          style: {
+            pointerEvents: isBodyPointerEventsDisabled ? isPointerEventsEnabled ? "auto" : "none" : void 0,
+            ...props.style
+          },
+          onFocusCapture: composeEventHandlers(props.onFocusCapture, focusOutside.onFocusCapture),
+          onBlurCapture: composeEventHandlers(props.onBlurCapture, focusOutside.onBlurCapture),
+          onPointerDownCapture: composeEventHandlers(
+            props.onPointerDownCapture,
+            pointerDownOutside.onPointerDownCapture
+          )
+        }
+      );
+    }
+  );
+  DismissableLayer.displayName = DISMISSABLE_LAYER_NAME;
+  var BRANCH_NAME = "DismissableLayerBranch";
+  var DismissableLayerBranch = reactExports.forwardRef((props, forwardedRef) => {
+    const context = reactExports.useContext(DismissableLayerContext);
+    const ref = reactExports.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, ref);
+    reactExports.useEffect(() => {
+      const node = ref.current;
+      if (node) {
+        context.branches.add(node);
+        return () => {
+          context.branches.delete(node);
+        };
+      }
+    }, [context.branches]);
+    return jsxRuntimeExports.jsx(Primitive.div, { ...props, ref: composedRefs });
+  });
+  DismissableLayerBranch.displayName = BRANCH_NAME;
+  function usePointerDownOutside(onPointerDownOutside, ownerDocument = globalThis?.document) {
+    const handlePointerDownOutside = useCallbackRef$1(onPointerDownOutside);
+    const isPointerInsideReactTreeRef = reactExports.useRef(false);
+    const handleClickRef = reactExports.useRef(() => {
+    });
+    reactExports.useEffect(() => {
+      const handlePointerDown = (event) => {
+        if (event.target && !isPointerInsideReactTreeRef.current) {
+          let handleAndDispatchPointerDownOutsideEvent2 = function() {
+            handleAndDispatchCustomEvent(
+              POINTER_DOWN_OUTSIDE,
+              handlePointerDownOutside,
+              eventDetail,
+              { discrete: true }
+            );
+          };
+          const eventDetail = { originalEvent: event };
+          if (event.pointerType === "touch") {
+            ownerDocument.removeEventListener("click", handleClickRef.current);
+            handleClickRef.current = handleAndDispatchPointerDownOutsideEvent2;
+            ownerDocument.addEventListener("click", handleClickRef.current, { once: true });
+          } else {
+            handleAndDispatchPointerDownOutsideEvent2();
+          }
+        } else {
+          ownerDocument.removeEventListener("click", handleClickRef.current);
+        }
+        isPointerInsideReactTreeRef.current = false;
+      };
+      const timerId = window.setTimeout(() => {
+        ownerDocument.addEventListener("pointerdown", handlePointerDown);
+      }, 0);
+      return () => {
+        window.clearTimeout(timerId);
+        ownerDocument.removeEventListener("pointerdown", handlePointerDown);
+        ownerDocument.removeEventListener("click", handleClickRef.current);
+      };
+    }, [ownerDocument, handlePointerDownOutside]);
+    return {
+onPointerDownCapture: () => isPointerInsideReactTreeRef.current = true
+    };
+  }
+  function useFocusOutside(onFocusOutside, ownerDocument = globalThis?.document) {
+    const handleFocusOutside = useCallbackRef$1(onFocusOutside);
+    const isFocusInsideReactTreeRef = reactExports.useRef(false);
+    reactExports.useEffect(() => {
+      const handleFocus = (event) => {
+        if (event.target && !isFocusInsideReactTreeRef.current) {
+          const eventDetail = { originalEvent: event };
+          handleAndDispatchCustomEvent(FOCUS_OUTSIDE, handleFocusOutside, eventDetail, {
+            discrete: false
+          });
+        }
+      };
+      ownerDocument.addEventListener("focusin", handleFocus);
+      return () => ownerDocument.removeEventListener("focusin", handleFocus);
+    }, [ownerDocument, handleFocusOutside]);
+    return {
+      onFocusCapture: () => isFocusInsideReactTreeRef.current = true,
+      onBlurCapture: () => isFocusInsideReactTreeRef.current = false
+    };
+  }
+  function dispatchUpdate() {
+    const event = new CustomEvent(CONTEXT_UPDATE);
+    document.dispatchEvent(event);
+  }
+  function handleAndDispatchCustomEvent(name, handler, detail, { discrete }) {
+    const target = detail.originalEvent.target;
+    const event = new CustomEvent(name, { bubbles: false, cancelable: true, detail });
+    if (handler) target.addEventListener(name, handler, { once: true });
+    if (discrete) {
+      dispatchDiscreteCustomEvent(target, event);
+    } else {
+      target.dispatchEvent(event);
+    }
+  }
+  var AUTOFOCUS_ON_MOUNT = "focusScope.autoFocusOnMount";
+  var AUTOFOCUS_ON_UNMOUNT = "focusScope.autoFocusOnUnmount";
+  var EVENT_OPTIONS = { bubbles: false, cancelable: true };
+  var FOCUS_SCOPE_NAME = "FocusScope";
+  var FocusScope = reactExports.forwardRef((props, forwardedRef) => {
+    const {
+      loop = false,
+      trapped = false,
+      onMountAutoFocus: onMountAutoFocusProp,
+      onUnmountAutoFocus: onUnmountAutoFocusProp,
+      ...scopeProps
+    } = props;
+    const [container, setContainer] = reactExports.useState(null);
+    const onMountAutoFocus = useCallbackRef$1(onMountAutoFocusProp);
+    const onUnmountAutoFocus = useCallbackRef$1(onUnmountAutoFocusProp);
+    const lastFocusedElementRef = reactExports.useRef(null);
+    const composedRefs = useComposedRefs(forwardedRef, (node) => setContainer(node));
+    const focusScope = reactExports.useRef({
+      paused: false,
+      pause() {
+        this.paused = true;
+      },
+      resume() {
+        this.paused = false;
+      }
+    }).current;
+    reactExports.useEffect(() => {
+      if (trapped) {
+        let handleFocusIn2 = function(event) {
+          if (focusScope.paused || !container) return;
+          const target = event.target;
+          if (container.contains(target)) {
+            lastFocusedElementRef.current = target;
+          } else {
+            focus(lastFocusedElementRef.current, { select: true });
+          }
+        }, handleFocusOut2 = function(event) {
+          if (focusScope.paused || !container) return;
+          const relatedTarget = event.relatedTarget;
+          if (relatedTarget === null) return;
+          if (!container.contains(relatedTarget)) {
+            focus(lastFocusedElementRef.current, { select: true });
+          }
+        }, handleMutations2 = function(mutations) {
+          const focusedElement = document.activeElement;
+          if (focusedElement !== document.body) return;
+          for (const mutation of mutations) {
+            if (mutation.removedNodes.length > 0) focus(container);
+          }
+        };
+        document.addEventListener("focusin", handleFocusIn2);
+        document.addEventListener("focusout", handleFocusOut2);
+        const mutationObserver = new MutationObserver(handleMutations2);
+        if (container) mutationObserver.observe(container, { childList: true, subtree: true });
+        return () => {
+          document.removeEventListener("focusin", handleFocusIn2);
+          document.removeEventListener("focusout", handleFocusOut2);
+          mutationObserver.disconnect();
+        };
+      }
+    }, [trapped, container, focusScope.paused]);
+    reactExports.useEffect(() => {
+      if (container) {
+        focusScopesStack.add(focusScope);
+        const previouslyFocusedElement = document.activeElement;
+        const hasFocusedCandidate = container.contains(previouslyFocusedElement);
+        if (!hasFocusedCandidate) {
+          const mountEvent = new CustomEvent(AUTOFOCUS_ON_MOUNT, EVENT_OPTIONS);
+          container.addEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
+          container.dispatchEvent(mountEvent);
+          if (!mountEvent.defaultPrevented) {
+            focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+            if (document.activeElement === previouslyFocusedElement) {
+              focus(container);
+            }
+          }
+        }
+        return () => {
+          container.removeEventListener(AUTOFOCUS_ON_MOUNT, onMountAutoFocus);
+          setTimeout(() => {
+            const unmountEvent = new CustomEvent(AUTOFOCUS_ON_UNMOUNT, EVENT_OPTIONS);
+            container.addEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
+            container.dispatchEvent(unmountEvent);
+            if (!unmountEvent.defaultPrevented) {
+              focus(previouslyFocusedElement ?? document.body, { select: true });
+            }
+            container.removeEventListener(AUTOFOCUS_ON_UNMOUNT, onUnmountAutoFocus);
+            focusScopesStack.remove(focusScope);
+          }, 0);
+        };
+      }
+    }, [container, onMountAutoFocus, onUnmountAutoFocus, focusScope]);
+    const handleKeyDown = reactExports.useCallback(
+      (event) => {
+        if (!loop && !trapped) return;
+        if (focusScope.paused) return;
+        const isTabKey = event.key === "Tab" && !event.altKey && !event.ctrlKey && !event.metaKey;
+        const focusedElement = document.activeElement;
+        if (isTabKey && focusedElement) {
+          const container2 = event.currentTarget;
+          const [first, last] = getTabbableEdges(container2);
+          const hasTabbableElementsInside = first && last;
+          if (!hasTabbableElementsInside) {
+            if (focusedElement === container2) event.preventDefault();
+          } else {
+            if (!event.shiftKey && focusedElement === last) {
+              event.preventDefault();
+              if (loop) focus(first, { select: true });
+            } else if (event.shiftKey && focusedElement === first) {
+              event.preventDefault();
+              if (loop) focus(last, { select: true });
+            }
+          }
+        }
+      },
+      [loop, trapped, focusScope.paused]
+    );
+    return jsxRuntimeExports.jsx(Primitive.div, { tabIndex: -1, ...scopeProps, ref: composedRefs, onKeyDown: handleKeyDown });
+  });
+  FocusScope.displayName = FOCUS_SCOPE_NAME;
+  function focusFirst(candidates, { select = false } = {}) {
+    const previouslyFocusedElement = document.activeElement;
+    for (const candidate of candidates) {
+      focus(candidate, { select });
+      if (document.activeElement !== previouslyFocusedElement) return;
+    }
+  }
+  function getTabbableEdges(container) {
+    const candidates = getTabbableCandidates(container);
+    const first = findVisible(candidates, container);
+    const last = findVisible(candidates.reverse(), container);
+    return [first, last];
+  }
+  function getTabbableCandidates(container) {
+    const nodes = [];
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
+      acceptNode: (node) => {
+        const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
+        if (node.disabled || node.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
+        return node.tabIndex >= 0 ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      }
+    });
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    return nodes;
+  }
+  function findVisible(elements, container) {
+    for (const element of elements) {
+      if (!isHidden(element, { upTo: container })) return element;
+    }
+  }
+  function isHidden(node, { upTo }) {
+    if (getComputedStyle(node).visibility === "hidden") return true;
+    while (node) {
+      if (upTo !== void 0 && node === upTo) return false;
+      if (getComputedStyle(node).display === "none") return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+  function isSelectableInput(element) {
+    return element instanceof HTMLInputElement && "select" in element;
+  }
+  function focus(element, { select = false } = {}) {
+    if (element && element.focus) {
+      const previouslyFocusedElement = document.activeElement;
+      element.focus({ preventScroll: true });
+      if (element !== previouslyFocusedElement && isSelectableInput(element) && select)
+        element.select();
+    }
+  }
+  var focusScopesStack = createFocusScopesStack();
+  function createFocusScopesStack() {
+    let stack = [];
+    return {
+      add(focusScope) {
+        const activeFocusScope = stack[0];
+        if (focusScope !== activeFocusScope) {
+          activeFocusScope?.pause();
+        }
+        stack = arrayRemove(stack, focusScope);
+        stack.unshift(focusScope);
+      },
+      remove(focusScope) {
+        stack = arrayRemove(stack, focusScope);
+        stack[0]?.resume();
+      }
+    };
+  }
+  function arrayRemove(array, item) {
+    const updatedArray = [...array];
+    const index2 = updatedArray.indexOf(item);
+    if (index2 !== -1) {
+      updatedArray.splice(index2, 1);
+    }
+    return updatedArray;
+  }
+  function removeLinks(items) {
+    return items.filter((item) => item.tagName !== "A");
+  }
+  var PORTAL_NAME$1 = "Portal";
+  var Portal$1 = reactExports.forwardRef((props, forwardedRef) => {
+    const { container: containerProp, ...portalProps } = props;
+    const [mounted, setMounted] = reactExports.useState(false);
+    useLayoutEffect2(() => setMounted(true), []);
+    const container = containerProp || mounted && globalThis?.document?.body;
+    return container ? ReactDOM.createPortal( jsxRuntimeExports.jsx(Primitive.div, { ...portalProps, ref: forwardedRef }), container) : null;
+  });
+  Portal$1.displayName = PORTAL_NAME$1;
+  var count = 0;
+  function useFocusGuards() {
+    reactExports.useEffect(() => {
+      const edgeGuards = document.querySelectorAll("[data-radix-focus-guard]");
+      document.body.insertAdjacentElement("afterbegin", edgeGuards[0] ?? createFocusGuard());
+      document.body.insertAdjacentElement("beforeend", edgeGuards[1] ?? createFocusGuard());
+      count++;
+      return () => {
+        if (count === 1) {
+          document.querySelectorAll("[data-radix-focus-guard]").forEach((node) => node.remove());
+        }
+        count--;
+      };
+    }, []);
+  }
+  function createFocusGuard() {
+    const element = document.createElement("span");
+    element.setAttribute("data-radix-focus-guard", "");
+    element.tabIndex = 0;
+    element.style.outline = "none";
+    element.style.opacity = "0";
+    element.style.position = "fixed";
+    element.style.pointerEvents = "none";
+    return element;
+  }
+  var __assign = function() {
+    __assign = Object.assign || function __assign2(t) {
+      for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+      return t;
+    };
+    return __assign.apply(this, arguments);
+  };
+  function __rest(s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+      t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+      for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+          t[p[i]] = s[p[i]];
+      }
+    return t;
+  }
+  function __spreadArray(to, from, pack) {
+    for (var i = 0, l = from.length, ar; i < l; i++) {
+      if (ar || !(i in from)) {
+        if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+        ar[i] = from[i];
+      }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+  }
+  typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+  };
+  var zeroRightClassName = "right-scroll-bar-position";
+  var fullWidthClassName = "width-before-scroll-bar";
+  var noScrollbarsClassName = "with-scroll-bars-hidden";
+  var removedBarSizeVariable = "--removed-body-scroll-bar-size";
+  function assignRef(ref, value) {
+    if (typeof ref === "function") {
+      ref(value);
+    } else if (ref) {
+      ref.current = value;
+    }
+    return ref;
+  }
+  function useCallbackRef(initialValue, callback) {
+    var ref = reactExports.useState(function() {
+      return {
+value: initialValue,
+callback,
+facade: {
+          get current() {
+            return ref.value;
+          },
+          set current(value) {
+            var last = ref.value;
+            if (last !== value) {
+              ref.value = value;
+              ref.callback(value, last);
+            }
+          }
+        }
+      };
+    })[0];
+    ref.callback = callback;
+    return ref.facade;
+  }
+  var useIsomorphicLayoutEffect = typeof window !== "undefined" ? reactExports.useLayoutEffect : reactExports.useEffect;
+  var currentValues = new WeakMap();
+  function useMergeRefs(refs, defaultValue) {
+    var callbackRef = useCallbackRef(null, function(newValue) {
+      return refs.forEach(function(ref) {
+        return assignRef(ref, newValue);
+      });
+    });
+    useIsomorphicLayoutEffect(function() {
+      var oldValue = currentValues.get(callbackRef);
+      if (oldValue) {
+        var prevRefs_1 = new Set(oldValue);
+        var nextRefs_1 = new Set(refs);
+        var current_1 = callbackRef.current;
+        prevRefs_1.forEach(function(ref) {
+          if (!nextRefs_1.has(ref)) {
+            assignRef(ref, null);
+          }
+        });
+        nextRefs_1.forEach(function(ref) {
+          if (!prevRefs_1.has(ref)) {
+            assignRef(ref, current_1);
+          }
+        });
+      }
+      currentValues.set(callbackRef, refs);
+    }, [refs]);
+    return callbackRef;
+  }
+  function ItoI(a) {
+    return a;
+  }
+  function innerCreateMedium(defaults, middleware) {
+    if (middleware === void 0) {
+      middleware = ItoI;
+    }
+    var buffer = [];
+    var assigned = false;
+    var medium = {
+      read: function() {
+        if (assigned) {
+          throw new Error("Sidecar: could not `read` from an `assigned` medium. `read` could be used only with `useMedium`.");
+        }
+        if (buffer.length) {
+          return buffer[buffer.length - 1];
+        }
+        return defaults;
+      },
+      useMedium: function(data) {
+        var item = middleware(data, assigned);
+        buffer.push(item);
+        return function() {
+          buffer = buffer.filter(function(x) {
+            return x !== item;
+          });
+        };
+      },
+      assignSyncMedium: function(cb) {
+        assigned = true;
+        while (buffer.length) {
+          var cbs = buffer;
+          buffer = [];
+          cbs.forEach(cb);
+        }
+        buffer = {
+          push: function(x) {
+            return cb(x);
+          },
+          filter: function() {
+            return buffer;
+          }
+        };
+      },
+      assignMedium: function(cb) {
+        assigned = true;
+        var pendingQueue = [];
+        if (buffer.length) {
+          var cbs = buffer;
+          buffer = [];
+          cbs.forEach(cb);
+          pendingQueue = buffer;
+        }
+        var executeQueue = function() {
+          var cbs2 = pendingQueue;
+          pendingQueue = [];
+          cbs2.forEach(cb);
+        };
+        var cycle = function() {
+          return Promise.resolve().then(executeQueue);
+        };
+        cycle();
+        buffer = {
+          push: function(x) {
+            pendingQueue.push(x);
+            cycle();
+          },
+          filter: function(filter) {
+            pendingQueue = pendingQueue.filter(filter);
+            return buffer;
+          }
+        };
+      }
+    };
+    return medium;
+  }
+  function createSidecarMedium(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    var medium = innerCreateMedium(null);
+    medium.options = __assign({ async: true, ssr: false }, options);
+    return medium;
+  }
+  var SideCar$1 = function(_a) {
+    var sideCar = _a.sideCar, rest = __rest(_a, ["sideCar"]);
+    if (!sideCar) {
+      throw new Error("Sidecar: please provide `sideCar` property to import the right car");
+    }
+    var Target = sideCar.read();
+    if (!Target) {
+      throw new Error("Sidecar medium not found");
+    }
+    return reactExports.createElement(Target, __assign({}, rest));
+  };
+  SideCar$1.isSideCarExport = true;
+  function exportSidecar(medium, exported) {
+    medium.useMedium(exported);
+    return SideCar$1;
+  }
+  var effectCar = createSidecarMedium();
+  var nothing = function() {
+    return;
+  };
+  var RemoveScroll = reactExports.forwardRef(function(props, parentRef) {
+    var ref = reactExports.useRef(null);
+    var _a = reactExports.useState({
+      onScrollCapture: nothing,
+      onWheelCapture: nothing,
+      onTouchMoveCapture: nothing
+    }), callbacks = _a[0], setCallbacks = _a[1];
+    var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noRelative = props.noRelative, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b = props.as, Container = _b === void 0 ? "div" : _b, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noRelative", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
+    var SideCar2 = sideCar;
+    var containerRef = useMergeRefs([ref, parentRef]);
+    var containerProps = __assign(__assign({}, rest), callbacks);
+    return reactExports.createElement(
+      reactExports.Fragment,
+      null,
+      enabled && reactExports.createElement(SideCar2, { sideCar: effectCar, removeScrollBar, shards, noRelative, noIsolation, inert, setCallbacks, allowPinchZoom: !!allowPinchZoom, lockRef: ref, gapMode }),
+      forwardProps ? reactExports.cloneElement(reactExports.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : reactExports.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children)
+    );
+  });
+  RemoveScroll.defaultProps = {
+    enabled: true,
+    removeScrollBar: true,
+    inert: false
+  };
+  RemoveScroll.classNames = {
+    fullWidth: fullWidthClassName,
+    zeroRight: zeroRightClassName
+  };
+  var getNonce = function() {
+    if (typeof __webpack_nonce__ !== "undefined") {
+      return __webpack_nonce__;
+    }
+    return void 0;
+  };
+  function makeStyleTag() {
+    if (!document)
+      return null;
+    var tag = document.createElement("style");
+    tag.type = "text/css";
+    var nonce = getNonce();
+    if (nonce) {
+      tag.setAttribute("nonce", nonce);
+    }
+    return tag;
+  }
+  function injectStyles(tag, css) {
+    if (tag.styleSheet) {
+      tag.styleSheet.cssText = css;
+    } else {
+      tag.appendChild(document.createTextNode(css));
+    }
+  }
+  function insertStyleTag(tag) {
+    var head = document.head || document.getElementsByTagName("head")[0];
+    head.appendChild(tag);
+  }
+  var stylesheetSingleton = function() {
+    var counter = 0;
+    var stylesheet = null;
+    return {
+      add: function(style) {
+        if (counter == 0) {
+          if (stylesheet = makeStyleTag()) {
+            injectStyles(stylesheet, style);
+            insertStyleTag(stylesheet);
+          }
+        }
+        counter++;
+      },
+      remove: function() {
+        counter--;
+        if (!counter && stylesheet) {
+          stylesheet.parentNode && stylesheet.parentNode.removeChild(stylesheet);
+          stylesheet = null;
+        }
+      }
+    };
+  };
+  var styleHookSingleton = function() {
+    var sheet = stylesheetSingleton();
+    return function(styles2, isDynamic) {
+      reactExports.useEffect(function() {
+        sheet.add(styles2);
+        return function() {
+          sheet.remove();
+        };
+      }, [styles2 && isDynamic]);
+    };
+  };
+  var styleSingleton = function() {
+    var useStyle = styleHookSingleton();
+    var Sheet = function(_a) {
+      var styles2 = _a.styles, dynamic = _a.dynamic;
+      useStyle(styles2, dynamic);
+      return null;
+    };
+    return Sheet;
+  };
+  var zeroGap = {
+    left: 0,
+    top: 0,
+    right: 0,
+    gap: 0
+  };
+  var parse = function(x) {
+    return parseInt(x || "", 10) || 0;
+  };
+  var getOffset = function(gapMode) {
+    var cs = window.getComputedStyle(document.body);
+    var left = cs[gapMode === "padding" ? "paddingLeft" : "marginLeft"];
+    var top = cs[gapMode === "padding" ? "paddingTop" : "marginTop"];
+    var right = cs[gapMode === "padding" ? "paddingRight" : "marginRight"];
+    return [parse(left), parse(top), parse(right)];
+  };
+  var getGapWidth = function(gapMode) {
+    if (gapMode === void 0) {
+      gapMode = "margin";
+    }
+    if (typeof window === "undefined") {
+      return zeroGap;
+    }
+    var offsets = getOffset(gapMode);
+    var documentWidth = document.documentElement.clientWidth;
+    var windowWidth = window.innerWidth;
+    return {
+      left: offsets[0],
+      top: offsets[1],
+      right: offsets[2],
+      gap: Math.max(0, windowWidth - documentWidth + offsets[2] - offsets[0])
+    };
+  };
+  var Style = styleSingleton();
+  var lockAttribute = "data-scroll-locked";
+  var getStyles = function(_a, allowRelative, gapMode, important) {
+    var left = _a.left, top = _a.top, right = _a.right, gap = _a.gap;
+    if (gapMode === void 0) {
+      gapMode = "margin";
+    }
+    return "\n  .".concat(noScrollbarsClassName, " {\n   overflow: hidden ").concat(important, ";\n   padding-right: ").concat(gap, "px ").concat(important, ";\n  }\n  body[").concat(lockAttribute, "] {\n    overflow: hidden ").concat(important, ";\n    overscroll-behavior: contain;\n    ").concat([
+      allowRelative && "position: relative ".concat(important, ";"),
+      gapMode === "margin" && "\n    padding-left: ".concat(left, "px;\n    padding-top: ").concat(top, "px;\n    padding-right: ").concat(right, "px;\n    margin-left:0;\n    margin-top:0;\n    margin-right: ").concat(gap, "px ").concat(important, ";\n    "),
+      gapMode === "padding" && "padding-right: ".concat(gap, "px ").concat(important, ";")
+    ].filter(Boolean).join(""), "\n  }\n  \n  .").concat(zeroRightClassName, " {\n    right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " {\n    margin-right: ").concat(gap, "px ").concat(important, ";\n  }\n  \n  .").concat(zeroRightClassName, " .").concat(zeroRightClassName, " {\n    right: 0 ").concat(important, ";\n  }\n  \n  .").concat(fullWidthClassName, " .").concat(fullWidthClassName, " {\n    margin-right: 0 ").concat(important, ";\n  }\n  \n  body[").concat(lockAttribute, "] {\n    ").concat(removedBarSizeVariable, ": ").concat(gap, "px;\n  }\n");
+  };
+  var getCurrentUseCounter = function() {
+    var counter = parseInt(document.body.getAttribute(lockAttribute) || "0", 10);
+    return isFinite(counter) ? counter : 0;
+  };
+  var useLockAttribute = function() {
+    reactExports.useEffect(function() {
+      document.body.setAttribute(lockAttribute, (getCurrentUseCounter() + 1).toString());
+      return function() {
+        var newCounter = getCurrentUseCounter() - 1;
+        if (newCounter <= 0) {
+          document.body.removeAttribute(lockAttribute);
+        } else {
+          document.body.setAttribute(lockAttribute, newCounter.toString());
+        }
+      };
+    }, []);
+  };
+  var RemoveScrollBar = function(_a) {
+    var noRelative = _a.noRelative, noImportant = _a.noImportant, _b = _a.gapMode, gapMode = _b === void 0 ? "margin" : _b;
+    useLockAttribute();
+    var gap = reactExports.useMemo(function() {
+      return getGapWidth(gapMode);
+    }, [gapMode]);
+    return reactExports.createElement(Style, { styles: getStyles(gap, !noRelative, gapMode, !noImportant ? "!important" : "") });
+  };
+  var passiveSupported = false;
+  if (typeof window !== "undefined") {
+    try {
+      var options = Object.defineProperty({}, "passive", {
+        get: function() {
+          passiveSupported = true;
+          return true;
+        }
+      });
+      window.addEventListener("test", options, options);
+      window.removeEventListener("test", options, options);
+    } catch (err) {
+      passiveSupported = false;
+    }
+  }
+  var nonPassive = passiveSupported ? { passive: false } : false;
+  var alwaysContainsScroll = function(node) {
+    return node.tagName === "TEXTAREA";
+  };
+  var elementCanBeScrolled = function(node, overflow) {
+    if (!(node instanceof Element)) {
+      return false;
+    }
+    var styles2 = window.getComputedStyle(node);
+    return (
+styles2[overflow] !== "hidden" &&
+!(styles2.overflowY === styles2.overflowX && !alwaysContainsScroll(node) && styles2[overflow] === "visible")
+    );
+  };
+  var elementCouldBeVScrolled = function(node) {
+    return elementCanBeScrolled(node, "overflowY");
+  };
+  var elementCouldBeHScrolled = function(node) {
+    return elementCanBeScrolled(node, "overflowX");
+  };
+  var locationCouldBeScrolled = function(axis, node) {
+    var ownerDocument = node.ownerDocument;
+    var current = node;
+    do {
+      if (typeof ShadowRoot !== "undefined" && current instanceof ShadowRoot) {
+        current = current.host;
+      }
+      var isScrollable = elementCouldBeScrolled(axis, current);
+      if (isScrollable) {
+        var _a = getScrollVariables(axis, current), scrollHeight = _a[1], clientHeight = _a[2];
+        if (scrollHeight > clientHeight) {
+          return true;
+        }
+      }
+      current = current.parentNode;
+    } while (current && current !== ownerDocument.body);
+    return false;
+  };
+  var getVScrollVariables = function(_a) {
+    var scrollTop = _a.scrollTop, scrollHeight = _a.scrollHeight, clientHeight = _a.clientHeight;
+    return [
+      scrollTop,
+      scrollHeight,
+      clientHeight
+    ];
+  };
+  var getHScrollVariables = function(_a) {
+    var scrollLeft = _a.scrollLeft, scrollWidth = _a.scrollWidth, clientWidth = _a.clientWidth;
+    return [
+      scrollLeft,
+      scrollWidth,
+      clientWidth
+    ];
+  };
+  var elementCouldBeScrolled = function(axis, node) {
+    return axis === "v" ? elementCouldBeVScrolled(node) : elementCouldBeHScrolled(node);
+  };
+  var getScrollVariables = function(axis, node) {
+    return axis === "v" ? getVScrollVariables(node) : getHScrollVariables(node);
+  };
+  var getDirectionFactor = function(axis, direction) {
+    return axis === "h" && direction === "rtl" ? -1 : 1;
+  };
+  var handleScroll = function(axis, endTarget, event, sourceDelta, noOverscroll) {
+    var directionFactor = getDirectionFactor(axis, window.getComputedStyle(endTarget).direction);
+    var delta = directionFactor * sourceDelta;
+    var target = event.target;
+    var targetInLock = endTarget.contains(target);
+    var shouldCancelScroll = false;
+    var isDeltaPositive = delta > 0;
+    var availableScroll = 0;
+    var availableScrollTop = 0;
+    do {
+      if (!target) {
+        break;
+      }
+      var _a = getScrollVariables(axis, target), position = _a[0], scroll_1 = _a[1], capacity = _a[2];
+      var elementScroll = scroll_1 - capacity - directionFactor * position;
+      if (position || elementScroll) {
+        if (elementCouldBeScrolled(axis, target)) {
+          availableScroll += elementScroll;
+          availableScrollTop += position;
+        }
+      }
+      var parent_1 = target.parentNode;
+      target = parent_1 && parent_1.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? parent_1.host : parent_1;
+    } while (
+!targetInLock && target !== document.body ||
+targetInLock && (endTarget.contains(target) || endTarget === target)
+    );
+    if (isDeltaPositive && (Math.abs(availableScroll) < 1 || false)) {
+      shouldCancelScroll = true;
+    } else if (!isDeltaPositive && (Math.abs(availableScrollTop) < 1 || false)) {
+      shouldCancelScroll = true;
+    }
+    return shouldCancelScroll;
+  };
+  var getTouchXY = function(event) {
+    return "changedTouches" in event ? [event.changedTouches[0].clientX, event.changedTouches[0].clientY] : [0, 0];
+  };
+  var getDeltaXY = function(event) {
+    return [event.deltaX, event.deltaY];
+  };
+  var extractRef = function(ref) {
+    return ref && "current" in ref ? ref.current : ref;
+  };
+  var deltaCompare = function(x, y) {
+    return x[0] === y[0] && x[1] === y[1];
+  };
+  var generateStyle = function(id) {
+    return "\n  .block-interactivity-".concat(id, " {pointer-events: none;}\n  .allow-interactivity-").concat(id, " {pointer-events: all;}\n");
+  };
+  var idCounter = 0;
+  var lockStack = [];
+  function RemoveScrollSideCar(props) {
+    var shouldPreventQueue = reactExports.useRef([]);
+    var touchStartRef = reactExports.useRef([0, 0]);
+    var activeAxis = reactExports.useRef();
+    var id = reactExports.useState(idCounter++)[0];
+    var Style2 = reactExports.useState(styleSingleton)[0];
+    var lastProps = reactExports.useRef(props);
+    reactExports.useEffect(function() {
+      lastProps.current = props;
+    }, [props]);
+    reactExports.useEffect(function() {
+      if (props.inert) {
+        document.body.classList.add("block-interactivity-".concat(id));
+        var allow_1 = __spreadArray([props.lockRef.current], (props.shards || []).map(extractRef)).filter(Boolean);
+        allow_1.forEach(function(el) {
+          return el.classList.add("allow-interactivity-".concat(id));
+        });
+        return function() {
+          document.body.classList.remove("block-interactivity-".concat(id));
+          allow_1.forEach(function(el) {
+            return el.classList.remove("allow-interactivity-".concat(id));
+          });
+        };
+      }
+      return;
+    }, [props.inert, props.lockRef.current, props.shards]);
+    var shouldCancelEvent = reactExports.useCallback(function(event, parent) {
+      if ("touches" in event && event.touches.length === 2 || event.type === "wheel" && event.ctrlKey) {
+        return !lastProps.current.allowPinchZoom;
+      }
+      var touch = getTouchXY(event);
+      var touchStart = touchStartRef.current;
+      var deltaX = "deltaX" in event ? event.deltaX : touchStart[0] - touch[0];
+      var deltaY = "deltaY" in event ? event.deltaY : touchStart[1] - touch[1];
+      var currentAxis;
+      var target = event.target;
+      var moveDirection = Math.abs(deltaX) > Math.abs(deltaY) ? "h" : "v";
+      if ("touches" in event && moveDirection === "h" && target.type === "range") {
+        return false;
+      }
+      var selection = window.getSelection();
+      var anchorNode = selection && selection.anchorNode;
+      var isTouchingSelection = anchorNode ? anchorNode === target || anchorNode.contains(target) : false;
+      if (isTouchingSelection) {
+        return false;
+      }
+      var canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
+      if (!canBeScrolledInMainDirection) {
+        return true;
+      }
+      if (canBeScrolledInMainDirection) {
+        currentAxis = moveDirection;
+      } else {
+        currentAxis = moveDirection === "v" ? "h" : "v";
+        canBeScrolledInMainDirection = locationCouldBeScrolled(moveDirection, target);
+      }
+      if (!canBeScrolledInMainDirection) {
+        return false;
+      }
+      if (!activeAxis.current && "changedTouches" in event && (deltaX || deltaY)) {
+        activeAxis.current = currentAxis;
+      }
+      if (!currentAxis) {
+        return true;
+      }
+      var cancelingAxis = activeAxis.current || currentAxis;
+      return handleScroll(cancelingAxis, parent, event, cancelingAxis === "h" ? deltaX : deltaY);
+    }, []);
+    var shouldPrevent = reactExports.useCallback(function(_event) {
+      var event = _event;
+      if (!lockStack.length || lockStack[lockStack.length - 1] !== Style2) {
+        return;
+      }
+      var delta = "deltaY" in event ? getDeltaXY(event) : getTouchXY(event);
+      var sourceEvent = shouldPreventQueue.current.filter(function(e) {
+        return e.name === event.type && (e.target === event.target || event.target === e.shadowParent) && deltaCompare(e.delta, delta);
+      })[0];
+      if (sourceEvent && sourceEvent.should) {
+        if (event.cancelable) {
+          event.preventDefault();
+        }
+        return;
+      }
+      if (!sourceEvent) {
+        var shardNodes = (lastProps.current.shards || []).map(extractRef).filter(Boolean).filter(function(node) {
+          return node.contains(event.target);
+        });
+        var shouldStop = shardNodes.length > 0 ? shouldCancelEvent(event, shardNodes[0]) : !lastProps.current.noIsolation;
+        if (shouldStop) {
+          if (event.cancelable) {
+            event.preventDefault();
+          }
+        }
+      }
+    }, []);
+    var shouldCancel = reactExports.useCallback(function(name, delta, target, should) {
+      var event = { name, delta, target, should, shadowParent: getOutermostShadowParent(target) };
+      shouldPreventQueue.current.push(event);
+      setTimeout(function() {
+        shouldPreventQueue.current = shouldPreventQueue.current.filter(function(e) {
+          return e !== event;
+        });
+      }, 1);
+    }, []);
+    var scrollTouchStart = reactExports.useCallback(function(event) {
+      touchStartRef.current = getTouchXY(event);
+      activeAxis.current = void 0;
+    }, []);
+    var scrollWheel = reactExports.useCallback(function(event) {
+      shouldCancel(event.type, getDeltaXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
+    }, []);
+    var scrollTouchMove = reactExports.useCallback(function(event) {
+      shouldCancel(event.type, getTouchXY(event), event.target, shouldCancelEvent(event, props.lockRef.current));
+    }, []);
+    reactExports.useEffect(function() {
+      lockStack.push(Style2);
+      props.setCallbacks({
+        onScrollCapture: scrollWheel,
+        onWheelCapture: scrollWheel,
+        onTouchMoveCapture: scrollTouchMove
+      });
+      document.addEventListener("wheel", shouldPrevent, nonPassive);
+      document.addEventListener("touchmove", shouldPrevent, nonPassive);
+      document.addEventListener("touchstart", scrollTouchStart, nonPassive);
+      return function() {
+        lockStack = lockStack.filter(function(inst) {
+          return inst !== Style2;
+        });
+        document.removeEventListener("wheel", shouldPrevent, nonPassive);
+        document.removeEventListener("touchmove", shouldPrevent, nonPassive);
+        document.removeEventListener("touchstart", scrollTouchStart, nonPassive);
+      };
+    }, []);
+    var removeScrollBar = props.removeScrollBar, inert = props.inert;
+    return reactExports.createElement(
+      reactExports.Fragment,
+      null,
+      inert ? reactExports.createElement(Style2, { styles: generateStyle(id) }) : null,
+      removeScrollBar ? reactExports.createElement(RemoveScrollBar, { noRelative: props.noRelative, gapMode: props.gapMode }) : null
+    );
+  }
+  function getOutermostShadowParent(node) {
+    var shadowParent = null;
+    while (node !== null) {
+      if (node instanceof ShadowRoot) {
+        shadowParent = node.host;
+        node = node.host;
+      }
+      node = node.parentNode;
+    }
+    return shadowParent;
+  }
+  const SideCar = exportSidecar(effectCar, RemoveScrollSideCar);
+  var ReactRemoveScroll = reactExports.forwardRef(function(props, ref) {
+    return reactExports.createElement(RemoveScroll, __assign({}, props, { ref, sideCar: SideCar }));
+  });
+  ReactRemoveScroll.classNames = RemoveScroll.classNames;
+  var getDefaultParent = function(originalTarget) {
+    if (typeof document === "undefined") {
+      return null;
+    }
+    var sampleTarget = Array.isArray(originalTarget) ? originalTarget[0] : originalTarget;
+    return sampleTarget.ownerDocument.body;
+  };
+  var counterMap = new WeakMap();
+  var uncontrolledNodes = new WeakMap();
+  var markerMap = {};
+  var lockCount = 0;
+  var unwrapHost = function(node) {
+    return node && (node.host || unwrapHost(node.parentNode));
+  };
+  var correctTargets = function(parent, targets) {
+    return targets.map(function(target) {
+      if (parent.contains(target)) {
+        return target;
+      }
+      var correctedTarget = unwrapHost(target);
+      if (correctedTarget && parent.contains(correctedTarget)) {
+        return correctedTarget;
+      }
+      console.error("aria-hidden", target, "in not contained inside", parent, ". Doing nothing");
+      return null;
+    }).filter(function(x) {
+      return Boolean(x);
+    });
+  };
+  var applyAttributeToOthers = function(originalTarget, parentNode, markerName, controlAttribute) {
+    var targets = correctTargets(parentNode, Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
+    if (!markerMap[markerName]) {
+      markerMap[markerName] = new WeakMap();
+    }
+    var markerCounter = markerMap[markerName];
+    var hiddenNodes = [];
+    var elementsToKeep = new Set();
+    var elementsToStop = new Set(targets);
+    var keep = function(el) {
+      if (!el || elementsToKeep.has(el)) {
+        return;
+      }
+      elementsToKeep.add(el);
+      keep(el.parentNode);
+    };
+    targets.forEach(keep);
+    var deep = function(parent) {
+      if (!parent || elementsToStop.has(parent)) {
+        return;
+      }
+      Array.prototype.forEach.call(parent.children, function(node) {
+        if (elementsToKeep.has(node)) {
+          deep(node);
+        } else {
+          try {
+            var attr = node.getAttribute(controlAttribute);
+            var alreadyHidden = attr !== null && attr !== "false";
+            var counterValue = (counterMap.get(node) || 0) + 1;
+            var markerValue = (markerCounter.get(node) || 0) + 1;
+            counterMap.set(node, counterValue);
+            markerCounter.set(node, markerValue);
+            hiddenNodes.push(node);
+            if (counterValue === 1 && alreadyHidden) {
+              uncontrolledNodes.set(node, true);
+            }
+            if (markerValue === 1) {
+              node.setAttribute(markerName, "true");
+            }
+            if (!alreadyHidden) {
+              node.setAttribute(controlAttribute, "true");
+            }
+          } catch (e) {
+            console.error("aria-hidden: cannot operate on ", node, e);
+          }
+        }
+      });
+    };
+    deep(parentNode);
+    elementsToKeep.clear();
+    lockCount++;
+    return function() {
+      hiddenNodes.forEach(function(node) {
+        var counterValue = counterMap.get(node) - 1;
+        var markerValue = markerCounter.get(node) - 1;
+        counterMap.set(node, counterValue);
+        markerCounter.set(node, markerValue);
+        if (!counterValue) {
+          if (!uncontrolledNodes.has(node)) {
+            node.removeAttribute(controlAttribute);
+          }
+          uncontrolledNodes.delete(node);
+        }
+        if (!markerValue) {
+          node.removeAttribute(markerName);
+        }
+      });
+      lockCount--;
+      if (!lockCount) {
+        counterMap = new WeakMap();
+        counterMap = new WeakMap();
+        uncontrolledNodes = new WeakMap();
+        markerMap = {};
+      }
+    };
+  };
+  var hideOthers = function(originalTarget, parentNode, markerName) {
+    if (markerName === void 0) {
+      markerName = "data-aria-hidden";
+    }
+    var targets = Array.from(Array.isArray(originalTarget) ? originalTarget : [originalTarget]);
+    var activeParentNode = getDefaultParent(originalTarget);
+    if (!activeParentNode) {
+      return function() {
+        return null;
+      };
+    }
+    targets.push.apply(targets, Array.from(activeParentNode.querySelectorAll("[aria-live], script")));
+    return applyAttributeToOthers(targets, activeParentNode, markerName, "aria-hidden");
+  };
   function usePrevious(value) {
     const ref = reactExports.useRef({ value, previous: value });
     return reactExports.useMemo(() => {
@@ -15042,7 +16113,7 @@ function createSlotClone(ownerName) {
     }, [value]);
   }
   function useSize(element) {
-    const [size, setSize] = reactExports.useState(void 0);
+    const [size2, setSize] = reactExports.useState(void 0);
     useLayoutEffect2(() => {
       if (element) {
         setSize({ width: element.offsetWidth, height: element.offsetHeight });
@@ -15073,8 +16144,3319 @@ function createSlotClone(ownerName) {
         setSize(void 0);
       }
     }, [element]);
-    return size;
+    return size2;
   }
+  const sides = ["top", "right", "bottom", "left"];
+  const min = Math.min;
+  const max = Math.max;
+  const round = Math.round;
+  const floor = Math.floor;
+  const createCoords = (v) => ({
+    x: v,
+    y: v
+  });
+  const oppositeSideMap = {
+    left: "right",
+    right: "left",
+    bottom: "top",
+    top: "bottom"
+  };
+  function clamp$1(start, value, end) {
+    return max(start, min(value, end));
+  }
+  function evaluate(value, param) {
+    return typeof value === "function" ? value(param) : value;
+  }
+  function getSide(placement) {
+    return placement.split("-")[0];
+  }
+  function getAlignment(placement) {
+    return placement.split("-")[1];
+  }
+  function getOppositeAxis(axis) {
+    return axis === "x" ? "y" : "x";
+  }
+  function getAxisLength(axis) {
+    return axis === "y" ? "height" : "width";
+  }
+  function getSideAxis(placement) {
+    const firstChar = placement[0];
+    return firstChar === "t" || firstChar === "b" ? "y" : "x";
+  }
+  function getAlignmentAxis(placement) {
+    return getOppositeAxis(getSideAxis(placement));
+  }
+  function getAlignmentSides(placement, rects, rtl) {
+    if (rtl === void 0) {
+      rtl = false;
+    }
+    const alignment = getAlignment(placement);
+    const alignmentAxis = getAlignmentAxis(placement);
+    const length = getAxisLength(alignmentAxis);
+    let mainAlignmentSide = alignmentAxis === "x" ? alignment === (rtl ? "end" : "start") ? "right" : "left" : alignment === "start" ? "bottom" : "top";
+    if (rects.reference[length] > rects.floating[length]) {
+      mainAlignmentSide = getOppositePlacement(mainAlignmentSide);
+    }
+    return [mainAlignmentSide, getOppositePlacement(mainAlignmentSide)];
+  }
+  function getExpandedPlacements(placement) {
+    const oppositePlacement = getOppositePlacement(placement);
+    return [getOppositeAlignmentPlacement(placement), oppositePlacement, getOppositeAlignmentPlacement(oppositePlacement)];
+  }
+  function getOppositeAlignmentPlacement(placement) {
+    return placement.includes("start") ? placement.replace("start", "end") : placement.replace("end", "start");
+  }
+  const lrPlacement = ["left", "right"];
+  const rlPlacement = ["right", "left"];
+  const tbPlacement = ["top", "bottom"];
+  const btPlacement = ["bottom", "top"];
+  function getSideList(side, isStart, rtl) {
+    switch (side) {
+      case "top":
+      case "bottom":
+        if (rtl) return isStart ? rlPlacement : lrPlacement;
+        return isStart ? lrPlacement : rlPlacement;
+      case "left":
+      case "right":
+        return isStart ? tbPlacement : btPlacement;
+      default:
+        return [];
+    }
+  }
+  function getOppositeAxisPlacements(placement, flipAlignment, direction, rtl) {
+    const alignment = getAlignment(placement);
+    let list = getSideList(getSide(placement), direction === "start", rtl);
+    if (alignment) {
+      list = list.map((side) => side + "-" + alignment);
+      if (flipAlignment) {
+        list = list.concat(list.map(getOppositeAlignmentPlacement));
+      }
+    }
+    return list;
+  }
+  function getOppositePlacement(placement) {
+    const side = getSide(placement);
+    return oppositeSideMap[side] + placement.slice(side.length);
+  }
+  function expandPaddingObject(padding) {
+    return {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      ...padding
+    };
+  }
+  function getPaddingObject(padding) {
+    return typeof padding !== "number" ? expandPaddingObject(padding) : {
+      top: padding,
+      right: padding,
+      bottom: padding,
+      left: padding
+    };
+  }
+  function rectToClientRect(rect) {
+    const {
+      x,
+      y,
+      width,
+      height
+    } = rect;
+    return {
+      width,
+      height,
+      top: y,
+      left: x,
+      right: x + width,
+      bottom: y + height,
+      x,
+      y
+    };
+  }
+  function computeCoordsFromPlacement(_ref, placement, rtl) {
+    let {
+      reference,
+      floating
+    } = _ref;
+    const sideAxis = getSideAxis(placement);
+    const alignmentAxis = getAlignmentAxis(placement);
+    const alignLength = getAxisLength(alignmentAxis);
+    const side = getSide(placement);
+    const isVertical = sideAxis === "y";
+    const commonX = reference.x + reference.width / 2 - floating.width / 2;
+    const commonY = reference.y + reference.height / 2 - floating.height / 2;
+    const commonAlign = reference[alignLength] / 2 - floating[alignLength] / 2;
+    let coords;
+    switch (side) {
+      case "top":
+        coords = {
+          x: commonX,
+          y: reference.y - floating.height
+        };
+        break;
+      case "bottom":
+        coords = {
+          x: commonX,
+          y: reference.y + reference.height
+        };
+        break;
+      case "right":
+        coords = {
+          x: reference.x + reference.width,
+          y: commonY
+        };
+        break;
+      case "left":
+        coords = {
+          x: reference.x - floating.width,
+          y: commonY
+        };
+        break;
+      default:
+        coords = {
+          x: reference.x,
+          y: reference.y
+        };
+    }
+    switch (getAlignment(placement)) {
+      case "start":
+        coords[alignmentAxis] -= commonAlign * (rtl && isVertical ? -1 : 1);
+        break;
+      case "end":
+        coords[alignmentAxis] += commonAlign * (rtl && isVertical ? -1 : 1);
+        break;
+    }
+    return coords;
+  }
+  async function detectOverflow(state, options) {
+    var _await$platform$isEle;
+    if (options === void 0) {
+      options = {};
+    }
+    const {
+      x,
+      y,
+      platform: platform2,
+      rects,
+      elements,
+      strategy
+    } = state;
+    const {
+      boundary = "clippingAncestors",
+      rootBoundary = "viewport",
+      elementContext = "floating",
+      altBoundary = false,
+      padding = 0
+    } = evaluate(options, state);
+    const paddingObject = getPaddingObject(padding);
+    const altContext = elementContext === "floating" ? "reference" : "floating";
+    const element = elements[altBoundary ? altContext : elementContext];
+    const clippingClientRect = rectToClientRect(await platform2.getClippingRect({
+      element: ((_await$platform$isEle = await (platform2.isElement == null ? void 0 : platform2.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || await (platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
+      boundary,
+      rootBoundary,
+      strategy
+    }));
+    const rect = elementContext === "floating" ? {
+      x,
+      y,
+      width: rects.floating.width,
+      height: rects.floating.height
+    } : rects.reference;
+    const offsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating));
+    const offsetScale = await (platform2.isElement == null ? void 0 : platform2.isElement(offsetParent)) ? await (platform2.getScale == null ? void 0 : platform2.getScale(offsetParent)) || {
+      x: 1,
+      y: 1
+    } : {
+      x: 1,
+      y: 1
+    };
+    const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+      elements,
+      rect,
+      offsetParent,
+      strategy
+    }) : rect);
+    return {
+      top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
+      bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
+      left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
+      right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
+    };
+  }
+  const MAX_RESET_COUNT = 50;
+  const computePosition$1 = async (reference, floating, config) => {
+    const {
+      placement = "bottom",
+      strategy = "absolute",
+      middleware = [],
+      platform: platform2
+    } = config;
+    const platformWithDetectOverflow = platform2.detectOverflow ? platform2 : {
+      ...platform2,
+      detectOverflow
+    };
+    const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(floating));
+    let rects = await platform2.getElementRects({
+      reference,
+      floating,
+      strategy
+    });
+    let {
+      x,
+      y
+    } = computeCoordsFromPlacement(rects, placement, rtl);
+    let statefulPlacement = placement;
+    let resetCount = 0;
+    const middlewareData = {};
+    for (let i = 0; i < middleware.length; i++) {
+      const currentMiddleware = middleware[i];
+      if (!currentMiddleware) {
+        continue;
+      }
+      const {
+        name,
+        fn
+      } = currentMiddleware;
+      const {
+        x: nextX,
+        y: nextY,
+        data,
+        reset
+      } = await fn({
+        x,
+        y,
+        initialPlacement: placement,
+        placement: statefulPlacement,
+        strategy,
+        middlewareData,
+        rects,
+        platform: platformWithDetectOverflow,
+        elements: {
+          reference,
+          floating
+        }
+      });
+      x = nextX != null ? nextX : x;
+      y = nextY != null ? nextY : y;
+      middlewareData[name] = {
+        ...middlewareData[name],
+        ...data
+      };
+      if (reset && resetCount < MAX_RESET_COUNT) {
+        resetCount++;
+        if (typeof reset === "object") {
+          if (reset.placement) {
+            statefulPlacement = reset.placement;
+          }
+          if (reset.rects) {
+            rects = reset.rects === true ? await platform2.getElementRects({
+              reference,
+              floating,
+              strategy
+            }) : reset.rects;
+          }
+          ({
+            x,
+            y
+          } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
+        }
+        i = -1;
+      }
+    }
+    return {
+      x,
+      y,
+      placement: statefulPlacement,
+      strategy,
+      middlewareData
+    };
+  };
+  const arrow$3 = (options) => ({
+    name: "arrow",
+    options,
+    async fn(state) {
+      const {
+        x,
+        y,
+        placement,
+        rects,
+        platform: platform2,
+        elements,
+        middlewareData
+      } = state;
+      const {
+        element,
+        padding = 0
+      } = evaluate(options, state) || {};
+      if (element == null) {
+        return {};
+      }
+      const paddingObject = getPaddingObject(padding);
+      const coords = {
+        x,
+        y
+      };
+      const axis = getAlignmentAxis(placement);
+      const length = getAxisLength(axis);
+      const arrowDimensions = await platform2.getDimensions(element);
+      const isYAxis = axis === "y";
+      const minProp = isYAxis ? "top" : "left";
+      const maxProp = isYAxis ? "bottom" : "right";
+      const clientProp = isYAxis ? "clientHeight" : "clientWidth";
+      const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+      const startDiff = coords[axis] - rects.reference[axis];
+      const arrowOffsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element));
+      let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
+      if (!clientSize || !await (platform2.isElement == null ? void 0 : platform2.isElement(arrowOffsetParent))) {
+        clientSize = elements.floating[clientProp] || rects.floating[length];
+      }
+      const centerToReference = endDiff / 2 - startDiff / 2;
+      const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
+      const minPadding = min(paddingObject[minProp], largestPossiblePadding);
+      const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
+      const min$1 = minPadding;
+      const max2 = clientSize - arrowDimensions[length] - maxPadding;
+      const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+      const offset2 = clamp$1(min$1, center, max2);
+      const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset2 && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
+      const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max2 : 0;
+      return {
+        [axis]: coords[axis] + alignmentOffset,
+        data: {
+          [axis]: offset2,
+          centerOffset: center - offset2 - alignmentOffset,
+          ...shouldAddOffset && {
+            alignmentOffset
+          }
+        },
+        reset: shouldAddOffset
+      };
+    }
+  });
+  const flip$2 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "flip",
+      options,
+      async fn(state) {
+        var _middlewareData$arrow, _middlewareData$flip;
+        const {
+          placement,
+          middlewareData,
+          rects,
+          initialPlacement,
+          platform: platform2,
+          elements
+        } = state;
+        const {
+          mainAxis: checkMainAxis = true,
+          crossAxis: checkCrossAxis = true,
+          fallbackPlacements: specifiedFallbackPlacements,
+          fallbackStrategy = "bestFit",
+          fallbackAxisSideDirection = "none",
+          flipAlignment = true,
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        if ((_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+          return {};
+        }
+        const side = getSide(placement);
+        const initialSideAxis = getSideAxis(initialPlacement);
+        const isBasePlacement = getSide(initialPlacement) === initialPlacement;
+        const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+        const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+        const hasFallbackAxisSideDirection = fallbackAxisSideDirection !== "none";
+        if (!specifiedFallbackPlacements && hasFallbackAxisSideDirection) {
+          fallbackPlacements.push(...getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection, rtl));
+        }
+        const placements = [initialPlacement, ...fallbackPlacements];
+        const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+        const overflows = [];
+        let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+        if (checkMainAxis) {
+          overflows.push(overflow[side]);
+        }
+        if (checkCrossAxis) {
+          const sides2 = getAlignmentSides(placement, rects, rtl);
+          overflows.push(overflow[sides2[0]], overflow[sides2[1]]);
+        }
+        overflowsData = [...overflowsData, {
+          placement,
+          overflows
+        }];
+        if (!overflows.every((side2) => side2 <= 0)) {
+          var _middlewareData$flip2, _overflowsData$filter;
+          const nextIndex = (((_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) || 0) + 1;
+          const nextPlacement = placements[nextIndex];
+          if (nextPlacement) {
+            const ignoreCrossAxisOverflow = checkCrossAxis === "alignment" ? initialSideAxis !== getSideAxis(nextPlacement) : false;
+            if (!ignoreCrossAxisOverflow ||
+
+overflowsData.every((d) => getSideAxis(d.placement) === initialSideAxis ? d.overflows[0] > 0 : true)) {
+              return {
+                data: {
+                  index: nextIndex,
+                  overflows: overflowsData
+                },
+                reset: {
+                  placement: nextPlacement
+                }
+              };
+            }
+          }
+          let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+          if (!resetPlacement) {
+            switch (fallbackStrategy) {
+              case "bestFit": {
+                var _overflowsData$filter2;
+                const placement2 = (_overflowsData$filter2 = overflowsData.filter((d) => {
+                  if (hasFallbackAxisSideDirection) {
+                    const currentSideAxis = getSideAxis(d.placement);
+                    return currentSideAxis === initialSideAxis ||
+
+currentSideAxis === "y";
+                  }
+                  return true;
+                }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+                if (placement2) {
+                  resetPlacement = placement2;
+                }
+                break;
+              }
+              case "initialPlacement":
+                resetPlacement = initialPlacement;
+                break;
+            }
+          }
+          if (placement !== resetPlacement) {
+            return {
+              reset: {
+                placement: resetPlacement
+              }
+            };
+          }
+        }
+        return {};
+      }
+    };
+  };
+  function getSideOffsets(overflow, rect) {
+    return {
+      top: overflow.top - rect.height,
+      right: overflow.right - rect.width,
+      bottom: overflow.bottom - rect.height,
+      left: overflow.left - rect.width
+    };
+  }
+  function isAnySideFullyClipped(overflow) {
+    return sides.some((side) => overflow[side] >= 0);
+  }
+  const hide$2 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "hide",
+      options,
+      async fn(state) {
+        const {
+          rects,
+          platform: platform2
+        } = state;
+        const {
+          strategy = "referenceHidden",
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        switch (strategy) {
+          case "referenceHidden": {
+            const overflow = await platform2.detectOverflow(state, {
+              ...detectOverflowOptions,
+              elementContext: "reference"
+            });
+            const offsets = getSideOffsets(overflow, rects.reference);
+            return {
+              data: {
+                referenceHiddenOffsets: offsets,
+                referenceHidden: isAnySideFullyClipped(offsets)
+              }
+            };
+          }
+          case "escaped": {
+            const overflow = await platform2.detectOverflow(state, {
+              ...detectOverflowOptions,
+              altBoundary: true
+            });
+            const offsets = getSideOffsets(overflow, rects.floating);
+            return {
+              data: {
+                escapedOffsets: offsets,
+                escaped: isAnySideFullyClipped(offsets)
+              }
+            };
+          }
+          default: {
+            return {};
+          }
+        }
+      }
+    };
+  };
+  const originSides = new Set(["left", "top"]);
+  async function convertValueToCoords(state, options) {
+    const {
+      placement,
+      platform: platform2,
+      elements
+    } = state;
+    const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+    const side = getSide(placement);
+    const alignment = getAlignment(placement);
+    const isVertical = getSideAxis(placement) === "y";
+    const mainAxisMulti = originSides.has(side) ? -1 : 1;
+    const crossAxisMulti = rtl && isVertical ? -1 : 1;
+    const rawValue = evaluate(options, state);
+    let {
+      mainAxis,
+      crossAxis,
+      alignmentAxis
+    } = typeof rawValue === "number" ? {
+      mainAxis: rawValue,
+      crossAxis: 0,
+      alignmentAxis: null
+    } : {
+      mainAxis: rawValue.mainAxis || 0,
+      crossAxis: rawValue.crossAxis || 0,
+      alignmentAxis: rawValue.alignmentAxis
+    };
+    if (alignment && typeof alignmentAxis === "number") {
+      crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
+    }
+    return isVertical ? {
+      x: crossAxis * crossAxisMulti,
+      y: mainAxis * mainAxisMulti
+    } : {
+      x: mainAxis * mainAxisMulti,
+      y: crossAxis * crossAxisMulti
+    };
+  }
+  const offset$2 = function(options) {
+    if (options === void 0) {
+      options = 0;
+    }
+    return {
+      name: "offset",
+      options,
+      async fn(state) {
+        var _middlewareData$offse, _middlewareData$arrow;
+        const {
+          x,
+          y,
+          placement,
+          middlewareData
+        } = state;
+        const diffCoords = await convertValueToCoords(state, options);
+        if (placement === ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse.placement) && (_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+          return {};
+        }
+        return {
+          x: x + diffCoords.x,
+          y: y + diffCoords.y,
+          data: {
+            ...diffCoords,
+            placement
+          }
+        };
+      }
+    };
+  };
+  const shift$2 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "shift",
+      options,
+      async fn(state) {
+        const {
+          x,
+          y,
+          placement,
+          platform: platform2
+        } = state;
+        const {
+          mainAxis: checkMainAxis = true,
+          crossAxis: checkCrossAxis = false,
+          limiter = {
+            fn: (_ref) => {
+              let {
+                x: x2,
+                y: y2
+              } = _ref;
+              return {
+                x: x2,
+                y: y2
+              };
+            }
+          },
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        const coords = {
+          x,
+          y
+        };
+        const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+        const crossAxis = getSideAxis(getSide(placement));
+        const mainAxis = getOppositeAxis(crossAxis);
+        let mainAxisCoord = coords[mainAxis];
+        let crossAxisCoord = coords[crossAxis];
+        if (checkMainAxis) {
+          const minSide = mainAxis === "y" ? "top" : "left";
+          const maxSide = mainAxis === "y" ? "bottom" : "right";
+          const min2 = mainAxisCoord + overflow[minSide];
+          const max2 = mainAxisCoord - overflow[maxSide];
+          mainAxisCoord = clamp$1(min2, mainAxisCoord, max2);
+        }
+        if (checkCrossAxis) {
+          const minSide = crossAxis === "y" ? "top" : "left";
+          const maxSide = crossAxis === "y" ? "bottom" : "right";
+          const min2 = crossAxisCoord + overflow[minSide];
+          const max2 = crossAxisCoord - overflow[maxSide];
+          crossAxisCoord = clamp$1(min2, crossAxisCoord, max2);
+        }
+        const limitedCoords = limiter.fn({
+          ...state,
+          [mainAxis]: mainAxisCoord,
+          [crossAxis]: crossAxisCoord
+        });
+        return {
+          ...limitedCoords,
+          data: {
+            x: limitedCoords.x - x,
+            y: limitedCoords.y - y,
+            enabled: {
+              [mainAxis]: checkMainAxis,
+              [crossAxis]: checkCrossAxis
+            }
+          }
+        };
+      }
+    };
+  };
+  const limitShift$2 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      options,
+      fn(state) {
+        const {
+          x,
+          y,
+          placement,
+          rects,
+          middlewareData
+        } = state;
+        const {
+          offset: offset2 = 0,
+          mainAxis: checkMainAxis = true,
+          crossAxis: checkCrossAxis = true
+        } = evaluate(options, state);
+        const coords = {
+          x,
+          y
+        };
+        const crossAxis = getSideAxis(placement);
+        const mainAxis = getOppositeAxis(crossAxis);
+        let mainAxisCoord = coords[mainAxis];
+        let crossAxisCoord = coords[crossAxis];
+        const rawOffset = evaluate(offset2, state);
+        const computedOffset = typeof rawOffset === "number" ? {
+          mainAxis: rawOffset,
+          crossAxis: 0
+        } : {
+          mainAxis: 0,
+          crossAxis: 0,
+          ...rawOffset
+        };
+        if (checkMainAxis) {
+          const len = mainAxis === "y" ? "height" : "width";
+          const limitMin = rects.reference[mainAxis] - rects.floating[len] + computedOffset.mainAxis;
+          const limitMax = rects.reference[mainAxis] + rects.reference[len] - computedOffset.mainAxis;
+          if (mainAxisCoord < limitMin) {
+            mainAxisCoord = limitMin;
+          } else if (mainAxisCoord > limitMax) {
+            mainAxisCoord = limitMax;
+          }
+        }
+        if (checkCrossAxis) {
+          var _middlewareData$offse, _middlewareData$offse2;
+          const len = mainAxis === "y" ? "width" : "height";
+          const isOriginSide = originSides.has(getSide(placement));
+          const limitMin = rects.reference[crossAxis] - rects.floating[len] + (isOriginSide ? ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse[crossAxis]) || 0 : 0) + (isOriginSide ? 0 : computedOffset.crossAxis);
+          const limitMax = rects.reference[crossAxis] + rects.reference[len] + (isOriginSide ? 0 : ((_middlewareData$offse2 = middlewareData.offset) == null ? void 0 : _middlewareData$offse2[crossAxis]) || 0) - (isOriginSide ? computedOffset.crossAxis : 0);
+          if (crossAxisCoord < limitMin) {
+            crossAxisCoord = limitMin;
+          } else if (crossAxisCoord > limitMax) {
+            crossAxisCoord = limitMax;
+          }
+        }
+        return {
+          [mainAxis]: mainAxisCoord,
+          [crossAxis]: crossAxisCoord
+        };
+      }
+    };
+  };
+  const size$2 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "size",
+      options,
+      async fn(state) {
+        var _state$middlewareData, _state$middlewareData2;
+        const {
+          placement,
+          rects,
+          platform: platform2,
+          elements
+        } = state;
+        const {
+          apply = () => {
+          },
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+        const side = getSide(placement);
+        const alignment = getAlignment(placement);
+        const isYAxis = getSideAxis(placement) === "y";
+        const {
+          width,
+          height
+        } = rects.floating;
+        let heightSide;
+        let widthSide;
+        if (side === "top" || side === "bottom") {
+          heightSide = side;
+          widthSide = alignment === (await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)) ? "start" : "end") ? "left" : "right";
+        } else {
+          widthSide = side;
+          heightSide = alignment === "end" ? "top" : "bottom";
+        }
+        const maximumClippingHeight = height - overflow.top - overflow.bottom;
+        const maximumClippingWidth = width - overflow.left - overflow.right;
+        const overflowAvailableHeight = min(height - overflow[heightSide], maximumClippingHeight);
+        const overflowAvailableWidth = min(width - overflow[widthSide], maximumClippingWidth);
+        const noShift = !state.middlewareData.shift;
+        let availableHeight = overflowAvailableHeight;
+        let availableWidth = overflowAvailableWidth;
+        if ((_state$middlewareData = state.middlewareData.shift) != null && _state$middlewareData.enabled.x) {
+          availableWidth = maximumClippingWidth;
+        }
+        if ((_state$middlewareData2 = state.middlewareData.shift) != null && _state$middlewareData2.enabled.y) {
+          availableHeight = maximumClippingHeight;
+        }
+        if (noShift && !alignment) {
+          const xMin = max(overflow.left, 0);
+          const xMax = max(overflow.right, 0);
+          const yMin = max(overflow.top, 0);
+          const yMax = max(overflow.bottom, 0);
+          if (isYAxis) {
+            availableWidth = width - 2 * (xMin !== 0 || xMax !== 0 ? xMin + xMax : max(overflow.left, overflow.right));
+          } else {
+            availableHeight = height - 2 * (yMin !== 0 || yMax !== 0 ? yMin + yMax : max(overflow.top, overflow.bottom));
+          }
+        }
+        await apply({
+          ...state,
+          availableWidth,
+          availableHeight
+        });
+        const nextDimensions = await platform2.getDimensions(elements.floating);
+        if (width !== nextDimensions.width || height !== nextDimensions.height) {
+          return {
+            reset: {
+              rects: true
+            }
+          };
+        }
+        return {};
+      }
+    };
+  };
+  function hasWindow() {
+    return typeof window !== "undefined";
+  }
+  function getNodeName(node) {
+    if (isNode(node)) {
+      return (node.nodeName || "").toLowerCase();
+    }
+    return "#document";
+  }
+  function getWindow(node) {
+    var _node$ownerDocument;
+    return (node == null || (_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.defaultView) || window;
+  }
+  function getDocumentElement(node) {
+    var _ref;
+    return (_ref = (isNode(node) ? node.ownerDocument : node.document) || window.document) == null ? void 0 : _ref.documentElement;
+  }
+  function isNode(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof Node || value instanceof getWindow(value).Node;
+  }
+  function isElement(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof Element || value instanceof getWindow(value).Element;
+  }
+  function isHTMLElement(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof HTMLElement || value instanceof getWindow(value).HTMLElement;
+  }
+  function isShadowRoot(value) {
+    if (!hasWindow() || typeof ShadowRoot === "undefined") {
+      return false;
+    }
+    return value instanceof ShadowRoot || value instanceof getWindow(value).ShadowRoot;
+  }
+  function isOverflowElement(element) {
+    const {
+      overflow,
+      overflowX,
+      overflowY,
+      display
+    } = getComputedStyle$1(element);
+    return /auto|scroll|overlay|hidden|clip/.test(overflow + overflowY + overflowX) && display !== "inline" && display !== "contents";
+  }
+  function isTableElement(element) {
+    return /^(table|td|th)$/.test(getNodeName(element));
+  }
+  function isTopLayer(element) {
+    try {
+      if (element.matches(":popover-open")) {
+        return true;
+      }
+    } catch (_e) {
+    }
+    try {
+      return element.matches(":modal");
+    } catch (_e) {
+      return false;
+    }
+  }
+  const willChangeRe = /transform|translate|scale|rotate|perspective|filter/;
+  const containRe = /paint|layout|strict|content/;
+  const isNotNone = (value) => !!value && value !== "none";
+  let isWebKitValue;
+  function isContainingBlock(elementOrCss) {
+    const css = isElement(elementOrCss) ? getComputedStyle$1(elementOrCss) : elementOrCss;
+    return isNotNone(css.transform) || isNotNone(css.translate) || isNotNone(css.scale) || isNotNone(css.rotate) || isNotNone(css.perspective) || !isWebKit() && (isNotNone(css.backdropFilter) || isNotNone(css.filter)) || willChangeRe.test(css.willChange || "") || containRe.test(css.contain || "");
+  }
+  function getContainingBlock(element) {
+    let currentNode = getParentNode(element);
+    while (isHTMLElement(currentNode) && !isLastTraversableNode(currentNode)) {
+      if (isContainingBlock(currentNode)) {
+        return currentNode;
+      } else if (isTopLayer(currentNode)) {
+        return null;
+      }
+      currentNode = getParentNode(currentNode);
+    }
+    return null;
+  }
+  function isWebKit() {
+    if (isWebKitValue == null) {
+      isWebKitValue = typeof CSS !== "undefined" && CSS.supports && CSS.supports("-webkit-backdrop-filter", "none");
+    }
+    return isWebKitValue;
+  }
+  function isLastTraversableNode(node) {
+    return /^(html|body|#document)$/.test(getNodeName(node));
+  }
+  function getComputedStyle$1(element) {
+    return getWindow(element).getComputedStyle(element);
+  }
+  function getNodeScroll(element) {
+    if (isElement(element)) {
+      return {
+        scrollLeft: element.scrollLeft,
+        scrollTop: element.scrollTop
+      };
+    }
+    return {
+      scrollLeft: element.scrollX,
+      scrollTop: element.scrollY
+    };
+  }
+  function getParentNode(node) {
+    if (getNodeName(node) === "html") {
+      return node;
+    }
+    const result = (
+node.assignedSlot ||
+node.parentNode ||
+isShadowRoot(node) && node.host ||
+getDocumentElement(node)
+    );
+    return isShadowRoot(result) ? result.host : result;
+  }
+  function getNearestOverflowAncestor(node) {
+    const parentNode = getParentNode(node);
+    if (isLastTraversableNode(parentNode)) {
+      return node.ownerDocument ? node.ownerDocument.body : node.body;
+    }
+    if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) {
+      return parentNode;
+    }
+    return getNearestOverflowAncestor(parentNode);
+  }
+  function getOverflowAncestors(node, list, traverseIframes) {
+    var _node$ownerDocument2;
+    if (list === void 0) {
+      list = [];
+    }
+    if (traverseIframes === void 0) {
+      traverseIframes = true;
+    }
+    const scrollableAncestor = getNearestOverflowAncestor(node);
+    const isBody = scrollableAncestor === ((_node$ownerDocument2 = node.ownerDocument) == null ? void 0 : _node$ownerDocument2.body);
+    const win = getWindow(scrollableAncestor);
+    if (isBody) {
+      const frameElement = getFrameElement(win);
+      return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : [], frameElement && traverseIframes ? getOverflowAncestors(frameElement) : []);
+    } else {
+      return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor, [], traverseIframes));
+    }
+  }
+  function getFrameElement(win) {
+    return win.parent && Object.getPrototypeOf(win.parent) ? win.frameElement : null;
+  }
+  function getCssDimensions(element) {
+    const css = getComputedStyle$1(element);
+    let width = parseFloat(css.width) || 0;
+    let height = parseFloat(css.height) || 0;
+    const hasOffset = isHTMLElement(element);
+    const offsetWidth = hasOffset ? element.offsetWidth : width;
+    const offsetHeight = hasOffset ? element.offsetHeight : height;
+    const shouldFallback = round(width) !== offsetWidth || round(height) !== offsetHeight;
+    if (shouldFallback) {
+      width = offsetWidth;
+      height = offsetHeight;
+    }
+    return {
+      width,
+      height,
+      $: shouldFallback
+    };
+  }
+  function unwrapElement(element) {
+    return !isElement(element) ? element.contextElement : element;
+  }
+  function getScale(element) {
+    const domElement = unwrapElement(element);
+    if (!isHTMLElement(domElement)) {
+      return createCoords(1);
+    }
+    const rect = domElement.getBoundingClientRect();
+    const {
+      width,
+      height,
+      $
+    } = getCssDimensions(domElement);
+    let x = ($ ? round(rect.width) : rect.width) / width;
+    let y = ($ ? round(rect.height) : rect.height) / height;
+    if (!x || !Number.isFinite(x)) {
+      x = 1;
+    }
+    if (!y || !Number.isFinite(y)) {
+      y = 1;
+    }
+    return {
+      x,
+      y
+    };
+  }
+  const noOffsets = createCoords(0);
+  function getVisualOffsets(element) {
+    const win = getWindow(element);
+    if (!isWebKit() || !win.visualViewport) {
+      return noOffsets;
+    }
+    return {
+      x: win.visualViewport.offsetLeft,
+      y: win.visualViewport.offsetTop
+    };
+  }
+  function shouldAddVisualOffsets(element, isFixed, floatingOffsetParent) {
+    if (isFixed === void 0) {
+      isFixed = false;
+    }
+    if (!floatingOffsetParent || isFixed && floatingOffsetParent !== getWindow(element)) {
+      return false;
+    }
+    return isFixed;
+  }
+  function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetParent) {
+    if (includeScale === void 0) {
+      includeScale = false;
+    }
+    if (isFixedStrategy === void 0) {
+      isFixedStrategy = false;
+    }
+    const clientRect = element.getBoundingClientRect();
+    const domElement = unwrapElement(element);
+    let scale = createCoords(1);
+    if (includeScale) {
+      if (offsetParent) {
+        if (isElement(offsetParent)) {
+          scale = getScale(offsetParent);
+        }
+      } else {
+        scale = getScale(element);
+      }
+    }
+    const visualOffsets = shouldAddVisualOffsets(domElement, isFixedStrategy, offsetParent) ? getVisualOffsets(domElement) : createCoords(0);
+    let x = (clientRect.left + visualOffsets.x) / scale.x;
+    let y = (clientRect.top + visualOffsets.y) / scale.y;
+    let width = clientRect.width / scale.x;
+    let height = clientRect.height / scale.y;
+    if (domElement) {
+      const win = getWindow(domElement);
+      const offsetWin = offsetParent && isElement(offsetParent) ? getWindow(offsetParent) : offsetParent;
+      let currentWin = win;
+      let currentIFrame = getFrameElement(currentWin);
+      while (currentIFrame && offsetParent && offsetWin !== currentWin) {
+        const iframeScale = getScale(currentIFrame);
+        const iframeRect = currentIFrame.getBoundingClientRect();
+        const css = getComputedStyle$1(currentIFrame);
+        const left = iframeRect.left + (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
+        const top = iframeRect.top + (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
+        x *= iframeScale.x;
+        y *= iframeScale.y;
+        width *= iframeScale.x;
+        height *= iframeScale.y;
+        x += left;
+        y += top;
+        currentWin = getWindow(currentIFrame);
+        currentIFrame = getFrameElement(currentWin);
+      }
+    }
+    return rectToClientRect({
+      width,
+      height,
+      x,
+      y
+    });
+  }
+  function getWindowScrollBarX(element, rect) {
+    const leftScroll = getNodeScroll(element).scrollLeft;
+    if (!rect) {
+      return getBoundingClientRect(getDocumentElement(element)).left + leftScroll;
+    }
+    return rect.left + leftScroll;
+  }
+  function getHTMLOffset(documentElement, scroll) {
+    const htmlRect = documentElement.getBoundingClientRect();
+    const x = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
+    const y = htmlRect.top + scroll.scrollTop;
+    return {
+      x,
+      y
+    };
+  }
+  function convertOffsetParentRelativeRectToViewportRelativeRect(_ref) {
+    let {
+      elements,
+      rect,
+      offsetParent,
+      strategy
+    } = _ref;
+    const isFixed = strategy === "fixed";
+    const documentElement = getDocumentElement(offsetParent);
+    const topLayer = elements ? isTopLayer(elements.floating) : false;
+    if (offsetParent === documentElement || topLayer && isFixed) {
+      return rect;
+    }
+    let scroll = {
+      scrollLeft: 0,
+      scrollTop: 0
+    };
+    let scale = createCoords(1);
+    const offsets = createCoords(0);
+    const isOffsetParentAnElement = isHTMLElement(offsetParent);
+    if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
+      if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+        scroll = getNodeScroll(offsetParent);
+      }
+      if (isOffsetParentAnElement) {
+        const offsetRect = getBoundingClientRect(offsetParent);
+        scale = getScale(offsetParent);
+        offsets.x = offsetRect.x + offsetParent.clientLeft;
+        offsets.y = offsetRect.y + offsetParent.clientTop;
+      }
+    }
+    const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
+    return {
+      width: rect.width * scale.x,
+      height: rect.height * scale.y,
+      x: rect.x * scale.x - scroll.scrollLeft * scale.x + offsets.x + htmlOffset.x,
+      y: rect.y * scale.y - scroll.scrollTop * scale.y + offsets.y + htmlOffset.y
+    };
+  }
+  function getClientRects(element) {
+    return Array.from(element.getClientRects());
+  }
+  function getDocumentRect(element) {
+    const html = getDocumentElement(element);
+    const scroll = getNodeScroll(element);
+    const body = element.ownerDocument.body;
+    const width = max(html.scrollWidth, html.clientWidth, body.scrollWidth, body.clientWidth);
+    const height = max(html.scrollHeight, html.clientHeight, body.scrollHeight, body.clientHeight);
+    let x = -scroll.scrollLeft + getWindowScrollBarX(element);
+    const y = -scroll.scrollTop;
+    if (getComputedStyle$1(body).direction === "rtl") {
+      x += max(html.clientWidth, body.clientWidth) - width;
+    }
+    return {
+      width,
+      height,
+      x,
+      y
+    };
+  }
+  const SCROLLBAR_MAX = 25;
+  function getViewportRect(element, strategy) {
+    const win = getWindow(element);
+    const html = getDocumentElement(element);
+    const visualViewport = win.visualViewport;
+    let width = html.clientWidth;
+    let height = html.clientHeight;
+    let x = 0;
+    let y = 0;
+    if (visualViewport) {
+      width = visualViewport.width;
+      height = visualViewport.height;
+      const visualViewportBased = isWebKit();
+      if (!visualViewportBased || visualViewportBased && strategy === "fixed") {
+        x = visualViewport.offsetLeft;
+        y = visualViewport.offsetTop;
+      }
+    }
+    const windowScrollbarX = getWindowScrollBarX(html);
+    if (windowScrollbarX <= 0) {
+      const doc = html.ownerDocument;
+      const body = doc.body;
+      const bodyStyles = getComputedStyle(body);
+      const bodyMarginInline = doc.compatMode === "CSS1Compat" ? parseFloat(bodyStyles.marginLeft) + parseFloat(bodyStyles.marginRight) || 0 : 0;
+      const clippingStableScrollbarWidth = Math.abs(html.clientWidth - body.clientWidth - bodyMarginInline);
+      if (clippingStableScrollbarWidth <= SCROLLBAR_MAX) {
+        width -= clippingStableScrollbarWidth;
+      }
+    } else if (windowScrollbarX <= SCROLLBAR_MAX) {
+      width += windowScrollbarX;
+    }
+    return {
+      width,
+      height,
+      x,
+      y
+    };
+  }
+  function getInnerBoundingClientRect(element, strategy) {
+    const clientRect = getBoundingClientRect(element, true, strategy === "fixed");
+    const top = clientRect.top + element.clientTop;
+    const left = clientRect.left + element.clientLeft;
+    const scale = isHTMLElement(element) ? getScale(element) : createCoords(1);
+    const width = element.clientWidth * scale.x;
+    const height = element.clientHeight * scale.y;
+    const x = left * scale.x;
+    const y = top * scale.y;
+    return {
+      width,
+      height,
+      x,
+      y
+    };
+  }
+  function getClientRectFromClippingAncestor(element, clippingAncestor, strategy) {
+    let rect;
+    if (clippingAncestor === "viewport") {
+      rect = getViewportRect(element, strategy);
+    } else if (clippingAncestor === "document") {
+      rect = getDocumentRect(getDocumentElement(element));
+    } else if (isElement(clippingAncestor)) {
+      rect = getInnerBoundingClientRect(clippingAncestor, strategy);
+    } else {
+      const visualOffsets = getVisualOffsets(element);
+      rect = {
+        x: clippingAncestor.x - visualOffsets.x,
+        y: clippingAncestor.y - visualOffsets.y,
+        width: clippingAncestor.width,
+        height: clippingAncestor.height
+      };
+    }
+    return rectToClientRect(rect);
+  }
+  function hasFixedPositionAncestor(element, stopNode) {
+    const parentNode = getParentNode(element);
+    if (parentNode === stopNode || !isElement(parentNode) || isLastTraversableNode(parentNode)) {
+      return false;
+    }
+    return getComputedStyle$1(parentNode).position === "fixed" || hasFixedPositionAncestor(parentNode, stopNode);
+  }
+  function getClippingElementAncestors(element, cache) {
+    const cachedResult = cache.get(element);
+    if (cachedResult) {
+      return cachedResult;
+    }
+    let result = getOverflowAncestors(element, [], false).filter((el) => isElement(el) && getNodeName(el) !== "body");
+    let currentContainingBlockComputedStyle = null;
+    const elementIsFixed = getComputedStyle$1(element).position === "fixed";
+    let currentNode = elementIsFixed ? getParentNode(element) : element;
+    while (isElement(currentNode) && !isLastTraversableNode(currentNode)) {
+      const computedStyle = getComputedStyle$1(currentNode);
+      const currentNodeIsContaining = isContainingBlock(currentNode);
+      if (!currentNodeIsContaining && computedStyle.position === "fixed") {
+        currentContainingBlockComputedStyle = null;
+      }
+      const shouldDropCurrentNode = elementIsFixed ? !currentNodeIsContaining && !currentContainingBlockComputedStyle : !currentNodeIsContaining && computedStyle.position === "static" && !!currentContainingBlockComputedStyle && (currentContainingBlockComputedStyle.position === "absolute" || currentContainingBlockComputedStyle.position === "fixed") || isOverflowElement(currentNode) && !currentNodeIsContaining && hasFixedPositionAncestor(element, currentNode);
+      if (shouldDropCurrentNode) {
+        result = result.filter((ancestor) => ancestor !== currentNode);
+      } else {
+        currentContainingBlockComputedStyle = computedStyle;
+      }
+      currentNode = getParentNode(currentNode);
+    }
+    cache.set(element, result);
+    return result;
+  }
+  function getClippingRect(_ref) {
+    let {
+      element,
+      boundary,
+      rootBoundary,
+      strategy
+    } = _ref;
+    const elementClippingAncestors = boundary === "clippingAncestors" ? isTopLayer(element) ? [] : getClippingElementAncestors(element, this._c) : [].concat(boundary);
+    const clippingAncestors = [...elementClippingAncestors, rootBoundary];
+    const firstRect = getClientRectFromClippingAncestor(element, clippingAncestors[0], strategy);
+    let top = firstRect.top;
+    let right = firstRect.right;
+    let bottom = firstRect.bottom;
+    let left = firstRect.left;
+    for (let i = 1; i < clippingAncestors.length; i++) {
+      const rect = getClientRectFromClippingAncestor(element, clippingAncestors[i], strategy);
+      top = max(rect.top, top);
+      right = min(rect.right, right);
+      bottom = min(rect.bottom, bottom);
+      left = max(rect.left, left);
+    }
+    return {
+      width: right - left,
+      height: bottom - top,
+      x: left,
+      y: top
+    };
+  }
+  function getDimensions(element) {
+    const {
+      width,
+      height
+    } = getCssDimensions(element);
+    return {
+      width,
+      height
+    };
+  }
+  function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
+    const isOffsetParentAnElement = isHTMLElement(offsetParent);
+    const documentElement = getDocumentElement(offsetParent);
+    const isFixed = strategy === "fixed";
+    const rect = getBoundingClientRect(element, true, isFixed, offsetParent);
+    let scroll = {
+      scrollLeft: 0,
+      scrollTop: 0
+    };
+    const offsets = createCoords(0);
+    function setLeftRTLScrollbarOffset() {
+      offsets.x = getWindowScrollBarX(documentElement);
+    }
+    if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
+      if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+        scroll = getNodeScroll(offsetParent);
+      }
+      if (isOffsetParentAnElement) {
+        const offsetRect = getBoundingClientRect(offsetParent, true, isFixed, offsetParent);
+        offsets.x = offsetRect.x + offsetParent.clientLeft;
+        offsets.y = offsetRect.y + offsetParent.clientTop;
+      } else if (documentElement) {
+        setLeftRTLScrollbarOffset();
+      }
+    }
+    if (isFixed && !isOffsetParentAnElement && documentElement) {
+      setLeftRTLScrollbarOffset();
+    }
+    const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
+    const x = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
+    const y = rect.top + scroll.scrollTop - offsets.y - htmlOffset.y;
+    return {
+      x,
+      y,
+      width: rect.width,
+      height: rect.height
+    };
+  }
+  function isStaticPositioned(element) {
+    return getComputedStyle$1(element).position === "static";
+  }
+  function getTrueOffsetParent(element, polyfill) {
+    if (!isHTMLElement(element) || getComputedStyle$1(element).position === "fixed") {
+      return null;
+    }
+    if (polyfill) {
+      return polyfill(element);
+    }
+    let rawOffsetParent = element.offsetParent;
+    if (getDocumentElement(element) === rawOffsetParent) {
+      rawOffsetParent = rawOffsetParent.ownerDocument.body;
+    }
+    return rawOffsetParent;
+  }
+  function getOffsetParent(element, polyfill) {
+    const win = getWindow(element);
+    if (isTopLayer(element)) {
+      return win;
+    }
+    if (!isHTMLElement(element)) {
+      let svgOffsetParent = getParentNode(element);
+      while (svgOffsetParent && !isLastTraversableNode(svgOffsetParent)) {
+        if (isElement(svgOffsetParent) && !isStaticPositioned(svgOffsetParent)) {
+          return svgOffsetParent;
+        }
+        svgOffsetParent = getParentNode(svgOffsetParent);
+      }
+      return win;
+    }
+    let offsetParent = getTrueOffsetParent(element, polyfill);
+    while (offsetParent && isTableElement(offsetParent) && isStaticPositioned(offsetParent)) {
+      offsetParent = getTrueOffsetParent(offsetParent, polyfill);
+    }
+    if (offsetParent && isLastTraversableNode(offsetParent) && isStaticPositioned(offsetParent) && !isContainingBlock(offsetParent)) {
+      return win;
+    }
+    return offsetParent || getContainingBlock(element) || win;
+  }
+  const getElementRects = async function(data) {
+    const getOffsetParentFn = this.getOffsetParent || getOffsetParent;
+    const getDimensionsFn = this.getDimensions;
+    const floatingDimensions = await getDimensionsFn(data.floating);
+    return {
+      reference: getRectRelativeToOffsetParent(data.reference, await getOffsetParentFn(data.floating), data.strategy),
+      floating: {
+        x: 0,
+        y: 0,
+        width: floatingDimensions.width,
+        height: floatingDimensions.height
+      }
+    };
+  };
+  function isRTL(element) {
+    return getComputedStyle$1(element).direction === "rtl";
+  }
+  const platform = {
+    convertOffsetParentRelativeRectToViewportRelativeRect,
+    getDocumentElement,
+    getClippingRect,
+    getOffsetParent,
+    getElementRects,
+    getClientRects,
+    getDimensions,
+    getScale,
+    isElement,
+    isRTL
+  };
+  function rectsAreEqual(a, b) {
+    return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+  }
+  function observeMove(element, onMove) {
+    let io = null;
+    let timeoutId;
+    const root = getDocumentElement(element);
+    function cleanup() {
+      var _io;
+      clearTimeout(timeoutId);
+      (_io = io) == null || _io.disconnect();
+      io = null;
+    }
+    function refresh(skip, threshold) {
+      if (skip === void 0) {
+        skip = false;
+      }
+      if (threshold === void 0) {
+        threshold = 1;
+      }
+      cleanup();
+      const elementRectForRootMargin = element.getBoundingClientRect();
+      const {
+        left,
+        top,
+        width,
+        height
+      } = elementRectForRootMargin;
+      if (!skip) {
+        onMove();
+      }
+      if (!width || !height) {
+        return;
+      }
+      const insetTop = floor(top);
+      const insetRight = floor(root.clientWidth - (left + width));
+      const insetBottom = floor(root.clientHeight - (top + height));
+      const insetLeft = floor(left);
+      const rootMargin = -insetTop + "px " + -insetRight + "px " + -insetBottom + "px " + -insetLeft + "px";
+      const options = {
+        rootMargin,
+        threshold: max(0, min(1, threshold)) || 1
+      };
+      let isFirstUpdate = true;
+      function handleObserve(entries) {
+        const ratio = entries[0].intersectionRatio;
+        if (ratio !== threshold) {
+          if (!isFirstUpdate) {
+            return refresh();
+          }
+          if (!ratio) {
+            timeoutId = setTimeout(() => {
+              refresh(false, 1e-7);
+            }, 1e3);
+          } else {
+            refresh(false, ratio);
+          }
+        }
+        if (ratio === 1 && !rectsAreEqual(elementRectForRootMargin, element.getBoundingClientRect())) {
+          refresh();
+        }
+        isFirstUpdate = false;
+      }
+      try {
+        io = new IntersectionObserver(handleObserve, {
+          ...options,
+root: root.ownerDocument
+        });
+      } catch (_e) {
+        io = new IntersectionObserver(handleObserve, options);
+      }
+      io.observe(element);
+    }
+    refresh(true);
+    return cleanup;
+  }
+  function autoUpdate(reference, floating, update, options) {
+    if (options === void 0) {
+      options = {};
+    }
+    const {
+      ancestorScroll = true,
+      ancestorResize = true,
+      elementResize = typeof ResizeObserver === "function",
+      layoutShift = typeof IntersectionObserver === "function",
+      animationFrame = false
+    } = options;
+    const referenceEl = unwrapElement(reference);
+    const ancestors = ancestorScroll || ancestorResize ? [...referenceEl ? getOverflowAncestors(referenceEl) : [], ...floating ? getOverflowAncestors(floating) : []] : [];
+    ancestors.forEach((ancestor) => {
+      ancestorScroll && ancestor.addEventListener("scroll", update, {
+        passive: true
+      });
+      ancestorResize && ancestor.addEventListener("resize", update);
+    });
+    const cleanupIo = referenceEl && layoutShift ? observeMove(referenceEl, update) : null;
+    let reobserveFrame = -1;
+    let resizeObserver = null;
+    if (elementResize) {
+      resizeObserver = new ResizeObserver((_ref) => {
+        let [firstEntry] = _ref;
+        if (firstEntry && firstEntry.target === referenceEl && resizeObserver && floating) {
+          resizeObserver.unobserve(floating);
+          cancelAnimationFrame(reobserveFrame);
+          reobserveFrame = requestAnimationFrame(() => {
+            var _resizeObserver;
+            (_resizeObserver = resizeObserver) == null || _resizeObserver.observe(floating);
+          });
+        }
+        update();
+      });
+      if (referenceEl && !animationFrame) {
+        resizeObserver.observe(referenceEl);
+      }
+      if (floating) {
+        resizeObserver.observe(floating);
+      }
+    }
+    let frameId;
+    let prevRefRect = animationFrame ? getBoundingClientRect(reference) : null;
+    if (animationFrame) {
+      frameLoop();
+    }
+    function frameLoop() {
+      const nextRefRect = getBoundingClientRect(reference);
+      if (prevRefRect && !rectsAreEqual(prevRefRect, nextRefRect)) {
+        update();
+      }
+      prevRefRect = nextRefRect;
+      frameId = requestAnimationFrame(frameLoop);
+    }
+    update();
+    return () => {
+      var _resizeObserver2;
+      ancestors.forEach((ancestor) => {
+        ancestorScroll && ancestor.removeEventListener("scroll", update);
+        ancestorResize && ancestor.removeEventListener("resize", update);
+      });
+      cleanupIo == null || cleanupIo();
+      (_resizeObserver2 = resizeObserver) == null || _resizeObserver2.disconnect();
+      resizeObserver = null;
+      if (animationFrame) {
+        cancelAnimationFrame(frameId);
+      }
+    };
+  }
+  const offset$1 = offset$2;
+  const shift$1 = shift$2;
+  const flip$1 = flip$2;
+  const size$1 = size$2;
+  const hide$1 = hide$2;
+  const arrow$2 = arrow$3;
+  const limitShift$1 = limitShift$2;
+  const computePosition = (reference, floating, options) => {
+    const cache = new Map();
+    const mergedOptions = {
+      platform,
+      ...options
+    };
+    const platformWithCache = {
+      ...mergedOptions.platform,
+      _c: cache
+    };
+    return computePosition$1(reference, floating, {
+      ...mergedOptions,
+      platform: platformWithCache
+    });
+  };
+  var isClient = typeof document !== "undefined";
+  var noop = function noop2() {
+  };
+  var index = isClient ? reactExports.useLayoutEffect : noop;
+  function deepEqual(a, b) {
+    if (a === b) {
+      return true;
+    }
+    if (typeof a !== typeof b) {
+      return false;
+    }
+    if (typeof a === "function" && a.toString() === b.toString()) {
+      return true;
+    }
+    let length;
+    let i;
+    let keys;
+    if (a && b && typeof a === "object") {
+      if (Array.isArray(a)) {
+        length = a.length;
+        if (length !== b.length) return false;
+        for (i = length; i-- !== 0; ) {
+          if (!deepEqual(a[i], b[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+      keys = Object.keys(a);
+      length = keys.length;
+      if (length !== Object.keys(b).length) {
+        return false;
+      }
+      for (i = length; i-- !== 0; ) {
+        if (!{}.hasOwnProperty.call(b, keys[i])) {
+          return false;
+        }
+      }
+      for (i = length; i-- !== 0; ) {
+        const key = keys[i];
+        if (key === "_owner" && a.$$typeof) {
+          continue;
+        }
+        if (!deepEqual(a[key], b[key])) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return a !== a && b !== b;
+  }
+  function getDPR(element) {
+    if (typeof window === "undefined") {
+      return 1;
+    }
+    const win = element.ownerDocument.defaultView || window;
+    return win.devicePixelRatio || 1;
+  }
+  function roundByDPR(element, value) {
+    const dpr = getDPR(element);
+    return Math.round(value * dpr) / dpr;
+  }
+  function useLatestRef(value) {
+    const ref = reactExports.useRef(value);
+    index(() => {
+      ref.current = value;
+    });
+    return ref;
+  }
+  function useFloating(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    const {
+      placement = "bottom",
+      strategy = "absolute",
+      middleware = [],
+      platform: platform2,
+      elements: {
+        reference: externalReference,
+        floating: externalFloating
+      } = {},
+      transform = true,
+      whileElementsMounted,
+      open
+    } = options;
+    const [data, setData] = reactExports.useState({
+      x: 0,
+      y: 0,
+      strategy,
+      placement,
+      middlewareData: {},
+      isPositioned: false
+    });
+    const [latestMiddleware, setLatestMiddleware] = reactExports.useState(middleware);
+    if (!deepEqual(latestMiddleware, middleware)) {
+      setLatestMiddleware(middleware);
+    }
+    const [_reference, _setReference] = reactExports.useState(null);
+    const [_floating, _setFloating] = reactExports.useState(null);
+    const setReference = reactExports.useCallback((node) => {
+      if (node !== referenceRef.current) {
+        referenceRef.current = node;
+        _setReference(node);
+      }
+    }, []);
+    const setFloating = reactExports.useCallback((node) => {
+      if (node !== floatingRef.current) {
+        floatingRef.current = node;
+        _setFloating(node);
+      }
+    }, []);
+    const referenceEl = externalReference || _reference;
+    const floatingEl = externalFloating || _floating;
+    const referenceRef = reactExports.useRef(null);
+    const floatingRef = reactExports.useRef(null);
+    const dataRef = reactExports.useRef(data);
+    const hasWhileElementsMounted = whileElementsMounted != null;
+    const whileElementsMountedRef = useLatestRef(whileElementsMounted);
+    const platformRef = useLatestRef(platform2);
+    const openRef = useLatestRef(open);
+    const update = reactExports.useCallback(() => {
+      if (!referenceRef.current || !floatingRef.current) {
+        return;
+      }
+      const config = {
+        placement,
+        strategy,
+        middleware: latestMiddleware
+      };
+      if (platformRef.current) {
+        config.platform = platformRef.current;
+      }
+      computePosition(referenceRef.current, floatingRef.current, config).then((data2) => {
+        const fullData = {
+          ...data2,
+
+
+
+isPositioned: openRef.current !== false
+        };
+        if (isMountedRef.current && !deepEqual(dataRef.current, fullData)) {
+          dataRef.current = fullData;
+          reactDomExports.flushSync(() => {
+            setData(fullData);
+          });
+        }
+      });
+    }, [latestMiddleware, placement, strategy, platformRef, openRef]);
+    index(() => {
+      if (open === false && dataRef.current.isPositioned) {
+        dataRef.current.isPositioned = false;
+        setData((data2) => ({
+          ...data2,
+          isPositioned: false
+        }));
+      }
+    }, [open]);
+    const isMountedRef = reactExports.useRef(false);
+    index(() => {
+      isMountedRef.current = true;
+      return () => {
+        isMountedRef.current = false;
+      };
+    }, []);
+    index(() => {
+      if (referenceEl) referenceRef.current = referenceEl;
+      if (floatingEl) floatingRef.current = floatingEl;
+      if (referenceEl && floatingEl) {
+        if (whileElementsMountedRef.current) {
+          return whileElementsMountedRef.current(referenceEl, floatingEl, update);
+        }
+        update();
+      }
+    }, [referenceEl, floatingEl, update, whileElementsMountedRef, hasWhileElementsMounted]);
+    const refs = reactExports.useMemo(() => ({
+      reference: referenceRef,
+      floating: floatingRef,
+      setReference,
+      setFloating
+    }), [setReference, setFloating]);
+    const elements = reactExports.useMemo(() => ({
+      reference: referenceEl,
+      floating: floatingEl
+    }), [referenceEl, floatingEl]);
+    const floatingStyles = reactExports.useMemo(() => {
+      const initialStyles = {
+        position: strategy,
+        left: 0,
+        top: 0
+      };
+      if (!elements.floating) {
+        return initialStyles;
+      }
+      const x = roundByDPR(elements.floating, data.x);
+      const y = roundByDPR(elements.floating, data.y);
+      if (transform) {
+        return {
+          ...initialStyles,
+          transform: "translate(" + x + "px, " + y + "px)",
+          ...getDPR(elements.floating) >= 1.5 && {
+            willChange: "transform"
+          }
+        };
+      }
+      return {
+        position: strategy,
+        left: x,
+        top: y
+      };
+    }, [strategy, transform, elements.floating, data.x, data.y]);
+    return reactExports.useMemo(() => ({
+      ...data,
+      update,
+      refs,
+      elements,
+      floatingStyles
+    }), [data, update, refs, elements, floatingStyles]);
+  }
+  const arrow$1 = (options) => {
+    function isRef(value) {
+      return {}.hasOwnProperty.call(value, "current");
+    }
+    return {
+      name: "arrow",
+      options,
+      fn(state) {
+        const {
+          element,
+          padding
+        } = typeof options === "function" ? options(state) : options;
+        if (element && isRef(element)) {
+          if (element.current != null) {
+            return arrow$2({
+              element: element.current,
+              padding
+            }).fn(state);
+          }
+          return {};
+        }
+        if (element) {
+          return arrow$2({
+            element,
+            padding
+          }).fn(state);
+        }
+        return {};
+      }
+    };
+  };
+  const offset = (options, deps) => {
+    const result = offset$1(options);
+    return {
+      name: result.name,
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  const shift = (options, deps) => {
+    const result = shift$1(options);
+    return {
+      name: result.name,
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  const limitShift = (options, deps) => {
+    const result = limitShift$1(options);
+    return {
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  const flip = (options, deps) => {
+    const result = flip$1(options);
+    return {
+      name: result.name,
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  const size = (options, deps) => {
+    const result = size$1(options);
+    return {
+      name: result.name,
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  const hide = (options, deps) => {
+    const result = hide$1(options);
+    return {
+      name: result.name,
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  const arrow = (options, deps) => {
+    const result = arrow$1(options);
+    return {
+      name: result.name,
+      fn: result.fn,
+      options: [options, deps]
+    };
+  };
+  var NAME = "Arrow";
+  var Arrow$1 = reactExports.forwardRef((props, forwardedRef) => {
+    const { children, width = 10, height = 5, ...arrowProps } = props;
+    return jsxRuntimeExports.jsx(
+      Primitive.svg,
+      {
+        ...arrowProps,
+        ref: forwardedRef,
+        width,
+        height,
+        viewBox: "0 0 30 10",
+        preserveAspectRatio: "none",
+        children: props.asChild ? children : jsxRuntimeExports.jsx("polygon", { points: "0,0 30,0 15,10" })
+      }
+    );
+  });
+  Arrow$1.displayName = NAME;
+  var Root$1 = Arrow$1;
+  var POPPER_NAME = "Popper";
+  var [createPopperContext, createPopperScope] = createContextScope(POPPER_NAME);
+  var [PopperProvider, usePopperContext] = createPopperContext(POPPER_NAME);
+  var Popper = (props) => {
+    const { __scopePopper, children } = props;
+    const [anchor, setAnchor] = reactExports.useState(null);
+    return jsxRuntimeExports.jsx(PopperProvider, { scope: __scopePopper, anchor, onAnchorChange: setAnchor, children });
+  };
+  Popper.displayName = POPPER_NAME;
+  var ANCHOR_NAME = "PopperAnchor";
+  var PopperAnchor = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopePopper, virtualRef, ...anchorProps } = props;
+      const context = usePopperContext(ANCHOR_NAME, __scopePopper);
+      const ref = reactExports.useRef(null);
+      const composedRefs = useComposedRefs(forwardedRef, ref);
+      const anchorRef = reactExports.useRef(null);
+      reactExports.useEffect(() => {
+        const previousAnchor = anchorRef.current;
+        anchorRef.current = virtualRef?.current || ref.current;
+        if (previousAnchor !== anchorRef.current) {
+          context.onAnchorChange(anchorRef.current);
+        }
+      });
+      return virtualRef ? null : jsxRuntimeExports.jsx(Primitive.div, { ...anchorProps, ref: composedRefs });
+    }
+  );
+  PopperAnchor.displayName = ANCHOR_NAME;
+  var CONTENT_NAME$1 = "PopperContent";
+  var [PopperContentProvider, useContentContext] = createPopperContext(CONTENT_NAME$1);
+  var PopperContent = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const {
+        __scopePopper,
+        side = "bottom",
+        sideOffset = 0,
+        align = "center",
+        alignOffset = 0,
+        arrowPadding = 0,
+        avoidCollisions = true,
+        collisionBoundary = [],
+        collisionPadding: collisionPaddingProp = 0,
+        sticky = "partial",
+        hideWhenDetached = false,
+        updatePositionStrategy = "optimized",
+        onPlaced,
+        ...contentProps
+      } = props;
+      const context = usePopperContext(CONTENT_NAME$1, __scopePopper);
+      const [content, setContent] = reactExports.useState(null);
+      const composedRefs = useComposedRefs(forwardedRef, (node) => setContent(node));
+      const [arrow$12, setArrow] = reactExports.useState(null);
+      const arrowSize = useSize(arrow$12);
+      const arrowWidth = arrowSize?.width ?? 0;
+      const arrowHeight = arrowSize?.height ?? 0;
+      const desiredPlacement = side + (align !== "center" ? "-" + align : "");
+      const collisionPadding = typeof collisionPaddingProp === "number" ? collisionPaddingProp : { top: 0, right: 0, bottom: 0, left: 0, ...collisionPaddingProp };
+      const boundary = Array.isArray(collisionBoundary) ? collisionBoundary : [collisionBoundary];
+      const hasExplicitBoundaries = boundary.length > 0;
+      const detectOverflowOptions = {
+        padding: collisionPadding,
+        boundary: boundary.filter(isNotNull),
+altBoundary: hasExplicitBoundaries
+      };
+      const { refs, floatingStyles, placement, isPositioned, middlewareData } = useFloating({
+strategy: "fixed",
+        placement: desiredPlacement,
+        whileElementsMounted: (...args) => {
+          const cleanup = autoUpdate(...args, {
+            animationFrame: updatePositionStrategy === "always"
+          });
+          return cleanup;
+        },
+        elements: {
+          reference: context.anchor
+        },
+        middleware: [
+          offset({ mainAxis: sideOffset + arrowHeight, alignmentAxis: alignOffset }),
+          avoidCollisions && shift({
+            mainAxis: true,
+            crossAxis: false,
+            limiter: sticky === "partial" ? limitShift() : void 0,
+            ...detectOverflowOptions
+          }),
+          avoidCollisions && flip({ ...detectOverflowOptions }),
+          size({
+            ...detectOverflowOptions,
+            apply: ({ elements, rects, availableWidth, availableHeight }) => {
+              const { width: anchorWidth, height: anchorHeight } = rects.reference;
+              const contentStyle = elements.floating.style;
+              contentStyle.setProperty("--radix-popper-available-width", `${availableWidth}px`);
+              contentStyle.setProperty("--radix-popper-available-height", `${availableHeight}px`);
+              contentStyle.setProperty("--radix-popper-anchor-width", `${anchorWidth}px`);
+              contentStyle.setProperty("--radix-popper-anchor-height", `${anchorHeight}px`);
+            }
+          }),
+          arrow$12 && arrow({ element: arrow$12, padding: arrowPadding }),
+          transformOrigin({ arrowWidth, arrowHeight }),
+          hideWhenDetached && hide({ strategy: "referenceHidden", ...detectOverflowOptions })
+        ]
+      });
+      const [placedSide, placedAlign] = getSideAndAlignFromPlacement(placement);
+      const handlePlaced = useCallbackRef$1(onPlaced);
+      useLayoutEffect2(() => {
+        if (isPositioned) {
+          handlePlaced?.();
+        }
+      }, [isPositioned, handlePlaced]);
+      const arrowX = middlewareData.arrow?.x;
+      const arrowY = middlewareData.arrow?.y;
+      const cannotCenterArrow = middlewareData.arrow?.centerOffset !== 0;
+      const [contentZIndex, setContentZIndex] = reactExports.useState();
+      useLayoutEffect2(() => {
+        if (content) setContentZIndex(window.getComputedStyle(content).zIndex);
+      }, [content]);
+      return jsxRuntimeExports.jsx(
+        "div",
+        {
+          ref: refs.setFloating,
+          "data-radix-popper-content-wrapper": "",
+          style: {
+            ...floatingStyles,
+            transform: isPositioned ? floatingStyles.transform : "translate(0, -200%)",
+minWidth: "max-content",
+            zIndex: contentZIndex,
+            ["--radix-popper-transform-origin"]: [
+              middlewareData.transformOrigin?.x,
+              middlewareData.transformOrigin?.y
+            ].join(" "),
+
+
+...middlewareData.hide?.referenceHidden && {
+              visibility: "hidden",
+              pointerEvents: "none"
+            }
+          },
+          dir: props.dir,
+          children: jsxRuntimeExports.jsx(
+            PopperContentProvider,
+            {
+              scope: __scopePopper,
+              placedSide,
+              onArrowChange: setArrow,
+              arrowX,
+              arrowY,
+              shouldHideArrow: cannotCenterArrow,
+              children: jsxRuntimeExports.jsx(
+                Primitive.div,
+                {
+                  "data-side": placedSide,
+                  "data-align": placedAlign,
+                  ...contentProps,
+                  ref: composedRefs,
+                  style: {
+                    ...contentProps.style,
+
+animation: !isPositioned ? "none" : void 0
+                  }
+                }
+              )
+            }
+          )
+        }
+      );
+    }
+  );
+  PopperContent.displayName = CONTENT_NAME$1;
+  var ARROW_NAME$1 = "PopperArrow";
+  var OPPOSITE_SIDE = {
+    top: "bottom",
+    right: "left",
+    bottom: "top",
+    left: "right"
+  };
+  var PopperArrow = reactExports.forwardRef(function PopperArrow2(props, forwardedRef) {
+    const { __scopePopper, ...arrowProps } = props;
+    const contentContext = useContentContext(ARROW_NAME$1, __scopePopper);
+    const baseSide = OPPOSITE_SIDE[contentContext.placedSide];
+    return (
+
+
+
+jsxRuntimeExports.jsx(
+        "span",
+        {
+          ref: contentContext.onArrowChange,
+          style: {
+            position: "absolute",
+            left: contentContext.arrowX,
+            top: contentContext.arrowY,
+            [baseSide]: 0,
+            transformOrigin: {
+              top: "",
+              right: "0 0",
+              bottom: "center 0",
+              left: "100% 0"
+            }[contentContext.placedSide],
+            transform: {
+              top: "translateY(100%)",
+              right: "translateY(50%) rotate(90deg) translateX(-50%)",
+              bottom: `rotate(180deg)`,
+              left: "translateY(50%) rotate(-90deg) translateX(50%)"
+            }[contentContext.placedSide],
+            visibility: contentContext.shouldHideArrow ? "hidden" : void 0
+          },
+          children: jsxRuntimeExports.jsx(
+            Root$1,
+            {
+              ...arrowProps,
+              ref: forwardedRef,
+              style: {
+                ...arrowProps.style,
+display: "block"
+              }
+            }
+          )
+        }
+      )
+    );
+  });
+  PopperArrow.displayName = ARROW_NAME$1;
+  function isNotNull(value) {
+    return value !== null;
+  }
+  var transformOrigin = (options) => ({
+    name: "transformOrigin",
+    options,
+    fn(data) {
+      const { placement, rects, middlewareData } = data;
+      const cannotCenterArrow = middlewareData.arrow?.centerOffset !== 0;
+      const isArrowHidden = cannotCenterArrow;
+      const arrowWidth = isArrowHidden ? 0 : options.arrowWidth;
+      const arrowHeight = isArrowHidden ? 0 : options.arrowHeight;
+      const [placedSide, placedAlign] = getSideAndAlignFromPlacement(placement);
+      const noArrowAlign = { start: "0%", center: "50%", end: "100%" }[placedAlign];
+      const arrowXCenter = (middlewareData.arrow?.x ?? 0) + arrowWidth / 2;
+      const arrowYCenter = (middlewareData.arrow?.y ?? 0) + arrowHeight / 2;
+      let x = "";
+      let y = "";
+      if (placedSide === "bottom") {
+        x = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
+        y = `${-arrowHeight}px`;
+      } else if (placedSide === "top") {
+        x = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
+        y = `${rects.floating.height + arrowHeight}px`;
+      } else if (placedSide === "right") {
+        x = `${-arrowHeight}px`;
+        y = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
+      } else if (placedSide === "left") {
+        x = `${rects.floating.width + arrowHeight}px`;
+        y = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
+      }
+      return { data: { x, y } };
+    }
+  });
+  function getSideAndAlignFromPlacement(placement) {
+    const [side, align = "center"] = placement.split("-");
+    return [side, align];
+  }
+  var Root2$1 = Popper;
+  var Anchor = PopperAnchor;
+  var Content = PopperContent;
+  var Arrow = PopperArrow;
+  function clamp(value, [min2, max2]) {
+    return Math.min(max2, Math.max(min2, value));
+  }
+  var OPEN_KEYS = [" ", "Enter", "ArrowUp", "ArrowDown"];
+  var SELECTION_KEYS = [" ", "Enter"];
+  var SELECT_NAME = "Select";
+  var [Collection, useCollection, createCollectionScope] = createCollection(SELECT_NAME);
+  var [createSelectContext] = createContextScope(SELECT_NAME, [
+    createCollectionScope,
+    createPopperScope
+  ]);
+  var usePopperScope = createPopperScope();
+  var [SelectProvider, useSelectContext] = createSelectContext(SELECT_NAME);
+  var [SelectNativeOptionsProvider, useSelectNativeOptionsContext] = createSelectContext(SELECT_NAME);
+  var Select$1 = (props) => {
+    const {
+      __scopeSelect,
+      children,
+      open: openProp,
+      defaultOpen,
+      onOpenChange,
+      value: valueProp,
+      defaultValue,
+      onValueChange,
+      dir,
+      name,
+      autoComplete,
+      disabled,
+      required,
+      form
+    } = props;
+    const popperScope = usePopperScope(__scopeSelect);
+    const [trigger, setTrigger] = reactExports.useState(null);
+    const [valueNode, setValueNode] = reactExports.useState(null);
+    const [valueNodeHasChildren, setValueNodeHasChildren] = reactExports.useState(false);
+    const direction = useDirection(dir);
+    const [open, setOpen] = useControllableState({
+      prop: openProp,
+      defaultProp: defaultOpen ?? false,
+      onChange: onOpenChange,
+      caller: SELECT_NAME
+    });
+    const [value, setValue] = useControllableState({
+      prop: valueProp,
+      defaultProp: defaultValue,
+      onChange: onValueChange,
+      caller: SELECT_NAME
+    });
+    const triggerPointerDownPosRef = reactExports.useRef(null);
+    const isFormControl = trigger ? form || !!trigger.closest("form") : true;
+    const [nativeOptionsSet, setNativeOptionsSet] = reactExports.useState( new Set());
+    const nativeSelectKey = Array.from(nativeOptionsSet).map((option) => option.props.value).join(";");
+    return jsxRuntimeExports.jsx(Root2$1, { ...popperScope, children: jsxRuntimeExports.jsxs(
+      SelectProvider,
+      {
+        required,
+        scope: __scopeSelect,
+        trigger,
+        onTriggerChange: setTrigger,
+        valueNode,
+        onValueNodeChange: setValueNode,
+        valueNodeHasChildren,
+        onValueNodeHasChildrenChange: setValueNodeHasChildren,
+        contentId: useId(),
+        value,
+        onValueChange: setValue,
+        open,
+        onOpenChange: setOpen,
+        dir: direction,
+        triggerPointerDownPosRef,
+        disabled,
+        children: [
+jsxRuntimeExports.jsx(Collection.Provider, { scope: __scopeSelect, children: jsxRuntimeExports.jsx(
+            SelectNativeOptionsProvider,
+            {
+              scope: props.__scopeSelect,
+              onNativeOptionAdd: reactExports.useCallback((option) => {
+                setNativeOptionsSet((prev) => new Set(prev).add(option));
+              }, []),
+              onNativeOptionRemove: reactExports.useCallback((option) => {
+                setNativeOptionsSet((prev) => {
+                  const optionsSet = new Set(prev);
+                  optionsSet.delete(option);
+                  return optionsSet;
+                });
+              }, []),
+              children
+            }
+          ) }),
+          isFormControl ? jsxRuntimeExports.jsxs(
+            SelectBubbleInput,
+            {
+              "aria-hidden": true,
+              required,
+              tabIndex: -1,
+              name,
+              autoComplete,
+              value,
+              onChange: (event) => setValue(event.target.value),
+              disabled,
+              form,
+              children: [
+                value === void 0 ? jsxRuntimeExports.jsx("option", { value: "" }) : null,
+                Array.from(nativeOptionsSet)
+              ]
+            },
+            nativeSelectKey
+          ) : null
+        ]
+      }
+    ) });
+  };
+  Select$1.displayName = SELECT_NAME;
+  var TRIGGER_NAME = "SelectTrigger";
+  var SelectTrigger$1 = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, disabled = false, ...triggerProps } = props;
+      const popperScope = usePopperScope(__scopeSelect);
+      const context = useSelectContext(TRIGGER_NAME, __scopeSelect);
+      const isDisabled = context.disabled || disabled;
+      const composedRefs = useComposedRefs(forwardedRef, context.onTriggerChange);
+      const getItems = useCollection(__scopeSelect);
+      const pointerTypeRef = reactExports.useRef("touch");
+      const [searchRef, handleTypeaheadSearch, resetTypeahead] = useTypeaheadSearch((search) => {
+        const enabledItems = getItems().filter((item) => !item.disabled);
+        const currentItem = enabledItems.find((item) => item.value === context.value);
+        const nextItem = findNextItem(enabledItems, search, currentItem);
+        if (nextItem !== void 0) {
+          context.onValueChange(nextItem.value);
+        }
+      });
+      const handleOpen = (pointerEvent) => {
+        if (!isDisabled) {
+          context.onOpenChange(true);
+          resetTypeahead();
+        }
+        if (pointerEvent) {
+          context.triggerPointerDownPosRef.current = {
+            x: Math.round(pointerEvent.pageX),
+            y: Math.round(pointerEvent.pageY)
+          };
+        }
+      };
+      return jsxRuntimeExports.jsx(Anchor, { asChild: true, ...popperScope, children: jsxRuntimeExports.jsx(
+        Primitive.button,
+        {
+          type: "button",
+          role: "combobox",
+          "aria-controls": context.contentId,
+          "aria-expanded": context.open,
+          "aria-required": context.required,
+          "aria-autocomplete": "none",
+          dir: context.dir,
+          "data-state": context.open ? "open" : "closed",
+          disabled: isDisabled,
+          "data-disabled": isDisabled ? "" : void 0,
+          "data-placeholder": shouldShowPlaceholder(context.value) ? "" : void 0,
+          ...triggerProps,
+          ref: composedRefs,
+          onClick: composeEventHandlers(triggerProps.onClick, (event) => {
+            event.currentTarget.focus();
+            if (pointerTypeRef.current !== "mouse") {
+              handleOpen(event);
+            }
+          }),
+          onPointerDown: composeEventHandlers(triggerProps.onPointerDown, (event) => {
+            pointerTypeRef.current = event.pointerType;
+            const target = event.target;
+            if (target.hasPointerCapture(event.pointerId)) {
+              target.releasePointerCapture(event.pointerId);
+            }
+            if (event.button === 0 && event.ctrlKey === false && event.pointerType === "mouse") {
+              handleOpen(event);
+              event.preventDefault();
+            }
+          }),
+          onKeyDown: composeEventHandlers(triggerProps.onKeyDown, (event) => {
+            const isTypingAhead = searchRef.current !== "";
+            const isModifierKey = event.ctrlKey || event.altKey || event.metaKey;
+            if (!isModifierKey && event.key.length === 1) handleTypeaheadSearch(event.key);
+            if (isTypingAhead && event.key === " ") return;
+            if (OPEN_KEYS.includes(event.key)) {
+              handleOpen();
+              event.preventDefault();
+            }
+          })
+        }
+      ) });
+    }
+  );
+  SelectTrigger$1.displayName = TRIGGER_NAME;
+  var VALUE_NAME = "SelectValue";
+  var SelectValue$1 = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, className, style, children, placeholder = "", ...valueProps } = props;
+      const context = useSelectContext(VALUE_NAME, __scopeSelect);
+      const { onValueNodeHasChildrenChange } = context;
+      const hasChildren = children !== void 0;
+      const composedRefs = useComposedRefs(forwardedRef, context.onValueNodeChange);
+      useLayoutEffect2(() => {
+        onValueNodeHasChildrenChange(hasChildren);
+      }, [onValueNodeHasChildrenChange, hasChildren]);
+      return jsxRuntimeExports.jsx(
+        Primitive.span,
+        {
+          ...valueProps,
+          ref: composedRefs,
+          style: { pointerEvents: "none" },
+          children: shouldShowPlaceholder(context.value) ? jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: placeholder }) : children
+        }
+      );
+    }
+  );
+  SelectValue$1.displayName = VALUE_NAME;
+  var ICON_NAME = "SelectIcon";
+  var SelectIcon = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, children, ...iconProps } = props;
+      return jsxRuntimeExports.jsx(Primitive.span, { "aria-hidden": true, ...iconProps, ref: forwardedRef, children: children || "▼" });
+    }
+  );
+  SelectIcon.displayName = ICON_NAME;
+  var PORTAL_NAME = "SelectPortal";
+  var SelectPortal = (props) => {
+    return jsxRuntimeExports.jsx(Portal$1, { asChild: true, ...props });
+  };
+  SelectPortal.displayName = PORTAL_NAME;
+  var CONTENT_NAME = "SelectContent";
+  var SelectContent$1 = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const context = useSelectContext(CONTENT_NAME, props.__scopeSelect);
+      const [fragment, setFragment] = reactExports.useState();
+      useLayoutEffect2(() => {
+        setFragment(new DocumentFragment());
+      }, []);
+      if (!context.open) {
+        const frag = fragment;
+        return frag ? reactDomExports.createPortal(
+jsxRuntimeExports.jsx(SelectContentProvider, { scope: props.__scopeSelect, children: jsxRuntimeExports.jsx(Collection.Slot, { scope: props.__scopeSelect, children: jsxRuntimeExports.jsx("div", { children: props.children }) }) }),
+          frag
+        ) : null;
+      }
+      return jsxRuntimeExports.jsx(SelectContentImpl, { ...props, ref: forwardedRef });
+    }
+  );
+  SelectContent$1.displayName = CONTENT_NAME;
+  var CONTENT_MARGIN = 10;
+  var [SelectContentProvider, useSelectContentContext] = createSelectContext(CONTENT_NAME);
+  var CONTENT_IMPL_NAME = "SelectContentImpl";
+  var Slot = createSlot("SelectContent.RemoveScroll");
+  var SelectContentImpl = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const {
+        __scopeSelect,
+        position = "item-aligned",
+        onCloseAutoFocus,
+        onEscapeKeyDown,
+        onPointerDownOutside,
+
+side,
+        sideOffset,
+        align,
+        alignOffset,
+        arrowPadding,
+        collisionBoundary,
+        collisionPadding,
+        sticky,
+        hideWhenDetached,
+        avoidCollisions,
+...contentProps
+      } = props;
+      const context = useSelectContext(CONTENT_NAME, __scopeSelect);
+      const [content, setContent] = reactExports.useState(null);
+      const [viewport, setViewport] = reactExports.useState(null);
+      const composedRefs = useComposedRefs(forwardedRef, (node) => setContent(node));
+      const [selectedItem, setSelectedItem] = reactExports.useState(null);
+      const [selectedItemText, setSelectedItemText] = reactExports.useState(
+        null
+      );
+      const getItems = useCollection(__scopeSelect);
+      const [isPositioned, setIsPositioned] = reactExports.useState(false);
+      const firstValidItemFoundRef = reactExports.useRef(false);
+      reactExports.useEffect(() => {
+        if (content) return hideOthers(content);
+      }, [content]);
+      useFocusGuards();
+      const focusFirst2 = reactExports.useCallback(
+        (candidates) => {
+          const [firstItem, ...restItems] = getItems().map((item) => item.ref.current);
+          const [lastItem] = restItems.slice(-1);
+          const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
+          for (const candidate of candidates) {
+            if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
+            candidate?.scrollIntoView({ block: "nearest" });
+            if (candidate === firstItem && viewport) viewport.scrollTop = 0;
+            if (candidate === lastItem && viewport) viewport.scrollTop = viewport.scrollHeight;
+            candidate?.focus();
+            if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+          }
+        },
+        [getItems, viewport]
+      );
+      const focusSelectedItem = reactExports.useCallback(
+        () => focusFirst2([selectedItem, content]),
+        [focusFirst2, selectedItem, content]
+      );
+      reactExports.useEffect(() => {
+        if (isPositioned) {
+          focusSelectedItem();
+        }
+      }, [isPositioned, focusSelectedItem]);
+      const { onOpenChange, triggerPointerDownPosRef } = context;
+      reactExports.useEffect(() => {
+        if (content) {
+          let pointerMoveDelta = { x: 0, y: 0 };
+          const handlePointerMove = (event) => {
+            pointerMoveDelta = {
+              x: Math.abs(Math.round(event.pageX) - (triggerPointerDownPosRef.current?.x ?? 0)),
+              y: Math.abs(Math.round(event.pageY) - (triggerPointerDownPosRef.current?.y ?? 0))
+            };
+          };
+          const handlePointerUp = (event) => {
+            if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
+              event.preventDefault();
+            } else {
+              if (!content.contains(event.target)) {
+                onOpenChange(false);
+              }
+            }
+            document.removeEventListener("pointermove", handlePointerMove);
+            triggerPointerDownPosRef.current = null;
+          };
+          if (triggerPointerDownPosRef.current !== null) {
+            document.addEventListener("pointermove", handlePointerMove);
+            document.addEventListener("pointerup", handlePointerUp, { capture: true, once: true });
+          }
+          return () => {
+            document.removeEventListener("pointermove", handlePointerMove);
+            document.removeEventListener("pointerup", handlePointerUp, { capture: true });
+          };
+        }
+      }, [content, onOpenChange, triggerPointerDownPosRef]);
+      reactExports.useEffect(() => {
+        const close = () => onOpenChange(false);
+        window.addEventListener("blur", close);
+        window.addEventListener("resize", close);
+        return () => {
+          window.removeEventListener("blur", close);
+          window.removeEventListener("resize", close);
+        };
+      }, [onOpenChange]);
+      const [searchRef, handleTypeaheadSearch] = useTypeaheadSearch((search) => {
+        const enabledItems = getItems().filter((item) => !item.disabled);
+        const currentItem = enabledItems.find((item) => item.ref.current === document.activeElement);
+        const nextItem = findNextItem(enabledItems, search, currentItem);
+        if (nextItem) {
+          setTimeout(() => nextItem.ref.current.focus());
+        }
+      });
+      const itemRefCallback = reactExports.useCallback(
+        (node, value, disabled) => {
+          const isFirstValidItem = !firstValidItemFoundRef.current && !disabled;
+          const isSelectedItem = context.value !== void 0 && context.value === value;
+          if (isSelectedItem || isFirstValidItem) {
+            setSelectedItem(node);
+            if (isFirstValidItem) firstValidItemFoundRef.current = true;
+          }
+        },
+        [context.value]
+      );
+      const handleItemLeave = reactExports.useCallback(() => content?.focus(), [content]);
+      const itemTextRefCallback = reactExports.useCallback(
+        (node, value, disabled) => {
+          const isFirstValidItem = !firstValidItemFoundRef.current && !disabled;
+          const isSelectedItem = context.value !== void 0 && context.value === value;
+          if (isSelectedItem || isFirstValidItem) {
+            setSelectedItemText(node);
+          }
+        },
+        [context.value]
+      );
+      const SelectPosition = position === "popper" ? SelectPopperPosition : SelectItemAlignedPosition;
+      const popperContentProps = SelectPosition === SelectPopperPosition ? {
+        side,
+        sideOffset,
+        align,
+        alignOffset,
+        arrowPadding,
+        collisionBoundary,
+        collisionPadding,
+        sticky,
+        hideWhenDetached,
+        avoidCollisions
+      } : {};
+      return jsxRuntimeExports.jsx(
+        SelectContentProvider,
+        {
+          scope: __scopeSelect,
+          content,
+          viewport,
+          onViewportChange: setViewport,
+          itemRefCallback,
+          selectedItem,
+          onItemLeave: handleItemLeave,
+          itemTextRefCallback,
+          focusSelectedItem,
+          selectedItemText,
+          position,
+          isPositioned,
+          searchRef,
+          children: jsxRuntimeExports.jsx(ReactRemoveScroll, { as: Slot, allowPinchZoom: true, children: jsxRuntimeExports.jsx(
+            FocusScope,
+            {
+              asChild: true,
+              trapped: context.open,
+              onMountAutoFocus: (event) => {
+                event.preventDefault();
+              },
+              onUnmountAutoFocus: composeEventHandlers(onCloseAutoFocus, (event) => {
+                context.trigger?.focus({ preventScroll: true });
+                event.preventDefault();
+              }),
+              children: jsxRuntimeExports.jsx(
+                DismissableLayer,
+                {
+                  asChild: true,
+                  disableOutsidePointerEvents: true,
+                  onEscapeKeyDown,
+                  onPointerDownOutside,
+                  onFocusOutside: (event) => event.preventDefault(),
+                  onDismiss: () => context.onOpenChange(false),
+                  children: jsxRuntimeExports.jsx(
+                    SelectPosition,
+                    {
+                      role: "listbox",
+                      id: context.contentId,
+                      "data-state": context.open ? "open" : "closed",
+                      dir: context.dir,
+                      onContextMenu: (event) => event.preventDefault(),
+                      ...contentProps,
+                      ...popperContentProps,
+                      onPlaced: () => setIsPositioned(true),
+                      ref: composedRefs,
+                      style: {
+display: "flex",
+                        flexDirection: "column",
+outline: "none",
+                        ...contentProps.style
+                      },
+                      onKeyDown: composeEventHandlers(contentProps.onKeyDown, (event) => {
+                        const isModifierKey = event.ctrlKey || event.altKey || event.metaKey;
+                        if (event.key === "Tab") event.preventDefault();
+                        if (!isModifierKey && event.key.length === 1) handleTypeaheadSearch(event.key);
+                        if (["ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) {
+                          const items = getItems().filter((item) => !item.disabled);
+                          let candidateNodes = items.map((item) => item.ref.current);
+                          if (["ArrowUp", "End"].includes(event.key)) {
+                            candidateNodes = candidateNodes.slice().reverse();
+                          }
+                          if (["ArrowUp", "ArrowDown"].includes(event.key)) {
+                            const currentElement = event.target;
+                            const currentIndex = candidateNodes.indexOf(currentElement);
+                            candidateNodes = candidateNodes.slice(currentIndex + 1);
+                          }
+                          setTimeout(() => focusFirst2(candidateNodes));
+                          event.preventDefault();
+                        }
+                      })
+                    }
+                  )
+                }
+              )
+            }
+          ) })
+        }
+      );
+    }
+  );
+  SelectContentImpl.displayName = CONTENT_IMPL_NAME;
+  var ITEM_ALIGNED_POSITION_NAME = "SelectItemAlignedPosition";
+  var SelectItemAlignedPosition = reactExports.forwardRef((props, forwardedRef) => {
+    const { __scopeSelect, onPlaced, ...popperProps } = props;
+    const context = useSelectContext(CONTENT_NAME, __scopeSelect);
+    const contentContext = useSelectContentContext(CONTENT_NAME, __scopeSelect);
+    const [contentWrapper, setContentWrapper] = reactExports.useState(null);
+    const [content, setContent] = reactExports.useState(null);
+    const composedRefs = useComposedRefs(forwardedRef, (node) => setContent(node));
+    const getItems = useCollection(__scopeSelect);
+    const shouldExpandOnScrollRef = reactExports.useRef(false);
+    const shouldRepositionRef = reactExports.useRef(true);
+    const { viewport, selectedItem, selectedItemText, focusSelectedItem } = contentContext;
+    const position = reactExports.useCallback(() => {
+      if (context.trigger && context.valueNode && contentWrapper && content && viewport && selectedItem && selectedItemText) {
+        const triggerRect = context.trigger.getBoundingClientRect();
+        const contentRect = content.getBoundingClientRect();
+        const valueNodeRect = context.valueNode.getBoundingClientRect();
+        const itemTextRect = selectedItemText.getBoundingClientRect();
+        if (context.dir !== "rtl") {
+          const itemTextOffset = itemTextRect.left - contentRect.left;
+          const left = valueNodeRect.left - itemTextOffset;
+          const leftDelta = triggerRect.left - left;
+          const minContentWidth = triggerRect.width + leftDelta;
+          const contentWidth = Math.max(minContentWidth, contentRect.width);
+          const rightEdge = window.innerWidth - CONTENT_MARGIN;
+          const clampedLeft = clamp(left, [
+            CONTENT_MARGIN,
+
+
+
+
+Math.max(CONTENT_MARGIN, rightEdge - contentWidth)
+          ]);
+          contentWrapper.style.minWidth = minContentWidth + "px";
+          contentWrapper.style.left = clampedLeft + "px";
+        } else {
+          const itemTextOffset = contentRect.right - itemTextRect.right;
+          const right = window.innerWidth - valueNodeRect.right - itemTextOffset;
+          const rightDelta = window.innerWidth - triggerRect.right - right;
+          const minContentWidth = triggerRect.width + rightDelta;
+          const contentWidth = Math.max(minContentWidth, contentRect.width);
+          const leftEdge = window.innerWidth - CONTENT_MARGIN;
+          const clampedRight = clamp(right, [
+            CONTENT_MARGIN,
+            Math.max(CONTENT_MARGIN, leftEdge - contentWidth)
+          ]);
+          contentWrapper.style.minWidth = minContentWidth + "px";
+          contentWrapper.style.right = clampedRight + "px";
+        }
+        const items = getItems();
+        const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+        const itemsHeight = viewport.scrollHeight;
+        const contentStyles = window.getComputedStyle(content);
+        const contentBorderTopWidth = parseInt(contentStyles.borderTopWidth, 10);
+        const contentPaddingTop = parseInt(contentStyles.paddingTop, 10);
+        const contentBorderBottomWidth = parseInt(contentStyles.borderBottomWidth, 10);
+        const contentPaddingBottom = parseInt(contentStyles.paddingBottom, 10);
+        const fullContentHeight = contentBorderTopWidth + contentPaddingTop + itemsHeight + contentPaddingBottom + contentBorderBottomWidth;
+        const minContentHeight = Math.min(selectedItem.offsetHeight * 5, fullContentHeight);
+        const viewportStyles = window.getComputedStyle(viewport);
+        const viewportPaddingTop = parseInt(viewportStyles.paddingTop, 10);
+        const viewportPaddingBottom = parseInt(viewportStyles.paddingBottom, 10);
+        const topEdgeToTriggerMiddle = triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
+        const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
+        const selectedItemHalfHeight = selectedItem.offsetHeight / 2;
+        const itemOffsetMiddle = selectedItem.offsetTop + selectedItemHalfHeight;
+        const contentTopToItemMiddle = contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
+        const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
+        const willAlignWithoutTopOverflow = contentTopToItemMiddle <= topEdgeToTriggerMiddle;
+        if (willAlignWithoutTopOverflow) {
+          const isLastItem = items.length > 0 && selectedItem === items[items.length - 1].ref.current;
+          contentWrapper.style.bottom = "0px";
+          const viewportOffsetBottom = content.clientHeight - viewport.offsetTop - viewport.offsetHeight;
+          const clampedTriggerMiddleToBottomEdge = Math.max(
+            triggerMiddleToBottomEdge,
+            selectedItemHalfHeight +
+(isLastItem ? viewportPaddingBottom : 0) + viewportOffsetBottom + contentBorderBottomWidth
+          );
+          const height = contentTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
+          contentWrapper.style.height = height + "px";
+        } else {
+          const isFirstItem = items.length > 0 && selectedItem === items[0].ref.current;
+          contentWrapper.style.top = "0px";
+          const clampedTopEdgeToTriggerMiddle = Math.max(
+            topEdgeToTriggerMiddle,
+            contentBorderTopWidth + viewport.offsetTop +
+(isFirstItem ? viewportPaddingTop : 0) + selectedItemHalfHeight
+          );
+          const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
+          contentWrapper.style.height = height + "px";
+          viewport.scrollTop = contentTopToItemMiddle - topEdgeToTriggerMiddle + viewport.offsetTop;
+        }
+        contentWrapper.style.margin = `${CONTENT_MARGIN}px 0`;
+        contentWrapper.style.minHeight = minContentHeight + "px";
+        contentWrapper.style.maxHeight = availableHeight + "px";
+        onPlaced?.();
+        requestAnimationFrame(() => shouldExpandOnScrollRef.current = true);
+      }
+    }, [
+      getItems,
+      context.trigger,
+      context.valueNode,
+      contentWrapper,
+      content,
+      viewport,
+      selectedItem,
+      selectedItemText,
+      context.dir,
+      onPlaced
+    ]);
+    useLayoutEffect2(() => position(), [position]);
+    const [contentZIndex, setContentZIndex] = reactExports.useState();
+    useLayoutEffect2(() => {
+      if (content) setContentZIndex(window.getComputedStyle(content).zIndex);
+    }, [content]);
+    const handleScrollButtonChange = reactExports.useCallback(
+      (node) => {
+        if (node && shouldRepositionRef.current === true) {
+          position();
+          focusSelectedItem?.();
+          shouldRepositionRef.current = false;
+        }
+      },
+      [position, focusSelectedItem]
+    );
+    return jsxRuntimeExports.jsx(
+      SelectViewportProvider,
+      {
+        scope: __scopeSelect,
+        contentWrapper,
+        shouldExpandOnScrollRef,
+        onScrollButtonChange: handleScrollButtonChange,
+        children: jsxRuntimeExports.jsx(
+          "div",
+          {
+            ref: setContentWrapper,
+            style: {
+              display: "flex",
+              flexDirection: "column",
+              position: "fixed",
+              zIndex: contentZIndex
+            },
+            children: jsxRuntimeExports.jsx(
+              Primitive.div,
+              {
+                ...popperProps,
+                ref: composedRefs,
+                style: {
+
+boxSizing: "border-box",
+maxHeight: "100%",
+                  ...popperProps.style
+                }
+              }
+            )
+          }
+        )
+      }
+    );
+  });
+  SelectItemAlignedPosition.displayName = ITEM_ALIGNED_POSITION_NAME;
+  var POPPER_POSITION_NAME = "SelectPopperPosition";
+  var SelectPopperPosition = reactExports.forwardRef((props, forwardedRef) => {
+    const {
+      __scopeSelect,
+      align = "start",
+      collisionPadding = CONTENT_MARGIN,
+      ...popperProps
+    } = props;
+    const popperScope = usePopperScope(__scopeSelect);
+    return jsxRuntimeExports.jsx(
+      Content,
+      {
+        ...popperScope,
+        ...popperProps,
+        ref: forwardedRef,
+        align,
+        collisionPadding,
+        style: {
+boxSizing: "border-box",
+          ...popperProps.style,
+...{
+            "--radix-select-content-transform-origin": "var(--radix-popper-transform-origin)",
+            "--radix-select-content-available-width": "var(--radix-popper-available-width)",
+            "--radix-select-content-available-height": "var(--radix-popper-available-height)",
+            "--radix-select-trigger-width": "var(--radix-popper-anchor-width)",
+            "--radix-select-trigger-height": "var(--radix-popper-anchor-height)"
+          }
+        }
+      }
+    );
+  });
+  SelectPopperPosition.displayName = POPPER_POSITION_NAME;
+  var [SelectViewportProvider, useSelectViewportContext] = createSelectContext(CONTENT_NAME, {});
+  var VIEWPORT_NAME = "SelectViewport";
+  var SelectViewport = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, nonce, ...viewportProps } = props;
+      const contentContext = useSelectContentContext(VIEWPORT_NAME, __scopeSelect);
+      const viewportContext = useSelectViewportContext(VIEWPORT_NAME, __scopeSelect);
+      const composedRefs = useComposedRefs(forwardedRef, contentContext.onViewportChange);
+      const prevScrollTopRef = reactExports.useRef(0);
+      return jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+jsxRuntimeExports.jsx(
+          "style",
+          {
+            dangerouslySetInnerHTML: {
+              __html: `[data-radix-select-viewport]{scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;}[data-radix-select-viewport]::-webkit-scrollbar{display:none}`
+            },
+            nonce
+          }
+        ),
+jsxRuntimeExports.jsx(Collection.Slot, { scope: __scopeSelect, children: jsxRuntimeExports.jsx(
+          Primitive.div,
+          {
+            "data-radix-select-viewport": "",
+            role: "presentation",
+            ...viewportProps,
+            ref: composedRefs,
+            style: {
+
+
+position: "relative",
+              flex: 1,
+
+
+
+overflow: "hidden auto",
+              ...viewportProps.style
+            },
+            onScroll: composeEventHandlers(viewportProps.onScroll, (event) => {
+              const viewport = event.currentTarget;
+              const { contentWrapper, shouldExpandOnScrollRef } = viewportContext;
+              if (shouldExpandOnScrollRef?.current && contentWrapper) {
+                const scrolledBy = Math.abs(prevScrollTopRef.current - viewport.scrollTop);
+                if (scrolledBy > 0) {
+                  const availableHeight = window.innerHeight - CONTENT_MARGIN * 2;
+                  const cssMinHeight = parseFloat(contentWrapper.style.minHeight);
+                  const cssHeight = parseFloat(contentWrapper.style.height);
+                  const prevHeight = Math.max(cssMinHeight, cssHeight);
+                  if (prevHeight < availableHeight) {
+                    const nextHeight = prevHeight + scrolledBy;
+                    const clampedNextHeight = Math.min(availableHeight, nextHeight);
+                    const heightDiff = nextHeight - clampedNextHeight;
+                    contentWrapper.style.height = clampedNextHeight + "px";
+                    if (contentWrapper.style.bottom === "0px") {
+                      viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
+                      contentWrapper.style.justifyContent = "flex-end";
+                    }
+                  }
+                }
+              }
+              prevScrollTopRef.current = viewport.scrollTop;
+            })
+          }
+        ) })
+      ] });
+    }
+  );
+  SelectViewport.displayName = VIEWPORT_NAME;
+  var GROUP_NAME = "SelectGroup";
+  var [SelectGroupContextProvider, useSelectGroupContext] = createSelectContext(GROUP_NAME);
+  var SelectGroup = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, ...groupProps } = props;
+      const groupId = useId();
+      return jsxRuntimeExports.jsx(SelectGroupContextProvider, { scope: __scopeSelect, id: groupId, children: jsxRuntimeExports.jsx(Primitive.div, { role: "group", "aria-labelledby": groupId, ...groupProps, ref: forwardedRef }) });
+    }
+  );
+  SelectGroup.displayName = GROUP_NAME;
+  var LABEL_NAME = "SelectLabel";
+  var SelectLabel = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, ...labelProps } = props;
+      const groupContext = useSelectGroupContext(LABEL_NAME, __scopeSelect);
+      return jsxRuntimeExports.jsx(Primitive.div, { id: groupContext.id, ...labelProps, ref: forwardedRef });
+    }
+  );
+  SelectLabel.displayName = LABEL_NAME;
+  var ITEM_NAME = "SelectItem";
+  var [SelectItemContextProvider, useSelectItemContext] = createSelectContext(ITEM_NAME);
+  var SelectItem$1 = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const {
+        __scopeSelect,
+        value,
+        disabled = false,
+        textValue: textValueProp,
+        ...itemProps
+      } = props;
+      const context = useSelectContext(ITEM_NAME, __scopeSelect);
+      const contentContext = useSelectContentContext(ITEM_NAME, __scopeSelect);
+      const isSelected = context.value === value;
+      const [textValue, setTextValue] = reactExports.useState(textValueProp ?? "");
+      const [isFocused, setIsFocused] = reactExports.useState(false);
+      const composedRefs = useComposedRefs(
+        forwardedRef,
+        (node) => contentContext.itemRefCallback?.(node, value, disabled)
+      );
+      const textId = useId();
+      const pointerTypeRef = reactExports.useRef("touch");
+      const handleSelect = () => {
+        if (!disabled) {
+          context.onValueChange(value);
+          context.onOpenChange(false);
+        }
+      };
+      if (value === "") {
+        throw new Error(
+          "A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder."
+        );
+      }
+      return jsxRuntimeExports.jsx(
+        SelectItemContextProvider,
+        {
+          scope: __scopeSelect,
+          value,
+          disabled,
+          textId,
+          isSelected,
+          onItemTextChange: reactExports.useCallback((node) => {
+            setTextValue((prevTextValue) => prevTextValue || (node?.textContent ?? "").trim());
+          }, []),
+          children: jsxRuntimeExports.jsx(
+            Collection.ItemSlot,
+            {
+              scope: __scopeSelect,
+              value,
+              disabled,
+              textValue,
+              children: jsxRuntimeExports.jsx(
+                Primitive.div,
+                {
+                  role: "option",
+                  "aria-labelledby": textId,
+                  "data-highlighted": isFocused ? "" : void 0,
+                  "aria-selected": isSelected && isFocused,
+                  "data-state": isSelected ? "checked" : "unchecked",
+                  "aria-disabled": disabled || void 0,
+                  "data-disabled": disabled ? "" : void 0,
+                  tabIndex: disabled ? void 0 : -1,
+                  ...itemProps,
+                  ref: composedRefs,
+                  onFocus: composeEventHandlers(itemProps.onFocus, () => setIsFocused(true)),
+                  onBlur: composeEventHandlers(itemProps.onBlur, () => setIsFocused(false)),
+                  onClick: composeEventHandlers(itemProps.onClick, () => {
+                    if (pointerTypeRef.current !== "mouse") handleSelect();
+                  }),
+                  onPointerUp: composeEventHandlers(itemProps.onPointerUp, () => {
+                    if (pointerTypeRef.current === "mouse") handleSelect();
+                  }),
+                  onPointerDown: composeEventHandlers(itemProps.onPointerDown, (event) => {
+                    pointerTypeRef.current = event.pointerType;
+                  }),
+                  onPointerMove: composeEventHandlers(itemProps.onPointerMove, (event) => {
+                    pointerTypeRef.current = event.pointerType;
+                    if (disabled) {
+                      contentContext.onItemLeave?.();
+                    } else if (pointerTypeRef.current === "mouse") {
+                      event.currentTarget.focus({ preventScroll: true });
+                    }
+                  }),
+                  onPointerLeave: composeEventHandlers(itemProps.onPointerLeave, (event) => {
+                    if (event.currentTarget === document.activeElement) {
+                      contentContext.onItemLeave?.();
+                    }
+                  }),
+                  onKeyDown: composeEventHandlers(itemProps.onKeyDown, (event) => {
+                    const isTypingAhead = contentContext.searchRef?.current !== "";
+                    if (isTypingAhead && event.key === " ") return;
+                    if (SELECTION_KEYS.includes(event.key)) handleSelect();
+                    if (event.key === " ") event.preventDefault();
+                  })
+                }
+              )
+            }
+          )
+        }
+      );
+    }
+  );
+  SelectItem$1.displayName = ITEM_NAME;
+  var ITEM_TEXT_NAME = "SelectItemText";
+  var SelectItemText = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, className, style, ...itemTextProps } = props;
+      const context = useSelectContext(ITEM_TEXT_NAME, __scopeSelect);
+      const contentContext = useSelectContentContext(ITEM_TEXT_NAME, __scopeSelect);
+      const itemContext = useSelectItemContext(ITEM_TEXT_NAME, __scopeSelect);
+      const nativeOptionsContext = useSelectNativeOptionsContext(ITEM_TEXT_NAME, __scopeSelect);
+      const [itemTextNode, setItemTextNode] = reactExports.useState(null);
+      const composedRefs = useComposedRefs(
+        forwardedRef,
+        (node) => setItemTextNode(node),
+        itemContext.onItemTextChange,
+        (node) => contentContext.itemTextRefCallback?.(node, itemContext.value, itemContext.disabled)
+      );
+      const textContent = itemTextNode?.textContent;
+      const nativeOption = reactExports.useMemo(
+        () => jsxRuntimeExports.jsx("option", { value: itemContext.value, disabled: itemContext.disabled, children: textContent }, itemContext.value),
+        [itemContext.disabled, itemContext.value, textContent]
+      );
+      const { onNativeOptionAdd, onNativeOptionRemove } = nativeOptionsContext;
+      useLayoutEffect2(() => {
+        onNativeOptionAdd(nativeOption);
+        return () => onNativeOptionRemove(nativeOption);
+      }, [onNativeOptionAdd, onNativeOptionRemove, nativeOption]);
+      return jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+jsxRuntimeExports.jsx(Primitive.span, { id: itemContext.textId, ...itemTextProps, ref: composedRefs }),
+        itemContext.isSelected && context.valueNode && !context.valueNodeHasChildren ? reactDomExports.createPortal(itemTextProps.children, context.valueNode) : null
+      ] });
+    }
+  );
+  SelectItemText.displayName = ITEM_TEXT_NAME;
+  var ITEM_INDICATOR_NAME = "SelectItemIndicator";
+  var SelectItemIndicator = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, ...itemIndicatorProps } = props;
+      const itemContext = useSelectItemContext(ITEM_INDICATOR_NAME, __scopeSelect);
+      return itemContext.isSelected ? jsxRuntimeExports.jsx(Primitive.span, { "aria-hidden": true, ...itemIndicatorProps, ref: forwardedRef }) : null;
+    }
+  );
+  SelectItemIndicator.displayName = ITEM_INDICATOR_NAME;
+  var SCROLL_UP_BUTTON_NAME = "SelectScrollUpButton";
+  var SelectScrollUpButton$1 = reactExports.forwardRef((props, forwardedRef) => {
+    const contentContext = useSelectContentContext(SCROLL_UP_BUTTON_NAME, props.__scopeSelect);
+    const viewportContext = useSelectViewportContext(SCROLL_UP_BUTTON_NAME, props.__scopeSelect);
+    const [canScrollUp, setCanScrollUp] = reactExports.useState(false);
+    const composedRefs = useComposedRefs(forwardedRef, viewportContext.onScrollButtonChange);
+    useLayoutEffect2(() => {
+      if (contentContext.viewport && contentContext.isPositioned) {
+        let handleScroll2 = function() {
+          const canScrollUp2 = viewport.scrollTop > 0;
+          setCanScrollUp(canScrollUp2);
+        };
+        const viewport = contentContext.viewport;
+        handleScroll2();
+        viewport.addEventListener("scroll", handleScroll2);
+        return () => viewport.removeEventListener("scroll", handleScroll2);
+      }
+    }, [contentContext.viewport, contentContext.isPositioned]);
+    return canScrollUp ? jsxRuntimeExports.jsx(
+      SelectScrollButtonImpl,
+      {
+        ...props,
+        ref: composedRefs,
+        onAutoScroll: () => {
+          const { viewport, selectedItem } = contentContext;
+          if (viewport && selectedItem) {
+            viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
+          }
+        }
+      }
+    ) : null;
+  });
+  SelectScrollUpButton$1.displayName = SCROLL_UP_BUTTON_NAME;
+  var SCROLL_DOWN_BUTTON_NAME = "SelectScrollDownButton";
+  var SelectScrollDownButton$1 = reactExports.forwardRef((props, forwardedRef) => {
+    const contentContext = useSelectContentContext(SCROLL_DOWN_BUTTON_NAME, props.__scopeSelect);
+    const viewportContext = useSelectViewportContext(SCROLL_DOWN_BUTTON_NAME, props.__scopeSelect);
+    const [canScrollDown, setCanScrollDown] = reactExports.useState(false);
+    const composedRefs = useComposedRefs(forwardedRef, viewportContext.onScrollButtonChange);
+    useLayoutEffect2(() => {
+      if (contentContext.viewport && contentContext.isPositioned) {
+        let handleScroll2 = function() {
+          const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+          const canScrollDown2 = Math.ceil(viewport.scrollTop) < maxScroll;
+          setCanScrollDown(canScrollDown2);
+        };
+        const viewport = contentContext.viewport;
+        handleScroll2();
+        viewport.addEventListener("scroll", handleScroll2);
+        return () => viewport.removeEventListener("scroll", handleScroll2);
+      }
+    }, [contentContext.viewport, contentContext.isPositioned]);
+    return canScrollDown ? jsxRuntimeExports.jsx(
+      SelectScrollButtonImpl,
+      {
+        ...props,
+        ref: composedRefs,
+        onAutoScroll: () => {
+          const { viewport, selectedItem } = contentContext;
+          if (viewport && selectedItem) {
+            viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
+          }
+        }
+      }
+    ) : null;
+  });
+  SelectScrollDownButton$1.displayName = SCROLL_DOWN_BUTTON_NAME;
+  var SelectScrollButtonImpl = reactExports.forwardRef((props, forwardedRef) => {
+    const { __scopeSelect, onAutoScroll, ...scrollIndicatorProps } = props;
+    const contentContext = useSelectContentContext("SelectScrollButton", __scopeSelect);
+    const autoScrollTimerRef = reactExports.useRef(null);
+    const getItems = useCollection(__scopeSelect);
+    const clearAutoScrollTimer = reactExports.useCallback(() => {
+      if (autoScrollTimerRef.current !== null) {
+        window.clearInterval(autoScrollTimerRef.current);
+        autoScrollTimerRef.current = null;
+      }
+    }, []);
+    reactExports.useEffect(() => {
+      return () => clearAutoScrollTimer();
+    }, [clearAutoScrollTimer]);
+    useLayoutEffect2(() => {
+      const activeItem = getItems().find((item) => item.ref.current === document.activeElement);
+      activeItem?.ref.current?.scrollIntoView({ block: "nearest" });
+    }, [getItems]);
+    return jsxRuntimeExports.jsx(
+      Primitive.div,
+      {
+        "aria-hidden": true,
+        ...scrollIndicatorProps,
+        ref: forwardedRef,
+        style: { flexShrink: 0, ...scrollIndicatorProps.style },
+        onPointerDown: composeEventHandlers(scrollIndicatorProps.onPointerDown, () => {
+          if (autoScrollTimerRef.current === null) {
+            autoScrollTimerRef.current = window.setInterval(onAutoScroll, 50);
+          }
+        }),
+        onPointerMove: composeEventHandlers(scrollIndicatorProps.onPointerMove, () => {
+          contentContext.onItemLeave?.();
+          if (autoScrollTimerRef.current === null) {
+            autoScrollTimerRef.current = window.setInterval(onAutoScroll, 50);
+          }
+        }),
+        onPointerLeave: composeEventHandlers(scrollIndicatorProps.onPointerLeave, () => {
+          clearAutoScrollTimer();
+        })
+      }
+    );
+  });
+  var SEPARATOR_NAME = "SelectSeparator";
+  var SelectSeparator = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, ...separatorProps } = props;
+      return jsxRuntimeExports.jsx(Primitive.div, { "aria-hidden": true, ...separatorProps, ref: forwardedRef });
+    }
+  );
+  SelectSeparator.displayName = SEPARATOR_NAME;
+  var ARROW_NAME = "SelectArrow";
+  var SelectArrow = reactExports.forwardRef(
+    (props, forwardedRef) => {
+      const { __scopeSelect, ...arrowProps } = props;
+      const popperScope = usePopperScope(__scopeSelect);
+      const context = useSelectContext(ARROW_NAME, __scopeSelect);
+      const contentContext = useSelectContentContext(ARROW_NAME, __scopeSelect);
+      return context.open && contentContext.position === "popper" ? jsxRuntimeExports.jsx(Arrow, { ...popperScope, ...arrowProps, ref: forwardedRef }) : null;
+    }
+  );
+  SelectArrow.displayName = ARROW_NAME;
+  var BUBBLE_INPUT_NAME$1 = "SelectBubbleInput";
+  var SelectBubbleInput = reactExports.forwardRef(
+    ({ __scopeSelect, value, ...props }, forwardedRef) => {
+      const ref = reactExports.useRef(null);
+      const composedRefs = useComposedRefs(forwardedRef, ref);
+      const prevValue = usePrevious(value);
+      reactExports.useEffect(() => {
+        const select = ref.current;
+        if (!select) return;
+        const selectProto = window.HTMLSelectElement.prototype;
+        const descriptor = Object.getOwnPropertyDescriptor(
+          selectProto,
+          "value"
+        );
+        const setValue = descriptor.set;
+        if (prevValue !== value && setValue) {
+          const event = new Event("change", { bubbles: true });
+          setValue.call(select, value);
+          select.dispatchEvent(event);
+        }
+      }, [prevValue, value]);
+      return jsxRuntimeExports.jsx(
+        Primitive.select,
+        {
+          ...props,
+          style: { ...VISUALLY_HIDDEN_STYLES, ...props.style },
+          ref: composedRefs,
+          defaultValue: value
+        }
+      );
+    }
+  );
+  SelectBubbleInput.displayName = BUBBLE_INPUT_NAME$1;
+  function shouldShowPlaceholder(value) {
+    return value === "" || value === void 0;
+  }
+  function useTypeaheadSearch(onSearchChange) {
+    const handleSearchChange = useCallbackRef$1(onSearchChange);
+    const searchRef = reactExports.useRef("");
+    const timerRef = reactExports.useRef(0);
+    const handleTypeaheadSearch = reactExports.useCallback(
+      (key) => {
+        const search = searchRef.current + key;
+        handleSearchChange(search);
+        (function updateSearch(value) {
+          searchRef.current = value;
+          window.clearTimeout(timerRef.current);
+          if (value !== "") timerRef.current = window.setTimeout(() => updateSearch(""), 1e3);
+        })(search);
+      },
+      [handleSearchChange]
+    );
+    const resetTypeahead = reactExports.useCallback(() => {
+      searchRef.current = "";
+      window.clearTimeout(timerRef.current);
+    }, []);
+    reactExports.useEffect(() => {
+      return () => window.clearTimeout(timerRef.current);
+    }, []);
+    return [searchRef, handleTypeaheadSearch, resetTypeahead];
+  }
+  function findNextItem(items, search, currentItem) {
+    const isRepeated = search.length > 1 && Array.from(search).every((char) => char === search[0]);
+    const normalizedSearch = isRepeated ? search[0] : search;
+    const currentItemIndex = currentItem ? items.indexOf(currentItem) : -1;
+    let wrappedItems = wrapArray(items, Math.max(currentItemIndex, 0));
+    const excludeCurrentItem = normalizedSearch.length === 1;
+    if (excludeCurrentItem) wrappedItems = wrappedItems.filter((v) => v !== currentItem);
+    const nextItem = wrappedItems.find(
+      (item) => item.textValue.toLowerCase().startsWith(normalizedSearch.toLowerCase())
+    );
+    return nextItem !== currentItem ? nextItem : void 0;
+  }
+  function wrapArray(array, startIndex) {
+    return array.map((_, index2) => array[(startIndex + index2) % array.length]);
+  }
+  var Root2 = Select$1;
+  var Trigger = SelectTrigger$1;
+  var Value = SelectValue$1;
+  var Icon = SelectIcon;
+  var Portal = SelectPortal;
+  var Content2 = SelectContent$1;
+  var Viewport = SelectViewport;
+  var Item = SelectItem$1;
+  var ItemText = SelectItemText;
+  var ItemIndicator = SelectItemIndicator;
+  var ScrollUpButton = SelectScrollUpButton$1;
+  var ScrollDownButton = SelectScrollDownButton$1;
   var SWITCH_NAME = "Switch";
   var [createSwitchContext] = createContextScope(SWITCH_NAME);
   var [SwitchProvider, useSwitchContext] = createSwitchContext(SWITCH_NAME);
@@ -15215,6 +19597,933 @@ jsxRuntimeExports.jsx(
   }
   var Root = Switch$1;
   var Thumb = SwitchThumb;
+  function Select({
+    ...props
+  }) {
+    return jsxRuntimeExports.jsx(Root2, { "data-slot": "select", ...props });
+  }
+  function SelectValue({
+    ...props
+  }) {
+    return jsxRuntimeExports.jsx(Value, { "data-slot": "select-value", ...props });
+  }
+  function SelectTrigger({
+    className,
+    size: size2 = "default",
+    children,
+    ...props
+  }) {
+    return jsxRuntimeExports.jsxs(
+      Trigger,
+      {
+        "data-slot": "select-trigger",
+        "data-size": size2,
+        className: cn(
+          "flex w-fit items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 text-sm whitespace-nowrap transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+          className
+        ),
+        ...props,
+        children: [
+          children,
+jsxRuntimeExports.jsx(Icon, { asChild: true, children: jsxRuntimeExports.jsx(ChevronDown, { className: "pointer-events-none size-4 text-muted-foreground" }) })
+        ]
+      }
+    );
+  }
+  function SelectContent({
+    className,
+    children,
+    position = "item-aligned",
+    align = "center",
+    ...props
+  }) {
+    return jsxRuntimeExports.jsx(Portal, { children: jsxRuntimeExports.jsxs(
+      Content2,
+      {
+        "data-slot": "select-content",
+        "data-align-trigger": position === "item-aligned",
+        className: cn("relative z-50 max-h-(--radix-select-content-available-height) min-w-36 origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", position === "popper" && "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1", className),
+        position,
+        align,
+        ...props,
+        children: [
+jsxRuntimeExports.jsx(SelectScrollUpButton, {}),
+jsxRuntimeExports.jsx(
+            Viewport,
+            {
+              "data-position": position,
+              className: cn(
+                "data-[position=popper]:h-(--radix-select-trigger-height) data-[position=popper]:w-full data-[position=popper]:min-w-(--radix-select-trigger-width)",
+                position === "popper" && ""
+              ),
+              children
+            }
+          ),
+jsxRuntimeExports.jsx(SelectScrollDownButton, {})
+        ]
+      }
+    ) });
+  }
+  function SelectItem({
+    className,
+    children,
+    ...props
+  }) {
+    return jsxRuntimeExports.jsxs(
+      Item,
+      {
+        "data-slot": "select-item",
+        className: cn(
+          "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+          className
+        ),
+        ...props,
+        children: [
+jsxRuntimeExports.jsx("span", { className: "pointer-events-none absolute right-2 flex size-4 items-center justify-center", children: jsxRuntimeExports.jsx(ItemIndicator, { children: jsxRuntimeExports.jsx(Check, { className: "pointer-events-none" }) }) }),
+jsxRuntimeExports.jsx(ItemText, { children })
+        ]
+      }
+    );
+  }
+  function SelectScrollUpButton({
+    className,
+    ...props
+  }) {
+    return jsxRuntimeExports.jsx(
+      ScrollUpButton,
+      {
+        "data-slot": "select-scroll-up-button",
+        className: cn(
+          "z-10 flex cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+          className
+        ),
+        ...props,
+        children: jsxRuntimeExports.jsx(ChevronUp, {})
+      }
+    );
+  }
+  function SelectScrollDownButton({
+    className,
+    ...props
+  }) {
+    return jsxRuntimeExports.jsx(
+      ScrollDownButton,
+      {
+        "data-slot": "select-scroll-down-button",
+        className: cn(
+          "z-10 flex cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+          className
+        ),
+        ...props,
+        children: jsxRuntimeExports.jsx(ChevronDown, {})
+      }
+    );
+  }
+  const WATCH_PAGE_BASE_URL = "https://live2.nicovideo.jp/watch";
+  const COMMENT_PROTOCOL = "msg.nicovideo.jp#json";
+  function getWatchWebSocketUrl(liveId) {
+    return new Promise((resolve, reject) => {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: `${WATCH_PAGE_BASE_URL}/${encodeURIComponent(liveId)}`,
+        onload(res) {
+          try {
+            const doc = new DOMParser().parseFromString(
+              res.responseText,
+              "text/html"
+            );
+            const raw = doc.querySelector("#embedded-data")?.getAttribute("data-props");
+            if (!raw) throw new Error("embedded-data not found");
+            const data = JSON.parse(raw);
+            const webSocketUrl = data.site?.relive?.webSocketUrl;
+            if (!webSocketUrl) throw new Error("relive WebSocket URL not found");
+            resolve(webSocketUrl);
+          } catch (e) {
+            reject(e instanceof Error ? e : new Error(String(e)));
+          }
+        },
+        onerror(e) {
+          reject(new Error(`Network error: ${e.status}`));
+        }
+      });
+    });
+  }
+  function parseJsonMessage(data) {
+    if (typeof data !== "string" || data.length === 0) return void 0;
+    try {
+      return JSON.parse(data);
+    } catch {
+      return void 0;
+    }
+  }
+  function isRoomMessage(message) {
+    return message.type === "room";
+  }
+  function isErrorMessage(message) {
+    return message.type === "error";
+  }
+  function toTimestampUsec(payload) {
+    const sec = payload.date ?? Math.floor(Date.now() / 1e3);
+    const usec = payload.date_usec ?? 0;
+    return String(sec * 1e6 + usec);
+  }
+  function toChatMessage(payload, threadId) {
+    const message = payload.content ?? "";
+    if (!message || message.startsWith("/")) return void 0;
+    const timestampUsec = toTimestampUsec(payload);
+    const no = payload.no ?? crypto.getRandomValues(new Uint32Array(1))[0];
+    return {
+      id: `${threadId}:${no}`,
+      author: payload.user_id ?? "anonymous",
+      message,
+      timestampUsec,
+      isMember: (payload.premium ?? 0) > 0
+    };
+  }
+  class NiconicoLiveChatClient {
+    _liveId;
+    _onChat;
+    _onError;
+    _onConnect;
+    _alive = false;
+    _watchWs = null;
+    _commentWs = null;
+    _startedAt = 0;
+    constructor({
+      liveId,
+      onChat: onChat2,
+      onError,
+      onConnect
+    }) {
+      if (!liveId) throw new Error("liveId is required");
+      this._liveId = liveId;
+      this._onChat = onChat2 ?? (() => void 0);
+      this._onError = onError ?? console.error;
+      this._onConnect = onConnect ?? (() => void 0);
+    }
+    async start({ skipExisting = true } = {}) {
+      if (this._alive) return;
+      this._startedAt = skipExisting ? Date.now() * 1e3 : 0;
+      this._alive = true;
+      try {
+        const webSocketUrl = await getWatchWebSocketUrl(this._liveId);
+        if (!this._alive) return;
+        this._connectWatchSession(webSocketUrl);
+      } catch (e) {
+        this._alive = false;
+        this._onError(e instanceof Error ? e : new Error(String(e)));
+      }
+    }
+    stop() {
+      this._alive = false;
+      this._watchWs?.close();
+      this._commentWs?.close();
+      this._watchWs = null;
+      this._commentWs = null;
+      this._startedAt = 0;
+    }
+    _connectWatchSession(webSocketUrl) {
+      const ws = new WebSocket(webSocketUrl);
+      this._watchWs = ws;
+      ws.addEventListener("open", () => {
+        ws.send(
+          JSON.stringify({
+            type: "startWatching",
+            data: {
+              stream: {
+                quality: "low",
+                protocol: "hls",
+                latency: "high"
+              },
+              room: {
+                protocol: "webSocket",
+                commentable: false
+              },
+              reconnect: false
+            }
+          })
+        );
+      });
+      ws.addEventListener("message", (event) => {
+        const message = parseJsonMessage(event.data);
+        if (!message) return;
+        this._handleWatchMessage(message);
+      });
+      ws.addEventListener("error", () => {
+        this._onError(new Error("Niconico watch WebSocket error"));
+      });
+      ws.addEventListener("close", () => {
+        if (!this._alive || this._commentWs) return;
+        this._onError(new Error("Niconico watch WebSocket closed"));
+      });
+    }
+    _handleWatchMessage(message) {
+      if (isErrorMessage(message)) {
+        this._onError(new Error(message.data?.message ?? "Niconico watch error"));
+        return;
+      }
+      if (!isRoomMessage(message)) return;
+      const serverUri = message.data?.messageServer?.uri;
+      const threadId = message.data?.threadId;
+      if (!serverUri || !threadId) return;
+      this._connectCommentSession(serverUri, threadId);
+    }
+    _connectCommentSession(serverUri, threadId) {
+      if (this._commentWs) return;
+      const ws = new WebSocket(serverUri, COMMENT_PROTOCOL);
+      this._commentWs = ws;
+      ws.addEventListener("open", () => {
+        ws.send(
+          JSON.stringify([
+            {
+              thread: {
+                thread: threadId,
+                version: "20061206",
+                user_id: "guest",
+                res_from: -100,
+                with_global: 1,
+                scores: 1,
+                nicoru: 0
+              }
+            }
+          ])
+        );
+        this._onConnect({ liveId: this._liveId });
+      });
+      ws.addEventListener("message", (event) => {
+        const parsed = parseJsonMessage(event.data);
+        const payloads = Array.isArray(parsed) ? parsed : [parsed];
+        const messages = payloads.map((payload) => {
+          const chat = payload?.chat;
+          return chat ? toChatMessage(chat, threadId) : void 0;
+        }).filter((message) => message !== void 0).filter((message) => Number(message.timestampUsec) > this._startedAt);
+        if (messages.length > 0) this._onChat(messages);
+      });
+      ws.addEventListener("error", () => {
+        this._onError(new Error("Niconico comment WebSocket error"));
+      });
+      ws.addEventListener("close", () => {
+        this._commentWs = null;
+        if (!this._alive) return;
+        this._onError(new Error("Niconico comment WebSocket closed"));
+      });
+    }
+  }
+  function subscribeNiconicoLiveChat(options) {
+    const client2 = new NiconicoLiveChatClient(options);
+    client2.start();
+    return () => client2.stop();
+  }
+  const WS_URL = "wss://irc-ws.chat.twitch.tv:443";
+  function parseTags(raw) {
+    const tags = {};
+    for (const part of raw.split(";")) {
+      const eq = part.indexOf("=");
+      if (eq === -1) tags[part] = "";
+      else tags[part.slice(0, eq)] = part.slice(eq + 1);
+    }
+    return tags;
+  }
+  function parseIrcMessage(line) {
+    let rest = line;
+    let tags = {};
+    let prefix = "";
+    if (rest.startsWith("@")) {
+      const sp = rest.indexOf(" ");
+      if (sp === -1) return null;
+      tags = parseTags(rest.slice(1, sp));
+      rest = rest.slice(sp + 1);
+    }
+    if (rest.startsWith(":")) {
+      const sp = rest.indexOf(" ");
+      if (sp === -1) return null;
+      prefix = rest.slice(1, sp);
+      rest = rest.slice(sp + 1);
+    }
+    const trailIdx = rest.indexOf(" :");
+    let trail = "";
+    if (trailIdx !== -1) {
+      trail = rest.slice(trailIdx + 2);
+      rest = rest.slice(0, trailIdx);
+    }
+    const parts = rest.split(" ").filter(Boolean);
+    const command = parts[0] ?? "";
+    const params = [...parts.slice(1), ...trail ? [trail] : []];
+    return { tags, prefix, command, params };
+  }
+  class TwitchLiveChatClient {
+    _channelName;
+    _onChat;
+    _onError;
+    _onConnect;
+    _alive = false;
+    _ws = null;
+    _startedAt = 0;
+    constructor({
+      channelName,
+      onChat: onChat2,
+      onError,
+      onConnect
+    }) {
+      if (!channelName) throw new Error("channelName is required");
+      this._channelName = channelName.toLowerCase();
+      this._onChat = onChat2 ?? (() => void 0);
+      this._onError = onError ?? console.error;
+      this._onConnect = onConnect ?? (() => void 0);
+    }
+    start({ skipExisting = true } = {}) {
+      if (this._alive) return;
+      this._startedAt = skipExisting ? Date.now() * 1e3 : 0;
+      this._alive = true;
+      this._connect();
+    }
+    stop() {
+      this._alive = false;
+      this._ws?.close();
+      this._ws = null;
+    }
+    _connect() {
+      const nick = `justinfan${Math.floor(Math.random() * 9e4) + 1e4}`;
+      const ws = new WebSocket(WS_URL);
+      this._ws = ws;
+      ws.addEventListener("open", () => {
+        ws.send("CAP REQ :twitch.tv/tags twitch.tv/commands");
+        ws.send(`NICK ${nick}`);
+        ws.send(`JOIN #${this._channelName}`);
+      });
+      ws.addEventListener("message", (event) => {
+        const text = typeof event.data === "string" ? event.data : "";
+        for (const line of text.split("\r\n")) {
+          if (line) this._handleLine(line);
+        }
+      });
+      ws.addEventListener("close", () => {
+        if (!this._alive) return;
+        setTimeout(() => {
+          if (this._alive) this._connect();
+        }, 3e3);
+      });
+      ws.addEventListener("error", () => {
+        this._onError(new Error("WebSocket error"));
+      });
+    }
+    _handleLine(line) {
+      if (line.startsWith("PING")) {
+        this._ws?.send("PONG :tmi.twitch.tv");
+        return;
+      }
+      const msg = parseIrcMessage(line);
+      if (!msg) return;
+      if (msg.command === "RECONNECT") {
+        this._ws?.close();
+        return;
+      }
+      if (msg.command === "JOIN") {
+        this._onConnect({ channelName: this._channelName });
+        return;
+      }
+      if (msg.command === "PRIVMSG") {
+        const { tags } = msg;
+        const timestampMs = tags["tmi-sent-ts"] ? Number(tags["tmi-sent-ts"]) : Date.now();
+        const timestampUsec = String(timestampMs * 1e3);
+        if (Number(timestampUsec) <= this._startedAt) return;
+        const chatMsg = {
+          id: tags["id"] ?? crypto.randomUUID(),
+          author: tags["display-name"] ?? msg.prefix.split("!")[0] ?? "",
+          message: msg.params[1] ?? "",
+          timestampUsec,
+          isMember: tags["subscriber"] === "1"
+        };
+        this._onChat([chatMsg]);
+      }
+    }
+  }
+  function subscribeTwitchLiveChat(options) {
+    const client2 = new TwitchLiveChatClient(options);
+    client2.start();
+    return () => client2.stop();
+  }
+  function getClientVersion() {
+    const d = new Date(Date.now() - 864e5);
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `2.${d.getFullYear()}${mm}${dd}.01.00`;
+  }
+  function getContinuationFromLiveId(liveId) {
+    return new Promise((resolve, reject) => {
+      _GM_xmlhttpRequest({
+        method: "GET",
+        url: `https://www.youtube.com/live_chat?is_popout=1&v=${liveId}`,
+        onload(res) {
+          const match = res.responseText.match(
+            /(?:window\s*\[\s*["']ytInitialData["']\s*\]|window\.ytInitialData|ytInitialData)\s*=\s*({.+?})\s*;<\/script>/s
+          );
+          if (!match) return reject(new Error("ytInitialData not found"));
+          let data;
+          try {
+            data = JSON.parse(match[1]);
+          } catch {
+            return reject(new Error("Failed to parse ytInitialData"));
+          }
+          const continuations = data?.contents?.liveChatRenderer?.continuations ?? data?.contents?.twoColumnWatchNextResults?.conversationBar?.liveChatRenderer?.continuations;
+          const continuation = continuations?.[0]?.invalidationContinuationData?.continuation ?? continuations?.[0]?.reloadContinuationData?.continuation ?? continuations?.[0]?.timedContinuationData?.continuation;
+          if (!continuation) return reject(new Error("continuation not found"));
+          resolve(continuation);
+        },
+        onerror(e) {
+          reject(new Error(`Network error: ${e.status}`));
+        }
+      });
+    });
+  }
+  class YTLiveChatClient {
+    _liveId;
+    _onChat;
+    _onError;
+    _onConnect;
+    _alive = false;
+    _continuation = null;
+    _timer = null;
+    _startedAt = 0;
+    _visitorData = null;
+    constructor({ liveId, onChat: onChat2, onError, onConnect }) {
+      if (!liveId) throw new Error("liveId is required");
+      this._liveId = liveId;
+      this._onChat = onChat2 ?? (() => void 0);
+      this._onError = onError ?? console.error;
+      this._onConnect = onConnect ?? (() => void 0);
+    }
+    async start({ skipExisting = true } = {}) {
+      if (this._alive) return;
+      try {
+        this._continuation = await getContinuationFromLiveId(this._liveId);
+        this._startedAt = skipExisting ? Date.now() * 1e3 : 0;
+        this._alive = true;
+        this._onConnect({ liveId: this._liveId });
+        this._poll();
+      } catch (e) {
+        this._onError(e instanceof Error ? e : new Error(String(e)));
+      }
+    }
+    stop() {
+      this._alive = false;
+      if (this._timer !== null) clearTimeout(this._timer);
+      this._timer = null;
+      this._continuation = null;
+      this._startedAt = 0;
+      this._visitorData = null;
+    }
+    _poll() {
+      if (!this._alive || this._continuation === null) return;
+      const requestStart = Date.now();
+      _GM_xmlhttpRequest({
+        method: "POST",
+        url: "https://www.youtube.com/youtubei/v1/live_chat/get_live_chat",
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({
+          context: {
+            client: {
+              clientName: "WEB",
+              clientVersion: getClientVersion(),
+              ...this._visitorData ? { visitorData: this._visitorData } : {}
+            }
+          },
+          continuation: this._continuation
+        }),
+        onload: (res) => {
+          try {
+            this._handle(
+              JSON.parse(res.responseText),
+              requestStart
+            );
+          } catch (e) {
+            this._onError(e instanceof Error ? e : new Error(String(e)));
+          }
+        },
+        onerror: (e) => {
+          this._onError(new Error(`Network error: ${e.status}`));
+        }
+      });
+    }
+    _handle(json, requestStart) {
+      const visitorData = json?.responseContext?.visitorData;
+      if (visitorData) this._visitorData = visitorData;
+      const lcc = json?.continuationContents?.liveChatContinuation;
+      if (!lcc) {
+        this._alive = false;
+        return;
+      }
+      const cont = lcc.continuations?.[0];
+      const next = cont?.invalidationContinuationData?.continuation ?? cont?.timedContinuationData?.continuation;
+      const timeout = Math.min(
+        cont?.invalidationContinuationData?.timeoutMs ?? cont?.timedContinuationData?.timeoutMs ?? 5e3,
+        5e3
+      );
+      if (next) this._continuation = next;
+      const messages = (lcc.actions ?? []).map((a) => a?.addChatItemAction?.item?.liveChatTextMessageRenderer).filter((r2) => r2 !== void 0).filter((r2) => Number(r2.timestampUsec) > this._startedAt).map((r2) => ({
+        id: r2.id,
+        author: r2.authorName?.simpleText ?? "",
+        message: r2.message?.runs?.map((run) => run.text ?? "").join("") ?? "",
+        timestampUsec: r2.timestampUsec,
+        isMember: !!r2.authorBadges?.some(
+          (b) => b.liveChatAuthorBadgeRenderer?.icon?.iconType === "MEMBER"
+        )
+      }));
+      if (messages.length > 0) this._onChat(messages);
+      const elapsed = Date.now() - requestStart;
+      const delay = Math.max(0, timeout - elapsed);
+      if (this._alive && next) {
+        this._timer = setTimeout(() => this._poll(), delay);
+      } else {
+        this._alive = false;
+      }
+    }
+  }
+  function subscribeYTLiveChat(options) {
+    const client2 = new YTLiveChatClient(options);
+    client2.start();
+    const unsubscribe = () => client2.stop();
+    return unsubscribe;
+  }
+  const LIVE_ID_PATTERN = /^lv\d+$/;
+  const NICONICO_HOST_PATTERN = /(^|\.)nicovideo\.jp$/i;
+  function extractNiconicoLiveId(input) {
+    const trimmed = input.trim();
+    if (LIVE_ID_PATTERN.test(trimmed)) return trimmed;
+    const normalized = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed) ? trimmed : `https://${trimmed}`;
+    let url;
+    try {
+      url = new URL(normalized);
+    } catch {
+      return void 0;
+    }
+    if (!NICONICO_HOST_PATTERN.test(url.hostname)) return void 0;
+    const [, page, liveId] = url.pathname.split("/");
+    if (page !== "watch" || !liveId || !LIVE_ID_PATTERN.test(liveId)) {
+      return void 0;
+    }
+    return liveId;
+  }
+  const CHANNEL_NAME_PATTERN = /^[a-zA-Z0-9_]{4,25}$/;
+  const TWITCH_HOST_PATTERN = /(^|\.)twitch\.tv$/i;
+  function extractTwitchLiveId(input) {
+    const trimmed = input.trim();
+    if (CHANNEL_NAME_PATTERN.test(trimmed)) return trimmed.toLowerCase();
+    const normalized = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed) ? trimmed : `https://${trimmed}`;
+    let url;
+    try {
+      url = new URL(normalized);
+    } catch {
+      return void 0;
+    }
+    if (!TWITCH_HOST_PATTERN.test(url.hostname)) return void 0;
+    const channelName = url.pathname.split("/").filter(Boolean)[0];
+    if (!channelName || !CHANNEL_NAME_PATTERN.test(channelName)) return void 0;
+    return channelName.toLowerCase();
+  }
+  const PATTERNS = [
+    /[?&]v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/live\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    /studio\.youtube\.com\/video\/([a-zA-Z0-9_-]{11})/
+  ];
+  function extractYouTubeLiveId(input) {
+    const trimmed = input.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+    for (const pattern of PATTERNS) {
+      const match = trimmed.match(pattern)?.[1];
+      if (match) return match;
+    }
+    return void 0;
+  }
+  const styles = '@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-animation-delay:0s;--tw-animation-direction:normal;--tw-animation-duration:initial;--tw-animation-fill-mode:none;--tw-animation-iteration-count:1;--tw-enter-blur:0;--tw-enter-opacity:1;--tw-enter-rotate:0;--tw-enter-scale:1;--tw-enter-translate-x:0;--tw-enter-translate-y:0;--tw-exit-blur:0;--tw-exit-opacity:1;--tw-exit-rotate:0;--tw-exit-scale:1;--tw-exit-translate-x:0;--tw-exit-translate-y:0}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-yellow-500:oklch(79.5% .184 86.047);--color-yellow-600:oklch(68.1% .162 75.834);--color-green-500:oklch(72.3% .219 149.579);--color-green-600:oklch(62.7% .194 149.214);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height: 1.5 ;--font-weight-medium:500;--font-weight-semibold:600;--tracking-wide:.025em;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-scheme:var(--color-scheme);--opacity-word-correct:var(--opacity-word-correct)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.start{inset-inline-start:var(--spacing)}.end{inset-inline-end:var(--spacing)}.right-4{right:calc(var(--spacing) * 4)}.bottom-4{bottom:calc(var(--spacing) * 4)}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.container{width:100%}@media(min-width:40rem){.container{max-width:40rem}}@media(min-width:48rem){.container{max-width:48rem}}@media(min-width:64rem){.container{max-width:64rem}}@media(min-width:80rem){.container{max-width:80rem}}@media(min-width:96rem){.container{max-width:96rem}}.mx-1{margin-inline:calc(var(--spacing) * 1)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-8{height:calc(var(--spacing) * 8)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-\\[1\\.15rem\\]{height:1.15rem}.w-8{width:calc(var(--spacing) * 8)}.w-48{width:calc(var(--spacing) * 48)}.w-full{width:100%}.min-w-0{min-width:calc(var(--spacing) * 0)}.min-w-8{min-width:calc(var(--spacing) * 8)}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.resize{resize:both}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.gap-1{gap:calc(var(--spacing) * 1)}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-solid{--tw-border-style:solid;border-style:solid}.border-blue-500{border-color:var(--color-blue-500)}.border-border,.border-border\\/50{border-color:var(--border)}@supports (color:color-mix(in lab,red,red)){.border-border\\/50{border-color:color-mix(in oklab,var(--border) 50%,transparent)}}.border-destructive{border-color:var(--destructive)}.border-green-500{border-color:var(--color-green-500)}.border-input{border-color:var(--input)}.border-transparent{border-color:#0000}.border-yellow-500{border-color:var(--color-yellow-500)}.bg-background{background-color:var(--background)}.bg-input{background-color:var(--input)}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-2{padding-block:calc(var(--spacing) * 2)}.text-center{text-align:center}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.text-header-foreground,.text-header-foreground\\/80{color:var(--header-foreground)}@supports (color:color-mix(in lab,red,red)){.text-header-foreground\\/80{color:color-mix(in oklab,var(--header-foreground) 80%,transparent)}}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.ring-inset{--tw-ring-inset:inset}.zoom-in{--tw-enter-scale:0}.zoom-out{--tw-exit-scale:0}@media(hover:hover){.group-hover\\:text-header-foreground:is(:where(.group):hover *){color:var(--header-foreground)}}.selection\\:bg-primary ::selection{background-color:var(--primary)}.selection\\:bg-primary::selection{background-color:var(--primary)}.selection\\:text-primary-foreground ::selection{color:var(--primary-foreground)}.selection\\:text-primary-foreground::selection{color:var(--primary-foreground)}.file\\:inline-flex::file-selector-button{display:inline-flex}.file\\:h-7::file-selector-button{height:calc(var(--spacing) * 7)}.file\\:border-0::file-selector-button{border-style:var(--tw-border-style);border-width:0}.file\\:bg-transparent::file-selector-button{background-color:#0000}.file\\:text-sm::file-selector-button{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.file\\:font-medium::file-selector-button{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.file\\:text-foreground::file-selector-button{color:var(--foreground)}.placeholder\\:text-muted-foreground::placeholder{color:var(--muted-foreground)}.focus-visible\\:border-blue-600:focus-visible{border-color:var(--color-blue-600)}.focus-visible\\:border-green-600:focus-visible{border-color:var(--color-green-600)}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:border-yellow-600:focus-visible{border-color:var(--color-yellow-600)}.focus-visible\\:ring-\\[2px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:#3080ff80}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-blue-500) 50%, transparent)}}.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:#00c75880}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-green-500) 50%, transparent)}}.focus-visible\\:ring-ring:focus-visible,.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:#edb20080}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-yellow-500) 50%, transparent)}}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[state\\=checked\\]\\:translate-x-\\[calc\\(100\\%-2px\\)\\][data-state=checked]{--tw-translate-x: calc(100% - 2px) ;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * 0);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-input[data-state=unchecked]{background-color:var(--input)}@media(min-width:48rem){.md\\:text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}}@media(prefers-color-scheme:dark){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=checked\\]\\:bg-primary-foreground[data-state=checked]{background-color:var(--primary-foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-foreground[data-state=unchecked]{background-color:var(--foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:color-mix(in oklab,var(--input) 80%,transparent)}}}}@property --tw-animation-delay{syntax:"*";inherits:false;initial-value:0s}@property --tw-animation-direction{syntax:"*";inherits:false;initial-value:normal}@property --tw-animation-duration{syntax:"*";inherits:false}@property --tw-animation-fill-mode{syntax:"*";inherits:false;initial-value:none}@property --tw-animation-iteration-count{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-translate-y{syntax:"*";inherits:false;initial-value:0}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,d09GMgABAAAAADlkABQAAAAAbWQAADjvAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoNHG59WHCg/SFZBUoQFP01WQVI8BmA/U1RBVIE4AIJAL34RCAq8RK8gC4ISADDUagE2AiQDhBYEIAWIIgeJJQwHG0tkFWybdrHbAbibOptsRJK5Wh2JsJGLU2T2//fjZAxhBdtUrX4IZkOcqq6uMWsMN+QWvMaiKghT2IlNW55jWsY8A7PZDZMjQdgqbGNPapE9UKJHSykjTSnudfUoSF03VLr8ImFyww+561Wo6Ov7v0iLP5PvOyxH9m0Z9Pmpg/xXZFVoHBp3/MMjNPZJLslD39p/3qrunnkfeAFZIgVIAoEkECbC7YlQUURCEjpyu1Ef/v9vzv89msnJxCfiE5lgEQghYlhoGzTI5ZaK+wDtU/t6b/2LG1f1UcNqaRDL/EDb/IeKPXGo23RWo6BgEnVH3FEHHEedNoKKoli9bLf9itWvWP5I5s/w5yL9HQ6Pm/YPq6TitEyVbne9HlPtzphx30Sa5kydVWZtr2VI0kIQLSRAhAQJkOL5yc36NwpMIPEzt+qbGiR7UvW/FrFkzzVmRJABnpcO9vZ3lFgBRokWYEFBEAXRuaewx8YmRtXW/5qr+gcO/ktP9gBYgiIu35BJD+GiO1ITO2tPLaA8IkcoF3meb7/21nBpE1L8dwRi3JDRxCFU0RApgH8/nPvvTzJpmxI+IPbVMtO7qIDgA7JcVB+AVfjnD5898c7lT8PY+CmSlqiGoOj329/hnlnCLUEoiVxAJlyTgKD7l8l9V/CQpMOpnnPhhCNLj5B6UPV7m73Zrl9zIZLtFQqXvElhSelJ5BUSFHgDMnpwSUiM8fj0qpbtf/ii0iVpuQElOHu8gbO26JyL5jz9ti468AOiAH5yBVAbQFJakdQGUlydQUp7BwXfCNIFpYtVSA4hV391DtBewu4l7aVU2bkKKVR3lcedSxdNabcuytLw/3H9eGffoQoDoET2e/retaUwDLPAwpgTxeDf9235rpRlmABHwTAGHLMFt/tXa27/fr+j24pnm1xEJEgQkRCC65b++V6/xrSes+RKaXYQCKy4B2gMlvm7AkEnPLwfeFYYJVEwtulvYRxcMG5NMHGdGLoZMPQxYxhEYRjRiGEXL4bDpjCI5jDctlE4DAYMYMWXM0CcEQ7iCIhFwCJXgQRClW9d54v6z77f8gFPFK5B0cGYhmKelrqR6WVWsv/+NVy61s0t5ev4Fn4zvzWlTm1KbU53Pu17uvFZ17NNz7aU6kpGaWxpZWlVaUdZXublaHlqeX15/3zD/NQFj1gT1QWxkF5YsbBmYWBx9aJ2cWApN6RLfGne0jeWsWVtBa9MWb1WZqvj1tiKLY313ZWZ2jDAFVpZLJUvk3IRr+AKRmRAloiFrChzdI3irKjiVEW2xkgW4R1e5kt8TZ1sENUllVHno2sQC3FQEkqLBbEs1kRFyIQQSbYTRfFSlyqNwAoAAdjbLJfp2P3B0PH8AJNcUYVuxNLO6gjIIAAC/D8rYcqMBQz+mRcAjpODAIblbBZx+qyehMLHWNAPac+gpxvS3i2DvVCIBC/zW0l5P+CPPRDsheSlOYEEt1ZX3M6WADTy6H0GVv+uPox6RbzBpd8G4lrWT6/xS8JF+WROEVBYNfH0B/QCPUD/IX5DfIe4WcO9xCJikj76XDP28Zw8ILfKJ+QH8gX5gPwP/hv8O/gZ/DA+oLEZuN5CvuYKIbOPZVL2GcPXxDPiHv3j8V9g38BOYjuxedgUDE8J+hBUfO8rbzvtuPBYlyGxQKJeUTd8c24iBMONkmWnoW9KdmPk9nSCbdoRxIwreaIBUK/X5K+yqxAdqkasLZUR/SVXk1KSSYYTPxKtDM7mAskHN2w4jAuqsGQR+Y3hn7GxU5cQVF4mhu1OgRZQZDx0GgOpOo4Jjg7jU1ZJHbZArqYrtAr1Vo5MtHMcN0htOhnSYswYpzp4ilWMp7bqOtqH11wOS+YV9suwOuT+CfBXke8ZR+fPBNMLP0EPwpkfPb38PV7olVXR24sgbr+By6UozWWTE6hzNIfdQdQqrO6nxh70PoXXBKSbGbaaVr8LbgkBy6n2PuLWstEIMRslW94NOFjC6w+EyN+qIxMUptOgiUFcnFVSmk3WRpkKcCWvTnAoV8WoQZXd88J6e3kJHX5O5qgecgFTEHPatZw3dLv9a9nod8i8/rp1FYbhl4cdQ3+KhzcfFAz+7mlseoCbsFyEJA6wQu8DSHZKEns5T5EemAG48hzH02nT5RXaJWv0S30248GQbkmnzwsl+9xSvUVZYzSIXrFcHzw3+NXW0WAPYXumTw6UK3H58dON2Gj/4b7PBQiTvcY7p18Zug62yp7yFQSyR/zYZmmyMzIrdUtve4Hu+L11EL5b2s3kiupzCj3LVfe31tQTb0qhlo3PGq3qGtDWrmv94BAAgEY8ZZgZ27pMYtUA8A2dadsZLQTwUtKcQphRut+H0z5IeBTiJQ+8FR8D4L77PfvgcgeNnGMEFICR7wKQ9F+SLtE1ac5k3lPw2+vvoM967O2yxMpiLT2DcShM+spmrQzMLHuQtn1Ck2/bt7o37umZHFGfGvaS5T2Ds3rOy3rMejqD44FUv8s6DNfNUPhU9y9pIk9knJMWrE/B+qXWjj5hPxGCVrk1J1rYKuv6frpD0qQfSY99Ryob1mYkh97Wlpqha3dqXddjHq3zcitkyDaeQlOkioSEOkan1klk5Qn6U0t/SsgDrOuoxTvTsoSLVWuhha79ncZtgLCLpKdJBVZgvipVcDMqSw+14mBKwiNlBpi4XcYVNeTmj+MW6voa6FbCscjFuRXHWnpFKxALYLO3SNWdkaY3OqehTwqadbVQWnvmVz3mv6xMfGap9dg0+Bl1g4lNP5UOrL119IXhnRh4CvZbnSuXVCwekZ69fN1a578g6PozUWfv39NvJC/N7BWJ2zE71r6wxNNsnhzjcOHVGiVTiX0bgPM7h1dNplYtjYA4raQUh6wNshTolOhBK7NDD7FT+ugNmmbAgL0CqK8AqTcdiAcZQqXUXlAL1fIceCNFTaDjQDGeTvGDoAP0RXqBNtMu2kL307N0Nz1Ot9AC3YYzpcAMo41eoltpmB6hnfQyvUg19DTdQfdgby6U0ST3AyfiQcHVoP30Cm2jh+hmuo+eRH08qHh34po7ynKl41WO447TjqYgj6djfKigFN/gqY52gIgHPczxtIsbQIEfvaNpvp2iJG1AX85gfh7YmdOVI9ARfg4NzA1R2xsPtvWwQXkqsXRxKRzGiAKi8VECS1JsMpggRwDyETDsjwcNjkQMX6osR8AUbfiGAo2ux0kMB3AFB7hxVFLB6BE69Tx6e+NB7wAqqMCYY+zbpoA6RlAaU5RU2jhB0knOEI62AkE55jSel8O0NK7eYthOFgbXLjEYwZCsEoWqx3AKRuABg+B1x0lmySkvgw9sMZTWFDBo7SV5jYrM982jg9c0hh3zWjRcZCejU7SpNzBvxTFGhUUCYzG6ZOnJOhjmd45/oefsL/E3TABf3qlUvHKsARaZvMQYoxUHT7VJlJeNXqMmcU5tcJtooTA1OIK0hHZsZsq1gkkXOzO0yNs5SqUSsPE6TWziIpxysix6pHXuiIJ4MCKMcCGt1JSyJGnGTqcQtDD2oV6hWtB2ZlgVds6K4Qe7Ma1GlbRaCXn5zDqT29gU3ALGlQoTpVDbCCEUuLogZux5vZlKNzziBX9X8J0wYC+ffBoC/z8/aM+Pe2D2CTh+EjY8C9sXYOtV2PInmAAkgLjP/Ejho6NP959MPZn1XOxL7S9NhnimHFPjQtuC9/Wxt/9/m48KMP/7fFzq5LnyXYUey+LoZ/bPE77Y/3X3hfxwWWRtxHSRPMSki9hO/P2un9xI9pM3knvJA+Tv7hmjS6MD0Vvua2N9sYHYYOwANUDtow5NZelT010zGfY7szFuL3/7E2Xq2NO+Z8Ol9HPo+YTyyfnOpb7lRBbpfdB8/8M9uPbY/1J65o6+/PIOPs9gtASWOIOdzQvS3TWZqtiDCfK9dACX4sePO/FLKvTkOecMPCd33BA9vCD7aCS+m18E5VpEZoP3ATmdIWDdo46JSoBF0B1tgr/0kG+QAeBH0zwnjAIYDi8gYRNSM79RGzAAMWMfSDsW+2fv0ihDUTJSY8+B/IgeXRm/YsfqdCxdW9+xvmSXNpYNfYAdLATYJ7vzRTSLnBzI1zxPv/AqvFZ3ezHk4YyItJpXhRWpTXVvfXx9kCRqdwzkyppfRRWte+pje6K75usrtw/JNyCzYzC7Udj9t8cw/JdgGjgNPOl+RwE28umSpZ2SipqGnIIWR40mGTZ2Dk5uHgK/KtVqxcQlJKWkNcvJysPgDIxMCFYkOwcnF5pPpy7d/Hr06xMwbMIkG8oUsyGDRowaEzRgXAM3r17ZBuhNYwCTcBiOHJo3myObk251XkyWQ2kt2mbAyRuNkcgwhpnMTMBKVZfBTtcXc9jJnLcMz2aTlPFw2WEXvkZITUD6daEh/1N1d4mTcAe2gWmaBCnF2yoQB8j0zrgJEoybMgTP1oEjlqdpFgJxn8IYrtAd6dvy2mFPvhbrKVf6x6rUGBgYjJjuvrhnRRDs3CDT6ueptsjYhJ+NgPdZyRTVGf54dstjAVGsEof6s05Y1qq51Gy/kdQoG+9ed1VlzWvNRUw/cV1ZfZPqe47aqZdK7xp3O1x2ZYydrdOl8+9IJ1NOTd++MC2SjPtUX9yoVatkEeatpiMec37GqgwVwjioyTAqnh06Uxg810UZRTaRckgRYtwpNr7CO19sNvXF3ZS5mOlCrvZda457/S1bq12Z+/gKjnO1s622qSsIpYjEg1Y2gHdVXvYRsH8luubVmaDukLFVx8mH19sVUCy/ft+wwKWAsS6Dad5hbQ60MU+4UfZ8cXR2fD4p/6Dss8WSNQYlrWbqumJ/WLKrDDU/LaZYcACXIu+Q5DlNdL98wdrszdLcflPTL/SeBMTTNzZTxt7Sjqk5WT4eqZ8TjE3O4SNqoQXG3z2m5z4DBSUhEsw+pJ8NpVIUBsvwztmpvLGwn9XV9WMreuC8T+eb680xFPso43IJHULvfPe7ye9NLB3c5dlCAyrWtHTUTuu6nL33/25lfje9fO2Amvjof++xiv3hv4vLzLf6DIpubYtGaQmq+85zCZxqYcrK0q4ERIylJIWxs8FTtUwQtSJPWScDCKacsDKMkqlP0G6h2ShzEMhWG42mUG3zLfa1C4p0x+lS32C/WVR2+Pa+X6+1mMMOTzcIhnBh1qbyUUyPtr3t+CHMFU6vGWjZQjNXedI2GqCp9vGhsgxsPEpWcO7/qetQgD18NXtV6tgj2glGIMYWD5ypcign/X26HyZC51vrl0zQjayP7Y3Cj9zjOisNZKGae0KHl/WrJyPsvJ0VP131QcyAXtWQBfd19aESDJZ3RlKkOUHM3YTmBRsHxtKIpM1xxAMasg8zA8Ax2lY5DRtvN5vzBaZsGIfcbw1EU+NuzP6+cR8n7KocBhLfzhgel+5udC0m5DcZJCls2lvxLdz2qh/5q5+J1v/eP43Pku3h99+bvq7ok68cfK91eM7ZHGDq9wQj6B561c/z17zLZvYcQVx6POPyMScD9hl4rjo9H4uXcTgkIJUU+VaxIgva5yTX7dt05wPTKX3rbrPobnvL7V2rTNWMc6WZBNlS1O7mtZZqaMsXOfWu2QOv/U31YtuDZUjStdY9y0R+IzZU+6sziPdvCwQRymMjry0HnSvRSdUrCk/CevlquSym0VUSkkbvotmBc60L+OXUvmKY0Gkd5g1l9et0zOQG2MtatX5KsP+xyBRssHIgV5q1ufXX6tCv+CxoRZwH6TKrMLwO6xdKTFIMWN3NGA8GY0ORodC6ZnyKsknuXxH7qr1bSFL58xrosoUqe8BojqToQVscWhGazbNMvxG1R//OJn3ypimVa5C8/B/cyo3q10q/K9syfhyhgQ79Oj3lbuMWqbBCAdPtaza2TLUMvmoNYUZRXZ1RioXIO41WYXUdUWO+E7pZTbsdpiMDA6aju51NczvnUgIuZoKuxe5EO9D6WZerfqYDQRs8zfEWFzNerxuYlAMdeo70XaUt9PU+cuGlnI8/+7iTMjRkGr5FDUE+S+mR1gVAa2eCWWNXoNoG6u25bq4dbpetCkcveS96R0NU4esFf57CN0Afy7PHYTgyMGA4usfp6ei1nCrmkfswjxX3IbUzLlftrA/FMdc85eaM/6cHdGh5ZH2/BxW1BgSmE8m+EwSBIApCQZwAE8syJlH7mRons52HEQX1fFWqIj/nElVKJpuTmytLNdXiOlcnHzMGhApPlNzJdJUqsYJqpUEqyFkyZeNsR4pPXGYSSGWuQAXcDH5JJpJfBoF1Y++1lo7TGScz2q81LXk6zuaczYGv4izNOhQ1GSjWuVxEqpDV/vhsEpmAB2lXR3fQ8zkbZaXgFYmx+aGKTXtbKFNmPlaNFxepywofzHJuySnQQmYc7kdEkyQpmvCjuKSxVGTeZmduwOpqMLOPps0+rAYTbbczt4moRh5kxun8iLDRJ5zoQjFVp9y/rZypcxEkYVNVKSvOOyOT1YOu79ECpl6vEUmMOBAhsmTvbX+o0krrjfxil8hGSgw1WJ3cYMDFQLBJNkTM45y0P3PyyWL1oijdWA+xacgY5kdOYCNFk35Ea8KIiRD9MkUB0/xxI6P/aSEtlpjaDRVTGJY0DzOVqNcy5p6Nnl9UmbwNDXyvqrhKTr5docizIxxIjNO0ltcQAjtzRlGH1Mhzi1JEB7bqVlDF+lKN19WscHD5+ik70/13XX69OzdtdvA6scJZVF9aWYPSecB7iXWa0brt/Kbz7SfDn1/RuvejfR9BxzwuSb+7NSfjxSj6jjMHz9Afk0unqlEYJfnEyPoBr2d9/8hx6wmCUCgQYtt0wpZELpL7yqfkuuDXk7qXFAWv9P9A/QCV80slG2YiEcF3J4OOJepg8kHbzY7MlWX31YqAVdSa0Tp00BjPCVGhnC/S4L9rULOM43yts8TBVHsUZqpNK6koNa7dg4ENg1xlykfc7VQ1jtoqu5zMFkTv5yB4H1dmqS0vUGKcTnidrOYQAqmqcaIaNlHtjrbZENXXGBiPf/tUrUSnKhEqHs3Nu6tSWIKpCoSo1jnTqJiBv42tQwdvUogKRbaiVw0BIKRw7fns/uJz9ycOJhd9FaGUmJRAh6KWT4Y7CCRpTpprTUMzXoxquPPUracaLgaXDpXDHVr/UU3DtNWatFz39xzTNBbNzGNMt9qnKlCHWIK6bbehQuwSMeI4Dc7tITIEbfNL1NIv8+oBMulV1pulQlHwWeCLsh2aphJxcGyi62fqZ0RnxEWOgkoF56dXupuYTpFfkbeG7KHv/GcLgscOLlFLx+fJE2R19qWq5k9SJ9m/0HTXc79KJZ8wBQSiFpVpjy7rhtidA0ea13xn7qdS00++TNqsyeKwrfleekyRT21UA3kXKfJW8E+xPHudhiPBwaTlk3tss1LrEMtKfyrRO0rrsU7fZjpMs8gY1d+YQtIss3V4VpqqqSaroYNFzkmXM1lmOoUMNtpwR5h1OEWz/htdMXGjscVqHZqTkr6z98hg0HXerfmm2STE9ZPfkx9ZzbCtuUT0ZlCdARc6P3Oj6shnSdD64ecJpzJPhDPD781oOlGqTTJ6cM+G/uFlbYUTRotSKrEojPB2iGr7gak7hSKfClN1z9Q7SNpr1agMJlSIzGopQyBwhTxOpl7JLd3Xel43mx35u/QoFLO47jyHrWC9pSVvhrAo1mbSv6fbQMizfZF1+YVVpxlKRvxOQ3a5plMqDGAGWX+fWGPiaTnFBn5loU5VWl6pKy3VAaPYgHGAYH9BdxtRgUGERhhciFDlJZz3Y0d4Y7mFE7wj+Bb+mbzck/wtLfUBXDu3xDcJhv+2cOf5q9RVGBbwsrnNPG8rm1x4qWR9jAZXargPLZKL1nlcjvPnL5AXgLcU3b8UfVV3jn11KTqwFO2MvsAELkQXD6Q/MsTFyZsLqzXZ9vACVXm9SMUpKJNXEM3z98m7vtzspwTcvWJXxEwXRtJdJhVHK16KV8eZjXXaQSsQbHLf1b1tbHLbha1wIia6PzH6PZ2BHRm97B9ERIOYrEx9hb9xaAObXLicPRiplWEiINiD952598wAmxzeOdS5a2jY4Vt/p/rYJdyCV9Z970b9ZwG+X3ge/wB/fgFka8wTEnWPRqv2Z8dsKa5fq6lTeKxUuw3D0l7K9tLKCaNtNPyibusT8/gwfnYlE233SO+Dp7OeKSvT6Ep4tH+iaxe5SyUjqitU+QUIdyfJ5j6dxMdxL9vGfq4cgHfqr3jo9+N/n39HPvn3MaqsnvflHX0jlJlIG/Vtx3doNeVcnoar3QHDn2sbL/jUic7jx3Dz+R0T51NljsDvwi0RxQsNiz+he8LHdruuY+LaMfr+X3WxXRMdih++xb+FlDjXeEeSy3UVE9Xgw+ZPhNdi4uuuJPe4z42PqnbLD40c5/6Zw7uMh/Cnfxh9v4mJ2c8PSA0CQ4+l4z32ubemR98cWzX1xJTwPw7nPxgIkSXPncpBVxfWmio4TqmNrNXX4vUyvR6vPTSPlyTtvbBqkfwDUZoQ25f4/zj483EZ/lq+ZeW3bntoNl15c2fnXyVfhZ/wNfjDofHGQB8VmnW0tb9+xOhuJIhUNxrcTSYoIr285EyV4GxJ6Tn+0Ayc9lZHK2XGbhg2ul6bXI5NkYnzek+5Xske0oQILUNjFsK2wIDebf95Kuu94yAiLTg5pJZzOPkfJKdLSveOuy2dxUftytVy6TJQqQPZHVUQluimZvOqa51y0bHUStVcyehkanULZq4WH50QlXONhFxxTO9pwHUldBqj47/51D36oSM77tx1j39z29rpe9x4R01UCyu26I3k2tuBpbHVyXq07N6BmxmUu9bYKXWP/qmhe+wM/XPR+8Q8VLEVYPHFdB6KlvGQW15yAWARyHfKtti2W8kQWuzR+KGyzdpQ6zin7KYT2adq55Qp6wkml086T+bHsO6oUYL9AEyyEYlB+G4s3GjVGjDS3OVDEtsUk2UC8syKpm/Z5DI5MxWd+LKF5WAaMbbIX/U3+i/92JfruVg5UZzBFLVYYJaxHgkPY0NzwnNyhdUyoHxrzHXFhem9wNWcXxiAOdPDdhJd4sj1DD3pWvcEDmLLEr2Byv91VInpMG/RL7E2OOGM6XgpxGzJ4by1xISbyuHydlmoygi0Hqz/tqymb462v93VHm8vNE/XEpnaFXe1nbN7uQv3S3tl39D7+/n+nv7h/kz/Vu/tfUOL12dVnlnKvMOM6Fe0qyGtGeSL5U/IX/T9UD96Df0HWZtWKBYo1il2KUZCZ3M3+yg7Ej0UA2Wn8sfKPyrvjS0t7pZ4Sz5aozqcvJN8mUy1RluFmF29Xf0t9c/U/1LflT6Wvp1+nl5tb4lbNFnN+cSvZpezYEeHtnflp/Nncl9HvHO77hL7TvFE8VrxSalKZfTfKC+XM1227rVcnOtI3px8NPnL1SutFzIsAAMUYPBFqMQjRgIWzICBFQARGfn+HZlwanZaGQUmu5zVbpj92opEteD5w8vOTd6m6EE4qKv3H0bq76B09vU0hayAeFhY+W/5Ge6WMoSR/iwmFnQkO2ahICgEME3SMhmMugd34J7sYRiUkfdgrqD1qBE4AXDpBVUklb6m8lxp5mY5kMcc+VDOMEdMPTZNEH1rkvUWrU6Pm8erug0jMZqiMn0xcc4jsu16KBR7gVSdBkT9rkQVMz+MXGKiKkQtrzHOS/1qIeVvDWD8aS5g+AO7dT0S1vStf9kOG5EcZDoYb/k4QrIgZn9ZroTqqFR+NTzzWUWUTAnSHeu61NSTOGwyVWdzE47M2NpilzZjKTOUrKZdO4IuiIqspNpUq1aZC/itRqnejQFNsjCJ57CzKCcD1EQ95tEIkwqnZbQ/ITFMunt9ZtglBvSa47pFxhn/kCg33HCLcpLm0Uy5peW0O9nlTNkM8OtIVeNUCEEzPCiXE4S+WHL/0mvLWuyvN+NAwku5dbagOiZcCAg5VpBDLjnjwG6v08QG/tkogh/VlbK0CJsaFhegN8j/xTEOxLCu+Khyw6rTIBBR9nPlUok+iVv7qmwVgkWBUBRvfOw3TfQK4YIdn8uaslmjfOEAT5JT/EWY+f9Ib+9/lqAoiOkw3VrrOJ3ZroQgfuN67bvbf3iytatIgEzsWkd67SOhIKMBIvL+OA8wUS4hKlTItetxQhXnc2G7VaWRcg+3Te1mAIXF/TAhjZDgaRmC/z76BGjzdy8plZG8HaOAER4TiGBMo8c5wvOIK9WmFMqOO3S/6pLcSmUolIDmyLD9xhnjD2plEESQNG6nRpnMJoV8j8BcJnURgLBephQJqwMLVobKAtmkcbvWxE0OOfTFngjiWp1U6iH/zVo6GsJtdAK1vB61GfvRi33YF9JfKspQ9d+vsbjgJjyoHBpaaCwEh/DSUjK+Yh2vgvtPUs27fRTPhjAcSOFKFhY+3ctWnY43DSr1WLNBrUd5tipXVUUKhIhWJsy+knwqP3SD3OZKdVj6P7WHOLuKZthUXPNWO+WEUGtdpttM3HxUGVvX3iaVW57XmMfFKj50qJUqEp2W3CB/vZejWxfs8/g3iQTPqsqZUjwwO8aXvJcscr3T47YZ1QwLUBDFkEPawl+IjsX7Vws4BjFRpYPbd5rCjDAyauD8KsbUFPRvafHTQHZFxQQKsIFchAtqMLaMO2Vt9d0O1mHYjRE8SB0dEyDPFu7h1p7PUhzyHQ5ga11Bx0YJsFjkg5s2tE7lDeqkelLFSkje0wwmk16p0YGvW9SznM6HECAHcywP+u1GdlxEIgsRqkbdRlgO4+qBa5lXIjZqcKjCAoww1WyUDW/hyJYS2WxEyAqrWpcccv86r/vaHBLStMViqA01+VTRZF/TRsxLLD37v90WogYta3KqKkJrnZPCFgZRpET89Q31PVApeQdhK6zXwO/IQbi30jZWTakfUwzNaJHHylnf5X43+ytRelUvY99EfTOxnOrwztJcFjIwqwYNFotWUakpiskRyUaYeZ5JiU6AxsfWmyQWI5MQG2xv/WUhKbS2EUlRoF/KPrGfqodhBuWUcVVIFVQXgh5U5lXL0sdCgmBhQEYb2uXx5ULo5XLgQDHFQ0Et8aLuEeaSYn5Lv3mZMIG8IL5KXFQNhhWUvmTOkUC9gYEGlR1fY7yqmf2JHooo7S1IobrXvne4dt+P80l/bhvgU/uwFw/7db5jJ30dWlUATYq6K8sDgxAa1uunWAFzYo6FGO0vzD6TUTOIhQNKR1GCLViiKrNO4yJtpES5fpo2DKuVCqVSg4t8IRejgWEB8MXOrzoBQ+qjKdx0s6cuH3yQvMPD9gLLMz42wMmTHN+TSoYcIPEKNrhrHKYj+iAf9CGSgGCUXRwpmaIkR1wlneLjlfpvZhd++kMeRkz6gM3KtcVCOzy3wQRNyNZGygVEo0JDu1UiFTptU5tM2jdQYRQwOkj3kOCRaoQF6u4eRkbWa7ZmFKKddlfwKkFeyjYaWwQ6BuSUMUUgVBijGNJpO1XHxC77/RI60SOcodjReRyP8JFgxLwhIhX32vEmd1GxoNC9mg/LB5IajiynJkMjCtKhLFqFOppLw8RzAvREiOKgYJVEkRmavn3E4bBadLhBZQwjrAuPjaJSKyGU2vi6DZRYw4FWUwSJiNCEIsTVzHetQsbUAPakeaqCaYo/y0zhtNmxE7uEa0s1QvH/TUwh6UHlZAcOVoj5oEnFYitWmulhw6GEk8w32XVzHqRhLmpFu3O9R0YRXM1gNumVQrUqpTCMtD9CdBctOzUmkczYA5lbW6dZzdmPbkcKVDWpBGaWO7Y4Gt3Q4PX8h6lmNRbbpHKqqjK9bjEphj4WZZjgZEDrOeTY6TRSScGl/Wk8FN7N+GToK/oK53D7eINKIzk/KNk3wHl45d6Gzdia6UmAiZSInVQe3drxuDboP9TIvnW6N3rHAfDjQGIdEtiEOYUPNfereJa5kCiAUov/kep0oRYHDjwIfJQLuSxmCEV453SzPtliMMh7wVM1j8/tbSAQsJyVMxm7fZy9DTYQJCaiEaagQGX40FM7kp9zZCGKaGZg0uEKZSoOMMIwKYCgfh/COodElRCl6ZtlUmSWlpgI3djAgYU+YNoe/QfiJN4kq1+fBF+7uTxUBq3C9Ifkcm0JLxkZo2ZQEsmFDYEpUF4RNvk3ROggX/wMOpGI3fq6WzDyhHdbKyyfe3MnVERVdSmEb1sZvYh2BRcYrCN2AzX52+Ly8cfolIQRZwgLQgDoQ6LvG47rNY3mdXz8KHjXiU8DnlFmyiEKFpN9hztsoNM9DM4iLFNCCE/ebrUbU78/2T81/fR0Xz/YG5WhAmbEOocKmneeWl8ftl5diaArg6psg2DynGDq/IKO1R2/wcxdo295OzX+9yznf3z9/+fq0/b5/BRf8RGv/Gf57dahdHsrbMf9cuAAvw0eRjgfmtbx8AS7cFC4tVBirBh1xEWVj742puO6Hc3pFrNOw+9q7VCExV+TkZrwetxeghEncyDAPFJeHNhXrepDVcN2F8/PKEUChqjQxWoaG3EVgSvJSXx4a5kaVorPHpA61x30ZRrVFotRUXeKi2PDfdab0zlhr8vkpebJ2x29Pi8W10Fa5JGGibW1iYKUSjvTrZJWLWcuTuPv34feAFO0YjmGlZyDK5oGQaVmQzDA9FyG/+/t/aXfeNyhjYAYxtEW0wi3/+lqP0Wdf+FyGGhFbpvHWhd8NhrRtGSg0b0sQrOsSAsDjzOlaJKFX9wW0whx6/GxSoTQYtkBlr9hc9BqTXPqWeo682ssHGxxo100nMSIsc+p2wJccC9JOb5Nz8q7DB+b2oYbxLIp87erVu/cyNImfkgzgham8XgWhc/b9J2iiRcZr/MBkb+tBR7xDEcEzh/DxTU4/WiRQDL2+rnD2+GBh+S1ooAIOs7t6nrFakb9IGIdjypYyJIuBit35gQRiVI0vWvXf60nu7UFRrBZxBeq0a5fGJ9f6r1t/1KMHghmSf7X0SpR7fuAlqCpagu92ovG4LiJ0M3qzWK3YFMp3L4ONKFrkCTM3r9j2QixzF4WZrbLYRu8qH0gnLnoCpOlyL+F+BuYzWwBXiCeHDGLr4kGOhKt83mD0Yh3pfZ8RnNFARsxTL8cglGTezh+ZnKZwyHi92ZLlSMG2CaDd85ddgmhljQPJiOWNXDfSRAh/wIYj3leYZTfbRdDISojDaNSnrK5mj3kMFUlJcxIQaUE82vHlljtE9dI2UmjwinFcWZJLeZ5SBvO5VFp+A3dr2qenG6+RbWA4KaW50sAs26G1oFJaRTYhJ7vItARXd5njJFK/yCIqvYPSCsneiOTcjMwg7lq4XFgTOr/ETsSNgSYDFVfjHpB/0qpVWdotiSCnFAINim65m8TMYnlMklCQqjDHu+1EOLiSgf75+fpeJxNiI7IswpWzs3Mlw8cAPcUQk0TNaQl8lXY29SQ523rA1V3xglDRuPksag0rww2O7uCERjmoQn95Jnnu8k/Dc1lCLEwEsvbxizC5CK9/wMuNdPVI/XSA1tb4NZga5BG5tp+kjo4OHN2ycGAp8iN02kxBlJp0cUPpwf6RkFBCKFMM0g7DbbPc8K7ceUBF3bJuHg8JUpLa67zY83wPOQIJdpV24GsEErgazRviHLAY9dis0NMCOxEhfUdiCD2IQzeJd9/mNOFfsy7PWJzTSscnC8LxzfxkoG4FPeR9JfJBrtd7M1E5NP9d1vz0irvQxR0u0XbFQ4SRNE5e2JjbLcQMseCru4/716h1VuGpSKMu8vIF13oWnHWs5ldl6Ks6syIZdCF3R2Kd8Bh8MTdrYrIsuKsCzT/cymv1Zn4cBT+5D6yfsY7+JgHLX5xjWPyIYMMGbXy1jce741EVDLp5kPVOwt9f95mCp7DPdLcJTUaIqNifTHN+r1HP9DplhWcwx3GcXfm2sdUPmAB9H3vnB0cnAFpQQ8qpdqPocG7qYDZBIQb7sR46P8IxWMfFnvX/O72Nl60XL1qGU8e07zpi4zdDcO1BGRMylIz77PRO49WIpEPwdL7oNcIpHTXlmbBkYN7lomrEcXK6p+9SJo+k9hCfPvs/EZnidHClQSqhd414/M/9OgKWBESCrm5DMi2p9u4wvkSpvl/NjIPHbZo1cI847ZaZ6rKvQZFcpdUsq5uhgemcC3lnwlibkZflNpkjUWvZ5AlJAkpS+/HliKzqzjK9145JOXlRdzCqMZVTUNdvf+sUY6vS7XJFJ5CUg0NkBW5VihCzC2gqjHAzJ3xrt4j8r2hzEJCSmzZsvuTwxhdlWuAJmRggHTKQCEiBq8WSP7j48swgrYPII5EyDCOz/kmXnnvms1mnXgkyBeK0zp7dcL5Q3A2Robo4N5MlhWtKdHr8jdZhFqOPjhcq21I9RprU8mmaK1f5JfKXSHS1Fu98DFY+UcKdYzIxzK+JZoyoufBJhh+H/f6VAwc21AAFlDqefvGWybMYSrMNDn+zBOqZ15+yxaiVSHbpPHamWPXnseXrM/LtSCYr7vTFcmi4Is1MamPRjfVhsPxwd7h4V6RTHmhDe7ES/ijE/96MENoJEggIcZH4oAHs078r1wqRp9owAzrwOzHu7wfAChWGqFVVO1IFdTSpE4+J9O/TiJDp4/+GwZj8V3fvUtVcHS+dref7qRi5kHj92RcREPhs06zaC//BRO3WbDcYUNoR0dxsiQYxmM1TV5+9jFTPf+O1eqNK/bJySsTrONOD3zEnYzKZDmqOV5gRmYzWcz0xRJHwzFYcTIcNlI1Vh8OJ3Wv02p9+n21u2kt2husE08V/GJH+Ztpz1IKhVNsRkOFXPjojbd9x4aBkAxWuO46Ich5f1MT+z094V2nEwRw+SeEmdukXdOt/+GJ+FTVlGFHI3jkAssLoOFmoTsepVz7SRzG8c3vPOd5ARppwrlkDGN51GGbvvzmrMVnd9PZGrkQqiifD1tNKlXQLfvmn1wvC6I4bMvoKCglkqk8kZlBp9Wgee62uJ0hYaRQEJh49megTYgoRFDDMz+K7GzmFjNDT5GDwHPsdntNLFgj1CXaVdwqj7eqaZNFKryu2rAQfepySW9ic1dXt1MEPWw0jbexnBljjAZOq4r6nSbPMCKXcVVTUaVkucUT0JO9CzYuCi5SfWDJBdXergJ6HUYnA6WEcPRSSFKXopYpZMaZ97ZA+1Cyc31YQjyER3E8ATSPTFgRgQDA1BTdPtihir211T15qrQjDOECTQIaGYlb3DUWIyNQPsuyrojLIlEV+4iQ5uxaWbCgoZOkLKVPu3EDbaeeJ5q1/QJjIKqT2oBz3FECjiNCS2u6hlfdIujfBgDeRjFSAfcSRoaAevHgWsVK2CqaJVpy3Red2m94L7eXEv+C5vf/IYnsSVn6YzVTe71tbaMWi9l/NK2ZkOfb2t/1Ah/F4HGiTE5rA7DOMMC/ptXsoemOkWKxyvrM7+344cngkLam8fCuHFW/snGp3XrAblOd8/BsDglTWyxHQkYj4LgpYA8Lhw1Svv0UaIXhAcfGkeghXNneHuhcsCA2rSMC16lmAODj8/8/9gXxwSO3P2wfLA89evuhfCptM/7N5+ARPuHUrpy6UBMrwP1z84+yC0UQ2OJH0YrKj2vvdII8nzFCxUwBCTOwTqAy7MEwHF4M3RKA/JAtmrXJjIe4WnRVvVbiLKpFnLNfwykfsc9gmkZybWzGDmYWgosYppeO16noLqfjEZcQyfQgigkq0kiREZDgkJODy7L2uXXPnt3mSvhSNN1jy17FcxZ9Wk5GohM2BnQHUexybWKtkIOwyHP1aZerJiqxzyz3fGmoYipHjkx/5GTBdQ7BjGkawWnCABg4pPAee0Kh7u6/A1KHN3v4eZ/2/kUxLxlWci9rNwBqgcMCgpb/UwEbZMUOJORuPfi/FsRntin71eqghe+MY+XRB99Tqf63zbfMPgiTA0JxZwuc9H46NXX+BWv4T8uwwY+BJ24OAA8y3lIA03Yl7I15HkxOsaGnMuzrF39NORx4gAOXFoo2gZA2sKq4ndO0xWaxzK5Z85OnF69v8HsArebdnbdlJEx6airWl2PRuSWh2Be/ayEa+18Php2RWfGP5Ef9gKZvtT64peeFcKlmmIJq0ShI3HaomO0rfe4qnqFcptnKfDGyQneILl9HJKsG9JThlebIdRvpCCDwPbAMiWm/aQW0CfR3yS51YyQMrajoc/eHM7iA/wjK6aFglpSBYdHNpdYIuYATci3VPmFhYy8P/xdaCYnkoWeChtlSAs/2pTAA/00UCxzZJjBBjJzOfI3TQa9VXFig0sxC/dfiiYXFhGzRCiK41j0cQWNewO2YjYV8Gwqb8WTiuTv/sUoSRs526F1R9GnW4z0gz1YeLpUcyZQJjYRaJZOOuyJiodqn9QVnmCWyDqM6aZaw9t9AR5wsAJVQK6LI+RVWBptrAjiJA7zmcLKzlXf4DQz3h6Z20PvXwX60FZlBs9To1+kYNqiyIgtSUEJsSt555P0AiBBJtBdQHH8Kf6EQVyqy26AhBkVZ7WOG5WcPgglP1c5zDEHtdQRa0tQ2IYoEkZAZqhUsgbOHFVShFhePh4SBD0kbplpgk6x/1twKm/C7DQhygDZZYMr6QujtCBOmdJqBrrh+/4UMDLbAfao/yCx/f7D3QYZQXdfMh9MMwgoJRHiY93fIlwzgvU1GiWSKAEKZWmfZ0K2WbXEM5gJsuLQd0VSOL03tlBMVw5Mfq+Fyc6M5VFHPcHxqLp9qXoGqGQ8SBqoICUx9nWwmGq5+DKAemQ8+cJf88FE+F/YZ79HDavPwvHrFz5VndiRirSZXeGbFedCoEcYBVRtqJjH25T9XsNCOJ6Pq64uYczjRwoLoS2g71YUADEzRkhS7nR3Maki7qsE1GMPZfiG5xrPAEyMLBP0LeKYtVcEPgF4AK9QgkGZHp/17FtpNS1CFVrw7xMfPLMSr1gtUPWum4oybzIguPFH1mjY6t3HRJL+r7GhL2X3h930vtwWsokmbIvDyYduocAtZpZRuvw0tb+kIYGL7rlwniKXfZazc/YVyxGSbjPDhVCoMaB2kOxfX6fqa7Vci8z0P1MYZFplYyzsuMUBdm229EbLVuKG/ziYINujcYKSLKQ6Uf3b6fK7AcQyUhHFmKbM1QdUIp8cCoDakh8TfSanVuv/liNVK2KO2unKRIKiGYmk4KPfyKKseiDhYbikJsBcAJgTdUu6pnVKBKVJUw/rszvZfF5NCY4GiKEwQDguCMI2GNCek1xX1fd1vw1aj5lp3vSXEC2+RAB7Pwv5gdpv6dfq3tMDkdi1cBE1oXbEvcoySKQDTR7DlBHUXbS1gNGClC5M9+O4ZyFAF+oNPfD7rtPH5V97xpFKeC5cvv/AqE6sGEkKCBzBMMs6gQGOur2MtS6DUdwT5tZIhmeoTBoPHOgLr8chcRpzD7mi0jaNwOxn7Vzb0j56W/B/GdMLx9qsez/MliNb6KUxYDHntAx/vTCbNPQteIyQISEaWhu4RjeNbJTDA7AvST5MZKX+seoi8/vD648VHd9PRNmajIBaNVworG5A+M0wmwSr+DQ7TJYM3AQYwnFmYK/UFcCfBpTjKyHJZ3b+G1yHIizmr1P0Moc0ozwNuVb3HGV30ll3LrYtHXNHRpj+/GRcD2jVQhkk9w6qRBUF4bBeh0xptlI0UuSbXaxp31X9fqDKUp7xFoCjR3xwRUF21GLLAKPxCoXx3x9cTU67MLcD+QYEkHp1NDHaKVFnP+RKDh9cfPEn5/UD+z9hhqhkmsxmYW35SRjDVRDx+R1avvH6aWXs+o/7wLFP15lkYsx1ZufL/AEIPMWGKnYnx/7z7xAAGAb0vjA960T9j7nX8yhWl8uvx0NOPomacCBk3X/1MftPsZWWveeKh0FfwFRthtyMwtYGj8K2cROII3jM97U/U0kSVEtdpZA4Sa2KTxLaJVxa33NMXsw1IcpoPxuUAr8PkJB9umcEDi2jEttA6jZaONN/q2x5nL56ZXj1C7TiEUdIrJ9AguwXq5aOe1ygbm23cxtMCB6itzMJWojWYsmESZj+FdT06ybLNJ4PW+L/nkNUj7STn7AO5T2BxrGkRQYUyrY/67jubxRRdpf1vm88Y5k0E/ncaL4RN9C0q03eZrEjyyPrX7z1ux217lsekYQLiORfc7Rjb6ArSCX6muB1jaREtbqerX2MA8eAHC0/b/SYpvs6Eh98A/LV9/i3e/6PPbqSdYbuWWx4COjhAgJ9sYg/dvdIl87gRCN7X41Cc223gZvpxdJ5XHndOvIauhIQN0j3W5WfYtvGs2hRjsxEriwSSa6hUVAi/NlXEspcSElZE4idjeEll7I0DrH9W7jvrr2rni4xKo6nvwsqd96OX2BGfRuf+k5F7TQqeZ3LWO6MkNSBX4bzTsueJRqwS5t+huA+iexGdax0o3N56vHZ5IEul52QX1WdRebHtqgRAmpvyv/jy2VrxKGkayxnhet/arDwEoq7ekEereVyxBWkImsbLapFIGECMqN9HnLezpYTZBIRZhdwYl7ncnHXWruem07o6jTTr3CyaN2Ujcf9iuX1WZ6shKzMOLQxmkVCJLQmWgZqPOGuoWgGw62scBXZtJ7uGAbxjVKIdmNl88Hpxd6urVTisxgC4mrSUxKBMTOJUGZYk1Nf7SZK1ToOK3Qk6tuF8lVgZX4EBMBrKZBImhMlkXBUiJcZOrsIrJVdDppja3KtYkirrWoy0ka/AWIv192Q6s+8nM2h8K5nJbjSZhXElmY1zIJlDZyiZyymWzIMEkvmMjCiIoVMphIBbBPRo0QszmHf169RGw2MN3BXKtY1oWdK9C9YKHUZzIagFKzCu0l4EuOmLxWlrsIz26EQ6X5SHHrTfaEiPD9at7u3uXj6Di8ueXxu4uCz8whBfGeyNo3YeDrvRhpfsM0AobJ0slmfd6tiO9Bo0VhvQW/DgPrlxkLezNVBKXkMmF4KoAUHe2VrI1tC+e1S9hteSPb9upe1Ta4HQE/UPns/ncET46Jigsnq2iPpUiuKVW54ckGAV2woBXXe87bDUasgOHpCv2crV1lgHDRuqr0Nace1dwzvPBcWDRVd//eiPFobb9CiBCwcXpvD99g6wyb9CDgK/anUCggr+xEYxcWl5alo6n4QCBlhR3FZDEwaLwxOIJDKFSqOjMVgcnkAkkSlUGp3BZLE5XB4vTZAUzbAcL4gSgAjLiqrphmnZjuv5FJQQKBU1DS0MTkfPwMiEYGZhRbKh2Dk4ubjRGjRq0qxFqzbtPDp4Q3w6denm16NXoIoFPcOeqKHvrCDLuM8CBC0DS3Pw4g6wlbA3lXacLGSDMRe5qLcqIoIqNdfFHSRISkn2ZjNKlGMOHVEHNBhB2UtpeSjdDiwWEbQMLl3DYQBBJEGlOZysnJ2BELmotzoigiq1bhezgwRJKcnebEaJcsyhI+pA2HCEvZSWB2fR4gbWyseVvvIsh/id379x+en5nyKfMS03NHg00zPv3fiTxhN6EAAAAA==)format("woff2-variations");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,d09GMgABAAAAADvMABQAAAAAg3wAADtWAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoUmG6sGHIEsP0hWQVKFBT9NVkFSPAZgP1NUQVSBOACEeC9+EQgKxEC5JAuDPAAw3iwBNgIkA4Z0BCAFiCIHjjIMBxvHegfYNo2eh9oJUM1lv6+pG4nQ4wiELxgVwcYBgGrelP3/n5JUZMykQNJuHejUHwpkOUpnUo2iDMowlJpCQsoWvNBuV0JGj3ugMB6Ryxgyhkt+ie4yummK5sAQF1mcSsHCU1ykKNuHh+Kp6C3WMmcGAyv90J5h12d+8aWqoGEHhh0YjrSxdHBhK35HutSPdc6f6MXa3E6dM4/XBVULi7IhIfF/5YSjHVpxYtF9xgyP0NgnuSTxz/v39bX2ff16ej40oH8GIYKVOXImOBSQzZyf57f55xItLTMRFRULmyhp4YmAiAiIMRNjc9Eu3OYiXeWPqMWPcjgXLn9u+7mIVKpkMGfvLQkaQ8B4vKuRtXDNirN3rBwlLKH0ZEQZtf6h3Kyhddquwar4ufzuJ/a6W5qe+O9e5z/zNa3YIAlpgASZkEzECfjS/6up9QsbJbYsmaPYIXuI4DbLl3Nakt/u7bizN0aHyJmxZRJgqxqoOgCgVhM3P0kF5aAiukrZvVy2zaXdzE2u58rXoqBrlEN4hMrud2cYX12rwiLR8IdufS+ihASJOBpgxVhxqf6ZVfe7M2Gb8or65jrRVsSRdVYUfNGmSXdOQbKTFJi2R1htX4FgWOr1sj4QDxtDkhKp289OWHe0Au0HEyAsCVN6Nam6lC9Vf1Xok1aR92BY4R1/pT6lJYSI07A5S0mbR3H7HTwBBQAGz42lBGfa8coCCPi/pSnVeHZiWXKRvHdufVMblhRA9iXILA0go9X8nZud3Z1rK1krra7qzqVUSW46l4Z8Rg2lVnRySimoNGgYmtCKA0gArpwGhZAABgJQ4L/a+83ufYepJqSpJmoK9Y2ZRbis9E9D6k35FTLkrFYvKBQSFYUCIxxXqml7S4DGPZX44ICCM9SdMxympwU6slKo3qrkok0M/iGY5kEqfXAA6QTn078D6AwoJKf4L4eYj5LDvdRAMRSdXbo1i9YuKjWlU13HojP0Iur+nZQBW9SAS1OTGiP6p21G1ZR+57h25whhkRAkBBERN33cj6mfw0j3tJZ/IYQg4gVxlPhS/tr/UhJ4XAAZA7IITjaEBKGgQ6IwIWw8iEACRCgJkiwNkiEDkikLkiMPUqAYIiOHKKkhWkaIWRnEzglxq4JU80OCQpB6DZDxWiBtOiBduiETTYFMMwcy1zzIAv2QpZZBVlgNWWs9ZKNNkC22QXZ4CfKK1yFveg/ygY8hn/oc8qU9kH32Q370I2TQILyIIXhHjcBDEDAMQjQoYshRIxDIkfAg+4GsAEZYBRSQl/dSBOTDdygzetgutb1tf3YL9skzlUnKfGWRslqdqVkDv94yXGmuMNebuy0+fc427Jq9am/OjFlmVp1dEFhwsShWxZrYEFuO6qw4dfd2oV0YFFxXdXW37FbcFe9RX/jU5/7XT6hBITgf4pCH+XA5+neVRdW4VxMxjbPxWdmrj+q+jCWWVKryAbSBthsm2MUhjrHEKtaJR3tNgsYUU52dNA+aAxaxmFFmcJsL7nKfx5yq7TZfjVVVzbN73ra35x14J7qrB3qsS53riq7rRbbM2aab1bMFgeaM/MEkp3zi1/zeswVYAgAGyG3NsGzhuH4QRrHElCuqbubyog5ZKMkCChDwv8QRSTTuGxDcC34A2IweBBhOx4+w1TYOL6QfMntKN8QdMaW1C+KOHT9tIqQjANp4oKFtGbhjDpsyEfj/FX3ABLkCLa0BFdKknZxjA8J7ctTbi2FT985bommb1qb55cRc3zl36k6ahces3exGkW/WX4zYdzs/qpfKtWl+mtjUD5aMO5F0kibxQfwRNqD7nM+nM1juX/de/3G2HbCVaU7ZmYJgqPqP/86Cz5IicBHwAiig9kG7nY/jbmCfRE2UfkLEDn0GiwS91pRugog2BHME0iKKGdQUBKSqiaSlObiXUhuY51kpGwqmSZFwfUgyzuDxz1wQRbwoZDTcDazHuG9OwrFBHBXxkIj6K2X1oRHSQ9DrO+InY+IiYVIEou13YixArPEpsyA8K8RllQhtMmKbxjhbBNFsZNpfjXEbLGto23C/N7ANtcK1CaRZN6mmRTJiWmGcBrZO4swpSi87uHMBkKDBgM04YhGSRDJpZJKNlGIU6DBixU45JLqoopog42mmgy56mMp0ZjGPhSxjFWtZ373qIhHYp2gbrdKsS6PgfVa3DetgsnZbDklFIpXKgs+bioPOx6IJz6vKXfDzxqFAKHBDnzCDdd9d5ysJBIBxj1qfWJhO71G9YaGX4BTk2Dbw2LZ4g0yri7UUOqpTn/XmmGwacuKabJhXpuf8JNw1iQtJTBawoCsBysdLq7mB3sIyT5pZKR1mB9kptObO/e8VrF78XoWeL6ecH65cOpVID967pjg8c8X3TswxFAXw6uIsXcznMmv1Yc14W2ZMNN/1apvxPLX5F+7vdlo9yWV6w6RHBtlG7MPKGOMPIA/bn87d+AuRt7XG9/miH2XAxuwjKr5zABgFZJYeN2mYpcWvabsLa8so57q5y5ZmxZWr1+yH/tcps7hVIBaFnBINdj/dtN0I2ywwzWCMjYWSwXz2y2uwekcxxvOVOwpOC7Nj+plxLrmtoTEjHr19bwbkF9d4R5m3/civzPcts5QmuKJY01lYfnTtXKYVwimy13nj1mjNGCCXQPM1rVFruF6ZxZN8ZHjbZU3bZ6+KwNk+/1Het0Tmx6FWD6kiaYyJMoYEW4Onktz3BZ7FSB1s564pYWKocCs3x1CRi5tNRhn7s7IKfp3L5snV+CX+y39Lzmrwqy7HI7BtebHclot9WJNFiIFGXb26foRDOToOM9jPd6LMXHTdMXXzMGvsFYIftZCuFskxKNfjs7Gg0agoY/BAWuTBMB+gg+Ot2iwJK/JK1Qbweq7DDktsAvgqWWtO3j5mLa0sLzlPVlHapwX1yrJIGstF5SPkR6OGCJZC5nrly5lR08J+Jp0t19g1swGd+OnqQOOGzO8CC/vRSiqVn75gRj6mxapcozl1QCZZgeRpP0GG+l3VscvFX6WuGp4z8gs4elmsWktPOyrw3Nnqs1uhuP7ulVMc4b3CPcXW4UzdQWryS73Dv+7rg1UhnR2hOH/bj2rX9XnwY0gpvy/Zf+YCMTqS6m8O6fSFCp3W+p+0egPZSVkr7jmcH7XTQQKvcN/z0wiMn1NF63XglffAOW56ruPxSn3uZtqgDfuELXxrxb+0oNEcz/W25xcIUPzXX1XfynomHxbujZ1/GjV5j9c4d/eeuXDXc1yvNdh75uJdjJT+ocUT1ZljZjiuVV7Dwn8Sq++fk6r+Pn9/8trn2Tv9NV6rdOveiI/39Xps1Pac1uGwg42qn84joa/H6huop7Yd2F1f+ZHrk+Y+nFDrNlfv7f7CegO9IdLUOPHhEEMcSYhIIZ0scsijBCWlmCgDwyH3/93FO8vf+rbFIe8UBLohhx5W4mcOWhXmEHjRyZ4juqX3pBhVHyinS00eNMV7mQ+HRSyRZZxdsZjRj4lAmGwMFFBELKSoBqqYiY8gC1iGkqlo6KaXNuqw0ajZHpToAxrIZYqwHHhnAA8LWQ6bpcyiWe0eKKQAiQ64UQI4SdZ0DwZsvFrhgZO+BajWSyeT6FeeB4sKcTyiYAYPlOJlRshAkz2oMQ0iUIKIOUwglQefOLW2xQGCTFo6QM54CJEPqvRSzwRqNC/HOA+yWpyCHqEb5kbeCABZ+NNRbp7FhE/yXubjw48G4EEg+KJezEUlfclI3ofRaV/DXzfAMyZ/YUCDDrNkQwQHDpzhtOjbxfpxU8CwIICDAI4oKJAgidf1zLI/E3x7mhOAA2KgiNUyxVJSkpepkj3TZASNDEV1yXy5y/GkfMinoeTCODAbnqK9Hh+SkHeJKVEQXBez65lk5XKMVVaSQHCEumSBVy/EeM3r24AScBAhMq4kjcclYPfZNMFFcdL1L0yg23lzmwiEO7scb3sFe7gqahr20ygd+yh17AnN3cBnNRULjKANJAmdwg1OE0Kipun/jECqyCrr0E6DMi95vbOU1S6vPSNvAyOcf3+kc1SIuaWQbQkHF0v3RLz9JKCvZCQWb7GkJXqZt5tLPlpkcTYu5USU5skisILlDMbyYQmMznSx1ETNeknkShi4k8lUICsJynxxgg8fS8EYiZ0Kg6VVGKHg5yIaQQwZJgYD5WxrBI+CjObN+M1waLpYvxcgOP6f8bVP2P62xR9QAwXk3uM/XfDtrB/cQ/aD7ScLKQ6loXRRHp1FF9Le39IYCeP53f+n5wzzzN7msQnsGS6UJux17r+BWO35aDc6g2YKMcImYQvehHfivfgANuBKySiXK2L1Ya1Bl5lHLdcd3z3Hfdt97AH2KPzYBWcZHmDAxywcbbQ54a+XoNmSM49snwZ7CDlrM3dUAaRR1QvoDwdCWbLOtoW6tPzAjncPnv0VRuf8hjeAC4Dype2zh8kBPxDdvrq7sSYG0P2LSCJwLaA2XASYggB1nncCRqABM+DOOCI8DQH4YXFfCkqD8InkULDxatRtln4IkI20gKfxIx2Mjy4HdTMqsa3L1TPirvHdh/ET56+djI+feqJg+vXrQagzHUBWaXdGiOldnFAt39Rd6BExiRi84sfwyi4/ebpsqUhl5mcgGzKSKxU/+QK1r76pg3WuQ3gCniL8CpcIXxLeEwaiNdF7oi9E+0Tfvn15S+l6ZUCjklaYMkOwuOOdXXQ05ysGDcUB38U/wj79XaGPLnva/+1PJDSD8/41223z4et5f7SWKVIIsDp6EUmGkmuAr24B4Mvr98amGf8M/dOjAtlkG9222GH8+h/5xk8GARmRINEsl0ksNqa4lZmW2Pk/7kwABjTDG4+kBUUbmjC6DlTtonRh6sY1CUcPnsnYJooxg8A0cWaJNVOSeYTmSrNQqgXE+qRItkiGflmWybGC1Cq5VsqzWoG1iqxTaECx9eQ2kdlIaQu1bVS20tpBb7dSu+jsZPUai1eZvcLpPeXeZvemCu/CvMXhHZU+VO1TPkFfCtmj1lcImiSYY5zpMi1l8JIyr/vDWfFmq/Ixtw94fKTGZ/w+V2cvBKwPB+GjovWTMLTQ8IYQXVugjUD5kiOKBt5Ye1TjQBbQ7cZKTsy44u1/oVQi6NHFSSX1kwmZUrLXTfGNm6r3fGQGBLX0CfAZIE8Bp4B+D2DYCWDwWNA7FaAH184ba8db0e2JAx5HmxgXcM5lMQ6vmkpVqFrYtbbaeCVUM9J5cE+8xC3cW1bfVPdx8PC8Og8QGC5OGe4GootbxEFlloo9LuITyvKrsjXZ3CTW46IoFSIZjxdlP1KbVVYaZTTKlbxoNbOyzqhmnlLUnxcmmxaralzmOyWdhVhXL1AF4vnCFpWUCDObGI1GKWySlRWVslQoV3qFAj65DI7ExLSKyLHWrGW53JbwBI+RlXqEh6d0T8jS6PgeJ6jRpxehkCQBTXGCByZJG0ekLi4GhOxuBjpG1KdAwlWwI1OLlfYQnVrpT7vd00PljYhRyE5EjK2haj7EXh2h8sgWXPt8lxlUMGnLAW4s5sFuhep7B9Q+nwX5++VBr7XF6j0byPSjzx7fYoFn52hYA2qk6a1YutXRsmg1+P0ZMSKDJBt55W1br1pXgWxEQWt/4fF5jCF740fk+bSYmXM7736PLjtrSa+M18UH4eamVuGz7/olBZN9DWzM8wnzV8KZCgoBzBHCGJBrUKuKk95xHpu4/LijND7K/jAPjfCgx7giUcGighGLDNqE6986CByjEJTbimwK7QrMcM64Xad7gwXXQD0fCvWHwbcJghp9p8Jg0q8zt5Zy5KE6kAXZZxSlp0oCvSQRa1WZJBlW6CZT4YQubwse2x/pVXgsEnZRz7nDLiFXKLdpERfL1A13SIqur7cyuP6lxcNnErx60EzW8N384O78/gtQwaw0DaNi4c3dstLkOxG0utU0csJHL+4Cam8T9RBZL/wJelxmWC3z00Ts/MrF1JM7h50xH9T0AtVbJJ1zm4x8+nIrQ5t5vJILaoPr4dHtvG8nGuudgdLQFfpK9I3CDwi/Dpzbb7VYKsmrd8Z5VFAUk+XuVgLWo6JjTdgOS4KwYK99aOTSoDA8aBokKOuj8haj1z7EuCAJ31rByDAyDPIHX3JkjxsDFDrFg0liR3BQCFgTag8/9aG6qNVzfrd1PdDz2W+96LSiXlGU5+SwbO0ykx1UmI1WA5KdsqjmsTvOLmxnJdSSQ825Xl8M1ktDRdgbAzojLIqyj+fob46IxAQysIcmjmXZTASsRzK105DNTCjg0UTIavl6y4m+im+Rxkbo8ERDAI4k/E31KHQO6674qvGB1VdOd7/SyobzJmfSDphABSVb+0vABNRtr/erPHvZ5WVbtB7lfR/fguBL7+PQ7W1dp/c9krtPaUTVikEtBAVUaYbK84YAfvMn9UntSpd6eP5h8jrHsaUO/tLXTHWAP3bfP6hr63DWD6s58fbMEHSxGgb8rjenTnW9NRBoWLhmYXRPkMgsH18TMLeZlX3BoHJBm8lc19rI8ASJDEf51Ll6CEXOvvHJ3vff+3DPq6uqls6bt3TZijm9ZHr/ld95wxdCntClSV5wFkQoDnlHjUylb9doZ/pFNbrZ7aWlWTbhfGmQwje6G3qKTU0DwYq3Jvuly70N0wrKVN051f6CJf7CVOhgtaxpwN7q6ip/e21jS/U0rbmDYQgQGeaAr7ayxSVdVFGZ19da7iqtVRQ0kI94Etr1xNe//d6E1WfBhE1Wj7X6jfbVTba328PY2wPNbbNX9fHDAWJvjrVCovW0qrZY2II5TUF5Xn2suDlhw8Y+J4QivsCn334a8FWoK9a9CBqBJSxjq07RA7YaIlSW1RjMtjrfyMuVlfIZLaXoGsbrGidEF0nWdzyprG25Uaq/9P5ab13NnPqeSb5In7+55VlkYs9WNzWf2ewOi/5NCPj8BneFBSaxWtf5K96cOrXirXWB1raStsxmvrnntVZhYZN8QTAo7wubMbunPePmAv/rhlAkqryrSNVozM/BLNmVfgOmJhp4x2s4Q+oO3Yhwyk+GcoNWV2HE9oCL5ZmttXYTywLEljy7O01ZaIk1iJP/82V5+ZX8xoKsshKNIthRaHf2qAytZH2AGMwy2tNKjBW6ouSrLhHG9UeHNTmuIl1psCcfQg/Gd/WEUkOkWyfWrOxsMWmbJskcS71LMV+ZzlBncbVVwJ15N+Ufax+AfHHOy/aemwJ+lmdWqX5G5THfS199Xc1a8J3Myt0qZ5bCv1cH6te71rmars2Gs97uVWlPOniQ8vT1tu/LzbbanAIJ/t7YHu+J5Ue21AuKOvqtWb5Z9FuQDDyN5Wazq8LH+jrFpDOUym9/6ycxsSmhYFvXlNYz3BFWNJbPpokj+ZL1430uodhegkkyrDnp7ycFlien2UBIx7pN6rler7q324xp67PUlStriP12hcxeGQ6FFtP+HES9qoa4Uu2rzwM63dJiKumtriZd/3xpKanJ8Y96Iw6cKxjIT3fl6fOS/Rpdco1emmf1hEO1ng4Q0su7Taq5Xq+qt9Nst3ToVb2B2IUEr7vaUmzMHwqQ+NZpwZvmNKLDUabWOjHoOpH9PEPU76+s1VM9LRn3WPkxMzO2zHyP2XZgNRYn8dvGiptVvbG5naaxYb16Ar660qsz5P3+G9zyCptK5yyHmFeVtWlay4c1xC8OaW0OpcqXWVVQbAobVFPLHcopbQajwl8U73Xf1Mn97VIsylxZD5UksdOcJbU66j0eZz1c+T9Rb5VuPf2s3RFv5vqdj6S4LKWzUBJUV3u1FTK7Ql9RgWnAzfVygbAZy457nCz2Sqx/2A4/ygmUMOn4P3/kt33wKJqwEvZKXy5u8taygS3F1l8bFbil215KsCZmap0l6UFFtVdbIDByJVqnA9NC1GasKlGc1OxtyhbrjSlS5mboFdLtE1pMqNqoE+z2blOdaq96brfJ5rK770NuFjh/kcDNxfBLplBNRp2i2F0kcbyTowc2vawpV+YuqiEuMChMMn1KRrR604ryKJ/EkVXWHmw0+KWFjnk1xNqnCrGyNiWub9old1QgQ5lVIDOHUoFrMxusJC9B/CzZgUmHsDzs5fedP2TOMUN6RuIRb9ERTwb2CcEL+kf1nfXVXl2FzKYsLXOXabxc9+IISx+wwv7XOaHeffP2BQ+bzN0Xep3TOX3D9KLQthnTJrzSlJz4Izm0e9+Wi/V/9V7dUwJKr3OqBXv17W++BoPayXS82+Om40GD6ROuZeV/RzZiJiP4wF4ffz2r4DuSsdxkgriDmB2DjH9z/6+W/Q+1iDty64BjnQNk/djAuY94hSa9SWXVzKynCPy9bY1lbflyv5b36hwNFr/O1JIj9yj4PUENlo2t79rJybVqVAqfXNdEHle5ohEyZmOLsKjZkbF9TW41q5t6ilzv8sPvut0mk8FtcL8LSzN53p9kZYmanBxlWYLsJ9dPlsn5ppBZro5Dynsj4mA6oj67eztAyPb9/k3inYQSX77F5bbsjbD3Xmqzb0fi7cRvpkJ2S5O/yVfMsyFhSTCwoN6wALKrDTUUWL0gkjjqLRptw4H+Rf1WrJl9KEL2n/fCeuF9w56gttySqTJ8nJL6coEq026BZaUZ5gw2bTx3JvczB8J4npARpWZxw7ziWEwSkxf1PMjgqcTFEh1kT7IxbJAd9GjCKlmjOAjZt25FS2/7ZcIrZ/J3vZK65FRs3Bc83t78b2v1ieifjIThcbD8RDYvJdGh/m1hXua3DMaLy0wBetXFOY88rvsdN2RkGC/MNEJvsTPshAyBo+hlBxSeSrxTVXQH9pyKetPhdzDezEiAmwUBg4a8gEc6/WFb9Ids14/YNfNkjgCXvCCcWA79IV8mD6sHwsWM8YesXdz363XKIlkiXm6S/oAL40asAhO4TUabx1+Q6No9lDysHfcCUEuYL6OX4/1OIoqnV99voA99EoJFarqniigqTxFFWxSLjjr5/4x6tF3H6epwMqXELN4oJfbwVZytDpHh7K6DqZfpFDlIOf7br7dkfi64gOTLox0ooiGgEmt2KuwcTONGXKKO+F4qFmEgCrxLUUTdcDUU9S/R1M7rLjphFxg4LKvH/eqa6iC/bQDcYIrRE0exefy6tOWPX5U2R+QAthFb7dvdRScTBfgTjzghB0cNALv0Q1mmH06qfjCZaiRF2Ksf1qUfNFkf0ase5cMB/ZAh/SHN6gE/VKbPU8UINZ7Sd3j/NubQQaqRQ5n/uB/I1p1ypIP5mqPb8GG6fcIQgDvVg0UyeeYpu0OTE9RylEGRa3UxMnKcM5XGHz4Exh86HIYPP8igY77WNR7wM6yBOri9u8PtC84zh1svr7jzZ9Ab0EqzHJh2muhHNpjr6AMAy2Zb7OqmaBLw4sjwe3jJkkOtl9UdywF/hZf7QzL7Ei100Ec4pe/4ihb/5XO2XDMfnAQMMcjjGdbiz9AGNFuuqqTLFFicCPDm3NApTefQepHjQ3L7JvyJsr1lJ+ic2N8dlpgBvM19eaJmU44cPwu/ET18KDNJlmO68oY8GlA+XGQ+NR6xiSJydGv5vhrbTdIPu6AfdE2NeOB+Yr1lv6YTOTJydEv5RQj4Z+ULeQCgZAO+yWx/U9MIkUNP7mId4Mv6Dmzy/71783qmzjw2/9H1OWcG/v9L787vNr41sxHAm/igLu5WfqUaCE0Ysknr/YrIbbe3NcOQamDNXiFQV2govIr0aJoJ0hua0N+kZVklV2qrUIidrV972Yv8BByXT64cdpxB2+HaxbXAw5mZCGSdGSlN6pc6TQYy49YymWy3YJ/0FW5stqI48lbCgEpAKh9QyMtG8jKNXGXZ+gr25UwYyYNnyMGoCcmR3SQ0EBIfXb/2mL2YAWpCFijdCxhtnQ3DeVGRRS0myEo0IVSQrSGWH2C1tdJB9z8zkAHSe9WBFlLb7K+X42slWD1jRAZaeqNpiuDh5bT74+8MoX1LpSWfsO8A3PtI9Ql+Xb63QlrQSMT9QQ6gPXeifjjcmSxewHII59qHBvIfjjT7YSLpbfeF3jX5TWqohhq7+ej9ydk6e8VE1Qq8nZndpCZfO3djE17kUsB/pKk1eziVRriHSGkDdPyHf0XoTLixmWfMoXD2jcSuraMmI4NKDGwuwv3DgM4gca2wx2wh7+Xbaq1htnCP0C0T5Fe0zy1fIy3uuAg/pv8kAN3ETDeFzyw11D9r6xwemWuQEufXboTPpKlURJD3Wiuft9xXQefnNCT5z1gxC2n0S0He/DQlvPt/8qAMMhZezSb70qBT/nMHxZWZIk/GZ1IWZE0ul24VFaquml3La2vdhY5fwEvwcnwZvhrfgp+KX4hfh/8OfxR/Cz9KMAliQhHBQHAR6ghzCCsI2whvEc4Qk4j5xFLicuJW4lvEL0hJJClJS8JIAVI76UvSIdLvpEukB2RCLiIbyVXkJvIk8nzyavLH5O/IR8lnydcoJEo0RUwpohgpdZRuSi9lJeV1yqeU76lSqoaKUf3UNuoH1P3Ug9RfqedpOTQ1zU7bQHuV9gnte3oJfT79guXfe40YLEZiZ7Wi3+5zfa2fhh4VG0lkKUt35mRX3s++nM21PBkyM3ocE5zwzJjIkljRm7oVG9zwztize3Uf/8B+ZaRyIPokB8/hcEQcKUfDwTh+zgLOGs5OzrucPZzznLtc4EZxJVwZ18z1cLu4s7nLuGu5m7knuBe5T3kdvDd5od3nP8K38Kv4bfzZ/NX8t/k/8eXoWdGB6Pbovujt0acFHYKXIEOgFJQJAoJ2wVTBcsEmwQd6+EFfgIIIWYd40ZUXFjDEQOKAtXv0b1/J3Zv/HCScd/Ci1kDyF679kk0wRmVHx5hwu/YGSrH2i/p779/t1h/6sal/oApkTJvSd2E9+EkbtwshHGK05yEi3TQS33WCmnT5xOkRspAb2XXtIrasvDqGATwepzcRkoVbislBJj1zRvXdIkcJRPKWrNX+y/AKEOxKUZxWikXEBLi4O8LCHgr17pUEGomdGmVieOQb0p6/sNaprfHkRF/+b2Dn9pYAFFtI6xKSpJGJ3cTIRRF/F8DMZ+bfVV6iyaGW9QoGuQnTx/NI8r7k/RIlDSGMw0BllNoDwQjN2XHIsh6zd4Biq36hqsD/JJnK2qhjoYHQXR/T8RXzpFZBPDTnTU1B313097BiwtUUu0t6WASVxXUQhgoAmiPM6px24dwSXeA92RlDAZXe9IA+ZdLr/N3xvZMBbYoE/z3o3nxT4fSKdhGpKIQ+ISNr8F+8CquwBVst5qe/7KMckg8mghfxY859CFsZpSSYjKVzPEmiIGWMOty38mWLOhjVoFRZmdF6K9JJgkaaIYLXkRCEkJorefYxMb/76muN+uyk8h68yuLZvo2WrsdPaTXRMroqnalYkjBdUG5ug1Psfa6y+UgrxtXs7+9dhPNXzp46SUNSGpT8uN4A5Xp2XvELrOOVOLNJSJhxoCAO2TSa7bsVY3ZUe4PTjSLJFK9FG7WoVCtSsA9pKQCVNywnjrfyuIgOE648IwGi+Votwwd410Rx9O4so6FIHJyrOd3jltO/lxaff7BTW12rTCK+Gw3PmDFt4bFqpiWBHqJqvG2RdyJEL4q44kLh0fn2ZT7ez0ye/AY/KXhxC5QanEwwXs4jkmg0M5TyPpV52I/5Qe9Vkhhh7MOkgpDxhoPLce5zRpWy4NBEtDNo9jRCiNneqIYkFKNslMldJ8RLAOHSoTw1IG4F5DKNaq4WN2fcE4Y3wtZbFlO8nFfVMX0SG2aHFAMtU8z3K25cGLjHEUKKOOKIZFtKUkFt8ZDjhN4QKwWENKpgncP15/CYmsvKZCwRtxLkEMIh4CWU7kC725W5NdaV6drb1oAEIsRAa25yth5mW0kbPfBA5oUbd1tbxTpaSRWYX6r8hsNfernLOrqARGSOljaiex4fUGcCepg6hYc/x383ARhgitKKK0HEhhmzoPDo6zP5M/DbNIZgolKDqymGm3ryiGB4debUMkzDgELpVspCjJsAgMz2gNKdoOjAfKD/2YIGBKhWYiQPR7QeiGDluJUt1iWEzp0vjq+1nepzGyS3g1FzLUactiH0vTAsj9NoKw9fGD95FAxsQNHQRC1NUWhZta4JYAS/OxjHGisto5+6WvuO72IhVai8jE6g4kq+993TQ1K4n4hknIJ18GIvFH3Dq3a6MkAI54eGenxzV9AXhYH1aXjkHbsRpQTtFNOc/BtAsTSY6BWLHuHOP8hUpe3RDjqZiDSQ9vUKAASU/jot/sWuhRCkEQwUHOkgjdZdu7lwIfvAA8Cw6GX+qTOrdipXsDfhcmf+eIUokrdUZuC/+C2Y0Iw67gOlNVfWYhcXnwZYrWgZ6reP8r+Kj0kqg4NyYbuspHP1ajw8CFo1u0GpMPztLPQFJ35uiULvU6gz0AgjMIV715y+CBGDQKEYiogQdTfNxxGeutsdGyXHZIAh2ggLxg8YlyIEX11xB3JntnDQZYNI8kj9CvgwCRGMafC8iEURWR2YMKrI18htr3Rq+yIEpSnoVoi9I7h68Xeas0AD94vofP0GTqwvktwmoLUcunWbY+n4wjBMwsT8fUo7ipQNOz48koDmfNPkugaJSmBOYPwYAtpCxw1TYyiRUthWWNJrwvB/f1Gvb7mgvr1ibd8InGmTTDVlMmiPUDTOf6zokyuhoGrTx5BlLTWMERQJx7E9K/wnRgmDuSo+oC4uvzkBDf+S4mjVCv1IHuQS3IxT0AiPw+Ocyg6SlL31BkUnLNSdsDykrjEOTq0yHInzlgR5yN0iwmNxrCscWQMmLKPUd2bfj2h9Yhaw3LwqCWaWN/MoUY2SHwPqdDobGrqZ90PZOlwV0jD6SZP72Osap43QOjdNIuDQhaahpUr3lRu1+c3JZhG1+tSiKYxtKQQLKjMju9Y/I7cyVSQnu5Ew9SOWEzXyaNoR2f4rtP2WUeYlOxwyZIH1IkWAsxTsjRXZSIWAfgKTxxyweFUMAt7elztJMGAWz8Ya0jjWUFOU5M3nTIeg4FpNf/Htn6gs5KMwEIhzyNLf1En9RDdVo9iIvpAaN1pq0fy0bVrS3h22dR2vz5kzy+pu1TU6VW63KrGgr79stcqUU2XuQODh0BdaN//0vi4tVo4b0bzUNEq3r+buTdQqQzSBa34XgKQI28+EzqPufgk/CTJLnMtPGly4i3DRjcmhgtIMLm+8CD9+kPQjWspuJSHuJxblBAsSuGnNsbZIaKCd89MOi3ERyToMqiVNsYfEoVXZMhygg0UR3eiIaQzRAw9kMwe2bWtSXw/wLPDveIblUouVChyNiareEeQA9QqOZuD7eSCm51ZVSHwjhLqY80jzXl9MKoRSD3GJAVWiySjWkWLDnAlTPvKCPWqYx//p2EvevBV/7kTUnV8gM6P3g72/GOb3M0mjnUahv4g+o4enboZpquthx8Ly6ov1Y9uOI+F/J/Cm5ZHkuVKi0SOJLGUDxxkHYHjskwmDt2L/OH0aOFwMkQ3t0aPR7rzb9W1tEFrYB5cRHAvhck9W2HAuBTnUE8+MrklEoyTpuSQGVom7O4gQICZOgrvy85VrhIgMVOLiR/fh3XpYhaqrCJo9MHjrvystXpsWwlctfCaRpTHgBuQCGHxBZCdO/AE0Ir5mIdLwF+/IZ88CgRrw1v766+ouL56++IplBvwTfwydEIYOe/kLPI/ROMA3XWyN8Y5GYQuLvCGvqFnucfKRNqcofrdGvdisKVqc7HAQcC3MoNKdjnLVR8XSsJSRYqC4RykasIhOkJnNcGh4rOysVmXKP6aII4oEoxHaU5rX+7dq7z8w1yf8YoZCHk+FXNod5bPF2fEm1UKP6L6nmzlWsMGHMFUVXZvclaaUvKyuGfEzj7RHYTSkvTQLVQneLgsLjy2BsyvtKaflCoiYAHNesegzvBNvDb2inmDBKIw5XTGLuVvxrLp7WWnBdFocQbZGcNXlyLGk5WBqIaU1uAsaaSwVYzkpVYar++a4EEjU6m4oBLHRvNOz2dJ072FxY7yZQIY0XmH2o1afEnxwAVPGVV2E7Kc4Bqp689Lgu2p1HI1u2SgTcBGrwpdecbJispLIJBRhGKadASGMG4MRUjRVNY1mSGPsKFPV3JG9D9kZgO3Q3wNE/GwAzikuB8pqkhYSXNvEYGjmhPTToTtQ1SefvKzpiycX+o1S4fRYA7DAADWEMq7p8BTejKWE555rEFiwF9TT1ea1wd4gMJ1XcOs9omXQZ/GUXj3GHnLQI+NoI0zAZL0X+OkzlXgBBGPfEjgsls26c2IUdlatVYvtAZDfhK7c9dQ5qbSDnneDBE5+sOkqotmryydONda37CNIy3hTOsuZfuWTt9x+UDwzcg+w+/2WaOy7Q33yDvSWl5dgGEN6nk5YGqPXYFD5BmGATYLe9UfCmnEx7EsKPGvdj6unSw0tZHdSPW1TU6zGL1BgpOI81xZ9BNcLnkK6GEeGY4k3IssdmWKj2KdbOg3JSWGrvNLzBVZWYDYzZpU1Fde7FoEVR76hIS2b96u8cU2+dgSBeZ/aceKOjSjK2In42s82eio9MtSupmcPD7C14hZoRQ80ldY1v6+2PIre5BQKWq0OzQr2ua55H4S9UOyritGP5bb1oa3AvQel46cek4u5IXzF6hpnjDRytShaVuEqeq0cm3qaLhWXTYCHuQ8HYM8LErXwe0gtshqEyIYh4jqcSKMoSZlVYcvlC5oqwO3JGNICSLBECJa9xinOn5WqtmFhBBg3WJYKxCWewZdLAt76mLK2y4vYu8C4vvuTemMWvQdRzRaOPTZyx24+xershdmevKZWa5szo63biC4kIS43otn6cS46TBAhouocU9eXOAStD0qYe8DoNfTGamsqvRHqxEwwesWiaIgnK4n0ZCICEWJW2FAQC4LtjXYvJva0UZN/GDEuHil+2t/Mo/fKKyup/zAqLX6Zz19ugNwcWqFj9RVjl4LRIJkSJBENwDY75oKRfe+GTbJIKTVYNWlKZovR3KhVdaTHHrMaDUZjGSZ0Vi1nt3YsKExSWjWQTEenKdxSVzdvDn/H6Bk/hatjSknv1EZxwf748FFgMLdWlBa6AGVDUIT9XXUe2wc0y3vyKaDiXtABXaIn6gfUU0hWr04NYO1VEu8SRGBCriZRv8mDS+7n843W3gd9tqb+wICQg3xulAL9rUMGQBz9gZ2pWKyUbCucrkSD6p+Agdzt3zfDTE4d5f0ZmaB5X01ZktSPtcNMT1It6zq1PNWrrFFqFWiGRtF9HPVlNwd1v619/BOxWdBgGnmO5i2cfnqawsJJl943yC/bcD2uQwOYYA6YidP4jWBcZBJibkSFQUDk2EhoPSaKd9BjVkN7qYKjj+2J3nVLqfmbjpehbfC+/Du4HpuAWV4mE5AeUQJHTFbzac9fDgrfRylogu6vrRm7TjIknRKFbFhf5EXsvOlmYIe/kPTyTS+3XU8nPHlOr1GPTpWaLlE8ubPQ5AxWP0q6fMV5T13/Ge6dh/1fosdCGYf92Dk86hUn6xfdCTxMwQo1QShWq4HSK4tzcV1qTgu5d6P09cl23KoXNdH1gwzr6NRKm0qyXbS0VqyoVV4ApbGGu9ANw/1t4Y+CVyBfTDqLI1mCLoaKi0PIzAIZwfgJ44LmAgVM23I9n2hvRG6n4nQt1LiGFacxnYH2jfFtNlSOazjClDpjFE99JjFcYnrzUr5XdyfyQt3nON4BykEuQDeuQDmEwVlDwtg1KsSwmKaTqbEGZLAI/yeY3bI91sNm1FbSkZ56xlcbrPf7a/2+5kEOOsPqx0JVB/3p2UYSmZ7UUIgdwQ8O/95VQSziCRI8lIv1LF8Sxv8/IJeK9SBszguwwebeGAvCvPkq6Y9ITYry+bFiuxFMOExRBsI+CMQ7oTanKn63rjZyqmcy5ViS4AEysQeyatjCS1p7656yEN/UmdKYAxEOqzKBYGcfn6lrb32Bsuuda80iApZizUot26sBF7yAMMHFZrWyGBzYI9NwQnpHa6ltj8Uk7bdjpWyFokGJ10grKofOV8gmee6qIhZ5w5a7qepLiICT83zvwFMO9A/Fi5FIMytMwEB0sRtQfzERGGCdBeuaSZVwhX5itbaBL19mgh9m/I3uzOv6Uq6Bw1P/byhCC25ZW67V+eyN5F5CL0u09vHZp1OhGxA/CCOEzczfys3TU3rBuSozmLLztwHaf5sOAe9ohWf1on+S2acECQ7lhG4XXt0+1PJMqxvvvhpnXxxha+NHn8zCb7FW8HvFoj8hCgloqRXsHF1ScVFdcR9I82b7DS/cyNj8tkPxdfp4efwc1yoGYuSw1SJ8jwDnzt2+4oQhPGmRgel6tWNRnzZXxOqWF2/2BZKMQ34EN/TE+gOCZRieQWYDkJVrSoLgJxZVQ02kDRVRTLDBAOf7CAvoP0zvjjSJ6u0YjAAaQR/oK3iww1v5g5zRx5WrW/aUas9AoeUQq78Ma2+Gt+DLCCNX4KbhxV3lmKgY/iwiCQxEoeFm6XS6q5aA1uBWU2g4TFKAmeDsZMptQh+GpdupaS5rksQ48ieZNx95uc5tAs9BY2jINN3A/f7wi+w2XaHfR0Bh47jMiBP0MFEmHg4sOCHXchOd/sue0f+sA7Kriv7OW233ClxxEHZ86b26PxDeoatpILB0V7VM5IWqfypu0jUyARiUhORZdiRJBw7oQCKqT0gFx+TgSgQaCNGzAGtRyKks1TP14YzyTFF42KdpI0tTYactQraMV13p0WU2Qi0F3PJ1lwDPMNp6A9Y0647EJxOJcFjAK1Z0iRoZaW74+NYpSLAcX4F0O+/ebqh36G9/leUt/lau/LVJ4IFv4UTlnyHQD0oHs9lo1+84wV5w6XZ4OewnFzZGvd20m+5mrUC4vAUtarI89j8cnoanqSPG1HIgmJzTgcGJBTLwR4J0CejYUYyo3iwQzLZvhobWg69WNhMHQgk8y/j3sdGU2YVmGQhgDV2nho33TF/AYpyqhWGcmaUh48HRx8SbayhoHUWRDIJZfnytcxonurFjJtQq3DlBVYg5jNMovfV2dPWwPl61uDL7UZsbwswNQtFYJj/ptLVOmDR0xZ05EiHHsjwvCyRNjSBNaaI2zfF0CSvLJ1DQ7cbiq5Fq1OWTqBlB7o3KtYpZ+eCBMVw+UqYRMdULugWGS2pVX+5hpLBa8GZ4/+I+qW22uB4l8kNOtvkTSPsB+gPFnclhkhoFg2mPqR6OfkEUzDHnAjAo4/REqWXoi3v41IdiFDaLf3p4rN3nrmhAc0ulvBGuZEa9B9WJOGGlUOQqSJ7NTr25uAa//EGz24Zp9HrbYhqt3LPourmpMHM17T909GiWHdZ6l662GSH7KfLOFRQRbl9Ix8duC+JfNl60oGgZdOL+tWL7EzuzsfMRnmLMtkLsmDmfZZ98MUYvkS+DJRPQuA33m1zu1sBukn8rrROC0WPG1gFjurA2a+ZMA+yB/7PS775nlw5L0cN2cTyVEHeFdKIuFQhIxEUEcRF+mfmRX+XuGVh8rNDDJl/oyn+3I50wPcsQJH6CfHkGHHAsHvP/hAguEJJ7U6/Fu7qBu/l59zwSNjcvx/e408rQ0dnX1c3c3I3mPPwyi9Zb65tbtPauFY1URgBEEF2a099dHfJcyq05Qkyz6OM+dNfy01BKYmfrp76pVG4cxhwFcpfjs1duaB0jSXKbBfLBx6zwPc9oeqqRnHUzCEIwsHFTQx1j2w2ZcsLrhBFyGiHhMJwKIVqu5XhQIdbrioeWyQMPWLLzejkDyqGMGWTv/KV+TWvAziGEccnzFrmQc7vHcWo+Rh0bhjkxj82OxRzJ3/lSg31P1xBGPjIJG6ilQmSrKil5VpPZii1TFZ5nT6AP9QWAeqw7TujOxprWosSz2bTlqqqm6ySZJeqyKKmqbppflskw4goUbKVSTkGLVcTcKKqGfm1H2WxJ8TJUyri+oV1DTSZDpyegKY6dLqlBKxJ3gqpKT1hAiKg2OvE98xw6lY4SpnLO9P9piiKU0AkGBWHikbwW09PnYrEheZ9Xr2lEeaWJWZr+fxQddraggFIenLXG9lw4zVGPEolWZV+BLuhildOY8r6k2l4aOuGQ6BaXSLGyGpHmPZgUnq3190BR1TgMhWN5mJ5PlQrxRcZU2XDngow/9s8PBWiWXc3wRDNcnLRVhuH2G1RL0TSBWV8zCO3QbttxnTspE+9yjKM3O5lBPGJombBFH6OSKPZBNaXdeRfYSdkKLiD7krF175TGNdjb3ZPs6wr20su34myBpTrwVUWWkrgLoredD5Ko5/fcWek56hX/pIvAjONZF2APcv/y6W0mIKYRwdVLu9o84ZfnPld+8eK8Xm0APJ0ZzzbfE/1eFb99uX9z6S8u3vCovzTMH/tl8p/gr/gyLAACCAfhluUremBZiJ+kDJLLNKCQT+9rSlZ7sQ80CArQowzUeJgM7CD/GhAI9IxfDTG9Gm0sAQlAz2y7Xg8Bz2Lf5Cx2tUMAYADAfvZO7+n/PznfPTcqIZ08GuCbuT9cAnyzyS9L29ONPZRyHwB9OICA7rc1MYChA5titZmacpedf/bPyk9Su/Cvpv69XGW/0Mz5VStUGB7f1W8ALpeGZYqcuyOECaHOVag1QCjlCGPdU800sU9o8uaZ8+uS0MT/5U75itC0+8gLX9jwEgyYrk9VoG6y6V2Xvj2dQiThBj6RW2Y7h8+QA0YpUFXZcndXCiBZD0zqtHAjGtHu+Bd2q6YuMOLm7HWTM4SxCNQ5uWvtDswJHUAn0CskHT4Q18o5OL3coD7TkmJAzv5ZTj5QkoEsBzNUpdxddkUEp1exU6RRznLX3lBFw1MA65AGP6dIyiZU28nr0IbesToiXQELYNnJsQDOhRGVOUDPSa+cdCLXL2xEkacwxx55EPCZWdjqESFw7vSKm09MEzzUo3rjbRWnIbRiazjMwml4+TmpEcRlLyKSlxCJ9M9hksV5BQSwdowaDyUqjY+fdBRNuJqAyF1tHJrLWgyBkzWxdh2F4kxeAcVjiGgJYnykJWJ7SRNKsEhLQjFHE+Fr05JxebUUQjItFU2OJiYgQGmE9lbS0YDj+FUBSq2vV88TpJC2bpd/51cEarKHSuya0qFvwT1UOc4qZPnJLsUi2LqKBHhxV3LIQngQLbJKXJgP+Sg2DrtjN8cqyruWF8OHrqS865oQGXplLJesu/9PUW2CjEX4UCx7YqH0XTvyUbWR5rxPcCjJ+Xa8oNZJVPPsd/7Wf1/fKdhyXAzs0fUFc6C/slAu4wiWdx1bxxazP18l+GMdH0xYG4Sby1fpzkE84CgdTmX/ydknaqwIQNem8AOFYfC5c5hS5OQ4zziFkgZSpVImnPM7bF8XCn8mmGF42v2/YwIiQroX0DxAZMgIBVFBEhqiIwaKQkzI8hixEDtO3HjxZSc6gZyM8xTFFFuc3MSTJqFEeRGWlMh/CpJcSqmJFSatdCXJSFImWbKc9wxll1MueaTllV8BRQorqriSZMmpokiZKjVNNP5yV8PI3piY5PIF5mKpXGE1Ghi1pqyeAWqj2Wp3YJ509/qDwyPlxyd+S8/OLy6vOK9vuG6D0P8+ieJkyDMaq55MZ3xzF8QnLNWs1pst/26f3t0/CD4+Pb8Ivb69q/twKcuLEp5R3qotatquH8ZpXtZtP07ny/V2fzxf74+/7X9/f9XAAB/rz5pouW/aMCKumC8f1wtx1fZ6WR9T4W+yavrf9yxKBHx9Degv3u2BiOaJ9LsxWfMGS7lEwrIkrUKRzFWXzASK1FGpotF8/RTGEkUx/bmvHbOGLRqLgQqvOCpV+fKeppOmXdGeLrR+f1qtU11rZmxgEVcwQbf1tX4H80zQ4GEn2psK2ZfKbe7EjbWl+30+zYcZctaWgS+b6JekQpAdLw3WHWYtOLLIjgdDmD4aw2WyiuGBw8gDx+YjY3JUP2XUPRy1+4GHUS0zmKwtYXLXeIL3679u1/hiQvSYfxJmHmYvzYqUJgbzZY9N5g2+3GnjS0rs6rvgF//crDhayGMAWkvjmAABiSgBKdglQZJACEkkc5i0iFJHN8uTiLRj5SBOiLOU7JMEJ8Vekq7lzFynabAQ26CRJ+UNAWVSGVd9klyRSmmT2gaNLnVXsIM+S+oJb/CgyZRQQjFVqLJP3A/fK/vEY9KxweKU8kRCqnCBgur2Na7Br9SmrJ81XtyRkWIjzk1teGM8HVeh8t9Gd2Lj9MFNxT2hmp8cniS7I4Godhc7DgoKuYLJVjrLFBCtmFFcEjVSZ7b8S9bZM6xNj2R9YIrdMpj/YyoRawAAAAA=)format("woff2-variations");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}';
+  const styleSheetCache = new Map();
+  function getStyleSheet(css) {
+    if (!styleSheetCache.has(css)) {
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(css);
+      styleSheetCache.set(css, sheet);
+    }
+    return styleSheetCache.get(css);
+  }
+  function attachShadowWithStyles(host) {
+    const shadow = host.attachShadow({ mode: "open" });
+    shadow.adoptedStyleSheets = [getStyleSheet(styles)];
+    return shadow;
+  }
+  function usePortalMount(selector, options) {
+    const position = options?.position;
+    const [mountEl, setMountEl] = reactExports.useState(null);
+    reactExports.useEffect(() => {
+      if (position !== void 0) {
+        let update2 = function() {
+          const target = document.querySelector(selector);
+          if (!target) {
+            setMountEl(null);
+            return;
+          }
+          if (host?.isConnected) return;
+          if (!host) {
+            host = document.createElement("div");
+            shadow = attachShadowWithStyles(host);
+          }
+          target.insertAdjacentElement(position, host);
+          setMountEl(shadow);
+        };
+        let host = null;
+        let shadow = null;
+        update2();
+        const observer2 = new MutationObserver(update2);
+        observer2.observe(document.body, { childList: true, subtree: true });
+        return () => {
+          observer2.disconnect();
+          host?.remove();
+          setMountEl(null);
+        };
+      }
+      function update() {
+        setMountEl(document.querySelector(selector));
+      }
+      update();
+      const observer = new MutationObserver(update);
+      observer.observe(document.body, { childList: true, subtree: true });
+      return () => observer.disconnect();
+    }, [selector, position]);
+    return mountEl;
+  }
+  function useWindowProperty(key) {
+    const [value, setValue] = reactExports.useState(
+      () => _unsafeWindow[key]
+    );
+    reactExports.useEffect(() => {
+      if (_unsafeWindow[key] !== void 0) {
+        setValue(_unsafeWindow[key]);
+        return;
+      }
+      Object.defineProperty(_unsafeWindow, key, {
+        configurable: true,
+        set(newValue) {
+          Object.defineProperty(_unsafeWindow, key, {
+            configurable: true,
+            writable: true,
+            value: newValue
+          });
+          setValue(newValue);
+        }
+      });
+      return () => {
+        const desc = Object.getOwnPropertyDescriptor(_unsafeWindow, key);
+        if (desc?.set) {
+          delete _unsafeWindow[key];
+        }
+      };
+    }, [key]);
+    return value;
+  }
+  const STORAGE_KEY_PLATFORM = "nama-typing:live-chat-platform";
+  const STORAGE_KEY_YT = "nama-typing:yt-live-chat-url";
+  const STORAGE_KEY_TWITCH = "nama-typing:twitch-channel-name";
+  const STORAGE_KEY_NICONICO = "nama-typing:niconico-live-id";
+  const ImeLiveChatConnector = ({
+    onConnect,
+    onChat: onChat2,
+    onError
+  }) => {
+    const inputRef = reactExports.useRef(null);
+    const [platform2, setPlatform] = reactExports.useState(
+      () => localStorage.getItem(STORAGE_KEY_PLATFORM) ?? "youtube"
+    );
+    const mountEl = usePortalMount("body", { position: "beforeend" });
+    const { isStarted } = useLiveChatSession(
+      inputRef,
+      platform2,
+      onConnect,
+      onChat2,
+      onError
+    );
+    if (isStarted || !mountEl) return null;
+    return reactDomExports.createPortal(
+jsxRuntimeExports.jsxs("div", { className: "fixed bottom-4 right-4 flex gap-1", children: [
+jsxRuntimeExports.jsx(
+          Input,
+          {
+            ref: inputRef,
+            defaultValue: getStorageValue(platform2),
+            onChange: (e) => setStorageValue(platform2, e.target.value),
+            onPaste: (e) => {
+              const value = e.clipboardData.getData("text");
+              const liveId = extractLiveId(platform2, value);
+              if (!liveId) return;
+              e.preventDefault();
+              e.currentTarget.value = liveId;
+              setStorageValue(platform2, liveId);
+            },
+            placeholder: getPlaceholder(platform2),
+            className: "w-48",
+            size: "sm"
+          },
+          platform2
+        ),
+jsxRuntimeExports.jsxs(
+          Select,
+          {
+            value: platform2,
+            onValueChange: (v) => {
+              const p = v;
+              setPlatform(p);
+              setStorageValue(p, inputRef.current?.value ?? "");
+            },
+            children: [
+jsxRuntimeExports.jsx(SelectTrigger, { size: "sm", children: jsxRuntimeExports.jsx(SelectValue, {}) }),
+jsxRuntimeExports.jsxs(SelectContent, { children: [
+jsxRuntimeExports.jsx(SelectItem, { value: "youtube", children: "YouTube" }),
+jsxRuntimeExports.jsx(SelectItem, { value: "twitch", children: "Twitch" }),
+jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
+              ] })
+            ]
+          }
+        )
+      ] }),
+      mountEl
+    );
+  };
+  const getStorageValue = (platform2) => {
+    switch (platform2) {
+      case "youtube":
+        return sessionStorage.getItem(STORAGE_KEY_YT) ?? "";
+      case "twitch":
+        return localStorage.getItem(STORAGE_KEY_TWITCH) ?? "";
+      case "niconico":
+        return sessionStorage.getItem(STORAGE_KEY_NICONICO) ?? "";
+    }
+  };
+  const setStorageValue = (platform2, value) => {
+    switch (platform2) {
+      case "youtube":
+        return sessionStorage.setItem(STORAGE_KEY_YT, value);
+      case "twitch":
+        return localStorage.setItem(STORAGE_KEY_TWITCH, value);
+      case "niconico":
+        return sessionStorage.setItem(STORAGE_KEY_NICONICO, value);
+    }
+  };
+  const getPlaceholder = (platform2) => {
+    switch (platform2) {
+      case "youtube":
+        return "YouTube Live URL or ID";
+      case "twitch":
+        return "Twitch channel name";
+      case "niconico":
+        return "Niconico Live URL or ID";
+    }
+  };
+  const extractLiveId = (platform2, value) => {
+    switch (platform2) {
+      case "youtube":
+        return extractYouTubeLiveId(value);
+      case "twitch":
+        return extractTwitchLiveId(value);
+      case "niconico":
+        return extractNiconicoLiveId(value);
+    }
+  };
+  const useLiveChatSession = (inputRef, platform2, onConnect, onChat2, onError) => {
+    const [isStarted, setIsStarted] = reactExports.useState(false);
+    const unsubscribeRef = reactExports.useRef(null);
+    const ime = useWindowProperty("__ytyping_ime");
+    const platformRef = reactExports.useRef(platform2);
+    platformRef.current = platform2;
+    reactExports.useEffect(() => {
+      if (!ime) return;
+      function startClient(_event) {
+        const rawValue = inputRef.current?.value ?? "";
+        setIsStarted(true);
+        unsubscribeRef.current?.();
+        switch (platformRef.current) {
+          case "youtube": {
+            const liveId = extractYouTubeLiveId(rawValue);
+            if (!liveId) return;
+            unsubscribeRef.current = subscribeYTLiveChat({
+              liveId,
+              onChat: onChat2,
+              onConnect,
+              onError
+            });
+            break;
+          }
+          case "twitch": {
+            const channelName = extractTwitchLiveId(rawValue);
+            if (!channelName) return;
+            unsubscribeRef.current = subscribeTwitchLiveChat({
+              channelName,
+              onChat: onChat2,
+              onConnect,
+              onError
+            });
+            break;
+          }
+          case "niconico": {
+            const liveId = extractNiconicoLiveId(rawValue);
+            if (!liveId) return;
+            unsubscribeRef.current = subscribeNiconicoLiveChat({
+              liveId,
+              onChat: onChat2,
+              onConnect,
+              onError
+            });
+            break;
+          }
+        }
+      }
+      function handleEnd() {
+        setIsStarted(false);
+      }
+      ime.removeEventListener("start", startClient);
+      ime.addEventListener("start", startClient);
+      ime.removeEventListener("end", handleEnd);
+      ime.addEventListener("end", handleEnd);
+      return () => {
+        unsubscribeRef.current?.();
+        unsubscribeRef.current = null;
+        ime.removeEventListener("start", startClient);
+        ime.removeEventListener("end", handleEnd);
+      };
+    }, [ime, inputRef, onChat2, onConnect, onError]);
+    return { isStarted };
+  };
+  const NamaTypingContainer = () => {
+    return jsxRuntimeExports.jsx(
+      ImeLiveChatConnector,
+      {
+        onChat: (messages) => onChat(messages),
+        onConnect: () => _unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
+        onError: (e) => _unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
+      }
+    );
+  };
+  function onChat(messages) {
+    const ime = _unsafeWindow.__ytyping_ime;
+    if (!ime) return;
+    for (const m of messages) {
+      const userResult = ime.getUserResult(m.author);
+      const result = ime.handleImeInput({
+        value: m.message,
+        currentWordIndex: userResult?.currentWordIndex,
+        wordResults: userResult?.wordResults
+      });
+      ime.updateUserResult(m.author, {
+        name: m.author,
+        typeCountDelta: result.typeCountDelta,
+        newWordResults: result.newWordResults,
+        nextWordIndex: result.nextWordIndex
+      });
+      ime.addNotifications(
+        result.appendNotifications.map((n) => `${m.author}: ${n}`)
+      );
+    }
+  }
   function Switch({
     className,
     ...props
@@ -15263,7 +20572,7 @@ jsxRuntimeExports.jsxs(
           htmlFor: id,
           className: "inline-flex items-center gap-1 mx-1 cursor-pointer group",
           children: [
-jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold text-header-foreground/80 group-hover:text-header-foreground tracking-wide min-w-8 text-center select-none", children: isIme ? "IME" : "TYPE" }),
+jsxRuntimeExports.jsx("span", { className: "text-xs font-semibold text-header-foreground/80 group-hover:text-header-foreground tracking-wide min-w-8 text-center select-none", children: isIme ? "/ime" : "/type" }),
 jsxRuntimeExports.jsx(
               Switch,
               {
@@ -15350,6 +20659,6 @@ jsxRuntimeExports.jsx(ImeModeSwitch, {}),
     return { host, mountPoint: mountPoint2 };
   }
   const { mountPoint } = createShadowRoot(styles);
-  ReactDOM.createRoot(mountPoint).render( jsxRuntimeExports.jsx(App, {}));
+  ReactDOM$1.createRoot(mountPoint).render( jsxRuntimeExports.jsx(App, {}));
 
 })();

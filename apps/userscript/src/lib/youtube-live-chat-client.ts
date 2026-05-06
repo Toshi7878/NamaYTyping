@@ -253,7 +253,7 @@ class YTLiveChatClient {
 	}
 }
 
-export function startLiveChat(options: YTLiveChatClientOptions): () => void {
+export function subscribeYTLiveChat(options: YTLiveChatClientOptions): () => void {
 	const client = new YTLiveChatClient(options);
 	client.start();
 	const unsubscribe = () => client.stop();

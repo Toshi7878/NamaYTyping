@@ -29,7 +29,7 @@ export const ImeModeSwitch = () => {
 			className="inline-flex items-center gap-1 mx-1 cursor-pointer group"
 		>
 			<span className="text-xs font-semibold text-header-foreground/80 group-hover:text-header-foreground tracking-wide min-w-8 text-center select-none">
-				{isIme ? "IME" : "TYPE"}
+				{isIme ? "/ime" : "/type"}
 			</span>
 			<Switch
 				id={id}
