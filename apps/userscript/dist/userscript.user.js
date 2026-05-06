@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.18
+// @version      1.1.19
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
 // @connect      www.youtube.com
-// @connect      *.nicovideo.jp
+// @connect      live.nicovideo.jp
+// @connect      live2.nicovideo.jp
+// @connect      mpn.live.nicovideo.jp
 // @connect      *.nimg.jp
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
@@ -19741,7 +19743,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
             if (!raw) throw new Error("embedded-data not found");
             const data = JSON.parse(raw);
             const wsUrl = data.site?.relive?.webSocketUrl;
-            if (!wsUrl) throw new Error("webSocketUrl not found in embedded-data");
+            if (!wsUrl)
+              throw new Error("webSocketUrl not found in embedded-data");
             resolve(wsUrl);
           } catch (e) {
             reject(e instanceof Error ? e : new Error(String(e)));
@@ -19817,7 +19820,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
           const seg = new ProtoReader(r2.readBytes());
           let t;
           while ((t = seg.readTag()) !== null) {
-            if (t.field === 3 && t.wireType === 2) result.segmentUri = seg.readString();
+            if (t.field === 3 && t.wireType === 2)
+              result.segmentUri = seg.readString();
             else seg.skip(t.wireType);
           }
           break;
@@ -19826,7 +19830,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
           const next = new ProtoReader(r2.readBytes());
           let t;
           while ((t = next.readTag()) !== null) {
-            if (t.field === 1 && t.wireType === 0) result.nextAt = next.readVarint();
+            if (t.field === 1 && t.wireType === 0)
+              result.nextAt = next.readVarint();
             else next.skip(t.wireType);
           }
           break;
@@ -19892,7 +19897,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
               const ts = new ProtoReader(meta.readBytes());
               let tt;
               while ((tt = ts.readTag()) !== null) {
-                if (tt.field === 1 && tt.wireType === 0) timestampSec = ts.readVarint();
+                if (tt.field === 1 && tt.wireType === 0)
+                  timestampSec = ts.readVarint();
                 else ts.skip(tt.wireType);
               }
             } else {
@@ -19939,7 +19945,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
           const next = new ProtoReader(r2.readBytes());
           let t;
           while ((t = next.readTag()) !== null) {
-            if (t.field === 1 && t.wireType === 2) result.nextUri = next.readString();
+            if (t.field === 1 && t.wireType === 2)
+              result.nextUri = next.readString();
             else next.skip(t.wireType);
           }
           break;
@@ -20003,6 +20010,10 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         }
       },
       onload(res) {
+        if (res.status !== 0 && res.status >= 400) {
+          onError(new Error(`HTTP ${res.status}`));
+          return;
+        }
         if (res.response) {
           const buf = new Uint8Array(res.response);
           if (buf.length > processedLength) {
@@ -20012,7 +20023,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         onDone();
       },
       onerror(res) {
-        onError(new Error(`HTTP stream error: status=${res.status}`));
+        onError(new Error(`HTTP stream network error: status=${res.status}`));
       }
     });
     return handle;
@@ -20149,7 +20160,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       if (!this._alive || !this._messageServerUri) return;
       this._messageStreamHandle?.abort();
       const prevAt = this._nextStreamAt;
-      const url = `${this._messageServerUri}&at=${this._nextStreamAt}`;
+      const sep = this._messageServerUri.includes("?") ? "&" : "?";
+      const url = `${this._messageServerUri}${sep}at=${this._nextStreamAt}`;
       const splitter = new ChunkSplitter();
       this._messageStreamHandle = openHttpStream(
         url,

@@ -25,7 +25,8 @@ function getWatchWebSocketUrl(liveId: string): Promise<string> {
 					if (!raw) throw new Error("embedded-data not found");
 					const data = JSON.parse(raw) as EmbeddedData;
 					const wsUrl = data.site?.relive?.webSocketUrl;
-					if (!wsUrl) throw new Error("webSocketUrl not found in embedded-data");
+					if (!wsUrl)
+						throw new Error("webSocketUrl not found in embedded-data");
 					resolve(wsUrl);
 				} catch (e) {
 					reject(e instanceof Error ? e : new Error(String(e)));
@@ -144,7 +145,8 @@ function decodeChunkedEntry(buf: Uint8Array): ChunkedEntry {
 				const seg = new ProtoReader(r.readBytes());
 				let t;
 				while ((t = seg.readTag()) !== null) {
-					if (t.field === 3 && t.wireType === 2) result.segmentUri = seg.readString();
+					if (t.field === 3 && t.wireType === 2)
+						result.segmentUri = seg.readString();
 					else seg.skip(t.wireType);
 				}
 				break;
@@ -154,7 +156,8 @@ function decodeChunkedEntry(buf: Uint8Array): ChunkedEntry {
 				const next = new ProtoReader(r.readBytes());
 				let t;
 				while ((t = next.readTag()) !== null) {
-					if (t.field === 1 && t.wireType === 0) result.nextAt = next.readVarint();
+					if (t.field === 1 && t.wireType === 0)
+						result.nextAt = next.readVarint();
 					else next.skip(t.wireType);
 				}
 				break;
@@ -212,10 +215,12 @@ function decodeChat(buf: Uint8Array): DecodedChat | undefined {
 	return c as DecodedChat;
 }
 
-function decodeChunkedMessage(buf: Uint8Array): {
-	chat: DecodedChat;
-	timestampSec: number;
-} | undefined {
+function decodeChunkedMessage(buf: Uint8Array):
+	| {
+			chat: DecodedChat;
+			timestampSec: number;
+	  }
+	| undefined {
 	const r = new ProtoReader(buf);
 	let timestampSec = 0;
 	let chat: DecodedChat | undefined;
@@ -235,7 +240,8 @@ function decodeChunkedMessage(buf: Uint8Array): {
 						const ts = new ProtoReader(meta.readBytes());
 						let tt;
 						while ((tt = ts.readTag()) !== null) {
-							if (tt.field === 1 && tt.wireType === 0) timestampSec = ts.readVarint();
+							if (tt.field === 1 && tt.wireType === 0)
+								timestampSec = ts.readVarint();
 							else ts.skip(tt.wireType);
 						}
 					} else {
@@ -291,7 +297,8 @@ function decodePackedSegment(buf: Uint8Array): DecodedPackedSegment {
 				const next = new ProtoReader(r.readBytes());
 				let t;
 				while ((t = next.readTag()) !== null) {
-					if (t.field === 1 && t.wireType === 2) result.nextUri = next.readString();
+					if (t.field === 1 && t.wireType === 2)
+						result.nextUri = next.readString();
 					else next.skip(t.wireType);
 				}
 				break;
@@ -381,6 +388,10 @@ function openHttpStream(
 			}
 		},
 		onload(res) {
+			if (res.status !== 0 && res.status >= 400) {
+				onError(new Error(`HTTP ${res.status}`));
+				return;
+			}
 			if (res.response) {
 				const buf = new Uint8Array(res.response as ArrayBuffer);
 				if (buf.length > processedLength) {
@@ -390,7 +401,7 @@ function openHttpStream(
 			onDone();
 		},
 		onerror(res) {
-			onError(new Error(`HTTP stream error: status=${res.status}`));
+			onError(new Error(`HTTP stream network error: status=${res.status}`));
 		},
 	});
 
@@ -547,7 +558,8 @@ class NiconicoLiveChatClient {
 		this._messageStreamHandle?.abort();
 
 		const prevAt = this._nextStreamAt;
-		const url = `${this._messageServerUri}&at=${this._nextStreamAt}`;
+		const sep = this._messageServerUri.includes("?") ? "&" : "?";
+		const url = `${this._messageServerUri}${sep}at=${this._nextStreamAt}`;
 		const splitter = new ChunkSplitter();
 
 		this._messageStreamHandle = openHttpStream(
