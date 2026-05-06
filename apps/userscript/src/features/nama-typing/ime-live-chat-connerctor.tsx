@@ -77,8 +77,10 @@ export const ImeLiveChatConnector = ({
 				onValueChange={(v) => {
 					const p = v as Platform;
 					setPlatform(p);
-					setStorageValue(p, inputRef.current?.value ?? "");
 					localStorage.setItem(STORAGE_KEY_PLATFORM, p);
+					if (inputRef.current) {
+						inputRef.current.value = getStorageValue(p);
+					}
 				}}
 			>
 				<SelectTrigger size="sm">

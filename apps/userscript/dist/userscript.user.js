@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.15
+// @version      1.1.16
 // @description  変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -20378,8 +20378,10 @@ jsxRuntimeExports.jsxs(
             onValueChange: (v) => {
               const p = v;
               setPlatform(p);
-              setStorageValue(p, inputRef.current?.value ?? "");
               localStorage.setItem(STORAGE_KEY_PLATFORM, p);
+              if (inputRef.current) {
+                inputRef.current.value = getStorageValue(p);
+              }
             },
             children: [
 jsxRuntimeExports.jsx(SelectTrigger, { size: "sm", children: jsxRuntimeExports.jsx(SelectValue, {}) }),
