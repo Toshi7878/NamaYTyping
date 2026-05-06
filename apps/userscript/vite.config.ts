@@ -21,10 +21,10 @@ export default defineConfig({
 				namespace: "https://greasyfork.org/users/302934",
 				version: pkg.version,
 				description:
-					"変換ありタイピングでYouTube Live上のチャットでの対戦を可能にするスクリプト",
+					"変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト",
 				match: ["https://ytyping.net/*"],
 				grant: ["GM_xmlhttpRequest", "unsafeWindow"],
-				connect: ["www.youtube.com", "*.nicovideo.jp"],
+				connect: ["www.youtube.com", "*.nicovideo.jp", "*.nimg.jp"],
 				license: "MIT",
 			},
 		}),
