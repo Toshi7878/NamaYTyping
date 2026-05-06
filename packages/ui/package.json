@@ -20,6 +20,9 @@
     "radix-ui": "^1.4.3",
     "tailwind-merge": "^3.5.0"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/react": "catalog:",

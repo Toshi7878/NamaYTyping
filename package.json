@@ -1,12 +1,13 @@
 {
-  "name": "namaytyping-monorepo",
-  "private": true,
-  "scripts": {
-    "dev": "pnpm -F userscript dev",
-    "build": "pnpm -F userscript build",
-    "preview": "pnpm -F userscript preview"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "2.4.13"
-  }
+	"name": "namaytyping-monorepo",
+	"private": true,
+	"scripts": {
+		"dev": "pnpm -F userscript dev",
+		"build": "pnpm -F userscript build",
+		"preview": "pnpm -F userscript preview",
+		"typecheck": "pnpm -r --if-present typecheck"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.13"
+	}
 }
