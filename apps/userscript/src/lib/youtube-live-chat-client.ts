@@ -2,6 +2,14 @@ import { GM_xmlhttpRequest } from "$";
 
 // ---- YouTube internal API shapes ----------------------------------------
 
+interface ChatMessage {
+	id: string;
+	author: string;
+	message: string;
+	timestampUsec: string;
+	isMember: boolean;
+}
+
 interface YtContinuationItem {
 	invalidationContinuationData?: { continuation: string };
 	reloadContinuationData?: { continuation: string };
@@ -52,14 +60,6 @@ interface LiveChatResponse {
 }
 
 // ---- Public types --------------------------------------------------------
-
-export interface ChatMessage {
-	id: string;
-	author: string;
-	message: string;
-	timestampUsec: string;
-	isMember: boolean;
-}
 
 export interface ConnectInfo {
 	liveId: string;
@@ -253,7 +253,9 @@ class YTLiveChatClient {
 	}
 }
 
-export function subscribeYTLiveChat(options: YTLiveChatClientOptions): () => void {
+export function subscribeYTLiveChat(
+	options: YTLiveChatClientOptions,
+): () => void {
 	const client = new YTLiveChatClient(options);
 	client.start();
 	const unsubscribe = () => client.stop();

@@ -1,6 +1,15 @@
-import type { ChatMessage } from "@/lib/youtube-live-chat-client";
 import { unsafeWindow } from "$";
 import { ImeLiveChatConnector } from "./ime-live-chat-connerctor";
+
+type Platform = "youtube" | "twitch" | "niconico";
+export interface ChatMessage {
+	platform: Platform;
+	id: string;
+	author: string;
+	message: string;
+	timestampUsec: string;
+	isMember: boolean;
+}
 
 export const NamaTypingContainer = () => {
 	return (

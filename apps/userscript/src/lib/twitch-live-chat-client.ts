@@ -54,7 +54,7 @@ function parseIrcMessage(line: string): ParsedIrcMessage | null {
 
 // ---- Public types --------------------------------------------------------
 
-export interface ChatMessage {
+interface ChatMessage {
 	id: string;
 	author: string;
 	message: string;
@@ -187,7 +187,9 @@ class TwitchLiveChatClient {
 	}
 }
 
-export function subscribeTwitchLiveChat(options: TwitchChatClientOptions): () => void {
+export function subscribeTwitchLiveChat(
+	options: TwitchChatClientOptions,
+): () => void {
 	const client = new TwitchLiveChatClient(options);
 	client.start();
 	return () => client.stop();

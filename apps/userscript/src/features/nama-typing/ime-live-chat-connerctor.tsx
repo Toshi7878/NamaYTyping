@@ -1,4 +1,4 @@
-import { subscribeNicoLiveChat } from "@mujurin/nicolive-api-ts/src";
+import { subscribeNicoLiveChat } from "@mujurin/nicolive-api-ts";
 import { Input } from "@repo/ui/input";
 import {
 	Select,
@@ -10,22 +10,19 @@ import {
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { subscribeTwitchLiveChat } from "@/lib/twitch-live-chat-client";
-import {
-	type ChatMessage,
-	subscribeYTLiveChat,
-} from "@/lib/youtube-live-chat-client";
+import { subscribeYTLiveChat } from "@/lib/youtube-live-chat-client";
 import { extractNiconicoLiveId } from "@/utils/extract-niconico-id";
 import { extractTwitchLiveId } from "@/utils/extract-twitch-id";
 import { extractYouTubeLiveId } from "@/utils/extract-youtube-id";
 import { usePortalMount } from "@/utils/use-portal-mount";
 import { useWindowProperty } from "@/utils/use-window-property";
+import type { ChatMessage } from "./container";
 
 const STORAGE_KEY_PLATFORM = "nama-typing:live-chat-platform";
 const STORAGE_KEY_YT = "nama-typing:yt-live-chat-url";
 const STORAGE_KEY_TWITCH = "nama-typing:twitch-channel-name";
 const STORAGE_KEY_NICONICO = "nama-typing:niconico-live-id";
-
-type Platform = "youtube" | "twitch" | "niconico";
+type Platform = ChatMessage["platform"];
 
 interface ImeLiveChatConnectorProps {
 	onConnect: () => void;
@@ -169,7 +166,7 @@ const useLiveChatSession = (
 					if (!liveId) return;
 					unsubscribeRef.current = subscribeYTLiveChat({
 						liveId,
-						onChat,
+						onChat: (messages) => onChat(withPlatform(messages, "youtube")),
 						onConnect,
 						onError,
 					});
@@ -180,7 +177,7 @@ const useLiveChatSession = (
 					if (!channelName) return;
 					unsubscribeRef.current = subscribeTwitchLiveChat({
 						channelName,
-						onChat,
+						onChat: (messages) => onChat(withPlatform(messages, "twitch")),
 						onConnect,
 						onError,
 					});
@@ -191,7 +188,7 @@ const useLiveChatSession = (
 					if (!liveId) return;
 					unsubscribeRef.current = subscribeNicoLiveChat({
 						liveId,
-						onChat,
+						onChat: (messages) => onChat(withPlatform(messages, "niconico")),
 						onConnect,
 						onError,
 					});
@@ -219,3 +216,12 @@ const useLiveChatSession = (
 
 	return { isStarted };
 };
+
+const withPlatform = (
+	messages: Omit<ChatMessage, "platform">[],
+	platform: Platform,
+): ChatMessage[] =>
+	messages.map((message) => ({
+		...message,
+		platform,
+	}));
