@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.22
+// @version      1.1.24
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -727,8 +727,8 @@
     react_production.useDeferredValue = function(value, initialValue) {
       return ReactSharedInternals.H.useDeferredValue(value, initialValue);
     };
-    react_production.useEffect = function(create, deps) {
-      return ReactSharedInternals.H.useEffect(create, deps);
+    react_production.useEffect = function(create2, deps) {
+      return ReactSharedInternals.H.useEffect(create2, deps);
     };
     react_production.useEffectEvent = function(callback) {
       return ReactSharedInternals.H.useEffectEvent(callback);
@@ -736,17 +736,17 @@
     react_production.useId = function() {
       return ReactSharedInternals.H.useId();
     };
-    react_production.useImperativeHandle = function(ref, create, deps) {
-      return ReactSharedInternals.H.useImperativeHandle(ref, create, deps);
+    react_production.useImperativeHandle = function(ref, create2, deps) {
+      return ReactSharedInternals.H.useImperativeHandle(ref, create2, deps);
     };
-    react_production.useInsertionEffect = function(create, deps) {
-      return ReactSharedInternals.H.useInsertionEffect(create, deps);
+    react_production.useInsertionEffect = function(create2, deps) {
+      return ReactSharedInternals.H.useInsertionEffect(create2, deps);
     };
-    react_production.useLayoutEffect = function(create, deps) {
-      return ReactSharedInternals.H.useLayoutEffect(create, deps);
+    react_production.useLayoutEffect = function(create2, deps) {
+      return ReactSharedInternals.H.useLayoutEffect(create2, deps);
     };
-    react_production.useMemo = function(create, deps) {
-      return ReactSharedInternals.H.useMemo(create, deps);
+    react_production.useMemo = function(create2, deps) {
+      return ReactSharedInternals.H.useMemo(create2, deps);
     };
     react_production.useOptimistic = function(passthrough, reducer) {
       return ReactSharedInternals.H.useOptimistic(passthrough, reducer);
@@ -4568,43 +4568,43 @@
       currentStateHook.memoizedState = action;
       return [stateHook, dispatch, false];
     }
-    function pushSimpleEffect(tag, inst, create, deps) {
-      tag = { tag, create, deps, inst, next: null };
+    function pushSimpleEffect(tag, inst, create2, deps) {
+      tag = { tag, create: create2, deps, inst, next: null };
       inst = currentlyRenderingFiber.updateQueue;
       null === inst && (inst = createFunctionComponentUpdateQueue(), currentlyRenderingFiber.updateQueue = inst);
-      create = inst.lastEffect;
-      null === create ? inst.lastEffect = tag.next = tag : (deps = create.next, create.next = tag, tag.next = deps, inst.lastEffect = tag);
+      create2 = inst.lastEffect;
+      null === create2 ? inst.lastEffect = tag.next = tag : (deps = create2.next, create2.next = tag, tag.next = deps, inst.lastEffect = tag);
       return tag;
     }
     function updateRef() {
       return updateWorkInProgressHook().memoizedState;
     }
-    function mountEffectImpl(fiberFlags, hookFlags, create, deps) {
+    function mountEffectImpl(fiberFlags, hookFlags, create2, deps) {
       var hook = mountWorkInProgressHook();
       currentlyRenderingFiber.flags |= fiberFlags;
       hook.memoizedState = pushSimpleEffect(
         1 | hookFlags,
         { destroy: void 0 },
-        create,
+        create2,
         void 0 === deps ? null : deps
       );
     }
-    function updateEffectImpl(fiberFlags, hookFlags, create, deps) {
+    function updateEffectImpl(fiberFlags, hookFlags, create2, deps) {
       var hook = updateWorkInProgressHook();
       deps = void 0 === deps ? null : deps;
       var inst = hook.memoizedState.inst;
-      null !== currentHook && null !== deps && areHookInputsEqual(deps, currentHook.memoizedState.deps) ? hook.memoizedState = pushSimpleEffect(hookFlags, inst, create, deps) : (currentlyRenderingFiber.flags |= fiberFlags, hook.memoizedState = pushSimpleEffect(
+      null !== currentHook && null !== deps && areHookInputsEqual(deps, currentHook.memoizedState.deps) ? hook.memoizedState = pushSimpleEffect(hookFlags, inst, create2, deps) : (currentlyRenderingFiber.flags |= fiberFlags, hook.memoizedState = pushSimpleEffect(
         1 | hookFlags,
         inst,
-        create,
+        create2,
         deps
       ));
     }
-    function mountEffect(create, deps) {
-      mountEffectImpl(8390656, 8, create, deps);
+    function mountEffect(create2, deps) {
+      mountEffectImpl(8390656, 8, create2, deps);
     }
-    function updateEffect(create, deps) {
-      updateEffectImpl(2048, 8, create, deps);
+    function updateEffect(create2, deps) {
+      updateEffectImpl(2048, 8, create2, deps);
     }
     function useEffectEventImpl(payload) {
       currentlyRenderingFiber.flags |= 4;
@@ -4624,28 +4624,28 @@
         return ref.impl.apply(void 0, arguments);
       };
     }
-    function updateInsertionEffect(create, deps) {
-      return updateEffectImpl(4, 2, create, deps);
+    function updateInsertionEffect(create2, deps) {
+      return updateEffectImpl(4, 2, create2, deps);
     }
-    function updateLayoutEffect(create, deps) {
-      return updateEffectImpl(4, 4, create, deps);
+    function updateLayoutEffect(create2, deps) {
+      return updateEffectImpl(4, 4, create2, deps);
     }
-    function imperativeHandleEffect(create, ref) {
+    function imperativeHandleEffect(create2, ref) {
       if ("function" === typeof ref) {
-        create = create();
-        var refCleanup = ref(create);
+        create2 = create2();
+        var refCleanup = ref(create2);
         return function() {
           "function" === typeof refCleanup ? refCleanup() : ref(null);
         };
       }
       if (null !== ref && void 0 !== ref)
-        return create = create(), ref.current = create, function() {
+        return create2 = create2(), ref.current = create2, function() {
           ref.current = null;
         };
     }
-    function updateImperativeHandle(ref, create, deps) {
+    function updateImperativeHandle(ref, create2, deps) {
       deps = null !== deps && void 0 !== deps ? deps.concat([ref]) : null;
-      updateEffectImpl(4, 4, imperativeHandleEffect.bind(null, create, ref), deps);
+      updateEffectImpl(4, 4, imperativeHandleEffect.bind(null, create2, ref), deps);
     }
     function mountDebugValue() {
     }
@@ -4944,20 +4944,20 @@
       },
       useContext: readContext,
       useEffect: mountEffect,
-      useImperativeHandle: function(ref, create, deps) {
+      useImperativeHandle: function(ref, create2, deps) {
         deps = null !== deps && void 0 !== deps ? deps.concat([ref]) : null;
         mountEffectImpl(
           4194308,
           4,
-          imperativeHandleEffect.bind(null, create, ref),
+          imperativeHandleEffect.bind(null, create2, ref),
           deps
         );
       },
-      useLayoutEffect: function(create, deps) {
-        return mountEffectImpl(4194308, 4, create, deps);
+      useLayoutEffect: function(create2, deps) {
+        return mountEffectImpl(4194308, 4, create2, deps);
       },
-      useInsertionEffect: function(create, deps) {
-        mountEffectImpl(4, 2, create, deps);
+      useInsertionEffect: function(create2, deps) {
+        mountEffectImpl(4, 2, create2, deps);
       },
       useMemo: function(nextCreate, deps) {
         var hook = mountWorkInProgressHook();
@@ -6983,8 +6983,8 @@
           do {
             if ((updateQueue.tag & flags) === flags) {
               lastEffect = void 0;
-              var create = updateQueue.create, inst = updateQueue.inst;
-              lastEffect = create();
+              var create2 = updateQueue.create, inst = updateQueue.inst;
+              lastEffect = create2();
               inst.destroy = lastEffect;
             }
             updateQueue = updateQueue.next;
@@ -12493,6 +12493,3861 @@
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   var _monkeyWindow = (() => window)();
+  function isMessage(arg, schema) {
+    const isMessage2 = arg !== null && typeof arg == "object" && "$typeName" in arg && typeof arg.$typeName == "string";
+    if (!isMessage2) {
+      return false;
+    }
+    if (schema === void 0) {
+      return true;
+    }
+    return schema.typeName === arg.$typeName;
+  }
+  var ScalarType;
+  (function(ScalarType2) {
+    ScalarType2[ScalarType2["DOUBLE"] = 1] = "DOUBLE";
+    ScalarType2[ScalarType2["FLOAT"] = 2] = "FLOAT";
+    ScalarType2[ScalarType2["INT64"] = 3] = "INT64";
+    ScalarType2[ScalarType2["UINT64"] = 4] = "UINT64";
+    ScalarType2[ScalarType2["INT32"] = 5] = "INT32";
+    ScalarType2[ScalarType2["FIXED64"] = 6] = "FIXED64";
+    ScalarType2[ScalarType2["FIXED32"] = 7] = "FIXED32";
+    ScalarType2[ScalarType2["BOOL"] = 8] = "BOOL";
+    ScalarType2[ScalarType2["STRING"] = 9] = "STRING";
+    ScalarType2[ScalarType2["BYTES"] = 12] = "BYTES";
+    ScalarType2[ScalarType2["UINT32"] = 13] = "UINT32";
+    ScalarType2[ScalarType2["SFIXED32"] = 15] = "SFIXED32";
+    ScalarType2[ScalarType2["SFIXED64"] = 16] = "SFIXED64";
+    ScalarType2[ScalarType2["SINT32"] = 17] = "SINT32";
+    ScalarType2[ScalarType2["SINT64"] = 18] = "SINT64";
+  })(ScalarType || (ScalarType = {}));
+  function varint64read() {
+    let lowBits = 0;
+    let highBits = 0;
+    for (let shift2 = 0; shift2 < 28; shift2 += 7) {
+      let b = this.buf[this.pos++];
+      lowBits |= (b & 127) << shift2;
+      if ((b & 128) == 0) {
+        this.assertBounds();
+        return [lowBits, highBits];
+      }
+    }
+    let middleByte = this.buf[this.pos++];
+    lowBits |= (middleByte & 15) << 28;
+    highBits = (middleByte & 112) >> 4;
+    if ((middleByte & 128) == 0) {
+      this.assertBounds();
+      return [lowBits, highBits];
+    }
+    for (let shift2 = 3; shift2 <= 31; shift2 += 7) {
+      let b = this.buf[this.pos++];
+      highBits |= (b & 127) << shift2;
+      if ((b & 128) == 0) {
+        this.assertBounds();
+        return [lowBits, highBits];
+      }
+    }
+    throw new Error("invalid varint");
+  }
+  const TWO_PWR_32_DBL = 4294967296;
+  function int64FromString(dec) {
+    const minus = dec[0] === "-";
+    if (minus) {
+      dec = dec.slice(1);
+    }
+    const base = 1e6;
+    let lowBits = 0;
+    let highBits = 0;
+    function add1e6digit(begin, end) {
+      const digit1e6 = Number(dec.slice(begin, end));
+      highBits *= base;
+      lowBits = lowBits * base + digit1e6;
+      if (lowBits >= TWO_PWR_32_DBL) {
+        highBits = highBits + (lowBits / TWO_PWR_32_DBL | 0);
+        lowBits = lowBits % TWO_PWR_32_DBL;
+      }
+    }
+    add1e6digit(-24, -18);
+    add1e6digit(-18, -12);
+    add1e6digit(-12, -6);
+    add1e6digit(-6);
+    return minus ? negate(lowBits, highBits) : newBits(lowBits, highBits);
+  }
+  function int64ToString(lo, hi) {
+    let bits = newBits(lo, hi);
+    const negative = bits.hi & 2147483648;
+    if (negative) {
+      bits = negate(bits.lo, bits.hi);
+    }
+    const result = uInt64ToString(bits.lo, bits.hi);
+    return negative ? "-" + result : result;
+  }
+  function uInt64ToString(lo, hi) {
+    ({ lo, hi } = toUnsigned(lo, hi));
+    if (hi <= 2097151) {
+      return String(TWO_PWR_32_DBL * hi + lo);
+    }
+    const low = lo & 16777215;
+    const mid = (lo >>> 24 | hi << 8) & 16777215;
+    const high = hi >> 16 & 65535;
+    let digitA = low + mid * 6777216 + high * 6710656;
+    let digitB = mid + high * 8147497;
+    let digitC = high * 2;
+    const base = 1e7;
+    if (digitA >= base) {
+      digitB += Math.floor(digitA / base);
+      digitA %= base;
+    }
+    if (digitB >= base) {
+      digitC += Math.floor(digitB / base);
+      digitB %= base;
+    }
+    return digitC.toString() + decimalFrom1e7WithLeadingZeros(digitB) + decimalFrom1e7WithLeadingZeros(digitA);
+  }
+  function toUnsigned(lo, hi) {
+    return { lo: lo >>> 0, hi: hi >>> 0 };
+  }
+  function newBits(lo, hi) {
+    return { lo: lo | 0, hi: hi | 0 };
+  }
+  function negate(lowBits, highBits) {
+    highBits = ~highBits;
+    if (lowBits) {
+      lowBits = ~lowBits + 1;
+    } else {
+      highBits += 1;
+    }
+    return newBits(lowBits, highBits);
+  }
+  const decimalFrom1e7WithLeadingZeros = (digit1e7) => {
+    const partial = String(digit1e7);
+    return "0000000".slice(partial.length) + partial;
+  };
+  function varint32write(value, bytes) {
+    if (value >= 0) {
+      while (value > 127) {
+        bytes.push(value & 127 | 128);
+        value = value >>> 7;
+      }
+      bytes.push(value);
+    } else {
+      for (let i = 0; i < 9; i++) {
+        bytes.push(value & 127 | 128);
+        value = value >> 7;
+      }
+      bytes.push(1);
+    }
+  }
+  function varint32read() {
+    let b = this.buf[this.pos++];
+    let result = b & 127;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 7;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 14;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 21;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 15) << 28;
+    for (let readBytes = 5; (b & 128) !== 0 && readBytes < 10; readBytes++)
+      b = this.buf[this.pos++];
+    if ((b & 128) != 0)
+      throw new Error("invalid varint");
+    this.assertBounds();
+    return result >>> 0;
+  }
+  var define_process_env_default = {};
+  const protoInt64 = makeInt64Support();
+  function makeInt64Support() {
+    const dv = new DataView(new ArrayBuffer(8));
+    const ok = typeof BigInt === "function" && typeof dv.getBigInt64 === "function" && typeof dv.getBigUint64 === "function" && typeof dv.setBigInt64 === "function" && typeof dv.setBigUint64 === "function" && (!!globalThis.Deno || typeof process != "object" || typeof define_process_env_default != "object" || define_process_env_default.BUF_BIGINT_DISABLE !== "1");
+    if (ok) {
+      const MIN = BigInt("-9223372036854775808");
+      const MAX = BigInt("9223372036854775807");
+      const UMIN = BigInt("0");
+      const UMAX = BigInt("18446744073709551615");
+      return {
+        zero: BigInt(0),
+        supported: true,
+        parse(value) {
+          const bi = typeof value == "bigint" ? value : BigInt(value);
+          if (bi > MAX || bi < MIN) {
+            throw new Error(`invalid int64: ${value}`);
+          }
+          return bi;
+        },
+        uParse(value) {
+          const bi = typeof value == "bigint" ? value : BigInt(value);
+          if (bi > UMAX || bi < UMIN) {
+            throw new Error(`invalid uint64: ${value}`);
+          }
+          return bi;
+        },
+        enc(value) {
+          dv.setBigInt64(0, this.parse(value), true);
+          return {
+            lo: dv.getInt32(0, true),
+            hi: dv.getInt32(4, true)
+          };
+        },
+        uEnc(value) {
+          dv.setBigInt64(0, this.uParse(value), true);
+          return {
+            lo: dv.getInt32(0, true),
+            hi: dv.getInt32(4, true)
+          };
+        },
+        dec(lo, hi) {
+          dv.setInt32(0, lo, true);
+          dv.setInt32(4, hi, true);
+          return dv.getBigInt64(0, true);
+        },
+        uDec(lo, hi) {
+          dv.setInt32(0, lo, true);
+          dv.setInt32(4, hi, true);
+          return dv.getBigUint64(0, true);
+        }
+      };
+    }
+    return {
+      zero: "0",
+      supported: false,
+      parse(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertInt64String(value);
+        return value;
+      },
+      uParse(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertUInt64String(value);
+        return value;
+      },
+      enc(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertInt64String(value);
+        return int64FromString(value);
+      },
+      uEnc(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertUInt64String(value);
+        return int64FromString(value);
+      },
+      dec(lo, hi) {
+        return int64ToString(lo, hi);
+      },
+      uDec(lo, hi) {
+        return uInt64ToString(lo, hi);
+      }
+    };
+  }
+  function assertInt64String(value) {
+    if (!/^-?[0-9]+$/.test(value)) {
+      throw new Error("invalid int64: " + value);
+    }
+  }
+  function assertUInt64String(value) {
+    if (!/^[0-9]+$/.test(value)) {
+      throw new Error("invalid uint64: " + value);
+    }
+  }
+  function scalarZeroValue(type, longAsString) {
+    switch (type) {
+      case ScalarType.STRING:
+        return "";
+      case ScalarType.BOOL:
+        return false;
+      case ScalarType.DOUBLE:
+      case ScalarType.FLOAT:
+        return 0;
+      case ScalarType.INT64:
+      case ScalarType.UINT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.FIXED64:
+      case ScalarType.SINT64:
+        return longAsString ? "0" : protoInt64.zero;
+      case ScalarType.BYTES:
+        return new Uint8Array(0);
+      default:
+        return 0;
+    }
+  }
+  function isScalarZeroValue(type, value) {
+    switch (type) {
+      case ScalarType.BOOL:
+        return value === false;
+      case ScalarType.STRING:
+        return value === "";
+      case ScalarType.BYTES:
+        return value instanceof Uint8Array && !value.byteLength;
+      default:
+        return value == 0;
+    }
+  }
+  const IMPLICIT$2 = 2;
+  const unsafeLocal = Symbol.for("reflect unsafe local");
+  function unsafeOneofCase(target, oneof) {
+    const c = target[oneof.localName].case;
+    if (c === void 0) {
+      return c;
+    }
+    return oneof.fields.find((f) => f.localName === c);
+  }
+  function unsafeIsSet(target, field) {
+    const name = field.localName;
+    if (field.oneof) {
+      return target[field.oneof.localName].case === name;
+    }
+    if (field.presence != IMPLICIT$2) {
+      return target[name] !== void 0 && Object.prototype.hasOwnProperty.call(target, name);
+    }
+    switch (field.fieldKind) {
+      case "list":
+        return target[name].length > 0;
+      case "map":
+        return Object.keys(target[name]).length > 0;
+      case "scalar":
+        return !isScalarZeroValue(field.scalar, target[name]);
+      case "enum":
+        return target[name] !== field.enum.values[0].number;
+    }
+    throw new Error("message field with implicit presence");
+  }
+  function unsafeIsSetExplicit(target, localName) {
+    return Object.prototype.hasOwnProperty.call(target, localName) && target[localName] !== void 0;
+  }
+  function unsafeGet(target, field) {
+    if (field.oneof) {
+      const oneof = target[field.oneof.localName];
+      if (oneof.case === field.localName) {
+        return oneof.value;
+      }
+      return void 0;
+    }
+    return target[field.localName];
+  }
+  function unsafeSet(target, field, value) {
+    if (field.oneof) {
+      target[field.oneof.localName] = {
+        case: field.localName,
+        value
+      };
+    } else {
+      target[field.localName] = value;
+    }
+  }
+  function unsafeClear(target, field) {
+    const name = field.localName;
+    if (field.oneof) {
+      const oneofLocalName = field.oneof.localName;
+      if (target[oneofLocalName].case === name) {
+        target[oneofLocalName] = { case: void 0 };
+      }
+    } else if (field.presence != IMPLICIT$2) {
+      delete target[name];
+    } else {
+      switch (field.fieldKind) {
+        case "map":
+          target[name] = {};
+          break;
+        case "list":
+          target[name] = [];
+          break;
+        case "enum":
+          target[name] = field.enum.values[0].number;
+          break;
+        case "scalar":
+          target[name] = scalarZeroValue(field.scalar, field.longAsString);
+          break;
+      }
+    }
+  }
+  function isObject(arg) {
+    return arg !== null && typeof arg == "object" && !Array.isArray(arg);
+  }
+  function isReflectList(arg, field) {
+    var _a, _b, _c, _d;
+    if (isObject(arg) && unsafeLocal in arg && "add" in arg && "field" in arg && typeof arg.field == "function") {
+      if (field !== void 0) {
+        const a = field;
+        const b = arg.field();
+        return a.listKind == b.listKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
+      }
+      return true;
+    }
+    return false;
+  }
+  function isReflectMap(arg, field) {
+    var _a, _b, _c, _d;
+    if (isObject(arg) && unsafeLocal in arg && "has" in arg && "field" in arg && typeof arg.field == "function") {
+      if (field !== void 0) {
+        const a = field, b = arg.field();
+        return a.mapKey === b.mapKey && a.mapKind == b.mapKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
+      }
+      return true;
+    }
+    return false;
+  }
+  function isReflectMessage(arg, messageDesc2) {
+    return isObject(arg) && unsafeLocal in arg && "desc" in arg && isObject(arg.desc) && arg.desc.kind === "message" && (messageDesc2 === void 0 || arg.desc.typeName == messageDesc2.typeName);
+  }
+  function isWrapper(arg) {
+    return isWrapperTypeName(arg.$typeName);
+  }
+  function isWrapperDesc(messageDesc2) {
+    const f = messageDesc2.fields[0];
+    return isWrapperTypeName(messageDesc2.typeName) && f !== void 0 && f.fieldKind == "scalar" && f.name == "value" && f.number == 1;
+  }
+  function isWrapperTypeName(name) {
+    return name.startsWith("google.protobuf.") && [
+      "DoubleValue",
+      "FloatValue",
+      "Int64Value",
+      "UInt64Value",
+      "Int32Value",
+      "UInt32Value",
+      "BoolValue",
+      "StringValue",
+      "BytesValue"
+    ].includes(name.substring(16));
+  }
+  const EDITION_PROTO3$1 = 999;
+  const EDITION_PROTO2$1 = 998;
+  const IMPLICIT$1 = 2;
+  function create(schema, init) {
+    if (isMessage(init, schema)) {
+      return init;
+    }
+    const message = createZeroMessage(schema);
+    return message;
+  }
+  const tokenZeroMessageField = Symbol();
+  const messagePrototypes = new WeakMap();
+  function createZeroMessage(desc) {
+    let msg;
+    if (!needsPrototypeChain(desc)) {
+      msg = {
+        $typeName: desc.typeName
+      };
+      for (const member of desc.members) {
+        if (member.kind == "oneof" || member.presence == IMPLICIT$1) {
+          msg[member.localName] = createZeroField(member);
+        }
+      }
+    } else {
+      const cached = messagePrototypes.get(desc);
+      let prototype;
+      let members;
+      if (cached) {
+        ({ prototype, members } = cached);
+      } else {
+        prototype = {};
+        members = new Set();
+        for (const member of desc.members) {
+          if (member.kind == "oneof") {
+            continue;
+          }
+          if (member.fieldKind != "scalar" && member.fieldKind != "enum") {
+            continue;
+          }
+          if (member.presence == IMPLICIT$1) {
+            continue;
+          }
+          members.add(member);
+          prototype[member.localName] = createZeroField(member);
+        }
+        messagePrototypes.set(desc, { prototype, members });
+      }
+      msg = Object.create(prototype);
+      msg.$typeName = desc.typeName;
+      for (const member of desc.members) {
+        if (members.has(member)) {
+          continue;
+        }
+        if (member.kind == "field") {
+          if (member.fieldKind == "message") {
+            continue;
+          }
+          if (member.fieldKind == "scalar" || member.fieldKind == "enum") {
+            if (member.presence != IMPLICIT$1) {
+              continue;
+            }
+          }
+        }
+        msg[member.localName] = createZeroField(member);
+      }
+    }
+    return msg;
+  }
+  function needsPrototypeChain(desc) {
+    switch (desc.file.edition) {
+      case EDITION_PROTO3$1:
+        return false;
+      case EDITION_PROTO2$1:
+        return true;
+      default:
+        return desc.fields.some((f) => f.presence != IMPLICIT$1 && f.fieldKind != "message" && !f.oneof);
+    }
+  }
+  function createZeroField(field) {
+    if (field.kind == "oneof") {
+      return { case: void 0 };
+    }
+    if (field.fieldKind == "list") {
+      return [];
+    }
+    if (field.fieldKind == "map") {
+      return {};
+    }
+    if (field.fieldKind == "message") {
+      return tokenZeroMessageField;
+    }
+    const defaultValue = field.getDefaultValue();
+    if (defaultValue !== void 0) {
+      return field.fieldKind == "scalar" && field.longAsString ? defaultValue.toString() : defaultValue;
+    }
+    return field.fieldKind == "scalar" ? scalarZeroValue(field.scalar, field.longAsString) : field.enum.values[0].number;
+  }
+  class FieldError extends Error {
+    constructor(fieldOrOneof, message, name = "FieldValueInvalidError") {
+      super(message);
+      this.name = name;
+      this.field = () => fieldOrOneof;
+    }
+  }
+  const symbol = Symbol.for("@bufbuild/protobuf/text-encoding");
+  function getTextEncoding() {
+    if (globalThis[symbol] == void 0) {
+      const te = new globalThis.TextEncoder();
+      const td = new globalThis.TextDecoder();
+      let tdStrict;
+      globalThis[symbol] = {
+        encodeUtf8(text) {
+          return te.encode(text);
+        },
+        decodeUtf8(bytes, strict) {
+          if (strict) {
+            if (tdStrict === void 0) {
+              tdStrict = new globalThis.TextDecoder("utf-8", { fatal: true });
+            }
+            return tdStrict.decode(bytes);
+          }
+          return td.decode(bytes);
+        },
+        checkUtf8(text) {
+          try {
+            encodeURIComponent(text);
+            return true;
+          } catch (_) {
+            return false;
+          }
+        }
+      };
+    }
+    return globalThis[symbol];
+  }
+  var WireType;
+  (function(WireType2) {
+    WireType2[WireType2["Varint"] = 0] = "Varint";
+    WireType2[WireType2["Bit64"] = 1] = "Bit64";
+    WireType2[WireType2["LengthDelimited"] = 2] = "LengthDelimited";
+    WireType2[WireType2["StartGroup"] = 3] = "StartGroup";
+    WireType2[WireType2["EndGroup"] = 4] = "EndGroup";
+    WireType2[WireType2["Bit32"] = 5] = "Bit32";
+  })(WireType || (WireType = {}));
+  const FLOAT32_MAX = 34028234663852886e22;
+  const FLOAT32_MIN = -34028234663852886e22;
+  const UINT32_MAX = 4294967295;
+  const INT32_MAX = 2147483647;
+  const INT32_MIN = -2147483648;
+  class BinaryReader {
+    constructor(buf, decodeUtf8 = getTextEncoding().decodeUtf8) {
+      this.decodeUtf8 = decodeUtf8;
+      this.varint64 = varint64read;
+      this.uint32 = varint32read;
+      this.buf = buf;
+      this.len = buf.length;
+      this.pos = 0;
+      this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+    }
+tag() {
+      const start = this.pos;
+      const tag = this.uint32();
+      const bytesRead = this.pos - start;
+      if (bytesRead > 5 || bytesRead == 5 && this.buf[this.pos - 1] > 15) {
+        throw new Error("illegal tag: varint overflows uint32");
+      }
+      const fieldNo = tag >>> 3;
+      const wireType = tag & 7;
+      if (fieldNo <= 0 || wireType > 5) {
+        throw new Error("illegal tag: field no " + fieldNo + " wire type " + wireType);
+      }
+      return [fieldNo, wireType];
+    }
+skip(wireType, fieldNo) {
+      let start = this.pos;
+      switch (wireType) {
+        case WireType.Varint:
+          while (this.buf[this.pos++] & 128) {
+          }
+          break;
+case WireType.Bit64:
+          this.pos += 4;
+        case WireType.Bit32:
+          this.pos += 4;
+          break;
+        case WireType.LengthDelimited:
+          let len = this.uint32();
+          this.pos += len;
+          break;
+        case WireType.StartGroup:
+          for (; ; ) {
+            const [fn, wt] = this.tag();
+            if (wt === WireType.EndGroup) {
+              if (fieldNo !== void 0 && fn !== fieldNo) {
+                throw new Error("invalid end group tag");
+              }
+              break;
+            }
+            this.skip(wt, fn);
+          }
+          break;
+        default:
+          throw new Error("cant skip wire type " + wireType);
+      }
+      this.assertBounds();
+      return this.buf.subarray(start, this.pos);
+    }
+assertBounds() {
+      if (this.pos > this.len)
+        throw new RangeError("premature EOF");
+    }
+int32() {
+      return this.uint32() | 0;
+    }
+sint32() {
+      let zze = this.uint32();
+      return zze >>> 1 ^ -(zze & 1);
+    }
+int64() {
+      return protoInt64.dec(...this.varint64());
+    }
+uint64() {
+      return protoInt64.uDec(...this.varint64());
+    }
+sint64() {
+      let [lo, hi] = this.varint64();
+      let s = -(lo & 1);
+      lo = (lo >>> 1 | (hi & 1) << 31) ^ s;
+      hi = hi >>> 1 ^ s;
+      return protoInt64.dec(lo, hi);
+    }
+bool() {
+      let [lo, hi] = this.varint64();
+      return lo !== 0 || hi !== 0;
+    }
+fixed32() {
+      return this.view.getUint32((this.pos += 4) - 4, true);
+    }
+sfixed32() {
+      return this.view.getInt32((this.pos += 4) - 4, true);
+    }
+fixed64() {
+      return protoInt64.uDec(this.sfixed32(), this.sfixed32());
+    }
+sfixed64() {
+      return protoInt64.dec(this.sfixed32(), this.sfixed32());
+    }
+float() {
+      return this.view.getFloat32((this.pos += 4) - 4, true);
+    }
+double() {
+      return this.view.getFloat64((this.pos += 8) - 8, true);
+    }
+bytes() {
+      let len = this.uint32(), start = this.pos;
+      this.pos += len;
+      this.assertBounds();
+      return this.buf.subarray(start, start + len);
+    }
+string(strict) {
+      return this.decodeUtf8(this.bytes(), strict);
+    }
+  }
+  function checkField(field, value) {
+    const check = field.fieldKind == "list" ? isReflectList(value, field) : field.fieldKind == "map" ? isReflectMap(value, field) : checkSingular(field, value);
+    if (check === true) {
+      return void 0;
+    }
+    let reason;
+    switch (field.fieldKind) {
+      case "list":
+        reason = `expected ${formatReflectList(field)}, got ${formatVal(value)}`;
+        break;
+      case "map":
+        reason = `expected ${formatReflectMap(field)}, got ${formatVal(value)}`;
+        break;
+      default: {
+        reason = reasonSingular(field, value, check);
+      }
+    }
+    return new FieldError(field, reason);
+  }
+  function checkListItem(field, index2, value) {
+    const check = checkSingular(field, value);
+    if (check !== true) {
+      return new FieldError(field, `list item #${index2 + 1}: ${reasonSingular(field, value, check)}`);
+    }
+    return void 0;
+  }
+  function checkMapEntry(field, key, value) {
+    const checkKey = checkScalarValue(key, field.mapKey);
+    if (checkKey !== true) {
+      return new FieldError(field, `invalid map key: ${reasonSingular({ scalar: field.mapKey }, key, checkKey)}`);
+    }
+    const checkVal = checkSingular(field, value);
+    if (checkVal !== true) {
+      return new FieldError(field, `map entry ${formatVal(key)}: ${reasonSingular(field, value, checkVal)}`);
+    }
+    return void 0;
+  }
+  function checkSingular(field, value) {
+    if (field.scalar !== void 0) {
+      return checkScalarValue(value, field.scalar);
+    }
+    if (field.enum !== void 0) {
+      if (field.enum.open) {
+        return Number.isInteger(value);
+      }
+      return field.enum.values.some((v) => v.number === value);
+    }
+    return isReflectMessage(value, field.message);
+  }
+  function checkScalarValue(value, scalar) {
+    switch (scalar) {
+      case ScalarType.DOUBLE:
+        return typeof value == "number";
+      case ScalarType.FLOAT:
+        if (typeof value != "number") {
+          return false;
+        }
+        if (Number.isNaN(value) || !Number.isFinite(value)) {
+          return true;
+        }
+        if (value > FLOAT32_MAX || value < FLOAT32_MIN) {
+          return `${value.toFixed()} out of range`;
+        }
+        return true;
+      case ScalarType.INT32:
+      case ScalarType.SFIXED32:
+      case ScalarType.SINT32:
+        if (typeof value !== "number" || !Number.isInteger(value)) {
+          return false;
+        }
+        if (value > INT32_MAX || value < INT32_MIN) {
+          return `${value.toFixed()} out of range`;
+        }
+        return true;
+      case ScalarType.FIXED32:
+      case ScalarType.UINT32:
+        if (typeof value !== "number" || !Number.isInteger(value)) {
+          return false;
+        }
+        if (value > UINT32_MAX || value < 0) {
+          return `${value.toFixed()} out of range`;
+        }
+        return true;
+      case ScalarType.BOOL:
+        return typeof value == "boolean";
+      case ScalarType.STRING:
+        if (typeof value != "string") {
+          return false;
+        }
+        return getTextEncoding().checkUtf8(value) || "invalid UTF8";
+      case ScalarType.BYTES:
+        return value instanceof Uint8Array;
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
+          try {
+            protoInt64.parse(value);
+            return true;
+          } catch (_) {
+            return `${value} out of range`;
+          }
+        }
+        return false;
+      case ScalarType.FIXED64:
+      case ScalarType.UINT64:
+        if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
+          try {
+            protoInt64.uParse(value);
+            return true;
+          } catch (_) {
+            return `${value} out of range`;
+          }
+        }
+        return false;
+    }
+  }
+  function reasonSingular(field, val, details) {
+    details = typeof details == "string" ? `: ${details}` : `, got ${formatVal(val)}`;
+    if (field.scalar !== void 0) {
+      return `expected ${scalarTypeDescription(field.scalar)}` + details;
+    }
+    if (field.enum !== void 0) {
+      return `expected ${field.enum.toString()}` + details;
+    }
+    return `expected ${formatReflectMessage(field.message)}` + details;
+  }
+  function formatVal(val) {
+    switch (typeof val) {
+      case "object":
+        if (val === null) {
+          return "null";
+        }
+        if (val instanceof Uint8Array) {
+          return `Uint8Array(${val.length})`;
+        }
+        if (Array.isArray(val)) {
+          return `Array(${val.length})`;
+        }
+        if (isReflectList(val)) {
+          return formatReflectList(val.field());
+        }
+        if (isReflectMap(val)) {
+          return formatReflectMap(val.field());
+        }
+        if (isReflectMessage(val)) {
+          return formatReflectMessage(val.desc);
+        }
+        if (isMessage(val)) {
+          return `message ${val.$typeName}`;
+        }
+        return "object";
+      case "string":
+        return val.length > 30 ? "string" : `"${val.split('"').join('\\"')}"`;
+      case "boolean":
+        return String(val);
+      case "number":
+        return String(val);
+      case "bigint":
+        return String(val) + "n";
+      default:
+        return typeof val;
+    }
+  }
+  function formatReflectMessage(desc) {
+    return `ReflectMessage (${desc.typeName})`;
+  }
+  function formatReflectList(field) {
+    switch (field.listKind) {
+      case "message":
+        return `ReflectList (${field.message.toString()})`;
+      case "enum":
+        return `ReflectList (${field.enum.toString()})`;
+      case "scalar":
+        return `ReflectList (${ScalarType[field.scalar]})`;
+    }
+  }
+  function formatReflectMap(field) {
+    switch (field.mapKind) {
+      case "message":
+        return `ReflectMap (${ScalarType[field.mapKey]}, ${field.message.toString()})`;
+      case "enum":
+        return `ReflectMap (${ScalarType[field.mapKey]}, ${field.enum.toString()})`;
+      case "scalar":
+        return `ReflectMap (${ScalarType[field.mapKey]}, ${ScalarType[field.scalar]})`;
+    }
+  }
+  function scalarTypeDescription(scalar) {
+    switch (scalar) {
+      case ScalarType.STRING:
+        return "string";
+      case ScalarType.BOOL:
+        return "boolean";
+      case ScalarType.INT64:
+      case ScalarType.SINT64:
+      case ScalarType.SFIXED64:
+        return "bigint (int64)";
+      case ScalarType.UINT64:
+      case ScalarType.FIXED64:
+        return "bigint (uint64)";
+      case ScalarType.BYTES:
+        return "Uint8Array";
+      case ScalarType.DOUBLE:
+        return "number (float64)";
+      case ScalarType.FLOAT:
+        return "number (float32)";
+      case ScalarType.FIXED32:
+      case ScalarType.UINT32:
+        return "number (uint32)";
+      case ScalarType.INT32:
+      case ScalarType.SFIXED32:
+      case ScalarType.SINT32:
+        return "number (int32)";
+    }
+  }
+  function reflect(messageDesc2, message, check = true) {
+    return new ReflectMessageImpl(messageDesc2, message, check);
+  }
+  const messageSortedFields = new WeakMap();
+  class ReflectMessageImpl {
+    get sortedFields() {
+      const cached = messageSortedFields.get(this.desc);
+      if (cached) {
+        return cached;
+      }
+      const sortedFields = this.desc.fields.concat().sort((a, b) => a.number - b.number);
+      messageSortedFields.set(this.desc, sortedFields);
+      return sortedFields;
+    }
+    constructor(messageDesc2, message, check = true) {
+      this.lists = new Map();
+      this.maps = new Map();
+      this.check = check;
+      this.desc = messageDesc2;
+      this.message = this[unsafeLocal] = message !== null && message !== void 0 ? message : create(messageDesc2);
+      this.fields = messageDesc2.fields;
+      this.oneofs = messageDesc2.oneofs;
+      this.members = messageDesc2.members;
+    }
+    findNumber(number) {
+      if (!this._fieldsByNumber) {
+        this._fieldsByNumber = new Map(this.desc.fields.map((f) => [f.number, f]));
+      }
+      return this._fieldsByNumber.get(number);
+    }
+    oneofCase(oneof) {
+      assertOwn(this.message, oneof);
+      return unsafeOneofCase(this.message, oneof);
+    }
+    isSet(field) {
+      assertOwn(this.message, field);
+      return unsafeIsSet(this.message, field);
+    }
+    clear(field) {
+      assertOwn(this.message, field);
+      unsafeClear(this.message, field);
+    }
+    get(field) {
+      assertOwn(this.message, field);
+      const value = unsafeGet(this.message, field);
+      switch (field.fieldKind) {
+        case "list":
+          let list = this.lists.get(field);
+          if (!list || list[unsafeLocal] !== value) {
+            this.lists.set(
+              field,
+list = new ReflectListImpl(field, value, this.check)
+            );
+          }
+          return list;
+        case "map":
+          let map = this.maps.get(field);
+          if (!map || map[unsafeLocal] !== value) {
+            this.maps.set(
+              field,
+map = new ReflectMapImpl(field, value, this.check)
+            );
+          }
+          return map;
+        case "message":
+          return messageToReflect(field, value, this.check);
+        case "scalar":
+          return value === void 0 ? scalarZeroValue(field.scalar, false) : longToReflect(field, value);
+        case "enum":
+          return value !== null && value !== void 0 ? value : field.enum.values[0].number;
+      }
+    }
+    set(field, value) {
+      assertOwn(this.message, field);
+      if (this.check) {
+        const err = checkField(field, value);
+        if (err) {
+          throw err;
+        }
+      }
+      let local;
+      if (field.fieldKind == "message") {
+        local = messageToLocal(field, value);
+      } else if (isReflectMap(value) || isReflectList(value)) {
+        local = value[unsafeLocal];
+      } else {
+        local = longToLocal(field, value);
+      }
+      unsafeSet(this.message, field, local);
+    }
+    getUnknown() {
+      return this.message.$unknown;
+    }
+    setUnknown(value) {
+      this.message.$unknown = value;
+    }
+  }
+  function assertOwn(owner, member) {
+    if (member.parent.typeName !== owner.$typeName) {
+      throw new FieldError(member, `cannot use ${member.toString()} with message ${owner.$typeName}`, "ForeignFieldError");
+    }
+  }
+  class ReflectListImpl {
+    field() {
+      return this._field;
+    }
+    get size() {
+      return this._arr.length;
+    }
+    constructor(field, unsafeInput, check) {
+      this._field = field;
+      this._arr = this[unsafeLocal] = unsafeInput;
+      this.check = check;
+    }
+    get(index2) {
+      const item = this._arr[index2];
+      return item === void 0 ? void 0 : listItemToReflect(this._field, item, this.check);
+    }
+    set(index2, item) {
+      if (index2 < 0 || index2 >= this._arr.length) {
+        throw new FieldError(this._field, `list item #${index2 + 1}: out of range`);
+      }
+      if (this.check) {
+        const err = checkListItem(this._field, index2, item);
+        if (err) {
+          throw err;
+        }
+      }
+      this._arr[index2] = listItemToLocal(this._field, item);
+    }
+    add(item) {
+      if (this.check) {
+        const err = checkListItem(this._field, this._arr.length, item);
+        if (err) {
+          throw err;
+        }
+      }
+      this._arr.push(listItemToLocal(this._field, item));
+      return void 0;
+    }
+    clear() {
+      this._arr.splice(0, this._arr.length);
+    }
+    [Symbol.iterator]() {
+      return this.values();
+    }
+    keys() {
+      return this._arr.keys();
+    }
+    *values() {
+      for (const item of this._arr) {
+        yield listItemToReflect(this._field, item, this.check);
+      }
+    }
+    *entries() {
+      for (let i = 0; i < this._arr.length; i++) {
+        yield [i, listItemToReflect(this._field, this._arr[i], this.check)];
+      }
+    }
+  }
+  class ReflectMapImpl {
+    constructor(field, unsafeInput, check = true) {
+      this.obj = this[unsafeLocal] = unsafeInput !== null && unsafeInput !== void 0 ? unsafeInput : {};
+      this.check = check;
+      this._field = field;
+    }
+    field() {
+      return this._field;
+    }
+    set(key, value) {
+      if (this.check) {
+        const err = checkMapEntry(this._field, key, value);
+        if (err) {
+          throw err;
+        }
+      }
+      this.obj[mapKeyToLocal(key)] = mapValueToLocal(this._field, value);
+      return this;
+    }
+    delete(key) {
+      const k = mapKeyToLocal(key);
+      const has = Object.prototype.hasOwnProperty.call(this.obj, k);
+      if (has) {
+        delete this.obj[k];
+      }
+      return has;
+    }
+    clear() {
+      for (const key of Object.keys(this.obj)) {
+        delete this.obj[key];
+      }
+    }
+    get(key) {
+      let val = this.obj[mapKeyToLocal(key)];
+      if (val !== void 0) {
+        val = mapValueToReflect(this._field, val, this.check);
+      }
+      return val;
+    }
+    has(key) {
+      return Object.prototype.hasOwnProperty.call(this.obj, mapKeyToLocal(key));
+    }
+    *keys() {
+      for (const objKey of Object.keys(this.obj)) {
+        yield mapKeyToReflect(objKey, this._field.mapKey);
+      }
+    }
+    *entries() {
+      for (const objEntry of Object.entries(this.obj)) {
+        yield [
+          mapKeyToReflect(objEntry[0], this._field.mapKey),
+          mapValueToReflect(this._field, objEntry[1], this.check)
+        ];
+      }
+    }
+    [Symbol.iterator]() {
+      return this.entries();
+    }
+    get size() {
+      return Object.keys(this.obj).length;
+    }
+    *values() {
+      for (const val of Object.values(this.obj)) {
+        yield mapValueToReflect(this._field, val, this.check);
+      }
+    }
+    forEach(callbackfn, thisArg) {
+      for (const mapEntry of this.entries()) {
+        callbackfn.call(thisArg, mapEntry[1], mapEntry[0], this);
+      }
+    }
+  }
+  function messageToLocal(field, value) {
+    if (!isReflectMessage(value)) {
+      return value;
+    }
+    if (isWrapper(value.message) && !field.oneof && field.fieldKind == "message") {
+      return value.message.value;
+    }
+    if (value.desc.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value") {
+      return wktStructToLocal(value.message);
+    }
+    return value.message;
+  }
+  function messageToReflect(field, value, check) {
+    if (value !== void 0) {
+      if (isWrapperDesc(field.message) && !field.oneof && field.fieldKind == "message") {
+        value = {
+          $typeName: field.message.typeName,
+          value: longToReflect(field.message.fields[0], value)
+        };
+      } else if (field.message.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value" && isObject(value)) {
+        value = wktStructToReflect(value);
+      }
+    }
+    return new ReflectMessageImpl(field.message, value, check);
+  }
+  function listItemToLocal(field, value) {
+    if (field.listKind == "message") {
+      return messageToLocal(field, value);
+    }
+    return longToLocal(field, value);
+  }
+  function listItemToReflect(field, value, check) {
+    if (field.listKind == "message") {
+      return messageToReflect(field, value, check);
+    }
+    return longToReflect(field, value);
+  }
+  function mapValueToLocal(field, value) {
+    if (field.mapKind == "message") {
+      return messageToLocal(field, value);
+    }
+    return longToLocal(field, value);
+  }
+  function mapValueToReflect(field, value, check) {
+    if (field.mapKind == "message") {
+      return messageToReflect(field, value, check);
+    }
+    return value;
+  }
+  function mapKeyToLocal(key) {
+    return typeof key == "string" || typeof key == "number" ? key : String(key);
+  }
+  function mapKeyToReflect(key, type) {
+    switch (type) {
+      case ScalarType.STRING:
+        return key;
+      case ScalarType.INT32:
+      case ScalarType.FIXED32:
+      case ScalarType.UINT32:
+      case ScalarType.SFIXED32:
+      case ScalarType.SINT32: {
+        const n = Number.parseInt(key);
+        if (Number.isFinite(n)) {
+          return n;
+        }
+        break;
+      }
+      case ScalarType.BOOL:
+        switch (key) {
+          case "true":
+            return true;
+          case "false":
+            return false;
+        }
+        break;
+      case ScalarType.UINT64:
+      case ScalarType.FIXED64:
+        try {
+          return protoInt64.uParse(key);
+        } catch (_a) {
+        }
+        break;
+      default:
+        try {
+          return protoInt64.parse(key);
+        } catch (_b) {
+        }
+        break;
+    }
+    return key;
+  }
+  function longToReflect(field, value) {
+    switch (field.scalar) {
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        if ("longAsString" in field && field.longAsString && typeof value == "string") {
+          value = protoInt64.parse(value);
+        }
+        break;
+      case ScalarType.FIXED64:
+      case ScalarType.UINT64:
+        if ("longAsString" in field && field.longAsString && typeof value == "string") {
+          value = protoInt64.uParse(value);
+        }
+        break;
+    }
+    return value;
+  }
+  function longToLocal(field, value) {
+    switch (field.scalar) {
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        if ("longAsString" in field && field.longAsString) {
+          value = String(value);
+        } else if (typeof value == "string" || typeof value == "number") {
+          value = protoInt64.parse(value);
+        }
+        break;
+      case ScalarType.FIXED64:
+      case ScalarType.UINT64:
+        if ("longAsString" in field && field.longAsString) {
+          value = String(value);
+        } else if (typeof value == "string" || typeof value == "number") {
+          value = protoInt64.uParse(value);
+        }
+        break;
+    }
+    return value;
+  }
+  function wktStructToReflect(json) {
+    const struct = {
+      $typeName: "google.protobuf.Struct",
+      fields: {}
+    };
+    if (isObject(json)) {
+      for (const [k, v] of Object.entries(json)) {
+        struct.fields[k] = wktValueToReflect(v);
+      }
+    }
+    return struct;
+  }
+  function wktStructToLocal(val) {
+    const json = {};
+    for (const [k, v] of Object.entries(val.fields)) {
+      json[k] = wktValueToLocal(v);
+    }
+    return json;
+  }
+  function wktValueToLocal(val) {
+    switch (val.kind.case) {
+      case "structValue":
+        return wktStructToLocal(val.kind.value);
+      case "listValue":
+        return val.kind.value.values.map(wktValueToLocal);
+      case "nullValue":
+      case void 0:
+        return null;
+      default:
+        return val.kind.value;
+    }
+  }
+  function wktValueToReflect(json) {
+    const value = {
+      $typeName: "google.protobuf.Value",
+      kind: { case: void 0 }
+    };
+    switch (typeof json) {
+      case "number":
+        value.kind = { case: "numberValue", value: json };
+        break;
+      case "string":
+        value.kind = { case: "stringValue", value: json };
+        break;
+      case "boolean":
+        value.kind = { case: "boolValue", value: json };
+        break;
+      case "object":
+        if (json === null) {
+          const nullValue = 0;
+          value.kind = { case: "nullValue", value: nullValue };
+        } else if (Array.isArray(json)) {
+          const listValue = {
+            $typeName: "google.protobuf.ListValue",
+            values: []
+          };
+          if (Array.isArray(json)) {
+            for (const e of json) {
+              listValue.values.push(wktValueToReflect(e));
+            }
+          }
+          value.kind = {
+            case: "listValue",
+            value: listValue
+          };
+        } else {
+          value.kind = {
+            case: "structValue",
+            value: wktStructToReflect(json)
+          };
+        }
+        break;
+    }
+    return value;
+  }
+  function base64Decode(base64Str) {
+    const table = getDecodeTable();
+    let es = base64Str.length * 3 / 4;
+    if (base64Str[base64Str.length - 2] == "=")
+      es -= 2;
+    else if (base64Str[base64Str.length - 1] == "=")
+      es -= 1;
+    let bytes = new Uint8Array(es), bytePos = 0, groupPos = 0, b, p = 0;
+    for (let i = 0; i < base64Str.length; i++) {
+      b = table[base64Str.charCodeAt(i)];
+      if (b === void 0) {
+        switch (base64Str[i]) {
+case "=":
+            groupPos = 0;
+case "\n":
+          case "\r":
+          case "	":
+          case " ":
+            continue;
+default:
+            throw Error("invalid base64 string");
+        }
+      }
+      switch (groupPos) {
+        case 0:
+          p = b;
+          groupPos = 1;
+          break;
+        case 1:
+          bytes[bytePos++] = p << 2 | (b & 48) >> 4;
+          p = b;
+          groupPos = 2;
+          break;
+        case 2:
+          bytes[bytePos++] = (p & 15) << 4 | (b & 60) >> 2;
+          p = b;
+          groupPos = 3;
+          break;
+        case 3:
+          bytes[bytePos++] = (p & 3) << 6 | b;
+          groupPos = 0;
+          break;
+      }
+    }
+    if (groupPos == 1)
+      throw Error("invalid base64 string");
+    return bytes.subarray(0, bytePos);
+  }
+  let encodeTableStd;
+  let decodeTable;
+  function getEncodeTable(encoding) {
+    if (!encodeTableStd) {
+      encodeTableStd = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
+      encodeTableStd.slice(0, -2).concat("-", "_");
+    }
+    return encodeTableStd;
+  }
+  function getDecodeTable() {
+    if (!decodeTable) {
+      decodeTable = [];
+      const encodeTable = getEncodeTable();
+      for (let i = 0; i < encodeTable.length; i++)
+        decodeTable[encodeTable[i].charCodeAt(0)] = i;
+      decodeTable["-".charCodeAt(0)] = encodeTable.indexOf("+");
+      decodeTable["_".charCodeAt(0)] = encodeTable.indexOf("/");
+    }
+    return decodeTable;
+  }
+  function protoCamelCase(snakeCase) {
+    let capNext = false;
+    const b = [];
+    for (let i = 0; i < snakeCase.length; i++) {
+      let c = snakeCase.charAt(i);
+      switch (c) {
+        case "_":
+          capNext = true;
+          break;
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+          b.push(c);
+          capNext = false;
+          break;
+        default:
+          if (capNext) {
+            capNext = false;
+            c = c.toUpperCase();
+          }
+          b.push(c);
+          break;
+      }
+    }
+    return b.join("");
+  }
+  const reservedObjectProperties = new Set([
+"constructor",
+    "toString",
+    "toJSON",
+    "valueOf"
+  ]);
+  function safeObjectProperty(name) {
+    return reservedObjectProperties.has(name) ? name + "$" : name;
+  }
+  function restoreJsonNames(message) {
+    for (const f of message.field) {
+      if (!unsafeIsSetExplicit(f, "jsonName")) {
+        f.jsonName = protoCamelCase(f.name);
+      }
+    }
+    message.nestedType.forEach(restoreJsonNames);
+  }
+  function parseTextFormatEnumValue(descEnum, value) {
+    const enumValue = descEnum.values.find((v) => v.name === value);
+    if (!enumValue) {
+      throw new Error(`cannot parse ${descEnum} default value: ${value}`);
+    }
+    return enumValue.number;
+  }
+  function parseTextFormatScalarValue(type, value) {
+    switch (type) {
+      case ScalarType.STRING:
+        return value;
+      case ScalarType.BYTES: {
+        const u = unescapeBytesDefaultValue(value);
+        if (u === false) {
+          throw new Error(`cannot parse ${ScalarType[type]} default value: ${value}`);
+        }
+        return u;
+      }
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        return protoInt64.parse(value);
+      case ScalarType.UINT64:
+      case ScalarType.FIXED64:
+        return protoInt64.uParse(value);
+      case ScalarType.DOUBLE:
+      case ScalarType.FLOAT:
+        switch (value) {
+          case "inf":
+            return Number.POSITIVE_INFINITY;
+          case "-inf":
+            return Number.NEGATIVE_INFINITY;
+          case "nan":
+            return Number.NaN;
+          default:
+            return parseFloat(value);
+        }
+      case ScalarType.BOOL:
+        return value === "true";
+      case ScalarType.INT32:
+      case ScalarType.UINT32:
+      case ScalarType.SINT32:
+      case ScalarType.FIXED32:
+      case ScalarType.SFIXED32:
+        return parseInt(value, 10);
+    }
+  }
+  function unescapeBytesDefaultValue(str) {
+    const b = [];
+    const input = {
+      tail: str,
+      c: "",
+      next() {
+        if (this.tail.length == 0) {
+          return false;
+        }
+        this.c = this.tail[0];
+        this.tail = this.tail.substring(1);
+        return true;
+      },
+      take(n) {
+        if (this.tail.length >= n) {
+          const r2 = this.tail.substring(0, n);
+          this.tail = this.tail.substring(n);
+          return r2;
+        }
+        return false;
+      }
+    };
+    while (input.next()) {
+      switch (input.c) {
+        case "\\":
+          if (input.next()) {
+            switch (input.c) {
+              case "\\":
+                b.push(input.c.charCodeAt(0));
+                break;
+              case "b":
+                b.push(8);
+                break;
+              case "f":
+                b.push(12);
+                break;
+              case "n":
+                b.push(10);
+                break;
+              case "r":
+                b.push(13);
+                break;
+              case "t":
+                b.push(9);
+                break;
+              case "v":
+                b.push(11);
+                break;
+              case "0":
+              case "1":
+              case "2":
+              case "3":
+              case "4":
+              case "5":
+              case "6":
+              case "7": {
+                const s = input.c;
+                const t = input.take(2);
+                if (t === false) {
+                  return false;
+                }
+                const n = parseInt(s + t, 8);
+                if (Number.isNaN(n)) {
+                  return false;
+                }
+                b.push(n);
+                break;
+              }
+              case "x": {
+                const s = input.c;
+                const t = input.take(2);
+                if (t === false) {
+                  return false;
+                }
+                const n = parseInt(s + t, 16);
+                if (Number.isNaN(n)) {
+                  return false;
+                }
+                b.push(n);
+                break;
+              }
+              case "u": {
+                const s = input.c;
+                const t = input.take(4);
+                if (t === false) {
+                  return false;
+                }
+                const n = parseInt(s + t, 16);
+                if (Number.isNaN(n)) {
+                  return false;
+                }
+                const chunk = new Uint8Array(4);
+                const view = new DataView(chunk.buffer);
+                view.setInt32(0, n, true);
+                b.push(chunk[0], chunk[1], chunk[2], chunk[3]);
+                break;
+              }
+              case "U": {
+                const s = input.c;
+                const t = input.take(8);
+                if (t === false) {
+                  return false;
+                }
+                const tc = protoInt64.uEnc(s + t);
+                const chunk = new Uint8Array(8);
+                const view = new DataView(chunk.buffer);
+                view.setInt32(0, tc.lo, true);
+                view.setInt32(4, tc.hi, true);
+                b.push(chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5], chunk[6], chunk[7]);
+                break;
+              }
+            }
+          }
+          break;
+        default:
+          b.push(input.c.charCodeAt(0));
+      }
+    }
+    return new Uint8Array(b);
+  }
+  function* nestedTypes(desc) {
+    switch (desc.kind) {
+      case "file":
+        for (const message of desc.messages) {
+          yield message;
+          yield* nestedTypes(message);
+        }
+        yield* desc.enums;
+        yield* desc.services;
+        yield* desc.extensions;
+        break;
+      case "message":
+        for (const message of desc.nestedMessages) {
+          yield message;
+          yield* nestedTypes(message);
+        }
+        yield* desc.nestedEnums;
+        yield* desc.nestedExtensions;
+        break;
+    }
+  }
+  function createFileRegistry(...args) {
+    const registry = createBaseRegistry();
+    if (!args.length) {
+      return registry;
+    }
+    if ("$typeName" in args[0] && args[0].$typeName == "google.protobuf.FileDescriptorSet") {
+      for (const file of args[0].file) {
+        addFile(file, registry);
+      }
+      return registry;
+    }
+    if ("$typeName" in args[0]) {
+      let recurseDeps2 = function(file) {
+        const deps = [];
+        for (const protoFileName of file.dependency) {
+          if (registry.getFile(protoFileName) != void 0) {
+            continue;
+          }
+          if (seen.has(protoFileName)) {
+            continue;
+          }
+          const dep = resolve(protoFileName);
+          if (!dep) {
+            throw new Error(`Unable to resolve ${protoFileName}, imported by ${file.name}`);
+          }
+          if ("kind" in dep) {
+            registry.addFile(dep, false, true);
+          } else {
+            seen.add(dep.name);
+            deps.push(dep);
+          }
+        }
+        return deps.concat(...deps.map(recurseDeps2));
+      };
+      const input = args[0];
+      const resolve = args[1];
+      const seen = new Set();
+      for (const file of [input, ...recurseDeps2(input)].reverse()) {
+        addFile(file, registry);
+      }
+    } else {
+      for (const fileReg of args) {
+        for (const file of fileReg.files) {
+          registry.addFile(file);
+        }
+      }
+    }
+    return registry;
+  }
+  function createBaseRegistry() {
+    const types = new Map();
+    const extendees = new Map();
+    const files = new Map();
+    return {
+      kind: "registry",
+      types,
+      extendees,
+      [Symbol.iterator]() {
+        return types.values();
+      },
+      get files() {
+        return files.values();
+      },
+      addFile(file, skipTypes, withDeps) {
+        files.set(file.proto.name, file);
+        if (!skipTypes) {
+          for (const type of nestedTypes(file)) {
+            this.add(type);
+          }
+        }
+        if (withDeps) {
+          for (const f of file.dependencies) {
+            this.addFile(f, skipTypes, withDeps);
+          }
+        }
+      },
+      add(desc) {
+        if (desc.kind == "extension") {
+          let numberToExt = extendees.get(desc.extendee.typeName);
+          if (!numberToExt) {
+            extendees.set(
+              desc.extendee.typeName,
+numberToExt = new Map()
+            );
+          }
+          numberToExt.set(desc.number, desc);
+        }
+        types.set(desc.typeName, desc);
+      },
+      get(typeName) {
+        return types.get(typeName);
+      },
+      getFile(fileName) {
+        return files.get(fileName);
+      },
+      getMessage(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "message" ? t : void 0;
+      },
+      getEnum(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "enum" ? t : void 0;
+      },
+      getExtension(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "extension" ? t : void 0;
+      },
+      getExtensionFor(extendee, no) {
+        var _a;
+        return (_a = extendees.get(extendee.typeName)) === null || _a === void 0 ? void 0 : _a.get(no);
+      },
+      getService(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "service" ? t : void 0;
+      }
+    };
+  }
+  const EDITION_PROTO2 = 998;
+  const EDITION_PROTO3 = 999;
+  const EDITION_UNSTABLE = 9999;
+  const TYPE_STRING = 9;
+  const TYPE_GROUP = 10;
+  const TYPE_MESSAGE = 11;
+  const TYPE_BYTES = 12;
+  const TYPE_ENUM = 14;
+  const LABEL_REPEATED = 3;
+  const LABEL_REQUIRED = 2;
+  const JS_STRING = 1;
+  const IDEMPOTENCY_UNKNOWN = 0;
+  const EXPLICIT = 1;
+  const IMPLICIT = 2;
+  const LEGACY_REQUIRED = 3;
+  const PACKED = 1;
+  const DELIMITED = 2;
+  const OPEN = 1;
+  const VERIFY = 2;
+  const maximumEdition = 1001;
+  const featureDefaults = {
+998: {
+      fieldPresence: 1,
+enumType: 2,
+repeatedFieldEncoding: 2,
+utf8Validation: 3,
+messageEncoding: 1,
+jsonFormat: 2,
+enforceNamingStyle: 2,
+defaultSymbolVisibility: 1
+},
+999: {
+      fieldPresence: 2,
+enumType: 1,
+repeatedFieldEncoding: 1,
+utf8Validation: 2,
+messageEncoding: 1,
+jsonFormat: 1,
+enforceNamingStyle: 2,
+defaultSymbolVisibility: 1
+},
+1e3: {
+      fieldPresence: 1,
+enumType: 1,
+repeatedFieldEncoding: 1,
+utf8Validation: 2,
+messageEncoding: 1,
+jsonFormat: 1,
+enforceNamingStyle: 2,
+defaultSymbolVisibility: 1
+},
+1001: {
+      fieldPresence: 1,
+enumType: 1,
+repeatedFieldEncoding: 1,
+utf8Validation: 2,
+messageEncoding: 1,
+jsonFormat: 1,
+enforceNamingStyle: 1,
+defaultSymbolVisibility: 2
+}
+  };
+  function addFile(proto, reg) {
+    var _a, _b;
+    const file = {
+      kind: "file",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      edition: getFileEdition(proto),
+      name: proto.name.replace(/\.proto$/, ""),
+      dependencies: findFileDependencies(proto, reg),
+      enums: [],
+      messages: [],
+      extensions: [],
+      services: [],
+      toString() {
+        return `file ${proto.name}`;
+      }
+    };
+    const mapEntriesStore = new Map();
+    const mapEntries = {
+      get(typeName) {
+        return mapEntriesStore.get(typeName);
+      },
+      add(desc) {
+        var _a2;
+        assert(((_a2 = desc.proto.options) === null || _a2 === void 0 ? void 0 : _a2.mapEntry) === true);
+        mapEntriesStore.set(desc.typeName, desc);
+      }
+    };
+    for (const enumProto of proto.enumType) {
+      addEnum(enumProto, file, void 0, reg);
+    }
+    for (const messageProto of proto.messageType) {
+      addMessage(messageProto, file, void 0, reg, mapEntries);
+    }
+    for (const serviceProto of proto.service) {
+      addService(serviceProto, file, reg);
+    }
+    addExtensions(file, reg);
+    for (const mapEntry of mapEntriesStore.values()) {
+      addFields(mapEntry, reg, mapEntries);
+    }
+    for (const message of file.messages) {
+      addFields(message, reg, mapEntries);
+      addExtensions(message, reg);
+    }
+    reg.addFile(file, true);
+  }
+  function addExtensions(desc, reg) {
+    switch (desc.kind) {
+      case "file":
+        for (const proto of desc.proto.extension) {
+          const ext = newField(proto, desc, reg);
+          desc.extensions.push(ext);
+          reg.add(ext);
+        }
+        break;
+      case "message":
+        for (const proto of desc.proto.extension) {
+          const ext = newField(proto, desc, reg);
+          desc.nestedExtensions.push(ext);
+          reg.add(ext);
+        }
+        for (const message of desc.nestedMessages) {
+          addExtensions(message, reg);
+        }
+        break;
+    }
+  }
+  function addFields(message, reg, mapEntries) {
+    const allOneofs = message.proto.oneofDecl.map((proto) => newOneof(proto, message));
+    const oneofsSeen = new Set();
+    for (const proto of message.proto.field) {
+      const oneof = findOneof(proto, allOneofs);
+      const field = newField(proto, message, reg, oneof, mapEntries);
+      message.fields.push(field);
+      message.field[field.localName] = field;
+      if (oneof === void 0) {
+        message.members.push(field);
+      } else {
+        oneof.fields.push(field);
+        if (!oneofsSeen.has(oneof)) {
+          oneofsSeen.add(oneof);
+          message.members.push(oneof);
+        }
+      }
+    }
+    for (const oneof of allOneofs.filter((o) => oneofsSeen.has(o))) {
+      message.oneofs.push(oneof);
+    }
+    for (const child of message.nestedMessages) {
+      addFields(child, reg, mapEntries);
+    }
+  }
+  function addEnum(proto, file, parent, reg) {
+    var _a, _b, _c, _d, _e;
+    const sharedPrefix = findEnumSharedPrefix(proto.name, proto.value);
+    const desc = {
+      kind: "enum",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      file,
+      parent,
+      open: true,
+      name: proto.name,
+      typeName: makeTypeName(proto, parent, file),
+      value: {},
+      values: [],
+      sharedPrefix,
+      toString() {
+        return `enum ${this.typeName}`;
+      }
+    };
+    desc.open = isEnumOpen(desc);
+    reg.add(desc);
+    for (const p of proto.value) {
+      const name = p.name;
+      desc.values.push(
+desc.value[p.number] = {
+          kind: "enum_value",
+          proto: p,
+          deprecated: (_d = (_c = p.options) === null || _c === void 0 ? void 0 : _c.deprecated) !== null && _d !== void 0 ? _d : false,
+          parent: desc,
+          name,
+          localName: safeObjectProperty(sharedPrefix == void 0 ? name : name.substring(sharedPrefix.length)),
+          number: p.number,
+          toString() {
+            return `enum value ${desc.typeName}.${name}`;
+          }
+        }
+      );
+    }
+    ((_e = parent === null || parent === void 0 ? void 0 : parent.nestedEnums) !== null && _e !== void 0 ? _e : file.enums).push(desc);
+  }
+  function addMessage(proto, file, parent, reg, mapEntries) {
+    var _a, _b, _c, _d;
+    const desc = {
+      kind: "message",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      file,
+      parent,
+      name: proto.name,
+      typeName: makeTypeName(proto, parent, file),
+      fields: [],
+      field: {},
+      oneofs: [],
+      members: [],
+      nestedEnums: [],
+      nestedMessages: [],
+      nestedExtensions: [],
+      toString() {
+        return `message ${this.typeName}`;
+      }
+    };
+    if (((_c = proto.options) === null || _c === void 0 ? void 0 : _c.mapEntry) === true) {
+      mapEntries.add(desc);
+    } else {
+      ((_d = parent === null || parent === void 0 ? void 0 : parent.nestedMessages) !== null && _d !== void 0 ? _d : file.messages).push(desc);
+      reg.add(desc);
+    }
+    for (const enumProto of proto.enumType) {
+      addEnum(enumProto, file, desc, reg);
+    }
+    for (const messageProto of proto.nestedType) {
+      addMessage(messageProto, file, desc, reg, mapEntries);
+    }
+  }
+  function addService(proto, file, reg) {
+    var _a, _b;
+    const desc = {
+      kind: "service",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      file,
+      name: proto.name,
+      typeName: makeTypeName(proto, void 0, file),
+      methods: [],
+      method: {},
+      toString() {
+        return `service ${this.typeName}`;
+      }
+    };
+    file.services.push(desc);
+    reg.add(desc);
+    for (const methodProto of proto.method) {
+      const method = newMethod(methodProto, desc, reg);
+      desc.methods.push(method);
+      desc.method[method.localName] = method;
+    }
+  }
+  function newMethod(proto, parent, reg) {
+    var _a, _b, _c, _d;
+    let methodKind;
+    if (proto.clientStreaming && proto.serverStreaming) {
+      methodKind = "bidi_streaming";
+    } else if (proto.clientStreaming) {
+      methodKind = "client_streaming";
+    } else if (proto.serverStreaming) {
+      methodKind = "server_streaming";
+    } else {
+      methodKind = "unary";
+    }
+    const input = reg.getMessage(trimLeadingDot(proto.inputType));
+    const output = reg.getMessage(trimLeadingDot(proto.outputType));
+    assert(input, `invalid MethodDescriptorProto: input_type ${proto.inputType} not found`);
+    assert(output, `invalid MethodDescriptorProto: output_type ${proto.inputType} not found`);
+    const name = proto.name;
+    return {
+      kind: "rpc",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      parent,
+      name,
+      localName: safeObjectProperty(name.length ? safeObjectProperty(name[0].toLowerCase() + name.substring(1)) : name),
+      methodKind,
+      input,
+      output,
+      idempotency: (_d = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.idempotencyLevel) !== null && _d !== void 0 ? _d : IDEMPOTENCY_UNKNOWN,
+      toString() {
+        return `rpc ${parent.typeName}.${name}`;
+      }
+    };
+  }
+  function newOneof(proto, parent) {
+    return {
+      kind: "oneof",
+      proto,
+      deprecated: false,
+      parent,
+      fields: [],
+      name: proto.name,
+      localName: safeObjectProperty(protoCamelCase(proto.name)),
+      toString() {
+        return `oneof ${parent.typeName}.${this.name}`;
+      }
+    };
+  }
+  function newField(proto, parentOrFile, reg, oneof, mapEntries) {
+    var _a, _b, _c;
+    const isExtension = mapEntries === void 0;
+    const field = {
+      kind: "field",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      name: proto.name,
+      number: proto.number,
+      scalar: void 0,
+      message: void 0,
+      enum: void 0,
+      presence: getFieldPresence(proto, oneof, isExtension, parentOrFile),
+      utf8Validation: isUtf8Validated(proto, parentOrFile),
+      listKind: void 0,
+      mapKind: void 0,
+      mapKey: void 0,
+      delimitedEncoding: void 0,
+      packed: void 0,
+      longAsString: false,
+      getDefaultValue: void 0
+    };
+    if (isExtension) {
+      const file = parentOrFile.kind == "file" ? parentOrFile : parentOrFile.file;
+      const parent = parentOrFile.kind == "file" ? void 0 : parentOrFile;
+      const typeName = makeTypeName(proto, parent, file);
+      field.kind = "extension";
+      field.file = file;
+      field.parent = parent;
+      field.oneof = void 0;
+      field.typeName = typeName;
+      field.jsonName = `[${typeName}]`;
+      field.toString = () => `extension ${typeName}`;
+      const extendee = reg.getMessage(trimLeadingDot(proto.extendee));
+      assert(extendee, `invalid FieldDescriptorProto: extendee ${proto.extendee} not found`);
+      field.extendee = extendee;
+    } else {
+      const parent = parentOrFile;
+      assert(parent.kind == "message");
+      field.parent = parent;
+      field.oneof = oneof;
+      field.localName = oneof ? protoCamelCase(proto.name) : safeObjectProperty(protoCamelCase(proto.name));
+      field.jsonName = proto.jsonName;
+      field.toString = () => `field ${parent.typeName}.${proto.name}`;
+    }
+    const label = proto.label;
+    const type = proto.type;
+    const jstype = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.jstype;
+    if (label === LABEL_REPEATED) {
+      const mapEntry = type == TYPE_MESSAGE ? mapEntries === null || mapEntries === void 0 ? void 0 : mapEntries.get(trimLeadingDot(proto.typeName)) : void 0;
+      if (mapEntry) {
+        field.fieldKind = "map";
+        const { key, value } = findMapEntryFields(mapEntry);
+        field.mapKey = key.scalar;
+        field.mapKind = value.fieldKind;
+        field.message = value.message;
+        field.delimitedEncoding = false;
+        field.enum = value.enum;
+        field.scalar = value.scalar;
+        return field;
+      }
+      field.fieldKind = "list";
+      switch (type) {
+        case TYPE_MESSAGE:
+        case TYPE_GROUP:
+          field.listKind = "message";
+          field.message = reg.getMessage(trimLeadingDot(proto.typeName));
+          assert(field.message);
+          field.delimitedEncoding = isDelimitedEncoding(proto, parentOrFile);
+          break;
+        case TYPE_ENUM:
+          field.listKind = "enum";
+          field.enum = reg.getEnum(trimLeadingDot(proto.typeName));
+          assert(field.enum);
+          break;
+        default:
+          field.listKind = "scalar";
+          field.scalar = type;
+          field.longAsString = jstype == JS_STRING;
+          break;
+      }
+      field.packed = isPackedField(proto, parentOrFile);
+      return field;
+    }
+    switch (type) {
+      case TYPE_MESSAGE:
+      case TYPE_GROUP:
+        field.fieldKind = "message";
+        field.message = reg.getMessage(trimLeadingDot(proto.typeName));
+        assert(field.message, `invalid FieldDescriptorProto: type_name ${proto.typeName} not found`);
+        field.delimitedEncoding = isDelimitedEncoding(proto, parentOrFile);
+        field.getDefaultValue = () => void 0;
+        break;
+      case TYPE_ENUM: {
+        const enumeration = reg.getEnum(trimLeadingDot(proto.typeName));
+        assert(enumeration !== void 0, `invalid FieldDescriptorProto: type_name ${proto.typeName} not found`);
+        field.fieldKind = "enum";
+        field.enum = reg.getEnum(trimLeadingDot(proto.typeName));
+        field.getDefaultValue = () => {
+          return unsafeIsSetExplicit(proto, "defaultValue") ? parseTextFormatEnumValue(enumeration, proto.defaultValue) : void 0;
+        };
+        break;
+      }
+      default: {
+        field.fieldKind = "scalar";
+        field.scalar = type;
+        field.longAsString = jstype == JS_STRING;
+        field.getDefaultValue = () => {
+          return unsafeIsSetExplicit(proto, "defaultValue") ? parseTextFormatScalarValue(type, proto.defaultValue) : void 0;
+        };
+        break;
+      }
+    }
+    return field;
+  }
+  function getFileEdition(proto) {
+    switch (proto.syntax) {
+      case "":
+      case "proto2":
+        return EDITION_PROTO2;
+      case "proto3":
+        return EDITION_PROTO3;
+      case "editions":
+        if (proto.edition === EDITION_UNSTABLE) {
+          return maximumEdition;
+        }
+        if (proto.edition in featureDefaults) {
+          return proto.edition;
+        }
+        throw new Error(`${proto.name}: unsupported edition`);
+      default:
+        throw new Error(`${proto.name}: unsupported syntax "${proto.syntax}"`);
+    }
+  }
+  function findFileDependencies(proto, reg) {
+    return proto.dependency.map((wantName) => {
+      const dep = reg.getFile(wantName);
+      if (!dep) {
+        throw new Error(`Cannot find ${wantName}, imported by ${proto.name}`);
+      }
+      return dep;
+    });
+  }
+  function findEnumSharedPrefix(enumName, values) {
+    const prefix = camelToSnakeCase(enumName) + "_";
+    for (const value of values) {
+      if (!value.name.toLowerCase().startsWith(prefix)) {
+        return void 0;
+      }
+      const shortName = value.name.substring(prefix.length);
+      if (shortName.length == 0) {
+        return void 0;
+      }
+      if (/^\d/.test(shortName)) {
+        return void 0;
+      }
+    }
+    return prefix;
+  }
+  function camelToSnakeCase(camel) {
+    return (camel.substring(0, 1) + camel.substring(1).replace(/[A-Z]/g, (c) => "_" + c)).toLowerCase();
+  }
+  function makeTypeName(proto, parent, file) {
+    let typeName;
+    if (parent) {
+      typeName = `${parent.typeName}.${proto.name}`;
+    } else if (file.proto.package.length > 0) {
+      typeName = `${file.proto.package}.${proto.name}`;
+    } else {
+      typeName = `${proto.name}`;
+    }
+    return typeName;
+  }
+  function trimLeadingDot(typeName) {
+    return typeName.startsWith(".") ? typeName.substring(1) : typeName;
+  }
+  function findOneof(proto, allOneofs) {
+    if (!unsafeIsSetExplicit(proto, "oneofIndex")) {
+      return void 0;
+    }
+    if (proto.proto3Optional) {
+      return void 0;
+    }
+    const oneof = allOneofs[proto.oneofIndex];
+    assert(oneof, `invalid FieldDescriptorProto: oneof #${proto.oneofIndex} for field #${proto.number} not found`);
+    return oneof;
+  }
+  function getFieldPresence(proto, oneof, isExtension, parent) {
+    if (proto.label == LABEL_REQUIRED) {
+      return LEGACY_REQUIRED;
+    }
+    if (proto.label == LABEL_REPEATED) {
+      return IMPLICIT;
+    }
+    if (!!oneof || proto.proto3Optional) {
+      return EXPLICIT;
+    }
+    if (isExtension) {
+      return EXPLICIT;
+    }
+    const resolved = resolveFeature("fieldPresence", { proto, parent });
+    if (resolved == IMPLICIT && (proto.type == TYPE_MESSAGE || proto.type == TYPE_GROUP)) {
+      return EXPLICIT;
+    }
+    return resolved;
+  }
+  function isPackedField(proto, parent) {
+    if (proto.label != LABEL_REPEATED) {
+      return false;
+    }
+    switch (proto.type) {
+      case TYPE_STRING:
+      case TYPE_BYTES:
+      case TYPE_GROUP:
+      case TYPE_MESSAGE:
+        return false;
+    }
+    const o = proto.options;
+    if (o && unsafeIsSetExplicit(o, "packed")) {
+      return o.packed;
+    }
+    return PACKED == resolveFeature("repeatedFieldEncoding", {
+      proto,
+      parent
+    });
+  }
+  function findMapEntryFields(mapEntry) {
+    const key = mapEntry.fields.find((f) => f.number === 1);
+    const value = mapEntry.fields.find((f) => f.number === 2);
+    assert(key && key.fieldKind == "scalar" && key.scalar != ScalarType.BYTES && key.scalar != ScalarType.FLOAT && key.scalar != ScalarType.DOUBLE && value && value.fieldKind != "list" && value.fieldKind != "map");
+    return { key, value };
+  }
+  function isEnumOpen(desc) {
+    var _a;
+    return OPEN == resolveFeature("enumType", {
+      proto: desc.proto,
+      parent: (_a = desc.parent) !== null && _a !== void 0 ? _a : desc.file
+    });
+  }
+  function isDelimitedEncoding(proto, parent) {
+    if (proto.type == TYPE_GROUP) {
+      return true;
+    }
+    return DELIMITED == resolveFeature("messageEncoding", {
+      proto,
+      parent
+    });
+  }
+  function isUtf8Validated(proto, parent) {
+    return VERIFY == resolveFeature("utf8Validation", {
+      proto,
+      parent
+    });
+  }
+  function resolveFeature(name, ref) {
+    var _a, _b;
+    const featureSet = (_a = ref.proto.options) === null || _a === void 0 ? void 0 : _a.features;
+    if (featureSet) {
+      const val = featureSet[name];
+      if (val != 0) {
+        return val;
+      }
+    }
+    if ("kind" in ref) {
+      if (ref.kind == "message") {
+        return resolveFeature(name, (_b = ref.parent) !== null && _b !== void 0 ? _b : ref.file);
+      }
+      const editionDefaults = featureDefaults[ref.edition];
+      if (!editionDefaults) {
+        throw new Error(`feature default for edition ${ref.edition} not found`);
+      }
+      return editionDefaults[name];
+    }
+    return resolveFeature(name, ref.parent);
+  }
+  function assert(condition, msg) {
+    if (!condition) {
+      throw new Error(msg);
+    }
+  }
+  function boot(boot2) {
+    const root = bootFileDescriptorProto(boot2);
+    root.messageType.forEach(restoreJsonNames);
+    const reg = createFileRegistry(root, () => void 0);
+    return reg.getFile(root.name);
+  }
+  function bootFileDescriptorProto(init) {
+    const proto = Object.create({
+      syntax: "",
+      edition: 0
+    });
+    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FileDescriptorProto", dependency: [], publicDependency: [], weakDependency: [], optionDependency: [], service: [], extension: [] }, init), { messageType: init.messageType.map(bootDescriptorProto), enumType: init.enumType.map(bootEnumDescriptorProto) }));
+  }
+  function bootDescriptorProto(init) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    const proto = Object.create({
+      visibility: 0
+    });
+    return Object.assign(proto, {
+      $typeName: "google.protobuf.DescriptorProto",
+      name: init.name,
+      field: (_b = (_a = init.field) === null || _a === void 0 ? void 0 : _a.map(bootFieldDescriptorProto)) !== null && _b !== void 0 ? _b : [],
+      extension: [],
+      nestedType: (_d = (_c = init.nestedType) === null || _c === void 0 ? void 0 : _c.map(bootDescriptorProto)) !== null && _d !== void 0 ? _d : [],
+      enumType: (_f = (_e = init.enumType) === null || _e === void 0 ? void 0 : _e.map(bootEnumDescriptorProto)) !== null && _f !== void 0 ? _f : [],
+      extensionRange: (_h = (_g = init.extensionRange) === null || _g === void 0 ? void 0 : _g.map((e) => Object.assign({ $typeName: "google.protobuf.DescriptorProto.ExtensionRange" }, e))) !== null && _h !== void 0 ? _h : [],
+      oneofDecl: [],
+      reservedRange: [],
+      reservedName: []
+    });
+  }
+  function bootFieldDescriptorProto(init) {
+    const proto = Object.create({
+      label: 1,
+      typeName: "",
+      extendee: "",
+      defaultValue: "",
+      oneofIndex: 0,
+      jsonName: "",
+      proto3Optional: false
+    });
+    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, init), { options: init.options ? bootFieldOptions(init.options) : void 0 }));
+  }
+  function bootFieldOptions(init) {
+    var _a, _b, _c;
+    const proto = Object.create({
+      ctype: 0,
+      packed: false,
+      jstype: 0,
+      lazy: false,
+      unverifiedLazy: false,
+      deprecated: false,
+      weak: false,
+      debugRedact: false,
+      retention: 0
+    });
+    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FieldOptions" }, init), { targets: (_a = init.targets) !== null && _a !== void 0 ? _a : [], editionDefaults: (_c = (_b = init.editionDefaults) === null || _b === void 0 ? void 0 : _b.map((e) => Object.assign({ $typeName: "google.protobuf.FieldOptions.EditionDefault" }, e))) !== null && _c !== void 0 ? _c : [], uninterpretedOption: [] }));
+  }
+  function bootEnumDescriptorProto(init) {
+    const proto = Object.create({
+      visibility: 0
+    });
+    return Object.assign(proto, {
+      $typeName: "google.protobuf.EnumDescriptorProto",
+      name: init.name,
+      reservedName: [],
+      reservedRange: [],
+      value: init.value.map((e) => Object.assign({ $typeName: "google.protobuf.EnumValueDescriptorProto" }, e))
+    });
+  }
+  function messageDesc(file, path, ...paths) {
+    return paths.reduce((acc, cur) => acc.nestedMessages[cur], file.messages[path]);
+  }
+  const file_google_protobuf_descriptor = boot({ "name": "google/protobuf/descriptor.proto", "package": "google.protobuf", "messageType": [{ "name": "FileDescriptorSet", "field": [{ "name": "file", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.FileDescriptorProto" }], "extensionRange": [{ "start": 536e6, "end": 536000001 }] }, { "name": "FileDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "package", "number": 2, "type": 9, "label": 1 }, { "name": "dependency", "number": 3, "type": 9, "label": 3 }, { "name": "public_dependency", "number": 10, "type": 5, "label": 3 }, { "name": "weak_dependency", "number": 11, "type": 5, "label": 3 }, { "name": "option_dependency", "number": 15, "type": 9, "label": 3 }, { "name": "message_type", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto" }, { "name": "enum_type", "number": 5, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto" }, { "name": "service", "number": 6, "type": 11, "label": 3, "typeName": ".google.protobuf.ServiceDescriptorProto" }, { "name": "extension", "number": 7, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "options", "number": 8, "type": 11, "label": 1, "typeName": ".google.protobuf.FileOptions" }, { "name": "source_code_info", "number": 9, "type": 11, "label": 1, "typeName": ".google.protobuf.SourceCodeInfo" }, { "name": "syntax", "number": 12, "type": 9, "label": 1 }, { "name": "edition", "number": 14, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }] }, { "name": "DescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "field", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "extension", "number": 6, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "nested_type", "number": 3, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto" }, { "name": "enum_type", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto" }, { "name": "extension_range", "number": 5, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto.ExtensionRange" }, { "name": "oneof_decl", "number": 8, "type": 11, "label": 3, "typeName": ".google.protobuf.OneofDescriptorProto" }, { "name": "options", "number": 7, "type": 11, "label": 1, "typeName": ".google.protobuf.MessageOptions" }, { "name": "reserved_range", "number": 9, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto.ReservedRange" }, { "name": "reserved_name", "number": 10, "type": 9, "label": 3 }, { "name": "visibility", "number": 11, "type": 14, "label": 1, "typeName": ".google.protobuf.SymbolVisibility" }], "nestedType": [{ "name": "ExtensionRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.ExtensionRangeOptions" }] }, { "name": "ReservedRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }] }] }, { "name": "ExtensionRangeOptions", "field": [{ "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }, { "name": "declaration", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.ExtensionRangeOptions.Declaration", "options": { "retention": 2 } }, { "name": "features", "number": 50, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "verification", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.ExtensionRangeOptions.VerificationState", "defaultValue": "UNVERIFIED", "options": { "retention": 2 } }], "nestedType": [{ "name": "Declaration", "field": [{ "name": "number", "number": 1, "type": 5, "label": 1 }, { "name": "full_name", "number": 2, "type": 9, "label": 1 }, { "name": "type", "number": 3, "type": 9, "label": 1 }, { "name": "reserved", "number": 5, "type": 8, "label": 1 }, { "name": "repeated", "number": 6, "type": 8, "label": 1 }] }], "enumType": [{ "name": "VerificationState", "value": [{ "name": "DECLARATION", "number": 0 }, { "name": "UNVERIFIED", "number": 1 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "FieldDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "number", "number": 3, "type": 5, "label": 1 }, { "name": "label", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldDescriptorProto.Label" }, { "name": "type", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldDescriptorProto.Type" }, { "name": "type_name", "number": 6, "type": 9, "label": 1 }, { "name": "extendee", "number": 2, "type": 9, "label": 1 }, { "name": "default_value", "number": 7, "type": 9, "label": 1 }, { "name": "oneof_index", "number": 9, "type": 5, "label": 1 }, { "name": "json_name", "number": 10, "type": 9, "label": 1 }, { "name": "options", "number": 8, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions" }, { "name": "proto3_optional", "number": 17, "type": 8, "label": 1 }], "enumType": [{ "name": "Type", "value": [{ "name": "TYPE_DOUBLE", "number": 1 }, { "name": "TYPE_FLOAT", "number": 2 }, { "name": "TYPE_INT64", "number": 3 }, { "name": "TYPE_UINT64", "number": 4 }, { "name": "TYPE_INT32", "number": 5 }, { "name": "TYPE_FIXED64", "number": 6 }, { "name": "TYPE_FIXED32", "number": 7 }, { "name": "TYPE_BOOL", "number": 8 }, { "name": "TYPE_STRING", "number": 9 }, { "name": "TYPE_GROUP", "number": 10 }, { "name": "TYPE_MESSAGE", "number": 11 }, { "name": "TYPE_BYTES", "number": 12 }, { "name": "TYPE_UINT32", "number": 13 }, { "name": "TYPE_ENUM", "number": 14 }, { "name": "TYPE_SFIXED32", "number": 15 }, { "name": "TYPE_SFIXED64", "number": 16 }, { "name": "TYPE_SINT32", "number": 17 }, { "name": "TYPE_SINT64", "number": 18 }] }, { "name": "Label", "value": [{ "name": "LABEL_OPTIONAL", "number": 1 }, { "name": "LABEL_REPEATED", "number": 3 }, { "name": "LABEL_REQUIRED", "number": 2 }] }] }, { "name": "OneofDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "options", "number": 2, "type": 11, "label": 1, "typeName": ".google.protobuf.OneofOptions" }] }, { "name": "EnumDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "value", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumValueDescriptorProto" }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.EnumOptions" }, { "name": "reserved_range", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto.EnumReservedRange" }, { "name": "reserved_name", "number": 5, "type": 9, "label": 3 }, { "name": "visibility", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.SymbolVisibility" }], "nestedType": [{ "name": "EnumReservedRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }] }] }, { "name": "EnumValueDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "number", "number": 2, "type": 5, "label": 1 }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.EnumValueOptions" }] }, { "name": "ServiceDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "method", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.MethodDescriptorProto" }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.ServiceOptions" }] }, { "name": "MethodDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "input_type", "number": 2, "type": 9, "label": 1 }, { "name": "output_type", "number": 3, "type": 9, "label": 1 }, { "name": "options", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.MethodOptions" }, { "name": "client_streaming", "number": 5, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "server_streaming", "number": 6, "type": 8, "label": 1, "defaultValue": "false" }] }, { "name": "FileOptions", "field": [{ "name": "java_package", "number": 1, "type": 9, "label": 1 }, { "name": "java_outer_classname", "number": 8, "type": 9, "label": 1 }, { "name": "java_multiple_files", "number": 10, "type": 8, "label": 1, "defaultValue": "false", "options": {} }, { "name": "java_generate_equals_and_hash", "number": 20, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "java_string_check_utf8", "number": 27, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "optimize_for", "number": 9, "type": 14, "label": 1, "typeName": ".google.protobuf.FileOptions.OptimizeMode", "defaultValue": "SPEED" }, { "name": "go_package", "number": 11, "type": 9, "label": 1 }, { "name": "cc_generic_services", "number": 16, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "java_generic_services", "number": 17, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "py_generic_services", "number": 18, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 23, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "cc_enable_arenas", "number": 31, "type": 8, "label": 1, "defaultValue": "true" }, { "name": "objc_class_prefix", "number": 36, "type": 9, "label": 1 }, { "name": "csharp_namespace", "number": 37, "type": 9, "label": 1 }, { "name": "swift_prefix", "number": 39, "type": 9, "label": 1 }, { "name": "php_class_prefix", "number": 40, "type": 9, "label": 1 }, { "name": "php_namespace", "number": 41, "type": 9, "label": 1 }, { "name": "php_metadata_namespace", "number": 44, "type": 9, "label": 1 }, { "name": "ruby_package", "number": 45, "type": 9, "label": 1 }, { "name": "features", "number": 50, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "enumType": [{ "name": "OptimizeMode", "value": [{ "name": "SPEED", "number": 1 }, { "name": "CODE_SIZE", "number": 2 }, { "name": "LITE_RUNTIME", "number": 3 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "MessageOptions", "field": [{ "name": "message_set_wire_format", "number": 1, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "no_standard_descriptor_accessor", "number": 2, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "map_entry", "number": 7, "type": 8, "label": 1 }, { "name": "deprecated_legacy_json_field_conflicts", "number": 11, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "features", "number": 12, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "FieldOptions", "field": [{ "name": "ctype", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.CType", "defaultValue": "STRING" }, { "name": "packed", "number": 2, "type": 8, "label": 1 }, { "name": "jstype", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.JSType", "defaultValue": "JS_NORMAL" }, { "name": "lazy", "number": 5, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "unverified_lazy", "number": 15, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "weak", "number": 10, "type": 8, "label": 1, "defaultValue": "false", "options": { "deprecated": true } }, { "name": "debug_redact", "number": 16, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "retention", "number": 17, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.OptionRetention" }, { "name": "targets", "number": 19, "type": 14, "label": 3, "typeName": ".google.protobuf.FieldOptions.OptionTargetType" }, { "name": "edition_defaults", "number": 20, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldOptions.EditionDefault" }, { "name": "features", "number": 21, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "feature_support", "number": 22, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions.FeatureSupport" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "nestedType": [{ "name": "EditionDefault", "field": [{ "name": "edition", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "value", "number": 2, "type": 9, "label": 1 }] }, { "name": "FeatureSupport", "field": [{ "name": "edition_introduced", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "edition_deprecated", "number": 2, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "deprecation_warning", "number": 3, "type": 9, "label": 1 }, { "name": "edition_removed", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "removal_error", "number": 5, "type": 9, "label": 1 }] }], "enumType": [{ "name": "CType", "value": [{ "name": "STRING", "number": 0 }, { "name": "CORD", "number": 1 }, { "name": "STRING_PIECE", "number": 2 }] }, { "name": "JSType", "value": [{ "name": "JS_NORMAL", "number": 0 }, { "name": "JS_STRING", "number": 1 }, { "name": "JS_NUMBER", "number": 2 }] }, { "name": "OptionRetention", "value": [{ "name": "RETENTION_UNKNOWN", "number": 0 }, { "name": "RETENTION_RUNTIME", "number": 1 }, { "name": "RETENTION_SOURCE", "number": 2 }] }, { "name": "OptionTargetType", "value": [{ "name": "TARGET_TYPE_UNKNOWN", "number": 0 }, { "name": "TARGET_TYPE_FILE", "number": 1 }, { "name": "TARGET_TYPE_EXTENSION_RANGE", "number": 2 }, { "name": "TARGET_TYPE_MESSAGE", "number": 3 }, { "name": "TARGET_TYPE_FIELD", "number": 4 }, { "name": "TARGET_TYPE_ONEOF", "number": 5 }, { "name": "TARGET_TYPE_ENUM", "number": 6 }, { "name": "TARGET_TYPE_ENUM_ENTRY", "number": 7 }, { "name": "TARGET_TYPE_SERVICE", "number": 8 }, { "name": "TARGET_TYPE_METHOD", "number": 9 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "OneofOptions", "field": [{ "name": "features", "number": 1, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "EnumOptions", "field": [{ "name": "allow_alias", "number": 2, "type": 8, "label": 1 }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated_legacy_json_field_conflicts", "number": 6, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "features", "number": 7, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "EnumValueOptions", "field": [{ "name": "deprecated", "number": 1, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "features", "number": 2, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "debug_redact", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "feature_support", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions.FeatureSupport" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "ServiceOptions", "field": [{ "name": "features", "number": 34, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "deprecated", "number": 33, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "MethodOptions", "field": [{ "name": "deprecated", "number": 33, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "idempotency_level", "number": 34, "type": 14, "label": 1, "typeName": ".google.protobuf.MethodOptions.IdempotencyLevel", "defaultValue": "IDEMPOTENCY_UNKNOWN" }, { "name": "features", "number": 35, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "enumType": [{ "name": "IdempotencyLevel", "value": [{ "name": "IDEMPOTENCY_UNKNOWN", "number": 0 }, { "name": "NO_SIDE_EFFECTS", "number": 1 }, { "name": "IDEMPOTENT", "number": 2 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "UninterpretedOption", "field": [{ "name": "name", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption.NamePart" }, { "name": "identifier_value", "number": 3, "type": 9, "label": 1 }, { "name": "positive_int_value", "number": 4, "type": 4, "label": 1 }, { "name": "negative_int_value", "number": 5, "type": 3, "label": 1 }, { "name": "double_value", "number": 6, "type": 1, "label": 1 }, { "name": "string_value", "number": 7, "type": 12, "label": 1 }, { "name": "aggregate_value", "number": 8, "type": 9, "label": 1 }], "nestedType": [{ "name": "NamePart", "field": [{ "name": "name_part", "number": 1, "type": 9, "label": 2 }, { "name": "is_extension", "number": 2, "type": 8, "label": 2 }] }] }, { "name": "FeatureSet", "field": [{ "name": "field_presence", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.FieldPresence", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "EXPLICIT", "edition": 900 }, { "value": "IMPLICIT", "edition": 999 }, { "value": "EXPLICIT", "edition": 1e3 }] } }, { "name": "enum_type", "number": 2, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.EnumType", "options": { "retention": 1, "targets": [6, 1], "editionDefaults": [{ "value": "CLOSED", "edition": 900 }, { "value": "OPEN", "edition": 999 }] } }, { "name": "repeated_field_encoding", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.RepeatedFieldEncoding", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "EXPANDED", "edition": 900 }, { "value": "PACKED", "edition": 999 }] } }, { "name": "utf8_validation", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.Utf8Validation", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "NONE", "edition": 900 }, { "value": "VERIFY", "edition": 999 }] } }, { "name": "message_encoding", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.MessageEncoding", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "LENGTH_PREFIXED", "edition": 900 }] } }, { "name": "json_format", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.JsonFormat", "options": { "retention": 1, "targets": [3, 6, 1], "editionDefaults": [{ "value": "LEGACY_BEST_EFFORT", "edition": 900 }, { "value": "ALLOW", "edition": 999 }] } }, { "name": "enforce_naming_style", "number": 7, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.EnforceNamingStyle", "options": { "retention": 2, "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9], "editionDefaults": [{ "value": "STYLE_LEGACY", "edition": 900 }, { "value": "STYLE2024", "edition": 1001 }] } }, { "name": "default_symbol_visibility", "number": 8, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.VisibilityFeature.DefaultSymbolVisibility", "options": { "retention": 2, "targets": [1], "editionDefaults": [{ "value": "EXPORT_ALL", "edition": 900 }, { "value": "EXPORT_TOP_LEVEL", "edition": 1001 }] } }], "nestedType": [{ "name": "VisibilityFeature", "enumType": [{ "name": "DefaultSymbolVisibility", "value": [{ "name": "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", "number": 0 }, { "name": "EXPORT_ALL", "number": 1 }, { "name": "EXPORT_TOP_LEVEL", "number": 2 }, { "name": "LOCAL_ALL", "number": 3 }, { "name": "STRICT", "number": 4 }] }] }], "enumType": [{ "name": "FieldPresence", "value": [{ "name": "FIELD_PRESENCE_UNKNOWN", "number": 0 }, { "name": "EXPLICIT", "number": 1 }, { "name": "IMPLICIT", "number": 2 }, { "name": "LEGACY_REQUIRED", "number": 3 }] }, { "name": "EnumType", "value": [{ "name": "ENUM_TYPE_UNKNOWN", "number": 0 }, { "name": "OPEN", "number": 1 }, { "name": "CLOSED", "number": 2 }] }, { "name": "RepeatedFieldEncoding", "value": [{ "name": "REPEATED_FIELD_ENCODING_UNKNOWN", "number": 0 }, { "name": "PACKED", "number": 1 }, { "name": "EXPANDED", "number": 2 }] }, { "name": "Utf8Validation", "value": [{ "name": "UTF8_VALIDATION_UNKNOWN", "number": 0 }, { "name": "VERIFY", "number": 2 }, { "name": "NONE", "number": 3 }] }, { "name": "MessageEncoding", "value": [{ "name": "MESSAGE_ENCODING_UNKNOWN", "number": 0 }, { "name": "LENGTH_PREFIXED", "number": 1 }, { "name": "DELIMITED", "number": 2 }] }, { "name": "JsonFormat", "value": [{ "name": "JSON_FORMAT_UNKNOWN", "number": 0 }, { "name": "ALLOW", "number": 1 }, { "name": "LEGACY_BEST_EFFORT", "number": 2 }] }, { "name": "EnforceNamingStyle", "value": [{ "name": "ENFORCE_NAMING_STYLE_UNKNOWN", "number": 0 }, { "name": "STYLE2024", "number": 1 }, { "name": "STYLE_LEGACY", "number": 2 }] }], "extensionRange": [{ "start": 1e3, "end": 9995 }, { "start": 9995, "end": 1e4 }, { "start": 1e4, "end": 10001 }] }, { "name": "FeatureSetDefaults", "field": [{ "name": "defaults", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault" }, { "name": "minimum_edition", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "maximum_edition", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }], "nestedType": [{ "name": "FeatureSetEditionDefault", "field": [{ "name": "edition", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "overridable_features", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "fixed_features", "number": 5, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }] }] }, { "name": "SourceCodeInfo", "field": [{ "name": "location", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.SourceCodeInfo.Location" }], "nestedType": [{ "name": "Location", "field": [{ "name": "path", "number": 1, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "span", "number": 2, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "leading_comments", "number": 3, "type": 9, "label": 1 }, { "name": "trailing_comments", "number": 4, "type": 9, "label": 1 }, { "name": "leading_detached_comments", "number": 6, "type": 9, "label": 3 }] }], "extensionRange": [{ "start": 536e6, "end": 536000001 }] }, { "name": "GeneratedCodeInfo", "field": [{ "name": "annotation", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.GeneratedCodeInfo.Annotation" }], "nestedType": [{ "name": "Annotation", "field": [{ "name": "path", "number": 1, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "source_file", "number": 2, "type": 9, "label": 1 }, { "name": "begin", "number": 3, "type": 5, "label": 1 }, { "name": "end", "number": 4, "type": 5, "label": 1 }, { "name": "semantic", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.GeneratedCodeInfo.Annotation.Semantic" }], "enumType": [{ "name": "Semantic", "value": [{ "name": "NONE", "number": 0 }, { "name": "SET", "number": 1 }, { "name": "ALIAS", "number": 2 }] }] }] }], "enumType": [{ "name": "Edition", "value": [{ "name": "EDITION_UNKNOWN", "number": 0 }, { "name": "EDITION_LEGACY", "number": 900 }, { "name": "EDITION_PROTO2", "number": 998 }, { "name": "EDITION_PROTO3", "number": 999 }, { "name": "EDITION_2023", "number": 1e3 }, { "name": "EDITION_2024", "number": 1001 }, { "name": "EDITION_UNSTABLE", "number": 9999 }, { "name": "EDITION_1_TEST_ONLY", "number": 1 }, { "name": "EDITION_2_TEST_ONLY", "number": 2 }, { "name": "EDITION_99997_TEST_ONLY", "number": 99997 }, { "name": "EDITION_99998_TEST_ONLY", "number": 99998 }, { "name": "EDITION_99999_TEST_ONLY", "number": 99999 }, { "name": "EDITION_MAX", "number": 2147483647 }] }, { "name": "SymbolVisibility", "value": [{ "name": "VISIBILITY_UNSET", "number": 0 }, { "name": "VISIBILITY_LOCAL", "number": 1 }, { "name": "VISIBILITY_EXPORT", "number": 2 }] }] });
+  const FileDescriptorProtoSchema = messageDesc(file_google_protobuf_descriptor, 1);
+  var ExtensionRangeOptions_VerificationState;
+  (function(ExtensionRangeOptions_VerificationState2) {
+    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["DECLARATION"] = 0] = "DECLARATION";
+    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["UNVERIFIED"] = 1] = "UNVERIFIED";
+  })(ExtensionRangeOptions_VerificationState || (ExtensionRangeOptions_VerificationState = {}));
+  var FieldDescriptorProto_Type;
+  (function(FieldDescriptorProto_Type2) {
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["DOUBLE"] = 1] = "DOUBLE";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FLOAT"] = 2] = "FLOAT";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT64"] = 3] = "INT64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT64"] = 4] = "UINT64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT32"] = 5] = "INT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED64"] = 6] = "FIXED64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED32"] = 7] = "FIXED32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BOOL"] = 8] = "BOOL";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["STRING"] = 9] = "STRING";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["GROUP"] = 10] = "GROUP";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["MESSAGE"] = 11] = "MESSAGE";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BYTES"] = 12] = "BYTES";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT32"] = 13] = "UINT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["ENUM"] = 14] = "ENUM";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED32"] = 15] = "SFIXED32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED64"] = 16] = "SFIXED64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT32"] = 17] = "SINT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT64"] = 18] = "SINT64";
+  })(FieldDescriptorProto_Type || (FieldDescriptorProto_Type = {}));
+  var FieldDescriptorProto_Label;
+  (function(FieldDescriptorProto_Label2) {
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["OPTIONAL"] = 1] = "OPTIONAL";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REPEATED"] = 3] = "REPEATED";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REQUIRED"] = 2] = "REQUIRED";
+  })(FieldDescriptorProto_Label || (FieldDescriptorProto_Label = {}));
+  var FileOptions_OptimizeMode;
+  (function(FileOptions_OptimizeMode2) {
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["SPEED"] = 1] = "SPEED";
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["CODE_SIZE"] = 2] = "CODE_SIZE";
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["LITE_RUNTIME"] = 3] = "LITE_RUNTIME";
+  })(FileOptions_OptimizeMode || (FileOptions_OptimizeMode = {}));
+  var FieldOptions_CType;
+  (function(FieldOptions_CType2) {
+    FieldOptions_CType2[FieldOptions_CType2["STRING"] = 0] = "STRING";
+    FieldOptions_CType2[FieldOptions_CType2["CORD"] = 1] = "CORD";
+    FieldOptions_CType2[FieldOptions_CType2["STRING_PIECE"] = 2] = "STRING_PIECE";
+  })(FieldOptions_CType || (FieldOptions_CType = {}));
+  var FieldOptions_JSType;
+  (function(FieldOptions_JSType2) {
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_NORMAL"] = 0] = "JS_NORMAL";
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_STRING"] = 1] = "JS_STRING";
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_NUMBER"] = 2] = "JS_NUMBER";
+  })(FieldOptions_JSType || (FieldOptions_JSType = {}));
+  var FieldOptions_OptionRetention;
+  (function(FieldOptions_OptionRetention2) {
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_UNKNOWN"] = 0] = "RETENTION_UNKNOWN";
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_RUNTIME"] = 1] = "RETENTION_RUNTIME";
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_SOURCE"] = 2] = "RETENTION_SOURCE";
+  })(FieldOptions_OptionRetention || (FieldOptions_OptionRetention = {}));
+  var FieldOptions_OptionTargetType;
+  (function(FieldOptions_OptionTargetType2) {
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_UNKNOWN"] = 0] = "TARGET_TYPE_UNKNOWN";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FILE"] = 1] = "TARGET_TYPE_FILE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_EXTENSION_RANGE"] = 2] = "TARGET_TYPE_EXTENSION_RANGE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_MESSAGE"] = 3] = "TARGET_TYPE_MESSAGE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FIELD"] = 4] = "TARGET_TYPE_FIELD";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ONEOF"] = 5] = "TARGET_TYPE_ONEOF";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM"] = 6] = "TARGET_TYPE_ENUM";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM_ENTRY"] = 7] = "TARGET_TYPE_ENUM_ENTRY";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_SERVICE"] = 8] = "TARGET_TYPE_SERVICE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_METHOD"] = 9] = "TARGET_TYPE_METHOD";
+  })(FieldOptions_OptionTargetType || (FieldOptions_OptionTargetType = {}));
+  var MethodOptions_IdempotencyLevel;
+  (function(MethodOptions_IdempotencyLevel2) {
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENCY_UNKNOWN"] = 0] = "IDEMPOTENCY_UNKNOWN";
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["NO_SIDE_EFFECTS"] = 1] = "NO_SIDE_EFFECTS";
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENT"] = 2] = "IDEMPOTENT";
+  })(MethodOptions_IdempotencyLevel || (MethodOptions_IdempotencyLevel = {}));
+  var FeatureSet_VisibilityFeature_DefaultSymbolVisibility;
+  (function(FeatureSet_VisibilityFeature_DefaultSymbolVisibility2) {
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["DEFAULT_SYMBOL_VISIBILITY_UNKNOWN"] = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["EXPORT_ALL"] = 1] = "EXPORT_ALL";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["EXPORT_TOP_LEVEL"] = 2] = "EXPORT_TOP_LEVEL";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["LOCAL_ALL"] = 3] = "LOCAL_ALL";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["STRICT"] = 4] = "STRICT";
+  })(FeatureSet_VisibilityFeature_DefaultSymbolVisibility || (FeatureSet_VisibilityFeature_DefaultSymbolVisibility = {}));
+  var FeatureSet_FieldPresence;
+  (function(FeatureSet_FieldPresence2) {
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["FIELD_PRESENCE_UNKNOWN"] = 0] = "FIELD_PRESENCE_UNKNOWN";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["EXPLICIT"] = 1] = "EXPLICIT";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["IMPLICIT"] = 2] = "IMPLICIT";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["LEGACY_REQUIRED"] = 3] = "LEGACY_REQUIRED";
+  })(FeatureSet_FieldPresence || (FeatureSet_FieldPresence = {}));
+  var FeatureSet_EnumType;
+  (function(FeatureSet_EnumType2) {
+    FeatureSet_EnumType2[FeatureSet_EnumType2["ENUM_TYPE_UNKNOWN"] = 0] = "ENUM_TYPE_UNKNOWN";
+    FeatureSet_EnumType2[FeatureSet_EnumType2["OPEN"] = 1] = "OPEN";
+    FeatureSet_EnumType2[FeatureSet_EnumType2["CLOSED"] = 2] = "CLOSED";
+  })(FeatureSet_EnumType || (FeatureSet_EnumType = {}));
+  var FeatureSet_RepeatedFieldEncoding;
+  (function(FeatureSet_RepeatedFieldEncoding2) {
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["REPEATED_FIELD_ENCODING_UNKNOWN"] = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN";
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["PACKED"] = 1] = "PACKED";
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["EXPANDED"] = 2] = "EXPANDED";
+  })(FeatureSet_RepeatedFieldEncoding || (FeatureSet_RepeatedFieldEncoding = {}));
+  var FeatureSet_Utf8Validation;
+  (function(FeatureSet_Utf8Validation2) {
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["UTF8_VALIDATION_UNKNOWN"] = 0] = "UTF8_VALIDATION_UNKNOWN";
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["VERIFY"] = 2] = "VERIFY";
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["NONE"] = 3] = "NONE";
+  })(FeatureSet_Utf8Validation || (FeatureSet_Utf8Validation = {}));
+  var FeatureSet_MessageEncoding;
+  (function(FeatureSet_MessageEncoding2) {
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["MESSAGE_ENCODING_UNKNOWN"] = 0] = "MESSAGE_ENCODING_UNKNOWN";
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["LENGTH_PREFIXED"] = 1] = "LENGTH_PREFIXED";
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["DELIMITED"] = 2] = "DELIMITED";
+  })(FeatureSet_MessageEncoding || (FeatureSet_MessageEncoding = {}));
+  var FeatureSet_JsonFormat;
+  (function(FeatureSet_JsonFormat2) {
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["JSON_FORMAT_UNKNOWN"] = 0] = "JSON_FORMAT_UNKNOWN";
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["ALLOW"] = 1] = "ALLOW";
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["LEGACY_BEST_EFFORT"] = 2] = "LEGACY_BEST_EFFORT";
+  })(FeatureSet_JsonFormat || (FeatureSet_JsonFormat = {}));
+  var FeatureSet_EnforceNamingStyle;
+  (function(FeatureSet_EnforceNamingStyle2) {
+    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["ENFORCE_NAMING_STYLE_UNKNOWN"] = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN";
+    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["STYLE2024"] = 1] = "STYLE2024";
+    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["STYLE_LEGACY"] = 2] = "STYLE_LEGACY";
+  })(FeatureSet_EnforceNamingStyle || (FeatureSet_EnforceNamingStyle = {}));
+  var GeneratedCodeInfo_Annotation_Semantic;
+  (function(GeneratedCodeInfo_Annotation_Semantic2) {
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["NONE"] = 0] = "NONE";
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["SET"] = 1] = "SET";
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["ALIAS"] = 2] = "ALIAS";
+  })(GeneratedCodeInfo_Annotation_Semantic || (GeneratedCodeInfo_Annotation_Semantic = {}));
+  var Edition;
+  (function(Edition2) {
+    Edition2[Edition2["EDITION_UNKNOWN"] = 0] = "EDITION_UNKNOWN";
+    Edition2[Edition2["EDITION_LEGACY"] = 900] = "EDITION_LEGACY";
+    Edition2[Edition2["EDITION_PROTO2"] = 998] = "EDITION_PROTO2";
+    Edition2[Edition2["EDITION_PROTO3"] = 999] = "EDITION_PROTO3";
+    Edition2[Edition2["EDITION_2023"] = 1e3] = "EDITION_2023";
+    Edition2[Edition2["EDITION_2024"] = 1001] = "EDITION_2024";
+    Edition2[Edition2["EDITION_UNSTABLE"] = 9999] = "EDITION_UNSTABLE";
+    Edition2[Edition2["EDITION_1_TEST_ONLY"] = 1] = "EDITION_1_TEST_ONLY";
+    Edition2[Edition2["EDITION_2_TEST_ONLY"] = 2] = "EDITION_2_TEST_ONLY";
+    Edition2[Edition2["EDITION_99997_TEST_ONLY"] = 99997] = "EDITION_99997_TEST_ONLY";
+    Edition2[Edition2["EDITION_99998_TEST_ONLY"] = 99998] = "EDITION_99998_TEST_ONLY";
+    Edition2[Edition2["EDITION_99999_TEST_ONLY"] = 99999] = "EDITION_99999_TEST_ONLY";
+    Edition2[Edition2["EDITION_MAX"] = 2147483647] = "EDITION_MAX";
+  })(Edition || (Edition = {}));
+  var SymbolVisibility;
+  (function(SymbolVisibility2) {
+    SymbolVisibility2[SymbolVisibility2["VISIBILITY_UNSET"] = 0] = "VISIBILITY_UNSET";
+    SymbolVisibility2[SymbolVisibility2["VISIBILITY_LOCAL"] = 1] = "VISIBILITY_LOCAL";
+    SymbolVisibility2[SymbolVisibility2["VISIBILITY_EXPORT"] = 2] = "VISIBILITY_EXPORT";
+  })(SymbolVisibility || (SymbolVisibility = {}));
+  const readDefaults = {
+    readUnknownFields: true
+  };
+  function makeReadOptions(options) {
+    return options ? Object.assign(Object.assign({}, readDefaults), options) : readDefaults;
+  }
+  function fromBinary(schema, bytes, options) {
+    const msg = reflect(schema, void 0, false);
+    readMessage(msg, new BinaryReader(bytes), makeReadOptions(options), false, bytes.byteLength);
+    return msg.message;
+  }
+  function readMessage(message, reader, options, delimited, lengthOrDelimitedFieldNo) {
+    var _a;
+    const end = delimited ? reader.len : reader.pos + lengthOrDelimitedFieldNo;
+    let fieldNo;
+    let wireType;
+    const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
+    while (reader.pos < end) {
+      [fieldNo, wireType] = reader.tag();
+      if (delimited && wireType == WireType.EndGroup) {
+        break;
+      }
+      const field = message.findNumber(fieldNo);
+      if (!field) {
+        const data = reader.skip(wireType, fieldNo);
+        if (options.readUnknownFields) {
+          unknownFields.push({ no: fieldNo, wireType, data });
+        }
+        continue;
+      }
+      readField(message, reader, field, wireType, options);
+    }
+    if (delimited) {
+      if (wireType != WireType.EndGroup || fieldNo !== lengthOrDelimitedFieldNo) {
+        throw new Error("invalid end group tag");
+      }
+    }
+    if (unknownFields.length > 0) {
+      message.setUnknown(unknownFields);
+    }
+  }
+  function readField(message, reader, field, wireType, options) {
+    var _a;
+    switch (field.fieldKind) {
+      case "scalar":
+        message.set(field, readScalar(reader, field.scalar, field.utf8Validation));
+        break;
+      case "enum":
+        const val = readScalar(reader, ScalarType.INT32);
+        if (field.enum.open) {
+          message.set(field, val);
+        } else {
+          const ok = field.enum.values.some((v) => v.number === val);
+          if (ok) {
+            message.set(field, val);
+          } else if (options.readUnknownFields) {
+            const bytes = [];
+            varint32write(val, bytes);
+            const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
+            unknownFields.push({
+              no: field.number,
+              wireType,
+              data: new Uint8Array(bytes)
+            });
+            message.setUnknown(unknownFields);
+          }
+        }
+        break;
+      case "message":
+        message.set(field, readMessageField(reader, options, field, message.get(field)));
+        break;
+      case "list":
+        readListField(reader, wireType, message.get(field), options);
+        break;
+      case "map":
+        readMapEntry(reader, message.get(field), options);
+        break;
+    }
+  }
+  function readMapEntry(reader, map, options) {
+    const field = map.field();
+    let key;
+    let val;
+    const len = reader.uint32();
+    const end = reader.pos + len;
+    while (reader.pos < end) {
+      const [fieldNo] = reader.tag();
+      switch (fieldNo) {
+        case 1:
+          key = readScalar(reader, field.mapKey, field.utf8Validation);
+          break;
+        case 2:
+          switch (field.mapKind) {
+            case "scalar":
+              val = readScalar(reader, field.scalar, field.utf8Validation);
+              break;
+            case "enum":
+              val = reader.int32();
+              break;
+            case "message":
+              val = readMessageField(reader, options, field);
+              break;
+          }
+          break;
+      }
+    }
+    if (key === void 0) {
+      key = scalarZeroValue(field.mapKey, false);
+    }
+    if (val === void 0) {
+      switch (field.mapKind) {
+        case "scalar":
+          val = scalarZeroValue(field.scalar, false);
+          break;
+        case "enum":
+          val = field.enum.values[0].number;
+          break;
+        case "message":
+          val = reflect(field.message, void 0, false);
+          break;
+      }
+    }
+    map.set(key, val);
+  }
+  function readListField(reader, wireType, list, options) {
+    var _a;
+    const field = list.field();
+    if (field.listKind === "message") {
+      list.add(readMessageField(reader, options, field));
+      return;
+    }
+    const scalarType = (_a = field.scalar) !== null && _a !== void 0 ? _a : ScalarType.INT32;
+    const packed = wireType == WireType.LengthDelimited && scalarType != ScalarType.STRING && scalarType != ScalarType.BYTES;
+    if (!packed) {
+      list.add(readScalar(reader, scalarType, field.utf8Validation));
+      return;
+    }
+    const e = reader.uint32() + reader.pos;
+    while (reader.pos < e) {
+      list.add(readScalar(reader, scalarType, field.utf8Validation));
+    }
+  }
+  function readMessageField(reader, options, field, mergeMessage) {
+    const delimited = field.delimitedEncoding;
+    const message = mergeMessage !== null && mergeMessage !== void 0 ? mergeMessage : reflect(field.message, void 0, false);
+    readMessage(message, reader, options, delimited, delimited ? field.number : reader.uint32());
+    return message;
+  }
+  function readScalar(reader, type, validateUtf8 = false) {
+    switch (type) {
+      case ScalarType.STRING:
+        return reader.string(validateUtf8);
+      case ScalarType.BOOL:
+        return reader.bool();
+      case ScalarType.DOUBLE:
+        return reader.double();
+      case ScalarType.FLOAT:
+        return reader.float();
+      case ScalarType.INT32:
+        return reader.int32();
+      case ScalarType.INT64:
+        return reader.int64();
+      case ScalarType.UINT64:
+        return reader.uint64();
+      case ScalarType.FIXED64:
+        return reader.fixed64();
+      case ScalarType.BYTES:
+        return reader.bytes();
+      case ScalarType.FIXED32:
+        return reader.fixed32();
+      case ScalarType.SFIXED32:
+        return reader.sfixed32();
+      case ScalarType.SFIXED64:
+        return reader.sfixed64();
+      case ScalarType.SINT64:
+        return reader.sint64();
+      case ScalarType.UINT32:
+        return reader.uint32();
+      case ScalarType.SINT32:
+        return reader.sint32();
+    }
+  }
+  function fileDesc(b64, imports) {
+    var _a;
+    const root = fromBinary(FileDescriptorProtoSchema, base64Decode(b64));
+    root.messageType.forEach(restoreJsonNames);
+    root.dependency = (_a = imports === null || imports === void 0 ? void 0 : imports.map((f) => f.proto.name)) !== null && _a !== void 0 ? _a : [];
+    const reg = createFileRegistry(root, (protoFileName) => imports === null || imports === void 0 ? void 0 : imports.find((f) => f.proto.name === protoFileName));
+    return reg.getFile(root.name);
+  }
+  const file_google_protobuf_timestamp = fileDesc("Ch9nb29nbGUvcHJvdG9idWYvdGltZXN0YW1wLnByb3RvEg9nb29nbGUucHJvdG9idWYiKwoJVGltZXN0YW1wEg8KB3NlY29uZHMYASABKAMSDQoFbmFub3MYAiABKAVChQEKE2NvbS5nb29nbGUucHJvdG9idWZCDlRpbWVzdGFtcFByb3RvUAFaMmdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL3RpbWVzdGFtcHBi+AEBogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM");
+  const file_google_protobuf_duration = fileDesc("Ch5nb29nbGUvcHJvdG9idWYvZHVyYXRpb24ucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIqCghEdXJhdGlvbhIPCgdzZWNvbmRzGAEgASgDEg0KBW5hbm9zGAIgASgFQoMBChNjb20uZ29vZ2xlLnByb3RvYnVmQg1EdXJhdGlvblByb3RvUAFaMWdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2R1cmF0aW9ucGL4AQGiAgNHUEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnByb3RvMw");
+  const file_dwango_nicolive_chat_data_atoms = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIrwJCgRDaGF0Eg8KB2NvbnRlbnQYASABKAkSDAoEdnBvcxgDIAEoBRJFCg5hY2NvdW50X3N0YXR1cxgEIAEoDjItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5BY2NvdW50U3RhdHVzEhEKBG5hbWUYAiABKAlIAIgBARIYCgtyYXdfdXNlcl9pZBgFIAEoA0gBiAEBEhsKDmhhc2hlZF91c2VyX2lkGAYgASgJSAKIAQESOgoIbW9kaWZpZXIYByABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISCgoCbm8YCCABKAUa4wYKCE1vZGlmaWVyEj4KCHBvc2l0aW9uGAEgASgOMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlBvcxI7CgRzaXplGAIgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlNpemUSSQoLbmFtZWRfY29sb3IYAyABKA4yMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXIuQ29sb3JOYW1lSAASSAoKZnVsbF9jb2xvchgEIAEoCzIyLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5GdWxsQ29sb3JIABI7CgRmb250GAUgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLkZvbnQSQQoHb3BhY2l0eRgGIAEoDjIwLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5PcGFjaXR5GiwKCUZ1bGxDb2xvchIJCgFyGAEgASgFEgkKAWcYAiABKAUSCQoBYhgDIAEoBSIiCgNQb3MSCAoEbmFrYRAAEgkKBXNoaXRhEAESBgoCdWUQAiImCgRTaXplEgoKBm1lZGl1bRAAEgkKBXNtYWxsEAESBwoDYmlnEAIi7QEKCUNvbG9yTmFtZRIJCgV3aGl0ZRAAEgcKA3JlZBABEggKBHBpbmsQAhIKCgZvcmFuZ2UQAxIKCgZ5ZWxsb3cQBBIJCgVncmVlbhAFEggKBGN5YW4QBhIICgRibHVlEAcSCgoGcHVycGxlEAgSCQoFYmxhY2sQCRIKCgZ3aGl0ZTIQChIICgRyZWQyEAsSCQoFcGluazIQDBILCgdvcmFuZ2UyEA0SCwoHeWVsbG93MhAOEgoKBmdyZWVuMhAPEgkKBWN5YW4yEBASCQoFYmx1ZTIQERILCgdwdXJwbGUyEBISCgoGYmxhY2syEBMiKgoERm9udBIKCgZkZWZvbnQQABIKCgZtaW5jaG8QARIKCgZnb3RoaWMQAiImCgdPcGFjaXR5EgoKBk5vcm1hbBAAEg8KC1RyYW5zbHVjZW50EAFCBwoFY29sb3IiKgoNQWNjb3VudFN0YXR1cxIMCghTdGFuZGFyZBAAEgsKB1ByZW1pdW0QAUIHCgVfbmFtZUIOCgxfcmF3X3VzZXJfaWRCEQoPX2hhc2hlZF91c2VyX2lkIpYBCg9PcGVyYXRvckNvbW1lbnQSDwoHY29udGVudBgBIAEoCRIRCgRuYW1lGAIgASgJSACIAQESOgoIbW9kaWZpZXIYAyABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISEQoEbGluaxgEIAEoCUgBiAEBQgcKBV9uYW1lQgcKBV9saW5rIlEKBEp1bXASDwoHY29udGVudBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJEicKBHdhaXQYBCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iUQoIUmVkaXJlY3QSCwoDdXJpGAEgASgJEg8KB21lc3NhZ2UYAiABKAkSJwoEd2FpdBgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiKAAgoSU2ltcGxlTm90aWZpY2F0aW9uEhAKBmljaGliYRgBIAEoCUgAEg8KBXF1b3RlGAIgASgJSAASEQoHZW1vdGlvbhgDIAEoCUgAEhAKBmNydWlzZRgEIAEoCUgAEhoKEHByb2dyYW1fZXh0ZW5kZWQYBSABKAlIABIUCgpyYW5raW5nX2luGAYgASgJSAASGQoPcmFua2luZ191cGRhdGVkGAggASgJSAASEQoHdmlzaXRlZBgHIAEoCUgAEh4KFHN1cHBvcnRlcl9yZWdpc3RlcmVkGAkgASgJSAASFwoNdXNlcl9sZXZlbF91cBgKIAEoCUgAQgkKB21lc3NhZ2Ui0QEKBEdpZnQSDwoHaXRlbV9pZBgBIAEoCRIfChJhZHZlcnRpc2VyX3VzZXJfaWQYAiABKANIAIgBARIXCg9hZHZlcnRpc2VyX25hbWUYAyABKAkSDQoFcG9pbnQYBCABKAMSDwoHbWVzc2FnZRgFIAEoCRIRCglpdGVtX25hbWUYBiABKAkSHgoRY29udHJpYnV0aW9uX3JhbmsYByABKAVIAYgBAUIVChNfYWR2ZXJ0aXNlcl91c2VyX2lkQhQKEl9jb250cmlidXRpb25fcmFuayKHBAoGTmljb2FkEjIKAnYwGAEgASgLMiQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjBIABIyCgJ2MRgCIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYxSAAa2QIKAlYwEjsKBmxhdGVzdBgBIAEoCzIrLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYwLkxhdGVzdBI9CgdyYW5raW5nGAIgAygLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjAuUmFua2luZxITCgt0b3RhbF9wb2ludBgDIAEoBRpNCgZMYXRlc3QSEgoKYWR2ZXJ0aXNlchgBIAEoCRINCgVwb2ludBgCIAEoBRIUCgdtZXNzYWdlGAMgASgJSACIAQFCCgoIX21lc3NhZ2UacwoHUmFua2luZxISCgphZHZlcnRpc2VyGAEgASgJEgwKBHJhbmsYAiABKAUSFAoHbWVzc2FnZRgDIAEoCUgAiAEBEhYKCXVzZXJfcmFuaxgEIAEoBUgBiAEBQgoKCF9tZXNzYWdlQgwKCl91c2VyX3JhbmsaLQoCVjESFgoOdG90YWxfYWRfcG9pbnQYASABKAUSDwoHbWVzc2FnZRgCIAEoCUIKCgh2ZXJzaW9ucyLHAgoLQ29tbWVudExvY2sSPQoGc3RhdHVzGAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5TdGF0dXMSWQoSZm9sbG93X3Jlc3RyaWN0aW9uGAIgASgLMjguZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5Gb2xsb3dSZXN0cmljdGlvbkgAiAEBGk8KEUZvbGxvd1Jlc3RyaWN0aW9uEjoKF21pbmltdW1fZm9sbG93X2R1cmF0aW9uGAEgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uIjYKBlN0YXR1cxIQCgxVbnJlc3RyaWN0ZWQQABIKCgZMb2NrZWQQARIOCgpSZXN0cmljdGVkEAJCFQoTX2ZvbGxvd19yZXN0cmljdGlvbiKAAQoLQ29tbWVudE1vZGUSPQoGbGF5b3V0GAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TW9kZS5MYXlvdXQiMgoGTGF5b3V0EgoKBk5vcm1hbBAAEgwKCFNwbGl0VG9wEAESDgoKQmFja2dyb3VuZBACIgwKCkdhbWVVcGRhdGUi5AEKClRyaWFsUGFuZWwSOgoFcGFuZWwYASABKA4yKy5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWwuUGFuZWwSRAoQdW5xdWFsaWZpZWRfdXNlchgCIAEoDjIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVHJpYWxQYW5lbC5Nb2RlIiAKBVBhbmVsEgoKBkhpZGRlbhAAEgsKB0Rpc3BsYXkQASIyCgRNb2RlEgsKB0FsbG93ZWQQABIOCgpSZXN0cmljdGVkEAESDQoJRm9yYmlkZGVuEAIibwoNUHJvZ3JhbVN0YXR1cxI9CgVzdGF0ZRgBIAEoDjIuLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1cy5TdGF0ZSIfCgVTdGF0ZRILCgdVbmtub3duEAASCQoFRW5kZWQQASLAAQoKVGFnVXBkYXRlZBI3CgR0YWdzGAEgAygLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5UYWdVcGRhdGVkLlRhZxIUCgxvd25lcl9sb2NrZWQYAiABKAgaYwoDVGFnEgwKBHRleHQYASABKAkSDgoGbG9ja2VkGAIgASgIEhAKCHJlc2VydmVkGAMgASgIEhoKDW5pY29wZWRpYV91cmkYBCABKAlIAIgBAUIQCg5fbmljb3BlZGlhX3VyaSLoAQoKU3RhdGlzdGljcxIUCgd2aWV3ZXJzGAEgASgDSACIAQESFQoIY29tbWVudHMYAiABKANIAYgBARIWCglhZF9wb2ludHMYAyABKANIAogBARIYCgtnaWZ0X3BvaW50cxgEIAEoA0gDiAEBEiMKFnRpbWVzaGlmdF9yZXNlcnZhdGlvbnMYBiABKANIBIgBAUIKCghfdmlld2Vyc0ILCglfY29tbWVudHNCDAoKX2FkX3BvaW50c0IOCgxfZ2lmdF9wb2ludHNCGQoXX3RpbWVzaGlmdF9yZXNlcnZhdGlvbnNKBAgFEAYi6AEKB01hcnF1ZWUSQAoHZGlzcGxheRgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZS5EaXNwbGF5SACIAQEajgEKB0Rpc3BsYXkSRAoQb3BlcmF0b3JfY29tbWVudBgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuT3BlcmF0b3JDb21tZW50EjAKCGR1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uSACIAQFCCwoJX2R1cmF0aW9uQgoKCF9kaXNwbGF5IoMCCgdFbnF1ZXRlEhAKCHF1ZXN0aW9uGAEgASgJEjoKB2Nob2ljZXMYAiADKAsyKS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkVucXVldGUuQ2hvaWNlEjkKBnN0YXR1cxgDIAEoDjIpLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuRW5xdWV0ZS5TdGF0dXMaQwoGQ2hvaWNlEhMKC2Rlc2NyaXB0aW9uGAEgASgJEhYKCXBlcl9taWxsZRgDIAEoBUgAiAEBQgwKCl9wZXJfbWlsbGUiKgoGU3RhdHVzEgoKBkNsb3NlZBAAEggKBFBvbGwQARIKCgZSZXN1bHQQAiJ7CglNb3ZlT3JkZXISLwoEanVtcBgBIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuSnVtcEgAEjcKCHJlZGlyZWN0GAIgASgLMiMuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5SZWRpcmVjdEgAQgQKAnRvYgZwcm90bzM", [file_google_protobuf_duration]);
+  var ProgramStatus_State = ((ProgramStatus_State2) => {
+    ProgramStatus_State2[ProgramStatus_State2["Unknown"] = 0] = "Unknown";
+    ProgramStatus_State2[ProgramStatus_State2["Ended"] = 1] = "Ended";
+    return ProgramStatus_State2;
+  })(ProgramStatus_State || {});
+  const file_dwango_nicolive_chat_data_atoms_forwarded = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL2ZvcndhcmRlZC5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyL7AQoNRm9yd2FyZGVkQ2hhdBItCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0EhIKCm1lc3NhZ2VfaWQYAiABKAkSFgoOc291cmNlX2xpdmVfaWQYAyABKAMSSwoEbW9kZRgEIAEoDjI9LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuRm9yd2FyZGVkQ2hhdC5Gb3J3YXJkaW5nTW9kZSJCCg5Gb3J3YXJkaW5nTW9kZRILCgdVTktOT1dOEAASDwoLRlJPTV9DUlVJU0UQARISCg5DT0xMQUJfU0hBUklORxACYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms]);
+  const file_dwango_nicolive_chat_data_atoms_moderator = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL21vZGVyYXRvci5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyJqChFNb2RlcmF0b3JVc2VySW5mbxIPCgd1c2VyX2lkGAEgASgDEhUKCG5pY2tuYW1lGAIgASgJSACIAQESFAoHaWNvblVybBgDIAEoCUgBiAEBQgsKCV9uaWNrbmFtZUIKCghfaWNvblVybCKLAgoQTW9kZXJhdG9yVXBkYXRlZBJXCglvcGVyYXRpb24YASABKA4yRC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVwZGF0ZWQuTW9kZXJhdG9yT3BlcmF0aW9uEkQKCG9wZXJhdG9yGAIgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVc2VySW5mbxItCgl1cGRhdGVkQXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIikKEk1vZGVyYXRvck9wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASLFBAoLU1NOR1VwZGF0ZWQSTQoJb3BlcmF0aW9uGAEgASgOMjouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZC5TU05HT3BlcmF0aW9uEg8KB3NzbmdfaWQYAiABKAMSRAoIb3BlcmF0b3IYAyABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVzZXJJbmZvEkgKBHR5cGUYBCABKA4yNS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdUeXBlSACIAQESEwoGc291cmNlGAUgASgJSAGIAQESMgoJdXBkYXRlZEF0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgCiAEBElQKDW9wZXJhdG9yX3R5cGUYByABKA4yPS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdPcGVyYXRvclR5cGUiJAoNU1NOR09wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASIrCghTU05HVHlwZRIICgRVU0VSEAASCAoEV09SRBABEgsKB0NPTU1BTkQQAiIyChBTU05HT3BlcmF0b3JUeXBlEg0KCU1PREVSQVRPUhAAEg8KC0JST0FEQ0FTVEVSEAFCBwoFX3R5cGVCCQoHX3NvdXJjZUIMCgpfdXBkYXRlZEF0IqMCChZNb2RlcmF0aW9uQW5ub3VuY2VtZW50EhQKB21lc3NhZ2UYASABKAlIAIgBARJdCg5ndWlkZWxpbmVJdGVtcxgCIAMoDjJFLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuTW9kZXJhdGlvbkFubm91bmNlbWVudC5HdWlkZWxpbmVJdGVtEi0KCXVwZGF0ZWRBdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiWQoNR3VpZGVsaW5lSXRlbRILCgdVTktOT1dOEAASCgoGU0VYVUFMEAESCAoEU1BBTRACEgsKB1NMQU5ERVIQAxIYChRQRVJTT05BTF9JTkZPUk1BVElPThAEQgoKCF9tZXNzYWdlYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  const file_dwango_nicolive_chat_data_atoms_notifications = fileDesc("CjNkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL25vdGlmaWNhdGlvbnMucHJvdG8SH2R3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMi0QIKFFNpbXBsZU5vdGlmaWNhdGlvblYyElQKBHR5cGUYASABKA4yRi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNpbXBsZU5vdGlmaWNhdGlvblYyLk5vdGlmaWNhdGlvblR5cGUSDwoHbWVzc2FnZRgCIAEoCRIVCg1zaG93X2luX3RlbG9wGAMgASgIEhQKDHNob3dfaW5fbGlzdBgEIAEoCCKkAQoQTm90aWZpY2F0aW9uVHlwZRILCgdVTktOT1dOEAASCgoGSUNISUJBEAESCwoHRU1PVElPThACEgoKBkNSVUlTRRADEhQKEFBST0dSQU1fRVhURU5ERUQQBBIOCgpSQU5LSU5HX0lOEAUSCwoHVklTSVRFRBAGEhgKFFNVUFBPUlRFUl9SRUdJU1RFUkVEEAcSEQoNVVNFUl9MRVZFTF9VUBAIYgZwcm90bzM");
+  const file_dwango_nicolive_chat_data_message = fileDesc("Cidkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL21lc3NhZ2UucHJvdG8SGWR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEigQYKD05pY29saXZlTWVzc2FnZRIvCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0SAASTAoTc2ltcGxlX25vdGlmaWNhdGlvbhgHIAEoCzItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuU2ltcGxlTm90aWZpY2F0aW9uSAASLwoEZ2lmdBgIIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuR2lmdEgAEjMKBm5pY29hZBgJIAEoCzIhLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkSAASPAoLZ2FtZV91cGRhdGUYDSABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkdhbWVVcGRhdGVIABI8Cgt0YWdfdXBkYXRlZBgRIAEoCzIlLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVGFnVXBkYXRlZEgAEk4KEW1vZGVyYXRvcl91cGRhdGVkGBIgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVcGRhdGVkSAASRAoMc3NuZ191cGRhdGVkGBMgASgLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZEgAEjoKD292ZXJmbG93ZWRfY2hhdBgUIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdEgAEkgKDmZvcndhcmRlZF9jaGF0GBYgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Gb3J3YXJkZWRDaGF0SAASVwoWc2ltcGxlX25vdGlmaWNhdGlvbl92MhgXIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuU2ltcGxlTm90aWZpY2F0aW9uVjJIAEIGCgRkYXRhSgQIAhAHSgQIChANSgQIDhARYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_forwarded, file_dwango_nicolive_chat_data_atoms_moderator, file_dwango_nicolive_chat_data_atoms_notifications]);
+  const file_dwango_nicolive_chat_data_origin = fileDesc("CiZkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL29yaWdpbi5wcm90bxIZZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YSJzCg5OaWNvbGl2ZU9yaWdpbhI+CgRjaGF0GAEgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbi5DaGF0SAAaFwoEQ2hhdBIPCgdsaXZlX2lkGAEgASgDQggKBm9yaWdpbmIGcHJvdG8z");
+  const file_dwango_nicolive_chat_data_state = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL3N0YXRlLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIoYGCg1OaWNvbGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1ZXRlGAIgASgLMiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRlSAGIAQESPQoKbW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1lbnRfbG9jaxgFIAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29tbWVudExvY2tIBIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxfcGFuZWwYByABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWxIBogBARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVyYXRpb25fYW5ub3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQFCDQoLX3N0YXRpc3RpY3NCCgoIX2VucXVldGVCDQoLX21vdmVfb3JkZXJCCgoIX21hcnF1ZWVCDwoNX2NvbW1lbnRfbG9ja0IPCg1fY29tbWVudF9tb2RlQg4KDF90cmlhbF9wYW5lbEIRCg9fcHJvZ3JhbV9zdGF0dXNCGgoYX21vZGVyYXRpb25fYW5ub3VuY2VtZW50YgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_moderator]);
+  const file_dwango_nicolive_chat_service_edge_payload = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9zZXJ2aWNlL2VkZ2UvcGF5bG9hZC5wcm90bxIhZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlIrUDCg5DaHVua2VkTWVzc2FnZRJECgRtZXRhGAEgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLkNodW5rZWRNZXNzYWdlLk1ldGESPQoHbWVzc2FnZRgCIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2xpdmVNZXNzYWdlSAASOQoFc3RhdGUYBCABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29saXZlU3RhdGVIABJKCgZzaWduYWwYBSABKA4yOC5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2UuU2lnbmFsSAAadQoETWV0YRIKCgJpZBgBIAEoCRImCgJhdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOQoGb3JpZ2luGAMgASgLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbiIVCgZTaWduYWwSCwoHRmx1c2hlZBAAQgkKB3BheWxvYWQingIKDVBhY2tlZFNlZ21lbnQSQwoIbWVzc2FnZXMYASADKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2USQwoEbmV4dBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90GhMKBE5leHQSCwoDdXJpGAEgASgJGhwKDVN0YXRlU25hcHNob3QSCwoDdXJpGAEgASgJItYCCgxDaHVua2VkRW50cnkSRgoIYmFja3dhcmQYAiABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQmFja3dhcmRTZWdtZW50SAASRQoIcHJldmlvdXMYAyABKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuTWVzc2FnZVNlZ21lbnRIABJECgdzZWdtZW50GAEgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLk1lc3NhZ2VTZWdtZW50SAASTAoEbmV4dBgEIAEoCzI8LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5DaHVua2VkRW50cnkuUmVhZHlGb3JOZXh0SAAaGgoMUmVhZHlGb3JOZXh0EgoKAmF0GAEgASgDQgcKBWVudHJ5InIKDk1lc3NhZ2VTZWdtZW50EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBILCgN1cmkYAyABKAki1gEKD0JhY2t3YXJkU2VnbWVudBIpCgV1bnRpbBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASRgoHc2VnbWVudBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90YgZwcm90bzM", [file_google_protobuf_timestamp, file_dwango_nicolive_chat_data_message, file_dwango_nicolive_chat_data_state, file_dwango_nicolive_chat_data_origin]);
+  const ChunkedMessageSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 0);
+  const PackedSegmentSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 1);
+  const ChunkedEntrySchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 2);
+  function timestampLargeA(a, b) {
+    return a.seconds < b.seconds || a.seconds === b.seconds && a.nanos < b.nanos;
+  }
+  function isAbortError(error, signal) {
+    return signal?.aborted === true && error instanceof Error && error.name === "AbortError";
+  }
+  function createAbortError$1() {
+    return new DOMException("操作が中止されました", "AbortError");
+  }
+  async function sleep(ms, signal) {
+    if (signal?.aborted) {
+      await sleep(0);
+      return Promise.reject(createAbortError$1());
+    }
+    const { promise, resolve, reject } = promiser();
+    const id = setTimeout(timeouted, ms);
+    signal?.addEventListener("abort", aborted);
+    return promise;
+    function timeouted() {
+      signal?.removeEventListener("abort", aborted);
+      resolve();
+    }
+    function aborted() {
+      clearInterval(id);
+      signal.removeEventListener("abort", aborted);
+      reject(createAbortError$1());
+    }
+  }
+  function promiser() {
+    let resolve = null;
+    let reject = null;
+    const promise = new Promise(((res, rej) => [resolve, reject] = [res, rej]));
+    return { promise, resolve, reject };
+  }
+  function getProps(object, props, defaultValue) {
+    for (const prop of props) {
+      if (object == null) break;
+      object = object[prop];
+    }
+    if (object !== void 0) return object;
+    if (defaultValue !== void 0) {
+      console.warn(`値が存在しないので代替値を使用します: ${props.join(".")}`, defaultValue);
+      return defaultValue;
+    }
+    throw new Error(`値が存在しません: ${props.join(".")}`);
+  }
+  const AsyncIteratorSet = {
+create: (options) => {
+      let resolveNext;
+      let rejectNext;
+      let state = "iterating";
+      let error;
+      const queue = [];
+      let filter = options?.filter;
+      const iterable = {
+        next() {
+          if (queue.length > 0) return Promise.resolve({ value: queue.shift(), done: false });
+          if (state === "iterating") return nextPromise();
+          if (state === "closed") return Promise.resolve({ value: void 0, done: true });
+          throw error;
+        },
+        [Symbol.asyncIterator]() {
+          return iterable;
+        },
+        return() {
+          if (state === "iterating") options?.breaked?.();
+          return Promise.resolve({ value: void 0, done: true });
+        }
+      };
+      return { iterator: iterable, enqueue, throw: throwError, close };
+      function nextPromise() {
+        return new Promise((resolve, reject) => {
+          resolveNext = resolve;
+          rejectNext = reject;
+        });
+      }
+      function enqueue(value) {
+        if (state !== "iterating") return;
+        if (filter != null) {
+          let res = filter(value);
+          if (res === false) return;
+          if (res === true) ;
+          else {
+            [res, filter] = res;
+            if (!res) return;
+          }
+        }
+        queue.push(value);
+        if (resolveNext != null) {
+          resolveNext({ value: queue.shift(), done: false });
+          resolveNext = void 0;
+        }
+      }
+      function throwError(reason) {
+        if (state !== "iterating") return;
+        finishIterating("error", reason);
+      }
+      function close() {
+        finishIterating("closed");
+      }
+      function finishIterating(newState, e) {
+        if (state !== "iterating") return;
+        state = newState;
+        if (newState === "closed") {
+          if (resolveNext != null) resolveNext({ value: void 0, done: true });
+        } else {
+          error = e;
+          if (rejectNext != null) rejectNext(error);
+        }
+      }
+    }
+  };
+  async function connectWsAndAsyncIterable(url, receiver, closed) {
+    const ws = new WebSocket(url);
+    const iteratorSet = AsyncIteratorSet.create({ breaked: () => iteratorSet.close() });
+    const onMessage = receiver == null ? (e) => iteratorSet.enqueue(e) : (e) => iteratorSet.enqueue(receiver(e));
+    const openPromiser = promiser();
+    ws.addEventListener("open", openPromiser.resolve);
+    ws.addEventListener("message", onMessage);
+    ws.addEventListener("close", cleanupAndCloseIter);
+    await openPromiser.promise;
+    ws.removeEventListener("open", openPromiser.resolve);
+    return [ws, iteratorSet];
+    function cleanupAndCloseIter(event) {
+      ws.removeEventListener("message", onMessage);
+      ws.removeEventListener("close", cleanupAndCloseIter);
+      openPromiser.reject(`code:${event.code}  reason:${event.reason}`);
+      closed?.();
+      iteratorSet.close();
+    }
+  }
+  const ResponseIteratorSet = {
+fetch: async (uri, desc, signal, transport = defaultResponseIteratorTransport) => {
+      const res = await transport.fetch(uri, signal);
+      return {
+        response: res.response,
+        iterator: sizeDelimitedDecodeStream(desc, res.iterator),
+        closed: res.closed
+      };
+    }
+  };
+  const defaultResponseIteratorTransport = {
+    async fetch(uri, signal) {
+      const res = await fetch(uri, { signal });
+      if (res.body == null) throw new Error(`fetchで問題が発生しました
+uri:${uri} status:${res.status}`);
+      const reader = res.body.getReader();
+      return {
+        response: res,
+        iterator: readableStreamToAsyncIterable(reader),
+        closed: reader.closed
+      };
+    }
+  };
+  async function* readableStreamToAsyncIterable(reader) {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) return;
+      yield value;
+    }
+  }
+  async function* sizeDelimitedDecodeStream(messageDesc2, iterable, options) {
+    function append(buffer2, chunk) {
+      const n = new Uint8Array(buffer2.byteLength + chunk.byteLength);
+      n.set(buffer2);
+      n.set(chunk, buffer2.length);
+      return n;
+    }
+    let buffer = new Uint8Array(0);
+    for await (const chunk of iterable) {
+      buffer = append(buffer, chunk);
+      while (buffer.length > 0) {
+        const reader = new BinaryReader(buffer);
+        const size2 = reader.uint32();
+        const offset2 = reader.pos;
+        if (offset2 + size2 > buffer.byteLength) {
+          break;
+        }
+        yield fromBinary(
+          messageDesc2,
+          buffer.subarray(offset2, offset2 + size2),
+          options
+        );
+        buffer = buffer.subarray(offset2 + size2);
+      }
+    }
+  }
+  const NicoliveMessageServer = {
+fetchEntry: (entryUri, at, signal, transport) => {
+      return ResponseIteratorSet.fetch(`${entryUri}?at=${at}`, ChunkedEntrySchema, signal, transport);
+    },
+fetchMessage: (messageUri, signal, transport) => {
+      return ResponseIteratorSet.fetch(messageUri, ChunkedMessageSchema, signal, transport);
+    },
+fetchBackwardMessages: async (backwardUri, delayMs, maxSegmentCount, isSnapshot, signal) => {
+      if (maxSegmentCount <= 0) maxSegmentCount = Number.MAX_SAFE_INTEGER;
+      const buf = [];
+      let nextUri = backwardUri;
+      let segmentUri;
+      let snapshotUri;
+      try {
+        while (true) {
+          const res = await fetch(nextUri, { signal });
+          const body = new Uint8Array(await res.arrayBuffer());
+          const packed = fromBinary(PackedSegmentSchema, body);
+          segmentUri = packed.next?.uri;
+          snapshotUri = packed.snapshot?.uri;
+          nextUri = isSnapshot ? snapshotUri : segmentUri;
+          buf.push(packed.messages);
+          if (nextUri == null || buf.length >= maxSegmentCount) break;
+          await sleep(delayMs, signal);
+        }
+      } catch (e) {
+        if (!isAbortError(e, signal)) throw e;
+      }
+      const messages = buf.reverse().flat();
+      return { messages, segmentUri, snapshotUri };
+    }
+  };
+  const NicoliveWsSendMessage = {
+    startWatching: (data) => ({
+      type: "startWatching",
+      data
+    }),
+    keepSeat: () => ({ type: "keepSeat" }),
+    getAkashic: (data) => ({
+      type: "getAkashic",
+      data
+    }),
+    changeStream: (data) => ({
+      type: "changeStream",
+      data
+    }),
+    answerEnquete: (data) => ({
+      type: "answerEnquete",
+      data
+    }),
+    pong: () => ({ type: "pong" }),
+    postComment: (data) => ({
+      type: "postComment",
+      data
+    }),
+    getTaxonomy: () => ({ type: "getTaxonomy" }),
+    getStreamQualities: () => ({
+      type: "getStreamQualities"
+    })
+  };
+  const NicoliveDisconectReason = {
+takeover: "TAKEOVER",
+noPermission: "NO_PERMISSION",
+endProgram: "END_PROGRAM",
+pingTimeout: "PING_TIMEOUT",
+tooManyConnections: "TOO_MANY_CONNECTIONS",
+tooManyWatchings: "TOO_MANY_WATCHINGS",
+crowded: "CROWDED",
+maintenanceIn: "MAINTENANCE_IN",
+serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
+  };
+  function getNicoliveDisconectReasonDescription(reason) {
+    if (reason == null) return "終了メッセージを受信する前に切断された";
+    return NicoliveDisconectReasonDescription[reason];
+  }
+  const NicoliveDisconectReasonDescription = {
+    [NicoliveDisconectReason.takeover]: "追い出された",
+    [NicoliveDisconectReason.noPermission]: "座席を取れなかった",
+    [NicoliveDisconectReason.endProgram]: "番組が終了した",
+    [NicoliveDisconectReason.pingTimeout]: "接続生存確認に失敗した (pingTimeout)",
+    [NicoliveDisconectReason.tooManyConnections]: "同一ユーザからの接続数上限を越えている",
+    [NicoliveDisconectReason.tooManyWatchings]: "同一ユーザの視聴番組数上限を越えている",
+    [NicoliveDisconectReason.crowded]: "満席",
+    [NicoliveDisconectReason.maintenanceIn]: "メンテナンス中",
+    [NicoliveDisconectReason.serviceTemporarilyUnavailable]: "一時的なサーバエラー"
+  };
+  const NicoliveRejectReason = {
+    needLogin: "needLogin",
+    noTimeshiftProgram: "noTimeshiftProgram",
+    programNotBegun: "programNotBegun",
+    passwordAuthRequired: "passwordAuthRequired",
+    unknown: "unknown"
+  };
+  function getNicoliveId(liveIdOrUrl) {
+    const liveIdRegex = /.*((lv|ch|user\/)\d+).*/;
+    return liveIdRegex.exec(liveIdOrUrl)?.[1];
+  }
+  function checkCloseMessage(message) {
+    return message != null && message.payload.case === "state" && message.payload.value.programStatus?.state === ProgramStatus_State.Ended;
+  }
+  async function parseNicolivePageData(res) {
+    try {
+      let postBroadcasterComment = function(text, name, isPermanent, color) {
+        return NicoliveUtility.postBroadcasterComment(
+          liveId,
+          broadcasterCommentToken,
+          text,
+          name,
+          isPermanent,
+          color
+        );
+      }, deleteBroadcasterComment = function() {
+        return NicoliveUtility.deleteBroadcasterComment(
+          liveId,
+          broadcasterCommentToken
+        );
+      };
+      const dom = await res.text().then((data) => new DOMParser().parseFromString(data, "text/html"));
+      const embeddedString = dom.getElementById("embedded-data").getAttribute("data-props");
+      const embedded = JSON.parse(embeddedString);
+      const site = getProps(embedded, ["site"]);
+      const program = getProps(embedded, ["program"]);
+      const liveId = getProps(program, ["nicoliveProgramId"]);
+      const broadcasterCommentToken = getProps(site, ["relive", "csrfToken"]);
+      const websocketUrl = getProps(site, ["relive", "webSocketUrl"]);
+      return {
+        websocketUrl,
+        beginTime: getProps(program, ["beginTime"], -1),
+        endTime: getProps(program, ["endTime"], -1),
+        status: getProps(program, ["status"], "ON_AIR"),
+        nicoliveInfo: {
+          liveId,
+          title: getProps(program, ["title"]),
+          provider: parseProvider(embedded),
+          loginUser: parseLoginUser(embedded),
+          broadcasterCommentToken: getProps(site, ["relive", "csrfToken"], ""),
+rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
+        },
+        postBroadcasterComment,
+        deleteBroadcasterComment
+      };
+    } catch (e) {
+      throw new NicolivePageParseError(res.url, e);
+    }
+  }
+  class NicoliveLiveIdError extends Error {
+    constructor(liveIdOrUrl) {
+      super(`有効な放送IDを含んでいません. ${liveIdOrUrl}`);
+      this.liveIdOrUrl = liveIdOrUrl;
+      this.name = "NicoliveLiveIdError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicolivePageNotFoundError extends Error {
+    constructor(response, liveId) {
+      super(`放送ページが存在しません. lv:${liveId}`);
+      this.response = response;
+      this.liveId = liveId;
+      this.name = "NicolivePageNotFoundError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicolivePageParseError extends Error {
+    constructor(url, innerError) {
+      super(`放送ページの解析に失敗しました. url:${url}
+内部エラー:${innerError}`);
+      this.url = url;
+      this.innerError = innerError;
+      this.name = "NicolivePageParseError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicoliveAccessDeniedError extends Error {
+    constructor(pageData) {
+      super(`放送が非公開または視聴する権限がありません. lv:${pageData.nicoliveInfo.liveId}`);
+      this.pageData = pageData;
+      this.name = "NicoliveAccessDeniedError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicoliveWebSocketReconnectError extends Error {
+    constructor(data) {
+      super(`ウェブソケット再接続要求を受け取りました`);
+      this.data = data;
+      this.reconnectTime = Date.now() + this.data.waitTimeSec * 1e3;
+      this.name = "NicoliveWebSocketReconnectError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicoliveWebSocketDisconnectError extends Error {
+    constructor(reason) {
+      super(`ウェブソケットから切断されました. 理由:${getNicoliveDisconectReasonDescription(reason)}`);
+      this.reason = reason;
+      this.name = "NicoliveWebSocketDisconnectError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+static createIfError(reason) {
+      if (reason !== NicoliveDisconectReason.endProgram)
+        return new NicoliveWebSocketDisconnectError(reason);
+    }
+  }
+  function parseProvider(embedded) {
+    try {
+      const program = getProps(embedded, ["program"]);
+      const socialGroup = getProps(embedded, ["socialGroup"]);
+      const supplier = getProps(program, ["supplier"]);
+      const providerType = getProps(program, ["providerType"]);
+      if (providerType === "community") {
+        return {
+          type: "user",
+          id: getProps(supplier, ["programProviderId"]) + "",
+          name: getProps(supplier, ["name"])
+        };
+      } else if (providerType === "official") {
+        return {
+          type: "official",
+          id: getProps(socialGroup, ["id"]),
+          name: getProps(socialGroup, ["name"]),
+          companyName: getProps(socialGroup, ["companyName"])
+        };
+      } else {
+        return {
+          type: "channel",
+          id: getProps(socialGroup, ["id"]),
+          name: getProps(socialGroup, ["name"]),
+          companyName: getProps(socialGroup, ["companyName"])
+        };
+      }
+    } catch (e) {
+      console.warn("放送の情報の解析に失敗しました", e);
+      return { type: "unknown" };
+    }
+  }
+  function parseLoginUser(embedded) {
+    debugger;
+    const user = embedded.user;
+    if (user?.isLoggedIn === void 0) {
+      console.warn("embedded.user.isLoggedIn が存在しません");
+      return void 0;
+    }
+    if (!user.isLoggedIn) return void 0;
+    const creatorCreatorSupportSummary = getProps(embedded, ["creatorCreatorSupportSummary"]);
+    return {
+      id: getProps(user, ["id"]) + "",
+      name: getProps(user, ["nickname"]),
+      isPremium: getProps(user, ["accountType"]) === "premium",
+      isBroadcaster: getProps(user, ["isBroadcaster"]),
+isOperator: getProps(user, ["isOperator"]),
+      isSupportable: creatorCreatorSupportSummary?.isSupportable === true
+    };
+  }
+  function parseReasons(embedded) {
+    const reasons = [];
+    const canWatch = getProps(embedded, ["userProgramWatch", "canWatch"], true);
+    if (canWatch === true) return reasons;
+    debugger;
+    if (getProps(embedded, ["programWatch", "condition", "needLogin"], false) === true) {
+      reasons.push(NicoliveRejectReason.needLogin);
+    }
+    const timeshiftStatus = getProps(embedded, ["programTimeshift", "publication", "status"], null);
+    switch (timeshiftStatus) {
+      case "Open":
+        break;
+      case "Before":
+        reasons.push(NicoliveRejectReason.programNotBegun);
+        break;
+      default:
+        reasons.push(NicoliveRejectReason.noTimeshiftProgram);
+        break;
+    }
+    if (!getProps(embedded, ["userProgramWatch", "passwordAuth", "isAuthorized"], true)) {
+      reasons.push(NicoliveRejectReason.passwordAuthRequired);
+    }
+    if (reasons.length === 0) {
+      reasons.push(NicoliveRejectReason.unknown);
+    }
+    return reasons;
+  }
+  const NicoliveWs = {
+connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
+      const reconnect = reconnectData != null;
+      let websocketUrl = reconnectData?.websocketUrl ?? pageData.websocketUrl;
+      if (websocketUrl === "")
+        throw new NicoliveAccessDeniedError(pageData);
+      if (reconnect && reconnectData.reconnectTime != null) {
+        const waitTimeMs = reconnectData.reconnectTime - Date.now();
+        await sleep(waitTimeMs, signal);
+      }
+      let latestSchedule = reconnectData?.latestSchedule ?? {
+        begin: new Date(pageData.beginTime * 1e3),
+        end: new Date(pageData.endTime * 1e3)
+      };
+      signal.addEventListener("abort", aborted);
+      const [ws, iteratorSet] = await connectWsAndAsyncIterable(
+        websocketUrl,
+        onMessage,
+        onClose
+      );
+      sendStartWatching(ws, reconnect, nicolveStream);
+      const messageServerDataPromiser = reconnect ? void 0 : promiser();
+      const messageServerDataPromise = messageServerDataPromiser == null ? Promise.resolve(reconnectData.messageServerData) : messageServerDataPromiser.promise;
+      let _disconnectMessage;
+      return {
+        ws,
+        iterator: iteratorSet.iterator,
+        messageServerDataPromise,
+        getWebsocketUrl: () => websocketUrl,
+        getLatestSchedule: () => latestSchedule,
+        send: (message) => send(ws, message),
+        postComment: async (text, isAnonymous, options) => {
+          const data = await messageServerDataPromise;
+          NicoliveWs.postComment(
+            ws,
+            Math.round((Date.now() - data.vposBaseTime) / 10),
+            text,
+            isAnonymous,
+            options
+          );
+        }
+      };
+      function onMessage({ data }) {
+        const message = parseMessage(data);
+        if (message.type === "ping") {
+          sendKeepSeatAndPong(ws);
+        } else if (message.type === "schedule") {
+          latestSchedule = {
+            begin: new Date(message.data.begin),
+            end: new Date(message.data.end)
+          };
+        } else if (message.type === "messageServer") {
+          const { viewUri, vposBaseTime, hashedUserId } = message.data;
+          messageServerDataPromiser?.resolve({
+            viewUri,
+            vposBaseTime: new Date(vposBaseTime).getTime(),
+            hashedUserId
+          });
+        } else if (message.type === "reconnect") {
+          websocketUrl = replaceAudienceToken(websocketUrl, message.data.audienceToken);
+          iteratorSet.throw(new NicoliveWebSocketReconnectError(message.data));
+          ws.close();
+        } else if (message.type === "disconnect") {
+          _disconnectMessage = message.data.reason;
+        }
+        iteratorSet.enqueue(message);
+        return message;
+      }
+      function onClose() {
+        signal.removeEventListener("abort", aborted);
+        ws.close();
+        const disconnectError = NicoliveWebSocketDisconnectError.createIfError(_disconnectMessage);
+        if (disconnectError == null) iteratorSet.close();
+        else iteratorSet.throw(disconnectError);
+      }
+      function aborted() {
+        messageServerDataPromiser?.reject(createAbortError$1());
+        iteratorSet.throw(createAbortError$1());
+        onClose();
+      }
+    },
+    postComment: (ws, vpos, text, isAnonymous, options) => {
+      send(ws, NicoliveWsSendMessage.postComment({
+        text,
+        isAnonymous,
+        vpos,
+        ...options
+      }));
+    }
+  };
+  function parseMessage(data) {
+    return JSON.parse(data);
+  }
+  function send(ws, message) {
+    ws.send(JSON.stringify(message));
+  }
+  function sendStartWatching(ws, reconnect, stream) {
+    send(ws, NicoliveWsSendMessage.startWatching({ reconnect, stream }));
+  }
+  function sendKeepSeatAndPong(ws) {
+    send(ws, NicoliveWsSendMessage.pong());
+    send(ws, NicoliveWsSendMessage.keepSeat());
+  }
+  function replaceAudienceToken(websocketUrl, audieceToken) {
+    const parsedUrl = new URL(websocketUrl);
+    const searchParams = parsedUrl.searchParams;
+    searchParams.set("audience_token", audieceToken);
+    return parsedUrl.toString();
+  }
+  const NicoliveUtility = {
+postBroadcasterComment: async (liveId, broadcasterCommentToken, text, name = "", isPermanent = false, color) => {
+      text = encodeURIComponent(text);
+      name = encodeURIComponent(name);
+      await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
+        "headers": {
+          "accept": "application/json",
+          "content-type": "application/x-www-form-urlencoded",
+          "x-public-api-token": broadcasterCommentToken
+        },
+        "body": `text=${text}&name=${name}&isPermanent=${isPermanent}&command=${color}`,
+        "method": "PUT",
+        "credentials": "include"
+      });
+    },
+deleteBroadcasterComment: async (liveId, broadcasterCommentToken) => {
+      await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
+        "headers": {
+          "x-public-api-token": broadcasterCommentToken
+        },
+        "method": "DELETE",
+        "credentials": "include"
+      });
+    },
+fetchNicolivePageData: (liveIdOrUrl) => {
+      return AbortAndPromise.new(async (abortController) => {
+        const liveId = getNicoliveId(liveIdOrUrl);
+        if (liveId == null) throw new NicoliveLiveIdError(liveIdOrUrl);
+        const res = await fetch(`https://live.nicovideo.jp/watch/${liveId}`, { signal: abortController.signal });
+        if (!res.ok) throw new NicolivePageNotFoundError(res, liveId);
+        return await parseNicolivePageData(res);
+      });
+    },
+createWsServerConnector: (pageData, options) => {
+      return AbortAndPromise.new(async (abortController) => {
+        let connectSet = await createConnectSet(abortController, void 0);
+        return {
+          getPromise: () => connectSet.promise,
+          isClosed: () => connectSet.isClosed(),
+          getAbortController: () => connectSet.abortController,
+          reconnect: (abortController2, reconnectTime) => AbortAndPromise.newA(abortController2, async (abortController3) => {
+            if (!connectSet.isClosed()) return;
+            const reconnectData = {
+              messageServerData: await connectSet.wsData.messageServerDataPromise,
+              latestSchedule: connectSet.wsData.getLatestSchedule(),
+              websocketUrl: connectSet.wsData.getWebsocketUrl(),
+              reconnectTime
+            };
+            connectSet = await createConnectSet(abortController3, reconnectData);
+          }),
+          getIterator: () => connectSet.wsData.iterator,
+          getWsData: () => connectSet.wsData,
+          getMessageServerData: () => connectSet.wsData.messageServerDataPromise,
+          getLatestSchedule: () => connectSet.wsData.getLatestSchedule(),
+          send: (message) => connectSet.wsData.send(message),
+          postComment: (text, isAnonymous, options2) => connectSet.wsData.postComment(text, isAnonymous, options2)
+        };
+      });
+      async function createConnectSet(abortController, reconnectData) {
+        const wsData = await NicoliveWs.connectWaitOpened(pageData, abortController.signal, reconnectData, options?.streamMessage);
+        const { promise, resolve } = promiser();
+        wsData.ws.addEventListener("close", onClose);
+        return { promise, abortController, wsData, isClosed };
+        function isClosed() {
+          const readyState = wsData.ws.readyState;
+          return readyState === WebSocket.CLOSING || readyState === WebSocket.CLOSED || abortController.signal.aborted;
+        }
+        function onClose() {
+          wsData.ws.removeEventListener("close", onClose);
+          resolve();
+        }
+      }
+    },
+createMessageServerConnector: (messageServerData, options) => {
+      const entryUri = messageServerData.viewUri;
+      return AbortAndPromise.new(async (abortController) => {
+        let connectSet = await createConnectSet(abortController, options);
+        return {
+          getPromise: () => connectSet.promise,
+          isClosed: () => connectSet.entryFetcher.isClosed() && connectSet.messageFetcher.isClosed(),
+          getAbortController: () => connectSet.abortController,
+          reconnect: (abortController2) => AbortAndPromise.newA(abortController2, async (abortController3) => {
+            if (!connectSet.entryFetcher.isClosed() || !connectSet.messageFetcher.isClosed()) return;
+            connectSet = await createConnectSet(
+              abortController3,
+              {
+                at: connectSet.entryFetcher.getLastEntryAt(),
+                skipToMeta: connectSet.messageFetcher.getLastMeta(),
+                backwardUri: connectSet.messageFetcher.getBackwardUri()
+              }
+            );
+          }),
+          getIterator: () => connectSet.messageFetcher.iterator,
+          getBackwardMessages: (delayMs, maxSegmentCount, isSnapshot) => {
+            const res = connectSet.messageFetcher.getBackwardMessages(delayMs, maxSegmentCount, isSnapshot);
+            return res;
+          }
+        };
+      });
+      async function createConnectSet(abortController, options2) {
+        const entryAt = options2?.at ?? "now";
+        const transport = options2?.transport;
+        const entryFetcher = await createEntryFetcher(abortController, entryUri, entryAt, transport);
+        const backwardUri = options2?.backwardUri ?? {
+          segment: entryFetcher.backwardSegment.segment?.uri,
+          snapshot: entryFetcher.backwardSegment.snapshot?.uri
+        };
+        const messageFetcher = await createMessageFetcher(abortController, entryFetcher, options2?.skipToMeta, backwardUri, transport);
+        return {
+          promise: (async () => {
+            await entryFetcher.promise;
+            await messageFetcher.promise;
+          })(),
+          abortController,
+          entryFetcher,
+          messageFetcher
+        };
+      }
+    },
+postPasswordAuth: (liveId, password) => {
+      return fetch(`https://live2.nicovideo.jp/unama/api/v2/programs/${liveId}/password/permission`, {
+        headers: {
+          "content-type": "application/json",
+          "x-niconico-session": "cookie"
+        },
+        body: `{"password":"${password}"}`,
+        method: "POST"
+      });
+    }
+  };
+  const AbortAndPromise = {
+    new(func) {
+      const abortController = new AbortController();
+      return {
+        abortController,
+        promise: func(abortController)
+      };
+    },
+    newA(abortController, func) {
+      abortController ??= new AbortController();
+      return {
+        abortController,
+        promise: func(abortController)
+      };
+    }
+  };
+  async function createEntryFetcher(abortController, entryUri, entryAt, transport) {
+    const signal = abortController.signal;
+    const iteratorSet = AsyncIteratorSet.create({
+      breaked: () => iteratorSet.close()
+    });
+    const innerAbort = new AbortController();
+    const innerSignal = innerAbort.signal;
+    signal.addEventListener("abort", safeClose);
+    let lastEntryAt = entryAt;
+    let curretnEntryAt = lastEntryAt;
+    let closed = false;
+    const backwardPromiser = promiser();
+    const promise = (async () => {
+      let receivedSegment = false;
+      try {
+        let fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
+        while (true) {
+          curretnEntryAt = void 0;
+          for await (const { entry: { value, case: _case } } of fetchEntry.iterator) {
+            if (_case === "next") {
+              curretnEntryAt = Number(value.at);
+              lastEntryAt = curretnEntryAt;
+            } else if (_case === "segment") {
+              receivedSegment = true;
+              iteratorSet.enqueue(value);
+            } else if (!receivedSegment) {
+              if (_case === "backward") {
+                backwardPromiser.resolve(value);
+              } else if (_case === "previous") {
+                iteratorSet.enqueue(value);
+              }
+            }
+          }
+          if (curretnEntryAt == null) break;
+          fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
+        }
+      } catch (e) {
+        backwardPromiser.reject(e);
+        if (!signal.aborted && !isAbortError(e, innerSignal)) iteratorSet.throw(e);
+      } finally {
+        closed = true;
+        signal.removeEventListener("abort", safeClose);
+        iteratorSet.close();
+      }
+    })();
+    return {
+      promise,
+      iterator: iteratorSet.iterator,
+      isClosed: () => closed,
+      safeClose,
+      getLastEntryAt: () => lastEntryAt,
+      backwardSegment: await backwardPromiser.promise
+    };
+    function safeClose() {
+      closed = true;
+      innerAbort.abort();
+    }
+  }
+  async function createMessageFetcher(abortController, entryFetcher, skipToMeta, backwardUri, transport) {
+    const signal = abortController.signal;
+    const iteratorSet = AsyncIteratorSet.create({
+      breaked: () => iteratorSet.close(),
+      filter: skipToMeta == null ? metaFilter : (value) => {
+        metaFilter(value);
+        if (value.meta?.id === skipToMeta.id) return [false, metaFilter];
+        if (value.meta?.at != null && timestampLargeA(skipToMeta.at, value.meta.at)) return [true, metaFilter];
+        return false;
+      }
+    });
+    const innerAbort = new AbortController();
+    const innerSignal = innerAbort.signal;
+    signal.addEventListener("abort", safeClose);
+    let closed = false;
+    let currentBackwardUri = backwardUri;
+    let fetchingBackwardSegment = false;
+    let lastMeta;
+    const firstPromiser = promiser();
+    const promise = (async () => {
+      try {
+        const { value, done } = await entryFetcher.iterator.next();
+        if (done) {
+          firstPromiser.resolve();
+          return;
+        }
+        const { iterator } = await NicoliveMessageServer.fetchMessage(value.uri, innerSignal, transport);
+        firstPromiser.resolve();
+        for await (const message of iterator) {
+          iteratorSet.enqueue(message);
+          if (checkCloseMessage(message)) return;
+        }
+        for await (const segment of entryFetcher.iterator) {
+          const { iterator: iterator2 } = await NicoliveMessageServer.fetchMessage(segment.uri, innerSignal, transport);
+          for await (const message of iterator2) {
+            iteratorSet.enqueue(message);
+            if (checkCloseMessage(message)) return;
+          }
+        }
+      } catch (e) {
+        firstPromiser.reject(e);
+        if (!signal.aborted && !isAbortError(e, innerSignal)) iteratorSet.throw(e);
+      } finally {
+        closed = true;
+        entryFetcher.safeClose();
+        signal.removeEventListener("abort", safeClose);
+        iteratorSet.close();
+      }
+    })();
+    await firstPromiser.promise;
+    return {
+      promise,
+      iterator: iteratorSet.iterator,
+      isClosed: () => closed,
+      safeClose,
+      getLastMeta: () => lastMeta,
+      getBackwardMessages,
+      getBackwardUri: () => currentBackwardUri
+    };
+    function metaFilter(message) {
+      updateMeta(message);
+      return true;
+    }
+    function updateMeta(message) {
+      if (message.meta?.at != null) {
+        lastMeta = message.meta;
+        return true;
+      }
+      return false;
+    }
+    function safeClose() {
+      closed = true;
+      innerAbort.abort();
+    }
+    function getBackwardMessages(delayMs, maxSegmentCount, isSnapshot = false) {
+      if (fetchingBackwardSegment) return void 0;
+      const backwardUri2 = isSnapshot ? currentBackwardUri.snapshot : currentBackwardUri.segment;
+      if (backwardUri2 == null) return;
+      fetchingBackwardSegment = true;
+      const abortController2 = new AbortController();
+      const messagePromise = (async () => {
+        const backward = await NicoliveMessageServer.fetchBackwardMessages(
+          backwardUri2,
+          delayMs,
+          maxSegmentCount,
+          isSnapshot,
+          abortController2.signal
+        );
+        currentBackwardUri = { segment: backward.segmentUri, snapshot: backward.snapshotUri };
+        if (lastMeta == null) {
+          for (let i = backward.messages.length - 1; i >= 0; i--) {
+            const message = backward.messages[i];
+            if (updateMeta(message)) break;
+          }
+        }
+        if (checkCloseMessage(backward.messages.at(-1))) {
+          safeClose();
+        }
+        const hasNext = currentBackwardUri.segment != null;
+        return [backward.messages, hasNext];
+      })();
+      fetchingBackwardSegment = false;
+      return {
+        abortController: abortController2,
+        messagePromise
+      };
+    }
+  }
+  class NicoLiveChatClient {
+    constructor(options) {
+      this.options = options;
+      this.abortControllers = [];
+      this.stopped = false;
+    }
+    async start() {
+      const liveId = parseLiveId(this.options.liveId);
+      if (liveId == null) {
+        this.emitError(new Error(`Invalid NicoLive liveId or URL: ${this.options.liveId}`));
+        return;
+      }
+      try {
+        const pageResponse = await fetchTextAsResponse(`https://live.nicovideo.jp/watch/${liveId}`);
+        if (this.stopped) return;
+        const pageData = await parseNicolivePageData(pageResponse);
+        const wsConnectorResult = NicoliveUtility.createWsServerConnector(pageData);
+        this.abortControllers.push(wsConnectorResult.abortController);
+        this.wsConnector = await wsConnectorResult.promise;
+        if (this.stopped) return;
+        const messageServerData = await this.wsConnector.getMessageServerData();
+        const messageConnectorResult = NicoliveUtility.createMessageServerConnector(messageServerData, {
+          transport: createUserscriptStreamTransport()
+        });
+        this.abortControllers.push(messageConnectorResult.abortController);
+        this.messageConnector = await messageConnectorResult.promise;
+        if (this.stopped) return;
+        this.options.onConnect?.({ liveId });
+        for await (const chunkedMessage of this.messageConnector.getIterator()) {
+          if (this.stopped) return;
+          const chat = toChatMessage(chunkedMessage);
+          if (chat != null) this.options.onChat?.([chat]);
+        }
+      } catch (error) {
+        if (this.stopped && isAbortLikeError(error)) return;
+        this.emitError(toError(error));
+      }
+    }
+    stop() {
+      this.stopped = true;
+      this.messageConnector?.getAbortController().abort();
+      this.wsConnector?.getAbortController().abort();
+      for (const abortController of this.abortControllers.splice(0)) {
+        abortController.abort();
+      }
+    }
+    emitError(error) {
+      this.options.onError?.(error);
+    }
+  }
+  function subscribeNicoLiveChat(options) {
+    const client2 = new NicoLiveChatClient(options);
+    void client2.start();
+    return () => client2.stop();
+  }
+  function toChatMessage(message) {
+    if (message.payload.case !== "message") return;
+    const data = message.payload.value.data;
+    if (data.case !== "chat") return;
+    const chat = data.value;
+    const author = chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "";
+    return {
+      id: message.meta?.id ?? `${chat.no}-${chat.vpos}`,
+      author,
+      message: chat.content,
+      timestampUsec: timestampToUsecString(message.meta?.at),
+      isMember: chat.accountStatus === 1
+    };
+  }
+  function timestampToUsecString(timestamp) {
+    if (timestamp == null) return `${Date.now() * 1e3}`;
+    return `${Number(timestamp.seconds) * 1e6 + Math.floor(timestamp.nanos / 1e3)}`;
+  }
+  function parseLiveId(value) {
+    return value.trim().match(/((?:lv|ch)\d+|user\/\d+)/)?.[1];
+  }
+  function createUserscriptStreamTransport() {
+    return {
+      async fetch(uri, signal) {
+        const stream = await gmFetchReadableStream(uri, signal);
+        const reader = stream.getReader();
+        return {
+          iterator: readableStreamToAsyncIterable(reader),
+          closed: reader.closed
+        };
+      }
+    };
+  }
+  async function fetchTextAsResponse(url, signal) {
+    const gm = getGmXmlhttpRequest();
+    if (gm == null) return fetch(url, { signal });
+    return new Promise((resolve, reject) => {
+      gm({
+        method: "GET",
+        url,
+        responseType: "text",
+        onload: (response) => {
+          const res = new Response(response.responseText ?? "", {
+            status: response.status,
+            statusText: response.statusText
+          });
+          if (response.finalUrl != null) {
+            Object.defineProperty(res, "url", { value: response.finalUrl });
+          }
+          resolve(res);
+        },
+        onerror: reject,
+        onabort: () => reject(createAbortError()),
+        ontimeout: () => reject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
+      });
+    });
+  }
+  function gmFetchReadableStream(url, signal) {
+    const gm = getGmXmlhttpRequest();
+    if (gm == null) {
+      return fetch(url, { signal }).then((response) => {
+        if (response.body == null) throw new Error(`fetch stream is unavailable: ${url}`);
+        return response.body;
+      });
+    }
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const settleResolve = (stream) => {
+        if (settled) return;
+        settled = true;
+        resolve(stream);
+      };
+      const settleReject = (error) => {
+        if (settled) return;
+        settled = true;
+        reject(error);
+      };
+      const request = gm({
+        method: "GET",
+        url,
+        responseType: "stream",
+        onloadstart: (response) => {
+          if (isReadableStream(response.response)) {
+            settleResolve(response.response);
+          }
+        },
+        onload: (response) => {
+          if (isReadableStream(response.response)) {
+            settleResolve(response.response);
+            return;
+          }
+          settleReject(new Error("GM_xmlhttpRequest stream response is unavailable. Tampermonkey responseType:'stream' support is required."));
+        },
+        onerror: settleReject,
+        onabort: () => settleReject(createAbortError()),
+        ontimeout: () => settleReject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
+      });
+      signal?.addEventListener("abort", () => {
+        request.abort?.();
+        settleReject(createAbortError());
+      }, { once: true });
+    });
+  }
+  function getGmXmlhttpRequest() {
+    if (typeof GM_xmlhttpRequest === "function") return GM_xmlhttpRequest;
+  }
+  function isReadableStream(value) {
+    return typeof value === "object" && value != null && "getReader" in value;
+  }
+  function createAbortError() {
+    return new DOMException("Operation aborted", "AbortError");
+  }
+  function isAbortLikeError(error) {
+    return error instanceof Error && error.name === "AbortError";
+  }
+  function toError(error) {
+    return error instanceof Error ? error : new Error(String(error));
+  }
   function r(e) {
     var t, f, n = "";
     if ("string" == typeof e || "number" == typeof e) n += e;
@@ -19726,549 +23581,6 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         children: jsxRuntimeExports.jsx(ChevronDown, { className: "size-4" })
       }
     );
-  }
-  const WATCH_PAGE_BASE_URL = "https://live.nicovideo.jp/watch";
-  const TEXT_DECODER = new TextDecoder();
-  function gmGetText(url) {
-    return new Promise((resolve, reject) => {
-      _GM_xmlhttpRequest({
-        method: "GET",
-        url,
-        onload(res) {
-          if (res.status !== 0 && (res.status < 200 || res.status >= 300)) {
-            reject(new Error(`GET ${url} failed: HTTP ${res.status}`));
-            return;
-          }
-          resolve(res.responseText);
-        },
-        onerror(res) {
-          reject(new Error(`GET ${url} failed: status=${res.status}`));
-        }
-      });
-    });
-  }
-  async function getWatchWebSocketUrl(liveId) {
-    const html = await gmGetText(
-      `${WATCH_PAGE_BASE_URL}/${encodeURIComponent(liveId)}`
-    );
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const raw = doc.querySelector("#embedded-data")?.getAttribute("data-props");
-    if (!raw) throw new Error("embedded-data not found");
-    const data = JSON.parse(raw);
-    const wsUrl = data.site?.relive?.webSocketUrl;
-    if (!wsUrl) throw new Error("webSocketUrl not found in embedded-data");
-    return wsUrl;
-  }
-  class ProtoReader {
-    buf;
-    pos = 0;
-    constructor(buf) {
-      this.buf = buf;
-    }
-    hasMore() {
-      return this.pos < this.buf.length;
-    }
-    readVarint() {
-      let result = 0;
-      let multiplier = 1;
-      while (this.pos < this.buf.length) {
-        const byte = this.buf[this.pos++];
-        result += (byte & 127) * multiplier;
-        if ((byte & 128) === 0) return result;
-        multiplier *= 128;
-      }
-      throw new Error("Unexpected end of protobuf varint");
-    }
-    readBytes() {
-      const len = this.readVarint();
-      if (this.pos + len > this.buf.length) {
-        throw new Error("Unexpected end of protobuf bytes");
-      }
-      const slice = this.buf.subarray(this.pos, this.pos + len);
-      this.pos += len;
-      return slice;
-    }
-    readString() {
-      return TEXT_DECODER.decode(this.readBytes());
-    }
-    readTag() {
-      if (!this.hasMore()) return void 0;
-      const tag = this.readVarint();
-      return { field: tag >>> 3, wireType: tag & 7 };
-    }
-    skip(wireType) {
-      switch (wireType) {
-        case 0:
-          this.readVarint();
-          return;
-        case 1:
-          this.pos += 8;
-          return;
-        case 2:
-          this.readBytes();
-          return;
-        case 5:
-          this.pos += 4;
-          return;
-        default:
-          throw new Error(`Unsupported protobuf wire type: ${wireType}`);
-      }
-    }
-  }
-  class SizeDelimitedSplitter {
-    buffer = new Uint8Array(0);
-    addData(data) {
-      if (data.length === 0) return;
-      const merged = new Uint8Array(this.buffer.length + data.length);
-      merged.set(this.buffer);
-      merged.set(data, this.buffer.length);
-      this.buffer = merged;
-    }
-    *read() {
-      let offset2 = 0;
-      while (offset2 < this.buffer.length) {
-        const header = this.readSize(offset2);
-        if (!header) break;
-        const start = header.nextOffset;
-        const end = start + header.size;
-        if (this.buffer.length < end) break;
-        yield this.buffer.subarray(start, end);
-        offset2 = end;
-      }
-      if (offset2 > 0) this.buffer = this.buffer.slice(offset2);
-    }
-    readSize(offset2) {
-      let size2 = 0;
-      let multiplier = 1;
-      for (let pos = offset2; pos < this.buffer.length; pos++) {
-        const byte = this.buffer[pos];
-        size2 += (byte & 127) * multiplier;
-        if ((byte & 128) === 0) return { size: size2, nextOffset: pos + 1 };
-        multiplier *= 128;
-      }
-      return void 0;
-    }
-  }
-  function decodeUriMessage(buf) {
-    const reader = new ProtoReader(buf);
-    let uri;
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if ((tag.field === 1 || tag.field === 3) && tag.wireType === 2) {
-        uri = reader.readString();
-      } else {
-        reader.skip(tag.wireType);
-      }
-    }
-    return uri;
-  }
-  function decodeReadyForNext(buf) {
-    const reader = new ProtoReader(buf);
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if (tag.field === 1) {
-        return tag.wireType === 2 ? reader.readString() : String(reader.readVarint());
-      }
-      reader.skip(tag.wireType);
-    }
-    return void 0;
-  }
-  function decodeChunkedEntry(buf) {
-    const reader = new ProtoReader(buf);
-    const entry = {};
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if (tag.wireType !== 2) {
-        reader.skip(tag.wireType);
-        continue;
-      }
-      const fieldBytes = reader.readBytes();
-      switch (tag.field) {
-        case 1:
-          entry.segmentUri = decodeUriMessage(fieldBytes);
-          break;
-        case 3:
-          entry.previousUri = decodeUriMessage(fieldBytes);
-          break;
-        case 4:
-          entry.nextAt = decodeReadyForNext(fieldBytes);
-          break;
-      }
-    }
-    return entry;
-  }
-  function decodeTimestamp(buf) {
-    const reader = new ProtoReader(buf);
-    let sec = 0;
-    let nanos = 0;
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if (tag.field === 1 && tag.wireType === 0) {
-        sec = reader.readVarint();
-      } else if (tag.field === 2 && tag.wireType === 0) {
-        nanos = reader.readVarint();
-      } else {
-        reader.skip(tag.wireType);
-      }
-    }
-    return { sec, nanos };
-  }
-  function decodeMeta(buf) {
-    const reader = new ProtoReader(buf);
-    let id;
-    let timestampSec = 0;
-    let timestampNanos = 0;
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if (tag.field === 1 && tag.wireType === 2) {
-        id = reader.readString();
-      } else if (tag.field === 2 && tag.wireType === 2) {
-        const timestamp = decodeTimestamp(reader.readBytes());
-        timestampSec = timestamp.sec;
-        timestampNanos = timestamp.nanos;
-      } else {
-        reader.skip(tag.wireType);
-      }
-    }
-    return { id, timestampSec, timestampNanos };
-  }
-  function decodeChat(buf) {
-    const reader = new ProtoReader(buf);
-    const chat = {};
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      switch (tag.field) {
-        case 1:
-          chat.content = reader.readString();
-          break;
-        case 2:
-          chat.name = reader.readString();
-          break;
-        case 4:
-          chat.accountStatus = reader.readVarint();
-          break;
-        case 5:
-          chat.rawUserId = reader.readVarint();
-          break;
-        case 6:
-          chat.hashedUserId = reader.readString();
-          break;
-        case 8:
-          chat.no = reader.readVarint();
-          break;
-        default:
-          reader.skip(tag.wireType);
-      }
-    }
-    if (!chat.content) return void 0;
-    return {
-      content: chat.content,
-      name: chat.name,
-      accountStatus: chat.accountStatus ?? 0,
-      rawUserId: chat.rawUserId,
-      hashedUserId: chat.hashedUserId,
-      no: chat.no ?? 0
-    };
-  }
-  function decodeNicoliveMessage(buf) {
-    const reader = new ProtoReader(buf);
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if ((tag.field === 1 || tag.field === 20) && tag.wireType === 2) {
-        return decodeChat(reader.readBytes());
-      }
-      reader.skip(tag.wireType);
-    }
-    return void 0;
-  }
-  function decodeChunkedMessage(buf) {
-    const reader = new ProtoReader(buf);
-    let id;
-    let timestampSec = 0;
-    let timestampNanos = 0;
-    let chat;
-    while (true) {
-      const tag = reader.readTag();
-      if (!tag) break;
-      if (tag.field === 1 && tag.wireType === 2) {
-        const meta = decodeMeta(reader.readBytes());
-        id = meta.id;
-        timestampSec = meta.timestampSec;
-        timestampNanos = meta.timestampNanos;
-      } else if (tag.field === 2 && tag.wireType === 2) {
-        chat = decodeNicoliveMessage(reader.readBytes());
-      } else {
-        reader.skip(tag.wireType);
-      }
-    }
-    if (!chat) return void 0;
-    return { id, chat, timestampSec, timestampNanos };
-  }
-  function openGmBinaryStream(url, onData, onDone, onError) {
-    let processedLength = 0;
-    const handleResponse = (response) => {
-      if (!(response instanceof ArrayBuffer) || response.byteLength <= processedLength) {
-        return;
-      }
-      const bytes = new Uint8Array(response);
-      onData(bytes.subarray(processedLength));
-      processedLength = bytes.length;
-    };
-    return _GM_xmlhttpRequest({
-      method: "GET",
-      url,
-      responseType: "arraybuffer",
-      onprogress(res) {
-        handleResponse(res.response);
-      },
-      onload(res) {
-        if (res.status !== 0 && (res.status < 200 || res.status >= 300)) {
-          onError(new Error(`GET ${url} failed: HTTP ${res.status}`));
-          return;
-        }
-        handleResponse(res.response);
-        onDone();
-      },
-      onerror(res) {
-        onError(new Error(`GET ${url} failed: status=${res.status}`));
-      }
-    });
-  }
-  function withAt(uri, at) {
-    const separator = uri.includes("?") ? "&" : "?";
-    return `${uri}${separator}at=${encodeURIComponent(at)}`;
-  }
-  function replaceAudienceToken(wsUrl, audienceToken) {
-    if (typeof audienceToken !== "string" || audienceToken.length === 0) {
-      return wsUrl;
-    }
-    const url = new URL(wsUrl);
-    url.searchParams.set("audience_token", audienceToken);
-    return url.toString();
-  }
-  class NicoLiveChatClient {
-    liveId;
-    onChat;
-    onError;
-    onConnect;
-    alive = false;
-    startedAtUsec = 0;
-    watchWs = null;
-    reconnectWsUrl = null;
-    reconnectTimer = null;
-    entryHandle = null;
-    segmentHandle = null;
-    viewUri = null;
-    nextEntryAt = "now";
-    connected = false;
-    receivedInitialSegment = false;
-    constructor({
-      liveId,
-      onChat: onChat2,
-      onError,
-      onConnect
-    }) {
-      if (!liveId) throw new Error("liveId is required");
-      this.liveId = liveId;
-      this.onChat = onChat2 ?? (() => void 0);
-      this.onError = onError ?? console.error;
-      this.onConnect = onConnect ?? (() => void 0);
-    }
-    async start({ skipExisting = true } = {}) {
-      if (this.alive) return;
-      this.startedAtUsec = skipExisting ? Date.now() * 1e3 : 0;
-      this.alive = true;
-      try {
-        const wsUrl = await getWatchWebSocketUrl(this.liveId);
-        if (!this.alive) return;
-        this.connectWatchWebSocket(wsUrl, false);
-      } catch (error) {
-        this.alive = false;
-        this.reportError(error);
-      }
-    }
-    stop() {
-      this.alive = false;
-      if (this.reconnectTimer !== null) {
-        clearTimeout(this.reconnectTimer);
-        this.reconnectTimer = null;
-      }
-      this.watchWs?.close();
-      this.watchWs = null;
-      this.entryHandle?.abort();
-      this.entryHandle = null;
-      this.segmentHandle?.abort();
-      this.segmentHandle = null;
-    }
-    connectWatchWebSocket(wsUrl, reconnect) {
-      const ws = new WebSocket(wsUrl);
-      this.watchWs = ws;
-      this.reconnectWsUrl = wsUrl;
-      ws.addEventListener("open", () => {
-        ws.send(JSON.stringify({ type: "startWatching", data: { reconnect } }));
-      });
-      ws.addEventListener("message", (event) => {
-        if (typeof event.data !== "string") return;
-        try {
-          this.handleWatchMessage(JSON.parse(event.data));
-        } catch (error) {
-          this.reportError(error);
-        }
-      });
-      ws.addEventListener("error", () => {
-        this.reportError(new Error("NicoNico watch WebSocket error"));
-      });
-    }
-    handleWatchMessage(message) {
-      switch (message.type) {
-        case "ping":
-          this.sendWatchMessage({ type: "pong" });
-          this.sendWatchMessage({ type: "keepSeat" });
-          break;
-        case "messageServer":
-        case "akashicMessageServer":
-          this.handleMessageServer(message.data);
-          break;
-        case "reconnect":
-          this.handleReconnect(message.data);
-          break;
-        case "disconnect":
-          this.handleDisconnect(message.data);
-          break;
-      }
-    }
-    handleMessageServer(data) {
-      const viewUri = data?.viewUri;
-      if (typeof viewUri !== "string" || viewUri.length === 0) return;
-      this.viewUri = viewUri;
-      this.nextEntryAt = "now";
-      this.receivedInitialSegment = false;
-      this.connectEntryStream();
-    }
-    handleReconnect(data) {
-      const currentUrl = this.reconnectWsUrl;
-      if (!currentUrl) return;
-      const waitTimeSec = typeof data?.waitTimeSec === "number" ? data.waitTimeSec : 0;
-      const nextUrl = replaceAudienceToken(currentUrl, data?.audienceToken);
-      this.watchWs?.close();
-      this.reconnectTimer = setTimeout(
-        () => {
-          if (this.alive) this.connectWatchWebSocket(nextUrl, true);
-        },
-        Math.max(0, waitTimeSec * 1e3)
-      );
-    }
-    handleDisconnect(data) {
-      const reason = data?.reason;
-      if (reason === "END_PROGRAM") {
-        this.stop();
-        return;
-      }
-      this.reportError(
-        new Error(`NicoNico disconnected: ${String(reason ?? "unknown")}`)
-      );
-    }
-    sendWatchMessage(message) {
-      if (this.watchWs?.readyState !== WebSocket.OPEN) return;
-      this.watchWs.send(JSON.stringify(message));
-    }
-    connectEntryStream() {
-      if (!this.alive || !this.viewUri) return;
-      this.entryHandle?.abort();
-      const currentAt = this.nextEntryAt;
-      const splitter = new SizeDelimitedSplitter();
-      this.entryHandle = openGmBinaryStream(
-        withAt(this.viewUri, currentAt),
-        (data) => {
-          try {
-            splitter.addData(data);
-            for (const chunk of splitter.read()) {
-              this.handleEntry(decodeChunkedEntry(chunk));
-            }
-          } catch (error) {
-            this.reportError(error);
-          }
-        },
-        () => {
-          if (!this.alive) return;
-          if (this.nextEntryAt === currentAt) {
-            this.reportError(
-              new Error("NicoNico entry stream ended without next cursor")
-            );
-            return;
-          }
-          this.connectEntryStream();
-        },
-        (error) => this.reportError(error)
-      );
-    }
-    handleEntry(entry) {
-      if (entry.nextAt) this.nextEntryAt = entry.nextAt;
-      const uri = entry.segmentUri ?? (!this.receivedInitialSegment ? entry.previousUri : void 0);
-      if (!uri) return;
-      this.receivedInitialSegment = true;
-      this.connectSegmentStream(uri);
-      if (!this.connected) {
-        this.connected = true;
-        this.onConnect({ liveId: this.liveId });
-      }
-    }
-    connectSegmentStream(segmentUri) {
-      if (!this.alive) return;
-      this.segmentHandle?.abort();
-      const splitter = new SizeDelimitedSplitter();
-      this.segmentHandle = openGmBinaryStream(
-        segmentUri,
-        (data) => {
-          try {
-            splitter.addData(data);
-            const messages = [];
-            for (const chunk of splitter.read()) {
-              const decoded = decodeChunkedMessage(chunk);
-              const message = decoded ? this.toChatMessage(decoded) : void 0;
-              if (message) messages.push(message);
-            }
-            if (messages.length > 0) this.onChat(messages);
-          } catch (error) {
-            this.reportError(error);
-          }
-        },
-        () => void 0,
-        (error) => this.reportError(error)
-      );
-    }
-    toChatMessage(decoded) {
-      const { chat } = decoded;
-      if (chat.content.startsWith("/")) return void 0;
-      const timestampUsec = String(
-        decoded.timestampSec * 1e6 + Math.floor(decoded.timestampNanos / 1e3)
-      );
-      if (this.startedAtUsec > 0 && Number(timestampUsec) <= this.startedAtUsec) {
-        return void 0;
-      }
-      return {
-        id: decoded.id ?? String(chat.no),
-        author: chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "anonymous",
-        message: chat.content,
-        timestampUsec,
-        isMember: chat.accountStatus > 0
-      };
-    }
-    reportError(error) {
-      this.onError(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-  function subscribeNicoLiveChat(options) {
-    const client2 = new NicoLiveChatClient(options);
-    void client2.start();
-    return () => client2.stop();
   }
   const WS_URL = "wss://irc-ws.chat.twitch.tv:443";
   function parseTags(raw) {

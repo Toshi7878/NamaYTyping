@@ -1,3 +1,4 @@
+import { subscribeNicoLiveChat } from "@mujurin/nicolive-api-ts/src";
 import { Input } from "@repo/ui/input";
 import {
 	Select,
@@ -8,7 +9,6 @@ import {
 } from "@repo/ui/select";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { subscribeNicoLiveChat } from "@/lib/nico-live-chat-client";
 import { subscribeTwitchLiveChat } from "@/lib/twitch-live-chat-client";
 import {
 	type ChatMessage,
