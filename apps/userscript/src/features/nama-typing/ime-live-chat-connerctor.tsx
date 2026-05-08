@@ -8,7 +8,7 @@ import {
 } from "@repo/ui/select";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { subscribeNiconicoLiveChat } from "@/lib/niconico-live-chat-client";
+import { subscribeNicoLiveChat } from "@/lib/nico-live-chat-client";
 import { subscribeTwitchLiveChat } from "@/lib/twitch-live-chat-client";
 import {
 	type ChatMessage,
@@ -189,7 +189,7 @@ const useLiveChatSession = (
 				case "niconico": {
 					const liveId = extractNiconicoLiveId(rawValue);
 					if (!liveId) return;
-					unsubscribeRef.current = subscribeNiconicoLiveChat({
+					unsubscribeRef.current = subscribeNicoLiveChat({
 						liveId,
 						onChat,
 						onConnect,

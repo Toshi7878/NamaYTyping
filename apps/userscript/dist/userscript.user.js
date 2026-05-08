@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.21
+// @version      1.1.22
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -19727,65 +19727,72 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       }
     );
   }
-  const WATCH_PAGE_BASE_URL = "https://live2.nicovideo.jp/watch";
-  function getWatchWebSocketUrl(liveId) {
+  const WATCH_PAGE_BASE_URL = "https://live.nicovideo.jp/watch";
+  const TEXT_DECODER = new TextDecoder();
+  function gmGetText(url) {
     return new Promise((resolve, reject) => {
       _GM_xmlhttpRequest({
         method: "GET",
-        url: `${WATCH_PAGE_BASE_URL}/${encodeURIComponent(liveId)}`,
+        url,
         onload(res) {
-          try {
-            const doc = new DOMParser().parseFromString(
-              res.responseText,
-              "text/html"
-            );
-            const raw = doc.querySelector("#embedded-data")?.getAttribute("data-props");
-            if (!raw) throw new Error("embedded-data not found");
-            const data = JSON.parse(raw);
-            const wsUrl = data.site?.relive?.webSocketUrl;
-            if (!wsUrl)
-              throw new Error("webSocketUrl not found in embedded-data");
-            resolve(wsUrl);
-          } catch (e) {
-            reject(e instanceof Error ? e : new Error(String(e)));
+          if (res.status !== 0 && (res.status < 200 || res.status >= 300)) {
+            reject(new Error(`GET ${url} failed: HTTP ${res.status}`));
+            return;
           }
+          resolve(res.responseText);
         },
-        onerror(e) {
-          reject(new Error(`Network error fetching watch page: ${e.status}`));
+        onerror(res) {
+          reject(new Error(`GET ${url} failed: status=${res.status}`));
         }
       });
     });
   }
+  async function getWatchWebSocketUrl(liveId) {
+    const html = await gmGetText(
+      `${WATCH_PAGE_BASE_URL}/${encodeURIComponent(liveId)}`
+    );
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const raw = doc.querySelector("#embedded-data")?.getAttribute("data-props");
+    if (!raw) throw new Error("embedded-data not found");
+    const data = JSON.parse(raw);
+    const wsUrl = data.site?.relive?.webSocketUrl;
+    if (!wsUrl) throw new Error("webSocketUrl not found in embedded-data");
+    return wsUrl;
+  }
   class ProtoReader {
+    buf;
+    pos = 0;
     constructor(buf) {
       this.buf = buf;
     }
-    buf;
-    pos = 0;
     hasMore() {
       return this.pos < this.buf.length;
     }
     readVarint() {
-      let result = 0, shift2 = 0;
+      let result = 0;
+      let multiplier = 1;
       while (this.pos < this.buf.length) {
         const byte = this.buf[this.pos++];
-        result += (byte & 127) * 2 ** shift2;
-        if (!(byte & 128)) return result;
-        shift2 += 7;
+        result += (byte & 127) * multiplier;
+        if ((byte & 128) === 0) return result;
+        multiplier *= 128;
       }
-      throw new Error("Unexpected end of buffer in varint");
+      throw new Error("Unexpected end of protobuf varint");
     }
     readBytes() {
       const len = this.readVarint();
+      if (this.pos + len > this.buf.length) {
+        throw new Error("Unexpected end of protobuf bytes");
+      }
       const slice = this.buf.subarray(this.pos, this.pos + len);
       this.pos += len;
       return slice;
     }
     readString() {
-      return new TextDecoder().decode(this.readBytes());
+      return TEXT_DECODER.decode(this.readBytes());
     }
     readTag() {
-      if (!this.hasMore()) return null;
+      if (!this.hasMore()) return void 0;
       const tag = this.readVarint();
       return { field: tag >>> 3, wireType: tag & 7 };
     }
@@ -19793,181 +19800,25 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       switch (wireType) {
         case 0:
           this.readVarint();
-          break;
+          return;
         case 1:
           this.pos += 8;
-          break;
+          return;
         case 2:
           this.readBytes();
-          break;
+          return;
         case 5:
           this.pos += 4;
-          break;
-      }
-    }
-  }
-  function decodeChunkedEntry(buf) {
-    const r2 = new ProtoReader(buf);
-    const result = {};
-    for (; ; ) {
-      const tag = r2.readTag();
-      if (tag === null) break;
-      if (tag.wireType !== 2) {
-        r2.skip(tag.wireType);
-        continue;
-      }
-      switch (tag.field) {
-        case 1: {
-          const seg = new ProtoReader(r2.readBytes());
-          for (; ; ) {
-            const t = seg.readTag();
-            if (t === null) break;
-            if (t.field === 3 && t.wireType === 2)
-              result.segmentUri = seg.readString();
-            else seg.skip(t.wireType);
-          }
-          break;
-        }
-        case 4: {
-          const next = new ProtoReader(r2.readBytes());
-          for (; ; ) {
-            const t = next.readTag();
-            if (t === null) break;
-            if (t.field === 1 && t.wireType === 0)
-              result.nextAt = next.readVarint();
-            else next.skip(t.wireType);
-          }
-          break;
-        }
+          return;
         default:
-          r2.skip(tag.wireType);
+          throw new Error(`Unsupported protobuf wire type: ${wireType}`);
       }
     }
-    return result;
   }
-  function decodeChat(buf) {
-    const r2 = new ProtoReader(buf);
-    const c = {};
-    for (; ; ) {
-      const tag = r2.readTag();
-      if (tag === null) break;
-      switch (tag.field) {
-        case 1:
-          c.content = r2.readString();
-          break;
-        case 2:
-          r2.readString();
-          break;
-        case 3:
-          r2.readVarint();
-          break;
-        case 4:
-          c.accountStatus = r2.readVarint();
-          break;
-        case 5:
-          c.rawUserId = r2.readVarint();
-          break;
-        case 6:
-          c.hashedUserId = r2.readString();
-          break;
-        case 8:
-          c.no = r2.readVarint();
-          break;
-        default:
-          r2.skip(tag.wireType);
-      }
-    }
-    if (!c.content) return void 0;
-    c.accountStatus ??= 0;
-    c.no ??= 0;
-    return c;
-  }
-  function decodeChunkedMessage(buf) {
-    const r2 = new ProtoReader(buf);
-    let timestampSec = 0;
-    let chat;
-    for (; ; ) {
-      const tag = r2.readTag();
-      if (tag === null) break;
-      if (tag.wireType !== 2) {
-        r2.skip(tag.wireType);
-        continue;
-      }
-      switch (tag.field) {
-        case 1: {
-          const meta = new ProtoReader(r2.readBytes());
-          for (; ; ) {
-            const mt = meta.readTag();
-            if (mt === null) break;
-            if (mt.field === 2 && mt.wireType === 2) {
-              const ts = new ProtoReader(meta.readBytes());
-              for (; ; ) {
-                const tt = ts.readTag();
-                if (tt === null) break;
-                if (tt.field === 1 && tt.wireType === 0)
-                  timestampSec = ts.readVarint();
-                else ts.skip(tt.wireType);
-              }
-            } else {
-              meta.skip(mt.wireType);
-            }
-          }
-          break;
-        }
-        case 2: {
-          const msg = new ProtoReader(r2.readBytes());
-          for (; ; ) {
-            const mt = msg.readTag();
-            if (mt === null) break;
-            if (mt.field === 1 && mt.wireType === 2)
-              chat = decodeChat(msg.readBytes());
-            else msg.skip(mt.wireType);
-          }
-          break;
-        }
-        default:
-          r2.skip(tag.wireType);
-      }
-    }
-    if (!chat) return void 0;
-    return { chat, timestampSec };
-  }
-  function decodePackedSegment(buf) {
-    const r2 = new ProtoReader(buf);
-    const result = { chats: [] };
-    for (; ; ) {
-      const tag = r2.readTag();
-      if (tag === null) break;
-      if (tag.wireType !== 2) {
-        r2.skip(tag.wireType);
-        continue;
-      }
-      switch (tag.field) {
-        case 1: {
-          const decoded = decodeChunkedMessage(r2.readBytes());
-          if (decoded) result.chats.push(decoded);
-          break;
-        }
-        case 2: {
-          const next = new ProtoReader(r2.readBytes());
-          for (; ; ) {
-            const t = next.readTag();
-            if (t === null) break;
-            if (t.field === 1 && t.wireType === 2)
-              result.nextUri = next.readString();
-            else next.skip(t.wireType);
-          }
-          break;
-        }
-        default:
-          r2.skip(tag.wireType);
-      }
-    }
-    return result;
-  }
-  class ChunkSplitter {
+  class SizeDelimitedSplitter {
     buffer = new Uint8Array(0);
     addData(data) {
+      if (data.length === 0) return;
       const merged = new Uint8Array(this.buffer.length + data.length);
       merged.set(this.buffer);
       merged.set(data, this.buffer.length);
@@ -19975,79 +19826,249 @@ jsxRuntimeExports.jsx(ItemText, { children }),
     }
     *read() {
       let offset2 = 0;
-      while (true) {
-        const varint = this._decodeVarint(this.buffer, offset2);
-        if (varint === null) break;
-        const { value, offset: varintEnd } = varint;
-        const start = varintEnd + 1;
-        const end = start + value;
+      while (offset2 < this.buffer.length) {
+        const header = this.readSize(offset2);
+        if (!header) break;
+        const start = header.nextOffset;
+        const end = start + header.size;
         if (this.buffer.length < end) break;
         yield this.buffer.subarray(start, end);
         offset2 = end;
       }
       if (offset2 > 0) this.buffer = this.buffer.slice(offset2);
     }
-    _decodeVarint(buf, pos) {
-      let value = 0, more = false, shift2 = 0;
-      do {
-        if (buf.length <= pos) return null;
-        const byte = buf[pos];
-        more = Boolean(byte & 128);
-        value |= (byte & 127) << shift2;
-        if (more) {
-          pos++;
-          shift2 += 7;
-        }
-      } while (more);
-      return { value, offset: pos };
+    readSize(offset2) {
+      let size2 = 0;
+      let multiplier = 1;
+      for (let pos = offset2; pos < this.buffer.length; pos++) {
+        const byte = this.buffer[pos];
+        size2 += (byte & 127) * multiplier;
+        if ((byte & 128) === 0) return { size: size2, nextOffset: pos + 1 };
+        multiplier *= 128;
+      }
+      return void 0;
     }
   }
-  function openHttpStream(url, onData, onDone, onError) {
-    let processedLength = 0;
-    const handleBuffer = (response) => {
-      if (!(response instanceof ArrayBuffer) || response.byteLength === 0) return;
-      const buf = new Uint8Array(response);
-      if (buf.length > processedLength) {
-        onData(buf.subarray(processedLength));
-        processedLength = buf.length;
+  function decodeUriMessage(buf) {
+    const reader = new ProtoReader(buf);
+    let uri;
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if ((tag.field === 1 || tag.field === 3) && tag.wireType === 2) {
+        uri = reader.readString();
+      } else {
+        reader.skip(tag.wireType);
       }
+    }
+    return uri;
+  }
+  function decodeReadyForNext(buf) {
+    const reader = new ProtoReader(buf);
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if (tag.field === 1) {
+        return tag.wireType === 2 ? reader.readString() : String(reader.readVarint());
+      }
+      reader.skip(tag.wireType);
+    }
+    return void 0;
+  }
+  function decodeChunkedEntry(buf) {
+    const reader = new ProtoReader(buf);
+    const entry = {};
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if (tag.wireType !== 2) {
+        reader.skip(tag.wireType);
+        continue;
+      }
+      const fieldBytes = reader.readBytes();
+      switch (tag.field) {
+        case 1:
+          entry.segmentUri = decodeUriMessage(fieldBytes);
+          break;
+        case 3:
+          entry.previousUri = decodeUriMessage(fieldBytes);
+          break;
+        case 4:
+          entry.nextAt = decodeReadyForNext(fieldBytes);
+          break;
+      }
+    }
+    return entry;
+  }
+  function decodeTimestamp(buf) {
+    const reader = new ProtoReader(buf);
+    let sec = 0;
+    let nanos = 0;
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if (tag.field === 1 && tag.wireType === 0) {
+        sec = reader.readVarint();
+      } else if (tag.field === 2 && tag.wireType === 0) {
+        nanos = reader.readVarint();
+      } else {
+        reader.skip(tag.wireType);
+      }
+    }
+    return { sec, nanos };
+  }
+  function decodeMeta(buf) {
+    const reader = new ProtoReader(buf);
+    let id;
+    let timestampSec = 0;
+    let timestampNanos = 0;
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if (tag.field === 1 && tag.wireType === 2) {
+        id = reader.readString();
+      } else if (tag.field === 2 && tag.wireType === 2) {
+        const timestamp = decodeTimestamp(reader.readBytes());
+        timestampSec = timestamp.sec;
+        timestampNanos = timestamp.nanos;
+      } else {
+        reader.skip(tag.wireType);
+      }
+    }
+    return { id, timestampSec, timestampNanos };
+  }
+  function decodeChat(buf) {
+    const reader = new ProtoReader(buf);
+    const chat = {};
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      switch (tag.field) {
+        case 1:
+          chat.content = reader.readString();
+          break;
+        case 2:
+          chat.name = reader.readString();
+          break;
+        case 4:
+          chat.accountStatus = reader.readVarint();
+          break;
+        case 5:
+          chat.rawUserId = reader.readVarint();
+          break;
+        case 6:
+          chat.hashedUserId = reader.readString();
+          break;
+        case 8:
+          chat.no = reader.readVarint();
+          break;
+        default:
+          reader.skip(tag.wireType);
+      }
+    }
+    if (!chat.content) return void 0;
+    return {
+      content: chat.content,
+      name: chat.name,
+      accountStatus: chat.accountStatus ?? 0,
+      rawUserId: chat.rawUserId,
+      hashedUserId: chat.hashedUserId,
+      no: chat.no ?? 0
     };
-    const handle = _GM_xmlhttpRequest({
+  }
+  function decodeNicoliveMessage(buf) {
+    const reader = new ProtoReader(buf);
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if ((tag.field === 1 || tag.field === 20) && tag.wireType === 2) {
+        return decodeChat(reader.readBytes());
+      }
+      reader.skip(tag.wireType);
+    }
+    return void 0;
+  }
+  function decodeChunkedMessage(buf) {
+    const reader = new ProtoReader(buf);
+    let id;
+    let timestampSec = 0;
+    let timestampNanos = 0;
+    let chat;
+    while (true) {
+      const tag = reader.readTag();
+      if (!tag) break;
+      if (tag.field === 1 && tag.wireType === 2) {
+        const meta = decodeMeta(reader.readBytes());
+        id = meta.id;
+        timestampSec = meta.timestampSec;
+        timestampNanos = meta.timestampNanos;
+      } else if (tag.field === 2 && tag.wireType === 2) {
+        chat = decodeNicoliveMessage(reader.readBytes());
+      } else {
+        reader.skip(tag.wireType);
+      }
+    }
+    if (!chat) return void 0;
+    return { id, chat, timestampSec, timestampNanos };
+  }
+  function openGmBinaryStream(url, onData, onDone, onError) {
+    let processedLength = 0;
+    const handleResponse = (response) => {
+      if (!(response instanceof ArrayBuffer) || response.byteLength <= processedLength) {
+        return;
+      }
+      const bytes = new Uint8Array(response);
+      onData(bytes.subarray(processedLength));
+      processedLength = bytes.length;
+    };
+    return _GM_xmlhttpRequest({
       method: "GET",
       url,
-      headers: { Priority: "u=1, i" },
       responseType: "arraybuffer",
       onprogress(res) {
-        handleBuffer(res.response);
+        handleResponse(res.response);
       },
       onload(res) {
-        if (res.status !== 0 && res.status >= 400) {
-          onError(new Error(`HTTP ${res.status}`));
+        if (res.status !== 0 && (res.status < 200 || res.status >= 300)) {
+          onError(new Error(`GET ${url} failed: HTTP ${res.status}`));
           return;
         }
-        handleBuffer(res.response);
+        handleResponse(res.response);
         onDone();
       },
       onerror(res) {
-        onError(new Error(`HTTP stream error: status=${res.status}`));
+        onError(new Error(`GET ${url} failed: status=${res.status}`));
       }
     });
-    return handle;
   }
-  class NiconicoLiveChatClient {
-    _liveId;
-    _onChat;
-    _onError;
-    _onConnect;
-    _alive = false;
-    _startedAt = 0;
-    _watchWs = null;
-    _keepSeatTimer = null;
-    _messageStreamHandle = null;
-    _segmentStreamHandle = null;
-    _messageServerUri = null;
-    _nextStreamAt = "now";
-    _connectedOnce = false;
+  function withAt(uri, at) {
+    const separator = uri.includes("?") ? "&" : "?";
+    return `${uri}${separator}at=${encodeURIComponent(at)}`;
+  }
+  function replaceAudienceToken(wsUrl, audienceToken) {
+    if (typeof audienceToken !== "string" || audienceToken.length === 0) {
+      return wsUrl;
+    }
+    const url = new URL(wsUrl);
+    url.searchParams.set("audience_token", audienceToken);
+    return url.toString();
+  }
+  class NicoLiveChatClient {
+    liveId;
+    onChat;
+    onError;
+    onConnect;
+    alive = false;
+    startedAtUsec = 0;
+    watchWs = null;
+    reconnectWsUrl = null;
+    reconnectTimer = null;
+    entryHandle = null;
+    segmentHandle = null;
+    viewUri = null;
+    nextEntryAt = "now";
+    connected = false;
+    receivedInitialSegment = false;
     constructor({
       liveId,
       onChat: onChat2,
@@ -20055,207 +20076,198 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       onConnect
     }) {
       if (!liveId) throw new Error("liveId is required");
-      this._liveId = liveId;
-      this._onChat = onChat2 ?? (() => void 0);
-      this._onError = onError ?? console.error;
-      this._onConnect = onConnect ?? (() => void 0);
+      this.liveId = liveId;
+      this.onChat = onChat2 ?? (() => void 0);
+      this.onError = onError ?? console.error;
+      this.onConnect = onConnect ?? (() => void 0);
     }
     async start({ skipExisting = true } = {}) {
-      if (this._alive) return;
-      this._startedAt = skipExisting ? Date.now() * 1e3 : 0;
-      this._alive = true;
+      if (this.alive) return;
+      this.startedAtUsec = skipExisting ? Date.now() * 1e3 : 0;
+      this.alive = true;
       try {
-        const wsUrl = await getWatchWebSocketUrl(this._liveId);
-        if (!this._alive) return;
-        this._connectWatch(wsUrl);
-      } catch (e) {
-        this._alive = false;
-        this._onError(e instanceof Error ? e : new Error(String(e)));
+        const wsUrl = await getWatchWebSocketUrl(this.liveId);
+        if (!this.alive) return;
+        this.connectWatchWebSocket(wsUrl, false);
+      } catch (error) {
+        this.alive = false;
+        this.reportError(error);
       }
     }
     stop() {
-      this._alive = false;
-      this._clearKeepSeat();
-      this._watchWs?.close();
-      this._watchWs = null;
-      this._messageStreamHandle?.abort();
-      this._messageStreamHandle = null;
-      this._segmentStreamHandle?.abort();
-      this._segmentStreamHandle = null;
-    }
-    _clearKeepSeat() {
-      if (this._keepSeatTimer !== null) {
-        clearInterval(this._keepSeatTimer);
-        this._keepSeatTimer = null;
+      this.alive = false;
+      if (this.reconnectTimer !== null) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
       }
+      this.watchWs?.close();
+      this.watchWs = null;
+      this.entryHandle?.abort();
+      this.entryHandle = null;
+      this.segmentHandle?.abort();
+      this.segmentHandle = null;
     }
-    _connectWatch(wsUrl) {
+    connectWatchWebSocket(wsUrl, reconnect) {
       const ws = new WebSocket(wsUrl);
-      this._watchWs = ws;
+      this.watchWs = ws;
+      this.reconnectWsUrl = wsUrl;
       ws.addEventListener("open", () => {
-        ws.send(
-          JSON.stringify({
-            type: "startWatching",
-            data: {
-              stream: {
-                quality: "abr",
-                protocol: "hls",
-                latency: "high",
-                chasePlay: false
-              },
-              room: { protocol: "webSocket", commentable: true },
-              reconnect: false
-            }
-          })
-        );
+        ws.send(JSON.stringify({ type: "startWatching", data: { reconnect } }));
       });
       ws.addEventListener("message", (event) => {
-        let msg;
+        if (typeof event.data !== "string") return;
         try {
-          msg = JSON.parse(event.data);
-        } catch {
-          return;
+          this.handleWatchMessage(JSON.parse(event.data));
+        } catch (error) {
+          this.reportError(error);
         }
-        this._handleWatchMessage(msg);
       });
       ws.addEventListener("error", () => {
-        this._onError(new Error("Watch WebSocket error"));
-      });
-      ws.addEventListener("close", () => {
-        this._clearKeepSeat();
+        this.reportError(new Error("NicoNico watch WebSocket error"));
       });
     }
-    _handleWatchMessage(msg) {
-      switch (msg.type) {
-        case "seat": {
-          const intervalSec = msg.data?.keepIntervalSec ?? 30;
-          this._clearKeepSeat();
-          this._keepSeatTimer = setInterval(() => {
-            if (this._watchWs?.readyState === WebSocket.OPEN) {
-              this._watchWs.send(JSON.stringify({ type: "keepSeat" }));
-            }
-          }, intervalSec * 1e3);
-          break;
-        }
+    handleWatchMessage(message) {
+      switch (message.type) {
         case "ping":
-          if (this._watchWs?.readyState === WebSocket.OPEN) {
-            this._watchWs.send(JSON.stringify({ type: "pong" }));
-          }
+          this.sendWatchMessage({ type: "pong" });
+          this.sendWatchMessage({ type: "keepSeat" });
           break;
-        case "disconnect": {
-          const reason = msg.data?.reason;
-          this._clearKeepSeat();
-          if (reason === "END_PROGRAM") {
-            this.stop();
-          } else {
-            this._onError(new Error(`Disconnected: ${reason ?? "unknown"}`));
-          }
-          break;
-        }
         case "messageServer":
-        case "akashicMessageServer": {
-          const { viewUri } = msg.data ?? {};
-          if (!viewUri) return;
-          this._messageServerUri = viewUri;
-          this._nextStreamAt = "now";
-          this._connectMessageServer();
+        case "akashicMessageServer":
+          this.handleMessageServer(message.data);
           break;
-        }
+        case "reconnect":
+          this.handleReconnect(message.data);
+          break;
+        case "disconnect":
+          this.handleDisconnect(message.data);
+          break;
       }
     }
-    _connectMessageServer() {
-      if (!this._alive || !this._messageServerUri) return;
-      this._messageStreamHandle?.abort();
-      const prevAt = this._nextStreamAt;
-      const sep = this._messageServerUri.includes("?") ? "&" : "?";
-      const url = `${this._messageServerUri}${sep}at=${this._nextStreamAt}`;
-      const splitter = new ChunkSplitter();
-      this._messageStreamHandle = openHttpStream(
-        url,
+    handleMessageServer(data) {
+      const viewUri = data?.viewUri;
+      if (typeof viewUri !== "string" || viewUri.length === 0) return;
+      this.viewUri = viewUri;
+      this.nextEntryAt = "now";
+      this.receivedInitialSegment = false;
+      this.connectEntryStream();
+    }
+    handleReconnect(data) {
+      const currentUrl = this.reconnectWsUrl;
+      if (!currentUrl) return;
+      const waitTimeSec = typeof data?.waitTimeSec === "number" ? data.waitTimeSec : 0;
+      const nextUrl = replaceAudienceToken(currentUrl, data?.audienceToken);
+      this.watchWs?.close();
+      this.reconnectTimer = setTimeout(
+        () => {
+          if (this.alive) this.connectWatchWebSocket(nextUrl, true);
+        },
+        Math.max(0, waitTimeSec * 1e3)
+      );
+    }
+    handleDisconnect(data) {
+      const reason = data?.reason;
+      if (reason === "END_PROGRAM") {
+        this.stop();
+        return;
+      }
+      this.reportError(
+        new Error(`NicoNico disconnected: ${String(reason ?? "unknown")}`)
+      );
+    }
+    sendWatchMessage(message) {
+      if (this.watchWs?.readyState !== WebSocket.OPEN) return;
+      this.watchWs.send(JSON.stringify(message));
+    }
+    connectEntryStream() {
+      if (!this.alive || !this.viewUri) return;
+      this.entryHandle?.abort();
+      const currentAt = this.nextEntryAt;
+      const splitter = new SizeDelimitedSplitter();
+      this.entryHandle = openGmBinaryStream(
+        withAt(this.viewUri, currentAt),
         (data) => {
           try {
             splitter.addData(data);
             for (const chunk of splitter.read()) {
-              const entry = decodeChunkedEntry(chunk);
-              if (entry.segmentUri) {
-                if (!this._connectedOnce) {
-                  this._connectedOnce = true;
-                  this._onConnect({ liveId: this._liveId });
-                }
-                this._startSegment(entry.segmentUri);
-              }
-              if (entry.nextAt !== void 0) {
-                this._nextStreamAt = String(entry.nextAt);
-              }
+              this.handleEntry(decodeChunkedEntry(chunk));
             }
-          } catch (e) {
-            this._onError(e instanceof Error ? e : new Error(String(e)));
+          } catch (error) {
+            this.reportError(error);
           }
         },
         () => {
-          if (!this._alive) return;
-          if (this._nextStreamAt === prevAt) {
-            this._onError(
-              new Error("Message server disconnected without updating nextAt")
+          if (!this.alive) return;
+          if (this.nextEntryAt === currentAt) {
+            this.reportError(
+              new Error("NicoNico entry stream ended without next cursor")
             );
             return;
           }
-          this._connectMessageServer();
+          this.connectEntryStream();
         },
-        (e) => {
-          this._onError(e);
-        }
+        (error) => this.reportError(error)
       );
     }
-    _startSegment(uri) {
-      if (!this._alive) return;
-      this._segmentStreamHandle?.abort();
-      const splitter = new ChunkSplitter();
-      let nextUri;
-      const connect = (segUri) => {
-        if (!this._alive) return;
-        this._segmentStreamHandle = openHttpStream(
-          segUri,
-          (data) => {
-            splitter.addData(data);
-            for (const chunk of splitter.read()) {
-              const seg = decodePackedSegment(chunk);
-              if (seg.nextUri) nextUri = seg.nextUri;
-              const messages = this._toMessages(seg.chats);
-              if (messages.length > 0) this._onChat(messages);
-            }
-          },
-          () => {
-            if (!this._alive) return;
-            if (nextUri) connect(nextUri);
-          },
-          (e) => {
-            this._onError(e);
-          }
-        );
-      };
-      connect(uri);
+    handleEntry(entry) {
+      if (entry.nextAt) this.nextEntryAt = entry.nextAt;
+      const uri = entry.segmentUri ?? (!this.receivedInitialSegment ? entry.previousUri : void 0);
+      if (!uri) return;
+      this.receivedInitialSegment = true;
+      this.connectSegmentStream(uri);
+      if (!this.connected) {
+        this.connected = true;
+        this.onConnect({ liveId: this.liveId });
+      }
     }
-    _toMessages(chats) {
-      return chats.map(({ chat, timestampSec }) => {
-        if (!chat.content || chat.content.startsWith("/")) return void 0;
-        const timestampUsec = String(timestampSec * 1e6);
-        if (this._startedAt > 0 && Number(timestampUsec) <= this._startedAt)
-          return void 0;
-        const author = chat.hashedUserId ?? chat.rawUserId?.toString() ?? "anonymous";
-        return {
-          id: String(chat.no),
-          author,
-          message: chat.content,
-          timestampUsec,
-          isMember: chat.accountStatus > 0
-        };
-      }).filter((m) => m !== void 0);
+    connectSegmentStream(segmentUri) {
+      if (!this.alive) return;
+      this.segmentHandle?.abort();
+      const splitter = new SizeDelimitedSplitter();
+      this.segmentHandle = openGmBinaryStream(
+        segmentUri,
+        (data) => {
+          try {
+            splitter.addData(data);
+            const messages = [];
+            for (const chunk of splitter.read()) {
+              const decoded = decodeChunkedMessage(chunk);
+              const message = decoded ? this.toChatMessage(decoded) : void 0;
+              if (message) messages.push(message);
+            }
+            if (messages.length > 0) this.onChat(messages);
+          } catch (error) {
+            this.reportError(error);
+          }
+        },
+        () => void 0,
+        (error) => this.reportError(error)
+      );
+    }
+    toChatMessage(decoded) {
+      const { chat } = decoded;
+      if (chat.content.startsWith("/")) return void 0;
+      const timestampUsec = String(
+        decoded.timestampSec * 1e6 + Math.floor(decoded.timestampNanos / 1e3)
+      );
+      if (this.startedAtUsec > 0 && Number(timestampUsec) <= this.startedAtUsec) {
+        return void 0;
+      }
+      return {
+        id: decoded.id ?? String(chat.no),
+        author: chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "anonymous",
+        message: chat.content,
+        timestampUsec,
+        isMember: chat.accountStatus > 0
+      };
+    }
+    reportError(error) {
+      this.onError(error instanceof Error ? error : new Error(String(error)));
     }
   }
-  function subscribeNiconicoLiveChat(options) {
-    const client2 = new NiconicoLiveChatClient(options);
-    client2.start();
+  function subscribeNicoLiveChat(options) {
+    const client2 = new NicoLiveChatClient(options);
+    void client2.start();
     return () => client2.stop();
   }
   const WS_URL = "wss://irc-ws.chat.twitch.tv:443";
@@ -20814,7 +20826,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
           case "niconico": {
             const liveId = extractNiconicoLiveId(rawValue);
             if (!liveId) return;
-            unsubscribeRef.current = subscribeNiconicoLiveChat({
+            unsubscribeRef.current = subscribeNicoLiveChat({
               liveId,
               onChat: onChat2,
               onConnect,
