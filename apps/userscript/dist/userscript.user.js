@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.25
+// @version      1.1.26
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -24330,6 +24330,19 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
     ...message,
     platform: platform2
   }));
+  const STORAGE_KEY_NICO_NAMES = "nama-typing:nico-names";
+  function getNicoNames() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY_NICO_NAMES) ?? "{}");
+    } catch {
+      return {};
+    }
+  }
+  function setNicoName(author, name) {
+    const names = getNicoNames();
+    names[author] = name;
+    localStorage.setItem(STORAGE_KEY_NICO_NAMES, JSON.stringify(names));
+  }
   const NamaTypingContainer = () => {
     return jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
@@ -24343,24 +24356,39 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
   function onChat(messages) {
     const ime = _unsafeWindow.__ytyping_ime;
     if (!ime) return;
+    const nicoNames = getNicoNames();
     for (const m of messages) {
       console.log(m);
-      const userResult = ime.getUserResult(m.author);
-      const result = ime.handleImeInput({
-        value: m.message,
-        currentWordIndex: userResult?.currentWordIndex,
-        wordResults: userResult?.wordResults
-      });
-      ime.updateUserResult(m.author, {
-        name: m.author,
-        typeCountDelta: result.typeCountDelta,
-        newWordResults: result.newWordResults,
-        nextWordIndex: result.nextWordIndex
-      });
-      ime.addNotifications(
-        result.appendNotifications.map((n) => `${m.author}: ${n}`)
-      );
+      if (!processChatMessage(ime, m, nicoNames)) continue;
     }
+  }
+  function processChatMessage(ime, m, nicoNames) {
+    if (m.platform === "niconico" && tryRegisterNicoName(m, nicoNames)) return false;
+    const displayName = m.platform === "niconico" ? nicoNames[m.author] ?? m.author : m.author;
+    const userResult = ime.getUserResult(m.author);
+    const result = ime.handleImeInput({
+      value: m.message,
+      currentWordIndex: userResult?.currentWordIndex,
+      wordResults: userResult?.wordResults
+    });
+    ime.updateUserResult(m.author, {
+      name: displayName,
+      typeCountDelta: result.typeCountDelta,
+      newWordResults: result.newWordResults,
+      nextWordIndex: result.nextWordIndex
+    });
+    ime.addNotifications(
+      result.appendNotifications.map((n) => `${displayName}: ${n}`)
+    );
+    return true;
+  }
+  function tryRegisterNicoName(m, nicoNames) {
+    const match = m.message.match(/^@(.+)/);
+    if (!match) return false;
+    const name = match[1].trim();
+    nicoNames[m.author] = name;
+    setNicoName(m.author, name);
+    return true;
   }
   function Switch({
     className,
