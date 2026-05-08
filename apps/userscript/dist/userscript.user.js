@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.24
+// @version      1.1.25
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -15274,19 +15274,150 @@ desc.value[p.number] = {
   const file_google_protobuf_timestamp = fileDesc("Ch9nb29nbGUvcHJvdG9idWYvdGltZXN0YW1wLnByb3RvEg9nb29nbGUucHJvdG9idWYiKwoJVGltZXN0YW1wEg8KB3NlY29uZHMYASABKAMSDQoFbmFub3MYAiABKAVChQEKE2NvbS5nb29nbGUucHJvdG9idWZCDlRpbWVzdGFtcFByb3RvUAFaMmdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL3RpbWVzdGFtcHBi+AEBogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM");
   const file_google_protobuf_duration = fileDesc("Ch5nb29nbGUvcHJvdG9idWYvZHVyYXRpb24ucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIqCghEdXJhdGlvbhIPCgdzZWNvbmRzGAEgASgDEg0KBW5hbm9zGAIgASgFQoMBChNjb20uZ29vZ2xlLnByb3RvYnVmQg1EdXJhdGlvblByb3RvUAFaMWdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2R1cmF0aW9ucGL4AQGiAgNHUEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnByb3RvMw");
   const file_dwango_nicolive_chat_data_atoms = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIrwJCgRDaGF0Eg8KB2NvbnRlbnQYASABKAkSDAoEdnBvcxgDIAEoBRJFCg5hY2NvdW50X3N0YXR1cxgEIAEoDjItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5BY2NvdW50U3RhdHVzEhEKBG5hbWUYAiABKAlIAIgBARIYCgtyYXdfdXNlcl9pZBgFIAEoA0gBiAEBEhsKDmhhc2hlZF91c2VyX2lkGAYgASgJSAKIAQESOgoIbW9kaWZpZXIYByABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISCgoCbm8YCCABKAUa4wYKCE1vZGlmaWVyEj4KCHBvc2l0aW9uGAEgASgOMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlBvcxI7CgRzaXplGAIgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlNpemUSSQoLbmFtZWRfY29sb3IYAyABKA4yMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXIuQ29sb3JOYW1lSAASSAoKZnVsbF9jb2xvchgEIAEoCzIyLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5GdWxsQ29sb3JIABI7CgRmb250GAUgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLkZvbnQSQQoHb3BhY2l0eRgGIAEoDjIwLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5PcGFjaXR5GiwKCUZ1bGxDb2xvchIJCgFyGAEgASgFEgkKAWcYAiABKAUSCQoBYhgDIAEoBSIiCgNQb3MSCAoEbmFrYRAAEgkKBXNoaXRhEAESBgoCdWUQAiImCgRTaXplEgoKBm1lZGl1bRAAEgkKBXNtYWxsEAESBwoDYmlnEAIi7QEKCUNvbG9yTmFtZRIJCgV3aGl0ZRAAEgcKA3JlZBABEggKBHBpbmsQAhIKCgZvcmFuZ2UQAxIKCgZ5ZWxsb3cQBBIJCgVncmVlbhAFEggKBGN5YW4QBhIICgRibHVlEAcSCgoGcHVycGxlEAgSCQoFYmxhY2sQCRIKCgZ3aGl0ZTIQChIICgRyZWQyEAsSCQoFcGluazIQDBILCgdvcmFuZ2UyEA0SCwoHeWVsbG93MhAOEgoKBmdyZWVuMhAPEgkKBWN5YW4yEBASCQoFYmx1ZTIQERILCgdwdXJwbGUyEBISCgoGYmxhY2syEBMiKgoERm9udBIKCgZkZWZvbnQQABIKCgZtaW5jaG8QARIKCgZnb3RoaWMQAiImCgdPcGFjaXR5EgoKBk5vcm1hbBAAEg8KC1RyYW5zbHVjZW50EAFCBwoFY29sb3IiKgoNQWNjb3VudFN0YXR1cxIMCghTdGFuZGFyZBAAEgsKB1ByZW1pdW0QAUIHCgVfbmFtZUIOCgxfcmF3X3VzZXJfaWRCEQoPX2hhc2hlZF91c2VyX2lkIpYBCg9PcGVyYXRvckNvbW1lbnQSDwoHY29udGVudBgBIAEoCRIRCgRuYW1lGAIgASgJSACIAQESOgoIbW9kaWZpZXIYAyABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISEQoEbGluaxgEIAEoCUgBiAEBQgcKBV9uYW1lQgcKBV9saW5rIlEKBEp1bXASDwoHY29udGVudBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJEicKBHdhaXQYBCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iUQoIUmVkaXJlY3QSCwoDdXJpGAEgASgJEg8KB21lc3NhZ2UYAiABKAkSJwoEd2FpdBgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiKAAgoSU2ltcGxlTm90aWZpY2F0aW9uEhAKBmljaGliYRgBIAEoCUgAEg8KBXF1b3RlGAIgASgJSAASEQoHZW1vdGlvbhgDIAEoCUgAEhAKBmNydWlzZRgEIAEoCUgAEhoKEHByb2dyYW1fZXh0ZW5kZWQYBSABKAlIABIUCgpyYW5raW5nX2luGAYgASgJSAASGQoPcmFua2luZ191cGRhdGVkGAggASgJSAASEQoHdmlzaXRlZBgHIAEoCUgAEh4KFHN1cHBvcnRlcl9yZWdpc3RlcmVkGAkgASgJSAASFwoNdXNlcl9sZXZlbF91cBgKIAEoCUgAQgkKB21lc3NhZ2Ui0QEKBEdpZnQSDwoHaXRlbV9pZBgBIAEoCRIfChJhZHZlcnRpc2VyX3VzZXJfaWQYAiABKANIAIgBARIXCg9hZHZlcnRpc2VyX25hbWUYAyABKAkSDQoFcG9pbnQYBCABKAMSDwoHbWVzc2FnZRgFIAEoCRIRCglpdGVtX25hbWUYBiABKAkSHgoRY29udHJpYnV0aW9uX3JhbmsYByABKAVIAYgBAUIVChNfYWR2ZXJ0aXNlcl91c2VyX2lkQhQKEl9jb250cmlidXRpb25fcmFuayKHBAoGTmljb2FkEjIKAnYwGAEgASgLMiQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjBIABIyCgJ2MRgCIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYxSAAa2QIKAlYwEjsKBmxhdGVzdBgBIAEoCzIrLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYwLkxhdGVzdBI9CgdyYW5raW5nGAIgAygLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjAuUmFua2luZxITCgt0b3RhbF9wb2ludBgDIAEoBRpNCgZMYXRlc3QSEgoKYWR2ZXJ0aXNlchgBIAEoCRINCgVwb2ludBgCIAEoBRIUCgdtZXNzYWdlGAMgASgJSACIAQFCCgoIX21lc3NhZ2UacwoHUmFua2luZxISCgphZHZlcnRpc2VyGAEgASgJEgwKBHJhbmsYAiABKAUSFAoHbWVzc2FnZRgDIAEoCUgAiAEBEhYKCXVzZXJfcmFuaxgEIAEoBUgBiAEBQgoKCF9tZXNzYWdlQgwKCl91c2VyX3JhbmsaLQoCVjESFgoOdG90YWxfYWRfcG9pbnQYASABKAUSDwoHbWVzc2FnZRgCIAEoCUIKCgh2ZXJzaW9ucyLHAgoLQ29tbWVudExvY2sSPQoGc3RhdHVzGAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5TdGF0dXMSWQoSZm9sbG93X3Jlc3RyaWN0aW9uGAIgASgLMjguZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5Gb2xsb3dSZXN0cmljdGlvbkgAiAEBGk8KEUZvbGxvd1Jlc3RyaWN0aW9uEjoKF21pbmltdW1fZm9sbG93X2R1cmF0aW9uGAEgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uIjYKBlN0YXR1cxIQCgxVbnJlc3RyaWN0ZWQQABIKCgZMb2NrZWQQARIOCgpSZXN0cmljdGVkEAJCFQoTX2ZvbGxvd19yZXN0cmljdGlvbiKAAQoLQ29tbWVudE1vZGUSPQoGbGF5b3V0GAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TW9kZS5MYXlvdXQiMgoGTGF5b3V0EgoKBk5vcm1hbBAAEgwKCFNwbGl0VG9wEAESDgoKQmFja2dyb3VuZBACIgwKCkdhbWVVcGRhdGUi5AEKClRyaWFsUGFuZWwSOgoFcGFuZWwYASABKA4yKy5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWwuUGFuZWwSRAoQdW5xdWFsaWZpZWRfdXNlchgCIAEoDjIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVHJpYWxQYW5lbC5Nb2RlIiAKBVBhbmVsEgoKBkhpZGRlbhAAEgsKB0Rpc3BsYXkQASIyCgRNb2RlEgsKB0FsbG93ZWQQABIOCgpSZXN0cmljdGVkEAESDQoJRm9yYmlkZGVuEAIibwoNUHJvZ3JhbVN0YXR1cxI9CgVzdGF0ZRgBIAEoDjIuLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1cy5TdGF0ZSIfCgVTdGF0ZRILCgdVbmtub3duEAASCQoFRW5kZWQQASLAAQoKVGFnVXBkYXRlZBI3CgR0YWdzGAEgAygLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5UYWdVcGRhdGVkLlRhZxIUCgxvd25lcl9sb2NrZWQYAiABKAgaYwoDVGFnEgwKBHRleHQYASABKAkSDgoGbG9ja2VkGAIgASgIEhAKCHJlc2VydmVkGAMgASgIEhoKDW5pY29wZWRpYV91cmkYBCABKAlIAIgBAUIQCg5fbmljb3BlZGlhX3VyaSLoAQoKU3RhdGlzdGljcxIUCgd2aWV3ZXJzGAEgASgDSACIAQESFQoIY29tbWVudHMYAiABKANIAYgBARIWCglhZF9wb2ludHMYAyABKANIAogBARIYCgtnaWZ0X3BvaW50cxgEIAEoA0gDiAEBEiMKFnRpbWVzaGlmdF9yZXNlcnZhdGlvbnMYBiABKANIBIgBAUIKCghfdmlld2Vyc0ILCglfY29tbWVudHNCDAoKX2FkX3BvaW50c0IOCgxfZ2lmdF9wb2ludHNCGQoXX3RpbWVzaGlmdF9yZXNlcnZhdGlvbnNKBAgFEAYi6AEKB01hcnF1ZWUSQAoHZGlzcGxheRgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZS5EaXNwbGF5SACIAQEajgEKB0Rpc3BsYXkSRAoQb3BlcmF0b3JfY29tbWVudBgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuT3BlcmF0b3JDb21tZW50EjAKCGR1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uSACIAQFCCwoJX2R1cmF0aW9uQgoKCF9kaXNwbGF5IoMCCgdFbnF1ZXRlEhAKCHF1ZXN0aW9uGAEgASgJEjoKB2Nob2ljZXMYAiADKAsyKS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkVucXVldGUuQ2hvaWNlEjkKBnN0YXR1cxgDIAEoDjIpLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuRW5xdWV0ZS5TdGF0dXMaQwoGQ2hvaWNlEhMKC2Rlc2NyaXB0aW9uGAEgASgJEhYKCXBlcl9taWxsZRgDIAEoBUgAiAEBQgwKCl9wZXJfbWlsbGUiKgoGU3RhdHVzEgoKBkNsb3NlZBAAEggKBFBvbGwQARIKCgZSZXN1bHQQAiJ7CglNb3ZlT3JkZXISLwoEanVtcBgBIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuSnVtcEgAEjcKCHJlZGlyZWN0GAIgASgLMiMuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5SZWRpcmVjdEgAQgQKAnRvYgZwcm90bzM", [file_google_protobuf_duration]);
-  var ProgramStatus_State = ((ProgramStatus_State2) => {
+  var Chat_Modifier_Pos;
+  (function(Chat_Modifier_Pos2) {
+    Chat_Modifier_Pos2[Chat_Modifier_Pos2["naka"] = 0] = "naka";
+    Chat_Modifier_Pos2[Chat_Modifier_Pos2["shita"] = 1] = "shita";
+    Chat_Modifier_Pos2[Chat_Modifier_Pos2["ue"] = 2] = "ue";
+  })(Chat_Modifier_Pos || (Chat_Modifier_Pos = {}));
+  var Chat_Modifier_Size;
+  (function(Chat_Modifier_Size2) {
+    Chat_Modifier_Size2[Chat_Modifier_Size2["medium"] = 0] = "medium";
+    Chat_Modifier_Size2[Chat_Modifier_Size2["small"] = 1] = "small";
+    Chat_Modifier_Size2[Chat_Modifier_Size2["big"] = 2] = "big";
+  })(Chat_Modifier_Size || (Chat_Modifier_Size = {}));
+  var Chat_Modifier_ColorName;
+  (function(Chat_Modifier_ColorName2) {
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["white"] = 0] = "white";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["red"] = 1] = "red";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["pink"] = 2] = "pink";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["orange"] = 3] = "orange";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["yellow"] = 4] = "yellow";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["green"] = 5] = "green";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["cyan"] = 6] = "cyan";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["blue"] = 7] = "blue";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["purple"] = 8] = "purple";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["black"] = 9] = "black";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["white2"] = 10] = "white2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["red2"] = 11] = "red2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["pink2"] = 12] = "pink2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["orange2"] = 13] = "orange2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["yellow2"] = 14] = "yellow2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["green2"] = 15] = "green2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["cyan2"] = 16] = "cyan2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["blue2"] = 17] = "blue2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["purple2"] = 18] = "purple2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["black2"] = 19] = "black2";
+  })(Chat_Modifier_ColorName || (Chat_Modifier_ColorName = {}));
+  var Chat_Modifier_Font;
+  (function(Chat_Modifier_Font2) {
+    Chat_Modifier_Font2[Chat_Modifier_Font2["defont"] = 0] = "defont";
+    Chat_Modifier_Font2[Chat_Modifier_Font2["mincho"] = 1] = "mincho";
+    Chat_Modifier_Font2[Chat_Modifier_Font2["gothic"] = 2] = "gothic";
+  })(Chat_Modifier_Font || (Chat_Modifier_Font = {}));
+  var Chat_Modifier_Opacity;
+  (function(Chat_Modifier_Opacity2) {
+    Chat_Modifier_Opacity2[Chat_Modifier_Opacity2["Normal"] = 0] = "Normal";
+    Chat_Modifier_Opacity2[Chat_Modifier_Opacity2["Translucent"] = 1] = "Translucent";
+  })(Chat_Modifier_Opacity || (Chat_Modifier_Opacity = {}));
+  var Chat_AccountStatus;
+  (function(Chat_AccountStatus2) {
+    Chat_AccountStatus2[Chat_AccountStatus2["Standard"] = 0] = "Standard";
+    Chat_AccountStatus2[Chat_AccountStatus2["Premium"] = 1] = "Premium";
+  })(Chat_AccountStatus || (Chat_AccountStatus = {}));
+  var CommentLock_Status;
+  (function(CommentLock_Status2) {
+    CommentLock_Status2[CommentLock_Status2["Unrestricted"] = 0] = "Unrestricted";
+    CommentLock_Status2[CommentLock_Status2["Locked"] = 1] = "Locked";
+    CommentLock_Status2[CommentLock_Status2["Restricted"] = 2] = "Restricted";
+  })(CommentLock_Status || (CommentLock_Status = {}));
+  var CommentMode_Layout;
+  (function(CommentMode_Layout2) {
+    CommentMode_Layout2[CommentMode_Layout2["Normal"] = 0] = "Normal";
+    CommentMode_Layout2[CommentMode_Layout2["SplitTop"] = 1] = "SplitTop";
+    CommentMode_Layout2[CommentMode_Layout2["Background"] = 2] = "Background";
+  })(CommentMode_Layout || (CommentMode_Layout = {}));
+  var TrialPanel_Panel;
+  (function(TrialPanel_Panel2) {
+    TrialPanel_Panel2[TrialPanel_Panel2["Hidden"] = 0] = "Hidden";
+    TrialPanel_Panel2[TrialPanel_Panel2["Display"] = 1] = "Display";
+  })(TrialPanel_Panel || (TrialPanel_Panel = {}));
+  var TrialPanel_Mode;
+  (function(TrialPanel_Mode2) {
+    TrialPanel_Mode2[TrialPanel_Mode2["Allowed"] = 0] = "Allowed";
+    TrialPanel_Mode2[TrialPanel_Mode2["Restricted"] = 1] = "Restricted";
+    TrialPanel_Mode2[TrialPanel_Mode2["Forbidden"] = 2] = "Forbidden";
+  })(TrialPanel_Mode || (TrialPanel_Mode = {}));
+  var ProgramStatus_State;
+  (function(ProgramStatus_State2) {
     ProgramStatus_State2[ProgramStatus_State2["Unknown"] = 0] = "Unknown";
     ProgramStatus_State2[ProgramStatus_State2["Ended"] = 1] = "Ended";
-    return ProgramStatus_State2;
-  })(ProgramStatus_State || {});
+  })(ProgramStatus_State || (ProgramStatus_State = {}));
+  var Enquete_Status;
+  (function(Enquete_Status2) {
+    Enquete_Status2[Enquete_Status2["Closed"] = 0] = "Closed";
+    Enquete_Status2[Enquete_Status2["Poll"] = 1] = "Poll";
+    Enquete_Status2[Enquete_Status2["Result"] = 2] = "Result";
+  })(Enquete_Status || (Enquete_Status = {}));
   const file_dwango_nicolive_chat_data_atoms_forwarded = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL2ZvcndhcmRlZC5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyL7AQoNRm9yd2FyZGVkQ2hhdBItCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0EhIKCm1lc3NhZ2VfaWQYAiABKAkSFgoOc291cmNlX2xpdmVfaWQYAyABKAMSSwoEbW9kZRgEIAEoDjI9LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuRm9yd2FyZGVkQ2hhdC5Gb3J3YXJkaW5nTW9kZSJCCg5Gb3J3YXJkaW5nTW9kZRILCgdVTktOT1dOEAASDwoLRlJPTV9DUlVJU0UQARISCg5DT0xMQUJfU0hBUklORxACYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms]);
+  var ForwardedChat_ForwardingMode;
+  (function(ForwardedChat_ForwardingMode2) {
+    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["UNKNOWN"] = 0] = "UNKNOWN";
+    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["FROM_CRUISE"] = 1] = "FROM_CRUISE";
+    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["COLLAB_SHARING"] = 2] = "COLLAB_SHARING";
+  })(ForwardedChat_ForwardingMode || (ForwardedChat_ForwardingMode = {}));
   const file_dwango_nicolive_chat_data_atoms_moderator = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL21vZGVyYXRvci5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyJqChFNb2RlcmF0b3JVc2VySW5mbxIPCgd1c2VyX2lkGAEgASgDEhUKCG5pY2tuYW1lGAIgASgJSACIAQESFAoHaWNvblVybBgDIAEoCUgBiAEBQgsKCV9uaWNrbmFtZUIKCghfaWNvblVybCKLAgoQTW9kZXJhdG9yVXBkYXRlZBJXCglvcGVyYXRpb24YASABKA4yRC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVwZGF0ZWQuTW9kZXJhdG9yT3BlcmF0aW9uEkQKCG9wZXJhdG9yGAIgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVc2VySW5mbxItCgl1cGRhdGVkQXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIikKEk1vZGVyYXRvck9wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASLFBAoLU1NOR1VwZGF0ZWQSTQoJb3BlcmF0aW9uGAEgASgOMjouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZC5TU05HT3BlcmF0aW9uEg8KB3NzbmdfaWQYAiABKAMSRAoIb3BlcmF0b3IYAyABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVzZXJJbmZvEkgKBHR5cGUYBCABKA4yNS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdUeXBlSACIAQESEwoGc291cmNlGAUgASgJSAGIAQESMgoJdXBkYXRlZEF0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgCiAEBElQKDW9wZXJhdG9yX3R5cGUYByABKA4yPS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdPcGVyYXRvclR5cGUiJAoNU1NOR09wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASIrCghTU05HVHlwZRIICgRVU0VSEAASCAoEV09SRBABEgsKB0NPTU1BTkQQAiIyChBTU05HT3BlcmF0b3JUeXBlEg0KCU1PREVSQVRPUhAAEg8KC0JST0FEQ0FTVEVSEAFCBwoFX3R5cGVCCQoHX3NvdXJjZUIMCgpfdXBkYXRlZEF0IqMCChZNb2RlcmF0aW9uQW5ub3VuY2VtZW50EhQKB21lc3NhZ2UYASABKAlIAIgBARJdCg5ndWlkZWxpbmVJdGVtcxgCIAMoDjJFLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuTW9kZXJhdGlvbkFubm91bmNlbWVudC5HdWlkZWxpbmVJdGVtEi0KCXVwZGF0ZWRBdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiWQoNR3VpZGVsaW5lSXRlbRILCgdVTktOT1dOEAASCgoGU0VYVUFMEAESCAoEU1BBTRACEgsKB1NMQU5ERVIQAxIYChRQRVJTT05BTF9JTkZPUk1BVElPThAEQgoKCF9tZXNzYWdlYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  var ModeratorUpdated_ModeratorOperation;
+  (function(ModeratorUpdated_ModeratorOperation2) {
+    ModeratorUpdated_ModeratorOperation2[ModeratorUpdated_ModeratorOperation2["ADD"] = 0] = "ADD";
+    ModeratorUpdated_ModeratorOperation2[ModeratorUpdated_ModeratorOperation2["DELETE"] = 1] = "DELETE";
+  })(ModeratorUpdated_ModeratorOperation || (ModeratorUpdated_ModeratorOperation = {}));
+  var SSNGUpdated_SSNGOperation;
+  (function(SSNGUpdated_SSNGOperation2) {
+    SSNGUpdated_SSNGOperation2[SSNGUpdated_SSNGOperation2["ADD"] = 0] = "ADD";
+    SSNGUpdated_SSNGOperation2[SSNGUpdated_SSNGOperation2["DELETE"] = 1] = "DELETE";
+  })(SSNGUpdated_SSNGOperation || (SSNGUpdated_SSNGOperation = {}));
+  var SSNGUpdated_SSNGType;
+  (function(SSNGUpdated_SSNGType2) {
+    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["USER"] = 0] = "USER";
+    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["WORD"] = 1] = "WORD";
+    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["COMMAND"] = 2] = "COMMAND";
+  })(SSNGUpdated_SSNGType || (SSNGUpdated_SSNGType = {}));
+  var SSNGUpdated_SSNGOperatorType;
+  (function(SSNGUpdated_SSNGOperatorType2) {
+    SSNGUpdated_SSNGOperatorType2[SSNGUpdated_SSNGOperatorType2["MODERATOR"] = 0] = "MODERATOR";
+    SSNGUpdated_SSNGOperatorType2[SSNGUpdated_SSNGOperatorType2["BROADCASTER"] = 1] = "BROADCASTER";
+  })(SSNGUpdated_SSNGOperatorType || (SSNGUpdated_SSNGOperatorType = {}));
+  var ModerationAnnouncement_GuidelineItem;
+  (function(ModerationAnnouncement_GuidelineItem2) {
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["UNKNOWN"] = 0] = "UNKNOWN";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SEXUAL"] = 1] = "SEXUAL";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SPAM"] = 2] = "SPAM";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SLANDER"] = 3] = "SLANDER";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["PERSONAL_INFORMATION"] = 4] = "PERSONAL_INFORMATION";
+  })(ModerationAnnouncement_GuidelineItem || (ModerationAnnouncement_GuidelineItem = {}));
   const file_dwango_nicolive_chat_data_atoms_notifications = fileDesc("CjNkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL25vdGlmaWNhdGlvbnMucHJvdG8SH2R3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMi0QIKFFNpbXBsZU5vdGlmaWNhdGlvblYyElQKBHR5cGUYASABKA4yRi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNpbXBsZU5vdGlmaWNhdGlvblYyLk5vdGlmaWNhdGlvblR5cGUSDwoHbWVzc2FnZRgCIAEoCRIVCg1zaG93X2luX3RlbG9wGAMgASgIEhQKDHNob3dfaW5fbGlzdBgEIAEoCCKkAQoQTm90aWZpY2F0aW9uVHlwZRILCgdVTktOT1dOEAASCgoGSUNISUJBEAESCwoHRU1PVElPThACEgoKBkNSVUlTRRADEhQKEFBST0dSQU1fRVhURU5ERUQQBBIOCgpSQU5LSU5HX0lOEAUSCwoHVklTSVRFRBAGEhgKFFNVUFBPUlRFUl9SRUdJU1RFUkVEEAcSEQoNVVNFUl9MRVZFTF9VUBAIYgZwcm90bzM");
+  var SimpleNotificationV2_NotificationType;
+  (function(SimpleNotificationV2_NotificationType2) {
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["UNKNOWN"] = 0] = "UNKNOWN";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["ICHIBA"] = 1] = "ICHIBA";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["EMOTION"] = 2] = "EMOTION";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["CRUISE"] = 3] = "CRUISE";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["PROGRAM_EXTENDED"] = 4] = "PROGRAM_EXTENDED";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["RANKING_IN"] = 5] = "RANKING_IN";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["VISITED"] = 6] = "VISITED";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["SUPPORTER_REGISTERED"] = 7] = "SUPPORTER_REGISTERED";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["USER_LEVEL_UP"] = 8] = "USER_LEVEL_UP";
+  })(SimpleNotificationV2_NotificationType || (SimpleNotificationV2_NotificationType = {}));
   const file_dwango_nicolive_chat_data_message = fileDesc("Cidkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL21lc3NhZ2UucHJvdG8SGWR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEigQYKD05pY29saXZlTWVzc2FnZRIvCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0SAASTAoTc2ltcGxlX25vdGlmaWNhdGlvbhgHIAEoCzItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuU2ltcGxlTm90aWZpY2F0aW9uSAASLwoEZ2lmdBgIIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuR2lmdEgAEjMKBm5pY29hZBgJIAEoCzIhLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkSAASPAoLZ2FtZV91cGRhdGUYDSABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkdhbWVVcGRhdGVIABI8Cgt0YWdfdXBkYXRlZBgRIAEoCzIlLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVGFnVXBkYXRlZEgAEk4KEW1vZGVyYXRvcl91cGRhdGVkGBIgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVcGRhdGVkSAASRAoMc3NuZ191cGRhdGVkGBMgASgLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZEgAEjoKD292ZXJmbG93ZWRfY2hhdBgUIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdEgAEkgKDmZvcndhcmRlZF9jaGF0GBYgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Gb3J3YXJkZWRDaGF0SAASVwoWc2ltcGxlX25vdGlmaWNhdGlvbl92MhgXIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuU2ltcGxlTm90aWZpY2F0aW9uVjJIAEIGCgRkYXRhSgQIAhAHSgQIChANSgQIDhARYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_forwarded, file_dwango_nicolive_chat_data_atoms_moderator, file_dwango_nicolive_chat_data_atoms_notifications]);
   const file_dwango_nicolive_chat_data_origin = fileDesc("CiZkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL29yaWdpbi5wcm90bxIZZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YSJzCg5OaWNvbGl2ZU9yaWdpbhI+CgRjaGF0GAEgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbi5DaGF0SAAaFwoEQ2hhdBIPCgdsaXZlX2lkGAEgASgDQggKBm9yaWdpbmIGcHJvdG8z");
   const file_dwango_nicolive_chat_data_state = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL3N0YXRlLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIoYGCg1OaWNvbGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1ZXRlGAIgASgLMiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRlSAGIAQESPQoKbW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1lbnRfbG9jaxgFIAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29tbWVudExvY2tIBIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxfcGFuZWwYByABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWxIBogBARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVyYXRpb25fYW5ub3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQFCDQoLX3N0YXRpc3RpY3NCCgoIX2VucXVldGVCDQoLX21vdmVfb3JkZXJCCgoIX21hcnF1ZWVCDwoNX2NvbW1lbnRfbG9ja0IPCg1fY29tbWVudF9tb2RlQg4KDF90cmlhbF9wYW5lbEIRCg9fcHJvZ3JhbV9zdGF0dXNCGgoYX21vZGVyYXRpb25fYW5ub3VuY2VtZW50YgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_moderator]);
   const file_dwango_nicolive_chat_service_edge_payload = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9zZXJ2aWNlL2VkZ2UvcGF5bG9hZC5wcm90bxIhZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlIrUDCg5DaHVua2VkTWVzc2FnZRJECgRtZXRhGAEgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLkNodW5rZWRNZXNzYWdlLk1ldGESPQoHbWVzc2FnZRgCIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2xpdmVNZXNzYWdlSAASOQoFc3RhdGUYBCABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29saXZlU3RhdGVIABJKCgZzaWduYWwYBSABKA4yOC5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2UuU2lnbmFsSAAadQoETWV0YRIKCgJpZBgBIAEoCRImCgJhdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOQoGb3JpZ2luGAMgASgLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbiIVCgZTaWduYWwSCwoHRmx1c2hlZBAAQgkKB3BheWxvYWQingIKDVBhY2tlZFNlZ21lbnQSQwoIbWVzc2FnZXMYASADKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2USQwoEbmV4dBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90GhMKBE5leHQSCwoDdXJpGAEgASgJGhwKDVN0YXRlU25hcHNob3QSCwoDdXJpGAEgASgJItYCCgxDaHVua2VkRW50cnkSRgoIYmFja3dhcmQYAiABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQmFja3dhcmRTZWdtZW50SAASRQoIcHJldmlvdXMYAyABKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuTWVzc2FnZVNlZ21lbnRIABJECgdzZWdtZW50GAEgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLk1lc3NhZ2VTZWdtZW50SAASTAoEbmV4dBgEIAEoCzI8LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5DaHVua2VkRW50cnkuUmVhZHlGb3JOZXh0SAAaGgoMUmVhZHlGb3JOZXh0EgoKAmF0GAEgASgDQgcKBWVudHJ5InIKDk1lc3NhZ2VTZWdtZW50EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBILCgN1cmkYAyABKAki1gEKD0JhY2t3YXJkU2VnbWVudBIpCgV1bnRpbBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASRgoHc2VnbWVudBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90YgZwcm90bzM", [file_google_protobuf_timestamp, file_dwango_nicolive_chat_data_message, file_dwango_nicolive_chat_data_state, file_dwango_nicolive_chat_data_origin]);
   const ChunkedMessageSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 0);
+  var ChunkedMessage_Signal;
+  (function(ChunkedMessage_Signal2) {
+    ChunkedMessage_Signal2[ChunkedMessage_Signal2["Flushed"] = 0] = "Flushed";
+  })(ChunkedMessage_Signal || (ChunkedMessage_Signal = {}));
   const PackedSegmentSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 1);
   const ChunkedEntrySchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 2);
   function timestampLargeA(a, b) {
@@ -15325,10 +15456,12 @@ desc.value[p.number] = {
   }
   function getProps(object, props, defaultValue) {
     for (const prop of props) {
-      if (object == null) break;
+      if (object == null)
+        break;
       object = object[prop];
     }
-    if (object !== void 0) return object;
+    if (object !== void 0)
+      return object;
     if (defaultValue !== void 0) {
       console.warn(`値が存在しないので代替値を使用します: ${props.join(".")}`, defaultValue);
       return defaultValue;
@@ -15345,16 +15478,20 @@ create: (options) => {
       let filter = options?.filter;
       const iterable = {
         next() {
-          if (queue.length > 0) return Promise.resolve({ value: queue.shift(), done: false });
-          if (state === "iterating") return nextPromise();
-          if (state === "closed") return Promise.resolve({ value: void 0, done: true });
+          if (queue.length > 0)
+            return Promise.resolve({ value: queue.shift(), done: false });
+          if (state === "iterating")
+            return nextPromise();
+          if (state === "closed")
+            return Promise.resolve({ value: void 0, done: true });
           throw error;
         },
         [Symbol.asyncIterator]() {
           return iterable;
         },
         return() {
-          if (state === "iterating") options?.breaked?.();
+          if (state === "iterating")
+            options?.breaked?.();
           return Promise.resolve({ value: void 0, done: true });
         }
       };
@@ -15366,14 +15503,17 @@ create: (options) => {
         });
       }
       function enqueue(value) {
-        if (state !== "iterating") return;
+        if (state !== "iterating")
+          return;
         if (filter != null) {
           let res = filter(value);
-          if (res === false) return;
+          if (res === false)
+            return;
           if (res === true) ;
           else {
             [res, filter] = res;
-            if (!res) return;
+            if (!res)
+              return;
           }
         }
         queue.push(value);
@@ -15383,20 +15523,24 @@ create: (options) => {
         }
       }
       function throwError(reason) {
-        if (state !== "iterating") return;
+        if (state !== "iterating")
+          return;
         finishIterating("error", reason);
       }
       function close() {
         finishIterating("closed");
       }
       function finishIterating(newState, e) {
-        if (state !== "iterating") return;
+        if (state !== "iterating")
+          return;
         state = newState;
         if (newState === "closed") {
-          if (resolveNext != null) resolveNext({ value: void 0, done: true });
+          if (resolveNext != null)
+            resolveNext({ value: void 0, done: true });
         } else {
           error = e;
-          if (rejectNext != null) rejectNext(error);
+          if (rejectNext != null)
+            rejectNext(error);
         }
       }
     }
@@ -15433,7 +15577,8 @@ fetch: async (uri, desc, signal, transport = defaultResponseIteratorTransport) =
   const defaultResponseIteratorTransport = {
     async fetch(uri, signal) {
       const res = await fetch(uri, { signal });
-      if (res.body == null) throw new Error(`fetchで問題が発生しました
+      if (res.body == null)
+        throw new Error(`fetchで問題が発生しました
 uri:${uri} status:${res.status}`);
       const reader = res.body.getReader();
       return {
@@ -15446,7 +15591,8 @@ uri:${uri} status:${res.status}`);
   async function* readableStreamToAsyncIterable(reader) {
     while (true) {
       const { done, value } = await reader.read();
-      if (done) return;
+      if (done)
+        return;
       yield value;
     }
   }
@@ -15467,11 +15613,7 @@ uri:${uri} status:${res.status}`);
         if (offset2 + size2 > buffer.byteLength) {
           break;
         }
-        yield fromBinary(
-          messageDesc2,
-          buffer.subarray(offset2, offset2 + size2),
-          options
-        );
+        yield fromBinary(messageDesc2, buffer.subarray(offset2, offset2 + size2), options);
         buffer = buffer.subarray(offset2 + size2);
       }
     }
@@ -15484,7 +15626,8 @@ fetchMessage: (messageUri, signal, transport) => {
       return ResponseIteratorSet.fetch(messageUri, ChunkedMessageSchema, signal, transport);
     },
 fetchBackwardMessages: async (backwardUri, delayMs, maxSegmentCount, isSnapshot, signal) => {
-      if (maxSegmentCount <= 0) maxSegmentCount = Number.MAX_SAFE_INTEGER;
+      if (maxSegmentCount <= 0)
+        maxSegmentCount = Number.MAX_SAFE_INTEGER;
       const buf = [];
       let nextUri = backwardUri;
       let segmentUri;
@@ -15498,11 +15641,13 @@ fetchBackwardMessages: async (backwardUri, delayMs, maxSegmentCount, isSnapshot,
           snapshotUri = packed.snapshot?.uri;
           nextUri = isSnapshot ? snapshotUri : segmentUri;
           buf.push(packed.messages);
-          if (nextUri == null || buf.length >= maxSegmentCount) break;
+          if (nextUri == null || buf.length >= maxSegmentCount)
+            break;
           await sleep(delayMs, signal);
         }
       } catch (e) {
-        if (!isAbortError(e, signal)) throw e;
+        if (!isAbortError(e, signal))
+          throw e;
       }
       const messages = buf.reverse().flat();
       return { messages, segmentUri, snapshotUri };
@@ -15548,7 +15693,8 @@ maintenanceIn: "MAINTENANCE_IN",
 serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
   };
   function getNicoliveDisconectReasonDescription(reason) {
-    if (reason == null) return "終了メッセージを受信する前に切断された";
+    if (reason == null)
+      return "終了メッセージを受信する前に切断された";
     return NicoliveDisconectReasonDescription[reason];
   }
   const NicoliveDisconectReasonDescription = {
@@ -15578,21 +15724,12 @@ serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
   }
   async function parseNicolivePageData(res) {
     try {
-      let postBroadcasterComment = function(text, name, isPermanent, color) {
-        return NicoliveUtility.postBroadcasterComment(
-          liveId,
-          broadcasterCommentToken,
-          text,
-          name,
-          isPermanent,
-          color
-        );
-      }, deleteBroadcasterComment = function() {
-        return NicoliveUtility.deleteBroadcasterComment(
-          liveId,
-          broadcasterCommentToken
-        );
+      let postBroadcasterComment2 = function(text, name, isPermanent, color) {
+        return NicoliveUtility.postBroadcasterComment(liveId, broadcasterCommentToken, text, name, isPermanent, color);
+      }, deleteBroadcasterComment2 = function() {
+        return NicoliveUtility.deleteBroadcasterComment(liveId, broadcasterCommentToken);
       };
+      var postBroadcasterComment = postBroadcasterComment2, deleteBroadcasterComment = deleteBroadcasterComment2;
       const dom = await res.text().then((data) => new DOMParser().parseFromString(data, "text/html"));
       const embeddedString = dom.getElementById("embedded-data").getAttribute("data-props");
       const embedded = JSON.parse(embeddedString);
@@ -15614,14 +15751,15 @@ serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
           broadcasterCommentToken: getProps(site, ["relive", "csrfToken"], ""),
 rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
         },
-        postBroadcasterComment,
-        deleteBroadcasterComment
+        postBroadcasterComment: postBroadcasterComment2,
+        deleteBroadcasterComment: deleteBroadcasterComment2
       };
     } catch (e) {
       throw new NicolivePageParseError(res.url, e);
     }
   }
   class NicoliveLiveIdError extends Error {
+    liveIdOrUrl;
     constructor(liveIdOrUrl) {
       super(`有効な放送IDを含んでいません. ${liveIdOrUrl}`);
       this.liveIdOrUrl = liveIdOrUrl;
@@ -15630,6 +15768,8 @@ rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
     }
   }
   class NicolivePageNotFoundError extends Error {
+    response;
+    liveId;
     constructor(response, liveId) {
       super(`放送ページが存在しません. lv:${liveId}`);
       this.response = response;
@@ -15639,6 +15779,8 @@ rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
     }
   }
   class NicolivePageParseError extends Error {
+    url;
+    innerError;
     constructor(url, innerError) {
       super(`放送ページの解析に失敗しました. url:${url}
 内部エラー:${innerError}`);
@@ -15649,6 +15791,7 @@ rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
     }
   }
   class NicoliveAccessDeniedError extends Error {
+    pageData;
     constructor(pageData) {
       super(`放送が非公開または視聴する権限がありません. lv:${pageData.nicoliveInfo.liveId}`);
       this.pageData = pageData;
@@ -15657,6 +15800,8 @@ rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
     }
   }
   class NicoliveWebSocketReconnectError extends Error {
+    data;
+reconnectTime;
     constructor(data) {
       super(`ウェブソケット再接続要求を受け取りました`);
       this.data = data;
@@ -15666,6 +15811,7 @@ rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
     }
   }
   class NicoliveWebSocketDisconnectError extends Error {
+    reason;
     constructor(reason) {
       super(`ウェブソケットから切断されました. 理由:${getNicoliveDisconectReasonDescription(reason)}`);
       this.reason = reason;
@@ -15716,7 +15862,8 @@ static createIfError(reason) {
       console.warn("embedded.user.isLoggedIn が存在しません");
       return void 0;
     }
-    if (!user.isLoggedIn) return void 0;
+    if (!user.isLoggedIn)
+      return void 0;
     const creatorCreatorSupportSummary = getProps(embedded, ["creatorCreatorSupportSummary"]);
     return {
       id: getProps(user, ["id"]) + "",
@@ -15730,7 +15877,8 @@ isOperator: getProps(user, ["isOperator"]),
   function parseReasons(embedded) {
     const reasons = [];
     const canWatch = getProps(embedded, ["userProgramWatch", "canWatch"], true);
-    if (canWatch === true) return reasons;
+    if (canWatch === true)
+      return reasons;
     debugger;
     if (getProps(embedded, ["programWatch", "condition", "needLogin"], false) === true) {
       reasons.push(NicoliveRejectReason.needLogin);
@@ -15769,11 +15917,7 @@ connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
         end: new Date(pageData.endTime * 1e3)
       };
       signal.addEventListener("abort", aborted);
-      const [ws, iteratorSet] = await connectWsAndAsyncIterable(
-        websocketUrl,
-        onMessage,
-        onClose
-      );
+      const [ws, iteratorSet] = await connectWsAndAsyncIterable(websocketUrl, onMessage, onClose);
       sendStartWatching(ws, reconnect, nicolveStream);
       const messageServerDataPromiser = reconnect ? void 0 : promiser();
       const messageServerDataPromise = messageServerDataPromiser == null ? Promise.resolve(reconnectData.messageServerData) : messageServerDataPromiser.promise;
@@ -15787,13 +15931,7 @@ connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
         send: (message) => send(ws, message),
         postComment: async (text, isAnonymous, options) => {
           const data = await messageServerDataPromise;
-          NicoliveWs.postComment(
-            ws,
-            Math.round((Date.now() - data.vposBaseTime) / 10),
-            text,
-            isAnonymous,
-            options
-          );
+          NicoliveWs.postComment(ws, Math.round((Date.now() - data.vposBaseTime) / 10), text, isAnonymous, options);
         }
       };
       function onMessage({ data }) {
@@ -15826,8 +15964,10 @@ connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
         signal.removeEventListener("abort", aborted);
         ws.close();
         const disconnectError = NicoliveWebSocketDisconnectError.createIfError(_disconnectMessage);
-        if (disconnectError == null) iteratorSet.close();
-        else iteratorSet.throw(disconnectError);
+        if (disconnectError == null)
+          iteratorSet.close();
+        else
+          iteratorSet.throw(disconnectError);
       }
       function aborted() {
         messageServerDataPromiser?.reject(createAbortError$1());
@@ -15890,9 +16030,11 @@ deleteBroadcasterComment: async (liveId, broadcasterCommentToken) => {
 fetchNicolivePageData: (liveIdOrUrl) => {
       return AbortAndPromise.new(async (abortController) => {
         const liveId = getNicoliveId(liveIdOrUrl);
-        if (liveId == null) throw new NicoliveLiveIdError(liveIdOrUrl);
+        if (liveId == null)
+          throw new NicoliveLiveIdError(liveIdOrUrl);
         const res = await fetch(`https://live.nicovideo.jp/watch/${liveId}`, { signal: abortController.signal });
-        if (!res.ok) throw new NicolivePageNotFoundError(res, liveId);
+        if (!res.ok)
+          throw new NicolivePageNotFoundError(res, liveId);
         return await parseNicolivePageData(res);
       });
     },
@@ -15904,7 +16046,8 @@ createWsServerConnector: (pageData, options) => {
           isClosed: () => connectSet.isClosed(),
           getAbortController: () => connectSet.abortController,
           reconnect: (abortController2, reconnectTime) => AbortAndPromise.newA(abortController2, async (abortController3) => {
-            if (!connectSet.isClosed()) return;
+            if (!connectSet.isClosed())
+              return;
             const reconnectData = {
               messageServerData: await connectSet.wsData.messageServerDataPromise,
               latestSchedule: connectSet.wsData.getLatestSchedule(),
@@ -15945,15 +16088,13 @@ createMessageServerConnector: (messageServerData, options) => {
           isClosed: () => connectSet.entryFetcher.isClosed() && connectSet.messageFetcher.isClosed(),
           getAbortController: () => connectSet.abortController,
           reconnect: (abortController2) => AbortAndPromise.newA(abortController2, async (abortController3) => {
-            if (!connectSet.entryFetcher.isClosed() || !connectSet.messageFetcher.isClosed()) return;
-            connectSet = await createConnectSet(
-              abortController3,
-              {
-                at: connectSet.entryFetcher.getLastEntryAt(),
-                skipToMeta: connectSet.messageFetcher.getLastMeta(),
-                backwardUri: connectSet.messageFetcher.getBackwardUri()
-              }
-            );
+            if (!connectSet.entryFetcher.isClosed() || !connectSet.messageFetcher.isClosed())
+              return;
+            connectSet = await createConnectSet(abortController3, {
+              at: connectSet.entryFetcher.getLastEntryAt(),
+              skipToMeta: connectSet.messageFetcher.getLastMeta(),
+              backwardUri: connectSet.messageFetcher.getBackwardUri()
+            });
           }),
           getIterator: () => connectSet.messageFetcher.iterator,
           getBackwardMessages: (delayMs, maxSegmentCount, isSnapshot) => {
@@ -16042,12 +16183,14 @@ postPasswordAuth: (liveId, password) => {
               }
             }
           }
-          if (curretnEntryAt == null) break;
+          if (curretnEntryAt == null)
+            break;
           fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
         }
       } catch (e) {
         backwardPromiser.reject(e);
-        if (!signal.aborted && !isAbortError(e, innerSignal)) iteratorSet.throw(e);
+        if (!signal.aborted && !isAbortError(e, innerSignal))
+          iteratorSet.throw(e);
       } finally {
         closed = true;
         signal.removeEventListener("abort", safeClose);
@@ -16073,8 +16216,10 @@ postPasswordAuth: (liveId, password) => {
       breaked: () => iteratorSet.close(),
       filter: skipToMeta == null ? metaFilter : (value) => {
         metaFilter(value);
-        if (value.meta?.id === skipToMeta.id) return [false, metaFilter];
-        if (value.meta?.at != null && timestampLargeA(skipToMeta.at, value.meta.at)) return [true, metaFilter];
+        if (value.meta?.id === skipToMeta.id)
+          return [false, metaFilter];
+        if (value.meta?.at != null && timestampLargeA(skipToMeta.at, value.meta.at))
+          return [true, metaFilter];
         return false;
       }
     });
@@ -16097,18 +16242,21 @@ postPasswordAuth: (liveId, password) => {
         firstPromiser.resolve();
         for await (const message of iterator) {
           iteratorSet.enqueue(message);
-          if (checkCloseMessage(message)) return;
+          if (checkCloseMessage(message))
+            return;
         }
         for await (const segment of entryFetcher.iterator) {
           const { iterator: iterator2 } = await NicoliveMessageServer.fetchMessage(segment.uri, innerSignal, transport);
           for await (const message of iterator2) {
             iteratorSet.enqueue(message);
-            if (checkCloseMessage(message)) return;
+            if (checkCloseMessage(message))
+              return;
           }
         }
       } catch (e) {
         firstPromiser.reject(e);
-        if (!signal.aborted && !isAbortError(e, innerSignal)) iteratorSet.throw(e);
+        if (!signal.aborted && !isAbortError(e, innerSignal))
+          iteratorSet.throw(e);
       } finally {
         closed = true;
         entryFetcher.safeClose();
@@ -16142,24 +16290,21 @@ postPasswordAuth: (liveId, password) => {
       innerAbort.abort();
     }
     function getBackwardMessages(delayMs, maxSegmentCount, isSnapshot = false) {
-      if (fetchingBackwardSegment) return void 0;
+      if (fetchingBackwardSegment)
+        return void 0;
       const backwardUri2 = isSnapshot ? currentBackwardUri.snapshot : currentBackwardUri.segment;
-      if (backwardUri2 == null) return;
+      if (backwardUri2 == null)
+        return;
       fetchingBackwardSegment = true;
       const abortController2 = new AbortController();
       const messagePromise = (async () => {
-        const backward = await NicoliveMessageServer.fetchBackwardMessages(
-          backwardUri2,
-          delayMs,
-          maxSegmentCount,
-          isSnapshot,
-          abortController2.signal
-        );
+        const backward = await NicoliveMessageServer.fetchBackwardMessages(backwardUri2, delayMs, maxSegmentCount, isSnapshot, abortController2.signal);
         currentBackwardUri = { segment: backward.segmentUri, snapshot: backward.snapshotUri };
         if (lastMeta == null) {
           for (let i = backward.messages.length - 1; i >= 0; i--) {
             const message = backward.messages[i];
-            if (updateMeta(message)) break;
+            if (updateMeta(message))
+              break;
           }
         }
         if (checkCloseMessage(backward.messages.at(-1))) {
@@ -16176,10 +16321,13 @@ postPasswordAuth: (liveId, password) => {
     }
   }
   class NicoLiveChatClient {
+    options;
+    abortControllers = [];
+    stopped = false;
+    wsConnector;
+    messageConnector;
     constructor(options) {
       this.options = options;
-      this.abortControllers = [];
-      this.stopped = false;
     }
     async start() {
       const liveId = parseLiveId(this.options.liveId);
@@ -16189,27 +16337,33 @@ postPasswordAuth: (liveId, password) => {
       }
       try {
         const pageResponse = await fetchTextAsResponse(`https://live.nicovideo.jp/watch/${liveId}`);
-        if (this.stopped) return;
+        if (this.stopped)
+          return;
         const pageData = await parseNicolivePageData(pageResponse);
         const wsConnectorResult = NicoliveUtility.createWsServerConnector(pageData);
         this.abortControllers.push(wsConnectorResult.abortController);
         this.wsConnector = await wsConnectorResult.promise;
-        if (this.stopped) return;
+        if (this.stopped)
+          return;
         const messageServerData = await this.wsConnector.getMessageServerData();
         const messageConnectorResult = NicoliveUtility.createMessageServerConnector(messageServerData, {
           transport: createUserscriptStreamTransport()
         });
         this.abortControllers.push(messageConnectorResult.abortController);
         this.messageConnector = await messageConnectorResult.promise;
-        if (this.stopped) return;
+        if (this.stopped)
+          return;
         this.options.onConnect?.({ liveId });
         for await (const chunkedMessage of this.messageConnector.getIterator()) {
-          if (this.stopped) return;
+          if (this.stopped)
+            return;
           const chat = toChatMessage(chunkedMessage);
-          if (chat != null) this.options.onChat?.([chat]);
+          if (chat != null)
+            this.options.onChat?.([chat]);
         }
       } catch (error) {
-        if (this.stopped && isAbortLikeError(error)) return;
+        if (this.stopped && isAbortLikeError(error))
+          return;
         this.emitError(toError(error));
       }
     }
@@ -16231,9 +16385,11 @@ postPasswordAuth: (liveId, password) => {
     return () => client2.stop();
   }
   function toChatMessage(message) {
-    if (message.payload.case !== "message") return;
+    if (message.payload.case !== "message")
+      return;
     const data = message.payload.value.data;
-    if (data.case !== "chat") return;
+    if (data.case !== "chat")
+      return;
     const chat = data.value;
     const author = chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "";
     return {
@@ -16245,7 +16401,8 @@ postPasswordAuth: (liveId, password) => {
     };
   }
   function timestampToUsecString(timestamp) {
-    if (timestamp == null) return `${Date.now() * 1e3}`;
+    if (timestamp == null)
+      return `${Date.now() * 1e3}`;
     return `${Number(timestamp.seconds) * 1e6 + Math.floor(timestamp.nanos / 1e3)}`;
   }
   function parseLiveId(value) {
@@ -16265,7 +16422,8 @@ postPasswordAuth: (liveId, password) => {
   }
   async function fetchTextAsResponse(url, signal) {
     const gm = getGmXmlhttpRequest();
-    if (gm == null) return fetch(url, { signal });
+    if (gm == null)
+      return fetch(url, { signal });
     return new Promise((resolve, reject) => {
       gm({
         method: "GET",
@@ -16291,19 +16449,22 @@ postPasswordAuth: (liveId, password) => {
     const gm = getGmXmlhttpRequest();
     if (gm == null) {
       return fetch(url, { signal }).then((response) => {
-        if (response.body == null) throw new Error(`fetch stream is unavailable: ${url}`);
+        if (response.body == null)
+          throw new Error(`fetch stream is unavailable: ${url}`);
         return response.body;
       });
     }
     return new Promise((resolve, reject) => {
       let settled = false;
       const settleResolve = (stream) => {
-        if (settled) return;
+        if (settled)
+          return;
         settled = true;
         resolve(stream);
       };
       const settleReject = (error) => {
-        if (settled) return;
+        if (settled)
+          return;
         settled = true;
         reject(error);
       };
@@ -16334,7 +16495,8 @@ postPasswordAuth: (liveId, password) => {
     });
   }
   function getGmXmlhttpRequest() {
-    if (typeof GM_xmlhttpRequest === "function") return GM_xmlhttpRequest;
+    if (typeof GM_xmlhttpRequest === "function")
+      return GM_xmlhttpRequest;
   }
   function isReadableStream(value) {
     return typeof value === "object" && value != null && "getReader" in value;
@@ -24118,7 +24280,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
             if (!liveId) return;
             unsubscribeRef.current = subscribeYTLiveChat({
               liveId,
-              onChat: onChat2,
+              onChat: (messages) => onChat2(withPlatform(messages, "youtube")),
               onConnect,
               onError
             });
@@ -24129,7 +24291,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
             if (!channelName) return;
             unsubscribeRef.current = subscribeTwitchLiveChat({
               channelName,
-              onChat: onChat2,
+              onChat: (messages) => onChat2(withPlatform(messages, "twitch")),
               onConnect,
               onError
             });
@@ -24140,7 +24302,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
             if (!liveId) return;
             unsubscribeRef.current = subscribeNicoLiveChat({
               liveId,
-              onChat: onChat2,
+              onChat: (messages) => onChat2(withPlatform(messages, "niconico")),
               onConnect,
               onError
             });
@@ -24164,6 +24326,10 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
     }, [ime, inputRef, onChat2, onConnect, onError]);
     return { isStarted };
   };
+  const withPlatform = (messages, platform2) => messages.map((message) => ({
+    ...message,
+    platform: platform2
+  }));
   const NamaTypingContainer = () => {
     return jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
