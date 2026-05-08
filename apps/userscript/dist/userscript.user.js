@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.20
+// @version      1.1.21
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -19809,8 +19809,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
   function decodeChunkedEntry(buf) {
     const r2 = new ProtoReader(buf);
     const result = {};
-    let tag;
-    while ((tag = r2.readTag()) !== null) {
+    for (; ; ) {
+      const tag = r2.readTag();
+      if (tag === null) break;
       if (tag.wireType !== 2) {
         r2.skip(tag.wireType);
         continue;
@@ -19818,8 +19819,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       switch (tag.field) {
         case 1: {
           const seg = new ProtoReader(r2.readBytes());
-          let t;
-          while ((t = seg.readTag()) !== null) {
+          for (; ; ) {
+            const t = seg.readTag();
+            if (t === null) break;
             if (t.field === 3 && t.wireType === 2)
               result.segmentUri = seg.readString();
             else seg.skip(t.wireType);
@@ -19828,8 +19830,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         }
         case 4: {
           const next = new ProtoReader(r2.readBytes());
-          let t;
-          while ((t = next.readTag()) !== null) {
+          for (; ; ) {
+            const t = next.readTag();
+            if (t === null) break;
             if (t.field === 1 && t.wireType === 0)
               result.nextAt = next.readVarint();
             else next.skip(t.wireType);
@@ -19845,8 +19848,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
   function decodeChat(buf) {
     const r2 = new ProtoReader(buf);
     const c = {};
-    let tag;
-    while ((tag = r2.readTag()) !== null) {
+    for (; ; ) {
+      const tag = r2.readTag();
+      if (tag === null) break;
       switch (tag.field) {
         case 1:
           c.content = r2.readString();
@@ -19882,8 +19886,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
     const r2 = new ProtoReader(buf);
     let timestampSec = 0;
     let chat;
-    let tag;
-    while ((tag = r2.readTag()) !== null) {
+    for (; ; ) {
+      const tag = r2.readTag();
+      if (tag === null) break;
       if (tag.wireType !== 2) {
         r2.skip(tag.wireType);
         continue;
@@ -19891,12 +19896,14 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       switch (tag.field) {
         case 1: {
           const meta = new ProtoReader(r2.readBytes());
-          let mt;
-          while ((mt = meta.readTag()) !== null) {
+          for (; ; ) {
+            const mt = meta.readTag();
+            if (mt === null) break;
             if (mt.field === 2 && mt.wireType === 2) {
               const ts = new ProtoReader(meta.readBytes());
-              let tt;
-              while ((tt = ts.readTag()) !== null) {
+              for (; ; ) {
+                const tt = ts.readTag();
+                if (tt === null) break;
                 if (tt.field === 1 && tt.wireType === 0)
                   timestampSec = ts.readVarint();
                 else ts.skip(tt.wireType);
@@ -19909,13 +19916,12 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         }
         case 2: {
           const msg = new ProtoReader(r2.readBytes());
-          let mt;
-          while ((mt = msg.readTag()) !== null) {
-            if (mt.field === 1 && mt.wireType === 2) {
+          for (; ; ) {
+            const mt = msg.readTag();
+            if (mt === null) break;
+            if (mt.field === 1 && mt.wireType === 2)
               chat = decodeChat(msg.readBytes());
-            } else {
-              msg.skip(mt.wireType);
-            }
+            else msg.skip(mt.wireType);
           }
           break;
         }
@@ -19929,8 +19935,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
   function decodePackedSegment(buf) {
     const r2 = new ProtoReader(buf);
     const result = { chats: [] };
-    let tag;
-    while ((tag = r2.readTag()) !== null) {
+    for (; ; ) {
+      const tag = r2.readTag();
+      if (tag === null) break;
       if (tag.wireType !== 2) {
         r2.skip(tag.wireType);
         continue;
@@ -19943,8 +19950,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         }
         case 2: {
           const next = new ProtoReader(r2.readBytes());
-          let t;
-          while ((t = next.readTag()) !== null) {
+          for (; ; ) {
+            const t = next.readTag();
+            if (t === null) break;
             if (t.field === 1 && t.wireType === 2)
               result.nextUri = next.readString();
             else next.skip(t.wireType);
@@ -20144,7 +20152,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
           }
           break;
         }
-        case "messageServer": {
+        case "messageServer":
+        case "akashicMessageServer": {
           const { viewUri } = msg.data ?? {};
           if (!viewUri) return;
           this._messageServerUri = viewUri;

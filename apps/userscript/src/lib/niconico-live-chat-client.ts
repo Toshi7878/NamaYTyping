@@ -133,8 +133,9 @@ interface ChunkedEntry {
 function decodeChunkedEntry(buf: Uint8Array): ChunkedEntry {
 	const r = new ProtoReader(buf);
 	const result: ChunkedEntry = {};
-	let tag;
-	while ((tag = r.readTag()) !== null) {
+	for (;;) {
+		const tag = r.readTag();
+		if (tag === null) break;
 		if (tag.wireType !== 2) {
 			r.skip(tag.wireType);
 			continue;
@@ -143,8 +144,9 @@ function decodeChunkedEntry(buf: Uint8Array): ChunkedEntry {
 			case 1: {
 				// segment: MessageSegment → field 3 = uri (string)
 				const seg = new ProtoReader(r.readBytes());
-				let t;
-				while ((t = seg.readTag()) !== null) {
+				for (;;) {
+					const t = seg.readTag();
+					if (t === null) break;
 					if (t.field === 3 && t.wireType === 2)
 						result.segmentUri = seg.readString();
 					else seg.skip(t.wireType);
@@ -154,8 +156,9 @@ function decodeChunkedEntry(buf: Uint8Array): ChunkedEntry {
 			case 4: {
 				// ReadyForNext → field 1 = at (int64)
 				const next = new ProtoReader(r.readBytes());
-				let t;
-				while ((t = next.readTag()) !== null) {
+				for (;;) {
+					const t = next.readTag();
+					if (t === null) break;
 					if (t.field === 1 && t.wireType === 0)
 						result.nextAt = next.readVarint();
 					else next.skip(t.wireType);
@@ -181,8 +184,9 @@ interface DecodedChat {
 function decodeChat(buf: Uint8Array): DecodedChat | undefined {
 	const r = new ProtoReader(buf);
 	const c: Partial<DecodedChat> & { content?: string } = {};
-	let tag;
-	while ((tag = r.readTag()) !== null) {
+	for (;;) {
+		const tag = r.readTag();
+		if (tag === null) break;
 		switch (tag.field) {
 			case 1:
 				c.content = r.readString();
@@ -224,8 +228,9 @@ function decodeChunkedMessage(buf: Uint8Array):
 	const r = new ProtoReader(buf);
 	let timestampSec = 0;
 	let chat: DecodedChat | undefined;
-	let tag;
-	while ((tag = r.readTag()) !== null) {
+	for (;;) {
+		const tag = r.readTag();
+		if (tag === null) break;
 		if (tag.wireType !== 2) {
 			r.skip(tag.wireType);
 			continue;
@@ -234,12 +239,14 @@ function decodeChunkedMessage(buf: Uint8Array):
 			case 1: {
 				// Meta → field 2 = Timestamp → field 1 = seconds
 				const meta = new ProtoReader(r.readBytes());
-				let mt;
-				while ((mt = meta.readTag()) !== null) {
+				for (;;) {
+					const mt = meta.readTag();
+					if (mt === null) break;
 					if (mt.field === 2 && mt.wireType === 2) {
 						const ts = new ProtoReader(meta.readBytes());
-						let tt;
-						while ((tt = ts.readTag()) !== null) {
+						for (;;) {
+							const tt = ts.readTag();
+							if (tt === null) break;
 							if (tt.field === 1 && tt.wireType === 0)
 								timestampSec = ts.readVarint();
 							else ts.skip(tt.wireType);
@@ -253,13 +260,12 @@ function decodeChunkedMessage(buf: Uint8Array):
 			case 2: {
 				// NicoliveMessage → field 1 = Chat
 				const msg = new ProtoReader(r.readBytes());
-				let mt;
-				while ((mt = msg.readTag()) !== null) {
-					if (mt.field === 1 && mt.wireType === 2) {
+				for (;;) {
+					const mt = msg.readTag();
+					if (mt === null) break;
+					if (mt.field === 1 && mt.wireType === 2)
 						chat = decodeChat(msg.readBytes());
-					} else {
-						msg.skip(mt.wireType);
-					}
+					else msg.skip(mt.wireType);
 				}
 				break;
 			}
@@ -279,8 +285,9 @@ interface DecodedPackedSegment {
 function decodePackedSegment(buf: Uint8Array): DecodedPackedSegment {
 	const r = new ProtoReader(buf);
 	const result: DecodedPackedSegment = { chats: [] };
-	let tag;
-	while ((tag = r.readTag()) !== null) {
+	for (;;) {
+		const tag = r.readTag();
+		if (tag === null) break;
 		if (tag.wireType !== 2) {
 			r.skip(tag.wireType);
 			continue;
@@ -295,8 +302,9 @@ function decodePackedSegment(buf: Uint8Array): DecodedPackedSegment {
 			case 2: {
 				// Next → field 1 = uri
 				const next = new ProtoReader(r.readBytes());
-				let t;
-				while ((t = next.readTag()) !== null) {
+				for (;;) {
+					const t = next.readTag();
+					if (t === null) break;
 					if (t.field === 1 && t.wireType === 2)
 						result.nextUri = next.readString();
 					else next.skip(t.wireType);
@@ -540,7 +548,8 @@ class NiconicoLiveChatClient {
 				}
 				break;
 			}
-			case "messageServer": {
+			case "messageServer":
+			case "akashicMessageServer": {
 				const { viewUri } =
 					(msg.data as { viewUri?: string; vposBaseTime?: string }) ?? {};
 				if (!viewUri) return;
