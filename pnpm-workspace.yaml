@@ -4,7 +4,9 @@ packages:
 
 allowBuilds:
   '@bufbuild/buf': true
+  '@firebase/util': true
   esbuild: true
+  protobufjs: true
   sharp: true
 
 catalog:

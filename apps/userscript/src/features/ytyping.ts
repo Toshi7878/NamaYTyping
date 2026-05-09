@@ -1,14 +1,57 @@
-import type { UserResult, WordResult } from "lyrics-ime-typing-engine";
+import type {
+	BuiltImeLine,
+	UserResult,
+	WordResult,
+} from "lyrics-ime-typing-engine";
 
 export interface YTypingIme extends EventTarget {
-	getUserResult: (id: string) => UserResult | undefined;
-	getResultRanking: () => {
-		rank: number;
-		name: string;
-		score: number;
-		wordResults: WordResult[];
-		currentWordIndex: number;
-	}[];
+	getBuiltMap: () => {
+		lines: BuiltImeLine[];
+		words: string[][][][];
+		totalNotes: number;
+		initWordResults: WordResult[];
+		flatWords: string[];
+	} | null;
+	ensureMapInfo: () => Promise<{
+		id: number;
+		media: {
+			previewTime: number;
+			thumbnailQuality: "mqdefault" | "maxresdefault";
+			videoId: string;
+		};
+		info: {
+			tags: string[];
+			title: string;
+			artistName: string;
+			source: string;
+			duration: number;
+			visibility: "PUBLIC" | "UNLISTED";
+		};
+		creator: {
+			id: number;
+			name: string | null;
+			comment: string;
+		};
+		difficulty: {
+			romaKpmMedian: number;
+			kanaKpmMedian: number;
+			romaKpmMax: number;
+			kanaKpmMax: number;
+			romaTotalNotes: number;
+			kanaTotalNotes: number;
+			rating: number;
+		};
+		like: {
+			hasLiked: boolean;
+		};
+		bookmark: {
+			hasBookmarked: boolean;
+		};
+		createdAt: Date;
+		updatedAt: Date;
+	} | null>;
+	getUserResult: (id: string) => (UserResult & { userId: string }) | undefined;
+	getUserResults: () => UserResult[];
 	updateUserResult: (
 		id: string,
 		{

@@ -3,6 +3,7 @@
 		{ "name": "root", "path": "." },
 		{ "name": "web", "path": "apps/web" },
 		{ "name": "userscript", "path": "apps/userscript" },
+		{ "name": "firebase", "path": "packages/firebase" },
 		{ "name": "ui", "path": "packages/ui" },
 		{ "name": "typescript-config", "path": "packages/typescript-config" }
 	],

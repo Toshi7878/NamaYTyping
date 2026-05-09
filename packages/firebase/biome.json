@@ -1,0 +1,12 @@
+{
+	"root": false,
+	"extends": "//",
+	"overrides": [
+		{
+			"includes": ["src/live/paths.ts"],
+			"formatter": {
+				"lineWidth": 140
+			}
+		}
+	]
+}
