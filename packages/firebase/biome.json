@@ -3,7 +3,7 @@
 	"extends": "//",
 	"overrides": [
 		{
-			"includes": ["src/live/paths.ts"],
+			"includes": ["src/live/path.ts"],
 			"formatter": {
 				"lineWidth": 140
 			}

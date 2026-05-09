@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isMapInfo(info) {
+      return info.keys().hasOnly(['title', 'artistName', 'source'])
+        && info.title is string
+        && info.artistName is string
+        && info.source is string;
+    }
+
+    function isMapMedia(media) {
+      return media.keys().hasOnly(['previewTime', 'thumbnailQuality', 'videoId'])
+        && media.previewTime is number
+        && media.thumbnailQuality in ['mqdefault', 'maxresdefault']
+        && media.videoId is string;
+    }
+
+    function isResultMap(map) {
+      return map.keys().hasOnly([
+          'id',
+          'mapId',
+          'rating',
+          'totalNotes',
+          'flatWords',
+          'createdAt',
+          'media',
+          'info'
+        ])
+        && map.id is string
+        && map.mapId is number
+        && map.rating is number
+        && map.totalNotes is number
+        && map.flatWords is list
+        && map.createdAt is timestamp
+        && isMapMedia(map.media)
+        && isMapInfo(map.info);
+    }
+
+    function isResultCreate(data) {
+      return data.keys().hasOnly(['map', 'createdAt', 'expireAt'])
+        && isResultMap(data.map)
+        && data.createdAt is timestamp
+        && data.expireAt is timestamp;
+    }
+
+    function isUserResultCreate(data, userId) {
+      return data.keys().hasOnly([
+          'userId',
+          'expireAt',
+          'name',
+          'typeCount',
+          'wordResults',
+          'currentWordIndex'
+        ])
+        && data.userId == userId
+        && data.expireAt is timestamp
+        && data.name is string
+        && data.typeCount is number
+        && data.wordResults is list
+        && data.currentWordIndex is number;
+    }
+
+    match /lives/{liveId} {
+      allow read: true;
+      allow write: false;
+
+      match /results/{resultId} {
+        allow read: true;
+        allow create: if isResultCreate(request.resource.data);
+        allow update, delete: if false;
+
+        match /users/{userId} {
+          allow read: true;
+          allow create: if isUserResultCreate(request.resource.data, userId);
+          allow update, delete: if false;
+        }
+      }
+    }
+  }
+}
