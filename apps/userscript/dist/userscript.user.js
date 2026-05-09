@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      1.1.26
+// @version      2.0.2
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
 // @connect      www.youtube.com
 // @connect      live.nicovideo.jp
 // @connect      live2.nicovideo.jp
-// @connect      mpn.live.nicovideo.jp
-// @connect      *.nimg.jp
+// @connect      *.nicovideo.jp
+// @connect      *.nmsg.nicovideo.jp
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // ==/UserScript==
@@ -23791,13 +23791,13 @@ jsxRuntimeExports.jsx(ItemText, { children }),
     _startedAt = 0;
     constructor({
       channelName,
-      onChat: onChat2,
+      onChat,
       onError,
       onConnect
     }) {
       if (!channelName) throw new Error("channelName is required");
       this._channelName = channelName.toLowerCase();
-      this._onChat = onChat2 ?? (() => void 0);
+      this._onChat = onChat ?? (() => void 0);
       this._onError = onError ?? console.error;
       this._onConnect = onConnect ?? (() => void 0);
     }
@@ -23916,10 +23916,10 @@ jsxRuntimeExports.jsx(ItemText, { children }),
     _timer = null;
     _startedAt = 0;
     _visitorData = null;
-    constructor({ liveId, onChat: onChat2, onError, onConnect }) {
+    constructor({ liveId, onChat, onError, onConnect }) {
       if (!liveId) throw new Error("liveId is required");
       this._liveId = liveId;
-      this._onChat = onChat2 ?? (() => void 0);
+      this._onChat = onChat ?? (() => void 0);
       this._onError = onError ?? console.error;
       this._onConnect = onConnect ?? (() => void 0);
     }
@@ -24158,7 +24158,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
   const STORAGE_KEY_NICONICO = "nama-typing:niconico-live-id";
   const ImeLiveChatConnector = ({
     onConnect,
-    onChat: onChat2,
+    onChat,
     onError
   }) => {
     const inputRef = reactExports.useRef(null);
@@ -24170,7 +24170,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       inputRef,
       platform2,
       onConnect,
-      onChat2,
+      onChat,
       onError
     );
     if (isStarted || !mountEl) return null;
@@ -24262,7 +24262,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
         return extractNiconicoLiveId(value);
     }
   };
-  const useLiveChatSession = (inputRef, platform2, onConnect, onChat2, onError) => {
+  const useLiveChatSession = (inputRef, platform2, onConnect, onChat, onError) => {
     const [isStarted, setIsStarted] = reactExports.useState(false);
     const unsubscribeRef = reactExports.useRef(null);
     const ime = useWindowProperty("__ytyping_ime");
@@ -24280,7 +24280,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
             if (!liveId) return;
             unsubscribeRef.current = subscribeYTLiveChat({
               liveId,
-              onChat: (messages) => onChat2(withPlatform(messages, "youtube")),
+              onChat: (messages) => onChat(withPlatform(messages, "youtube")),
               onConnect,
               onError
             });
@@ -24291,7 +24291,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
             if (!channelName) return;
             unsubscribeRef.current = subscribeTwitchLiveChat({
               channelName,
-              onChat: (messages) => onChat2(withPlatform(messages, "twitch")),
+              onChat: (messages) => onChat(withPlatform(messages, "twitch")),
               onConnect,
               onError
             });
@@ -24302,7 +24302,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
             if (!liveId) return;
             unsubscribeRef.current = subscribeNicoLiveChat({
               liveId,
-              onChat: (messages) => onChat2(withPlatform(messages, "niconico")),
+              onChat: (messages) => onChat(withPlatform(messages, "niconico")),
               onConnect,
               onError
             });
@@ -24323,73 +24323,77 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
         ime.removeEventListener("start", startClient);
         ime.removeEventListener("end", handleEnd);
       };
-    }, [ime, inputRef, onChat2, onConnect, onError]);
+    }, [ime, inputRef, onChat, onConnect, onError]);
     return { isStarted };
   };
   const withPlatform = (messages, platform2) => messages.map((message) => ({
     ...message,
+    name: message.author || "名無し",
     platform: platform2
   }));
   const STORAGE_KEY_NICO_NAMES = "nama-typing:nico-names";
-  function getNicoNames() {
+  function getNicoName(message) {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY_NICO_NAMES) ?? "{}");
+      const map = JSON.parse(
+        localStorage.getItem(STORAGE_KEY_NICO_NAMES) ?? "{}"
+      );
+      return map[message.author] ?? message.author;
     } catch {
-      return {};
+      return message.author;
     }
-  }
-  function setNicoName(author, name) {
-    const names = getNicoNames();
-    names[author] = name;
-    localStorage.setItem(STORAGE_KEY_NICO_NAMES, JSON.stringify(names));
   }
   const NamaTypingContainer = () => {
     return jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
       {
-        onChat: (messages) => onChat(messages),
+        onChat: (messages) => handleChat(messages),
         onConnect: () => _unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました"),
         onError: (e) => _unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
       }
     );
   };
-  function onChat(messages) {
+  function handleChat(messages) {
     const ime = _unsafeWindow.__ytyping_ime;
     if (!ime) return;
-    const nicoNames = getNicoNames();
     for (const m of messages) {
       console.log(m);
-      if (!processChatMessage(ime, m, nicoNames)) continue;
+      switch (m.platform) {
+        case "niconico": {
+          const name = getNicoName(m);
+          const { isWordComment } = handleTyping(ime, { ...m, author: name });
+          if (!isWordComment && m.message.match(/^@(.+)/)) {
+            const newName = m.message.slice(1).trim().slice(0, 20);
+            ime.updateUserName(m.id, newName);
+            ime.addNotifications([`名前変更: ${name} -> ${newName}`]);
+          }
+          break;
+        }
+        default: {
+          handleTyping(ime, m);
+          break;
+        }
+      }
     }
   }
-  function processChatMessage(ime, m, nicoNames) {
-    if (m.platform === "niconico" && tryRegisterNicoName(m, nicoNames)) return false;
-    const displayName = m.platform === "niconico" ? nicoNames[m.author] ?? m.author : m.author;
-    const userResult = ime.getUserResult(m.author);
+  const handleTyping = (ime, message) => {
+    const userResult = ime.getUserResult(message.author);
     const result = ime.handleImeInput({
-      value: m.message,
+      value: message.message,
       currentWordIndex: userResult?.currentWordIndex,
       wordResults: userResult?.wordResults
     });
-    ime.updateUserResult(m.author, {
-      name: displayName,
+    ime.updateUserResult(message.author, {
+      name: message.author,
       typeCountDelta: result.typeCountDelta,
       newWordResults: result.newWordResults,
       nextWordIndex: result.nextWordIndex
     });
     ime.addNotifications(
-      result.appendNotifications.map((n) => `${displayName}: ${n}`)
+      result.appendNotifications.map((n) => `${message.author}: ${n}`)
     );
-    return true;
-  }
-  function tryRegisterNicoName(m, nicoNames) {
-    const match = m.message.match(/^@(.+)/);
-    if (!match) return false;
-    const name = match[1].trim();
-    nicoNames[m.author] = name;
-    setNicoName(m.author, name);
-    return true;
-  }
+    const isWordComment = result.nextWordIndex !== userResult?.currentWordIndex;
+    return { isWordComment };
+  };
   function Switch({
     className,
     ...props

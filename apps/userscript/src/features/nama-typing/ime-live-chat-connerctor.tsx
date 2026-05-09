@@ -223,5 +223,6 @@ const withPlatform = (
 ): ChatMessage[] =>
 	messages.map((message) => ({
 		...message,
+		name: message.author || "名無し",
 		platform,
 	}));

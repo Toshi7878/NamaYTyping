@@ -1,6 +1,6 @@
 import type { UserResult, WordResult } from "lyrics-ime-typing-engine";
 
-interface YTypingIme extends EventTarget {
+export interface YTypingIme extends EventTarget {
 	getUserResult: (id: string) => UserResult | undefined;
 	getResultRanking: () => {
 		rank: number;
@@ -23,6 +23,7 @@ interface YTypingIme extends EventTarget {
 			nextWordIndex: number;
 		},
 	) => void;
+	updateUserName: (id: string, name: string) => void;
 	handleImeInput: ({
 		value,
 		currentWordIndex,

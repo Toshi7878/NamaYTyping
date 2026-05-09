@@ -1,5 +1,7 @@
 import { unsafeWindow } from "$";
+import type { YTypingIme } from "../ytyping";
 import { ImeLiveChatConnector } from "./ime-live-chat-connerctor";
+import { getNicoName } from "./niconico";
 
 type Platform = "youtube" | "twitch" | "niconico";
 export interface ChatMessage {
@@ -11,26 +13,10 @@ export interface ChatMessage {
 	isMember: boolean;
 }
 
-const STORAGE_KEY_NICO_NAMES = "nama-typing:nico-names";
-
-function getNicoNames(): Record<string, string> {
-	try {
-		return JSON.parse(localStorage.getItem(STORAGE_KEY_NICO_NAMES) ?? "{}") as Record<string, string>;
-	} catch {
-		return {};
-	}
-}
-
-function setNicoName(author: string, name: string): void {
-	const names = getNicoNames();
-	names[author] = name;
-	localStorage.setItem(STORAGE_KEY_NICO_NAMES, JSON.stringify(names));
-}
-
 export const NamaTypingContainer = () => {
 	return (
 		<ImeLiveChatConnector
-			onChat={(messages) => onChat(messages)}
+			onChat={(messages) => handleChat(messages)}
 			onConnect={() =>
 				unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました")
 			}
@@ -41,59 +27,53 @@ export const NamaTypingContainer = () => {
 	);
 };
 
-function onChat(messages: ChatMessage[]) {
+function handleChat(messages: ChatMessage[]) {
 	const ime = unsafeWindow.__ytyping_ime;
 	if (!ime) return;
 
-	const nicoNames = getNicoNames();
-
 	for (const m of messages) {
 		console.log(m);
-		if (!processChatMessage(ime, m, nicoNames)) continue;
+		switch (m.platform) {
+			case "niconico": {
+				const name = getNicoName(m);
+				const { isWordComment } = handleTyping(ime, { ...m, author: name });
+
+				if (!isWordComment && m.message.match(/^@(.+)/)) {
+					const newName = m.message.slice(1).trim().slice(0, 20);
+					ime.updateUserName(m.id, newName);
+					ime.addNotifications([`名前変更: ${name} -> ${newName}`]);
+				}
+				break;
+			}
+			default: {
+				handleTyping(ime, m);
+				break;
+			}
+		}
 	}
 }
 
-function processChatMessage(
-	ime: NonNullable<typeof unsafeWindow.__ytyping_ime>,
-	m: ChatMessage,
-	nicoNames: Record<string, string>,
-): boolean {
-	if (m.platform === "niconico" && tryRegisterNicoName(m, nicoNames)) return false;
-
-	const displayName =
-		m.platform === "niconico" ? (nicoNames[m.author] ?? m.author) : m.author;
-
-	const userResult = ime.getUserResult(m.author);
+const handleTyping = (ime: YTypingIme, message: ChatMessage) => {
+	const userResult = ime.getUserResult(message.author);
 
 	const result = ime.handleImeInput({
-		value: m.message,
+		value: message.message,
 		currentWordIndex: userResult?.currentWordIndex,
 		wordResults: userResult?.wordResults,
 	});
 
-	ime.updateUserResult(m.author, {
-		name: displayName,
+	ime.updateUserResult(message.author, {
+		name: message.author,
 		typeCountDelta: result.typeCountDelta,
 		newWordResults: result.newWordResults,
 		nextWordIndex: result.nextWordIndex,
 	});
 
 	ime.addNotifications(
-		result.appendNotifications.map((n) => `${displayName}: ${n}`),
+		result.appendNotifications.map((n) => `${message.author}: ${n}`),
 	);
 
-	return true;
-}
+	const isWordComment = result.nextWordIndex !== userResult?.currentWordIndex;
 
-function tryRegisterNicoName(
-	m: ChatMessage,
-	nicoNames: Record<string, string>,
-): boolean {
-	const match = m.message.match(/^@(.+)/);
-	if (!match) return false;
-
-	const name = match[1].trim();
-	nicoNames[m.author] = name;
-	setNicoName(m.author, name);
-	return true;
-}
+	return { isWordComment };
+};
