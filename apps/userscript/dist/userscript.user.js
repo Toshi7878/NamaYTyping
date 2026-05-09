@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      2.0.2
+// @version      2.1.1
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -15856,7 +15856,6 @@ static createIfError(reason) {
     }
   }
   function parseLoginUser(embedded) {
-    debugger;
     const user = embedded.user;
     if (user?.isLoggedIn === void 0) {
       console.warn("embedded.user.isLoggedIn が存在しません");
@@ -15879,7 +15878,6 @@ isOperator: getProps(user, ["isOperator"]),
     const canWatch = getProps(embedded, ["userProgramWatch", "canWatch"], true);
     if (canWatch === true)
       return reasons;
-    debugger;
     if (getProps(embedded, ["programWatch", "condition", "needLogin"], false) === true) {
       reasons.push(NicoliveRejectReason.needLogin);
     }
@@ -16108,8 +16106,8 @@ createMessageServerConnector: (messageServerData, options) => {
         const transport = options2?.transport;
         const entryFetcher = await createEntryFetcher(abortController, entryUri, entryAt, transport);
         const backwardUri = options2?.backwardUri ?? {
-          segment: entryFetcher.backwardSegment.segment?.uri,
-          snapshot: entryFetcher.backwardSegment.snapshot?.uri
+          segment: entryFetcher.backwardSegment?.segment?.uri,
+          snapshot: entryFetcher.backwardSegment?.snapshot?.uri
         };
         const messageFetcher = await createMessageFetcher(abortController, entryFetcher, options2?.skipToMeta, backwardUri, transport);
         return {
@@ -16161,7 +16159,7 @@ postPasswordAuth: (liveId, password) => {
     let lastEntryAt = entryAt;
     let curretnEntryAt = lastEntryAt;
     let closed = false;
-    const backwardPromiser = promiser();
+    let backwardSegment;
     const promise = (async () => {
       let receivedSegment = false;
       try {
@@ -16177,7 +16175,7 @@ postPasswordAuth: (liveId, password) => {
               iteratorSet.enqueue(value);
             } else if (!receivedSegment) {
               if (_case === "backward") {
-                backwardPromiser.resolve(value);
+                backwardSegment = value;
               } else if (_case === "previous") {
                 iteratorSet.enqueue(value);
               }
@@ -16188,7 +16186,6 @@ postPasswordAuth: (liveId, password) => {
           fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
         }
       } catch (e) {
-        backwardPromiser.reject(e);
         if (!signal.aborted && !isAbortError(e, innerSignal))
           iteratorSet.throw(e);
       } finally {
@@ -16203,7 +16200,9 @@ postPasswordAuth: (liveId, password) => {
       isClosed: () => closed,
       safeClose,
       getLastEntryAt: () => lastEntryAt,
-      backwardSegment: await backwardPromiser.promise
+      get backwardSegment() {
+        return backwardSegment;
+      }
     };
     function safeClose() {
       closed = true;
@@ -16354,13 +16353,10 @@ postPasswordAuth: (liveId, password) => {
         if (this.stopped)
           return;
         this.options.onConnect?.({ liveId });
-        for await (const chunkedMessage of this.messageConnector.getIterator()) {
-          if (this.stopped)
-            return;
-          const chat = toChatMessage(chunkedMessage);
-          if (chat != null)
-            this.options.onChat?.([chat]);
-        }
+        await Promise.race([
+          this.readWebSocketMessages(),
+          this.readServerMessages()
+        ]);
       } catch (error) {
         if (this.stopped && isAbortLikeError(error))
           return;
@@ -16377,6 +16373,52 @@ postPasswordAuth: (liveId, password) => {
     }
     emitError(error) {
       this.options.onError?.(error);
+    }
+    async readWebSocketMessages() {
+      while (!this.stopped && this.wsConnector != null) {
+        const signal = this.wsConnector.getAbortController().signal;
+        try {
+          for await (const _message of this.wsConnector.getIterator()) {
+            if (this.stopped)
+              return;
+          }
+        } catch (error) {
+          if (this.stopped || isAbortLikeError(error, signal))
+            return;
+          if (error instanceof NicoliveWebSocketReconnectError) {
+            const reconnect = this.wsConnector.reconnect(void 0, error.reconnectTime);
+            this.abortControllers.push(reconnect.abortController);
+            await reconnect.promise;
+            continue;
+          }
+          throw error;
+        }
+        return;
+      }
+    }
+    async readServerMessages() {
+      while (!this.stopped && this.messageConnector != null) {
+        const signal = this.messageConnector.getAbortController().signal;
+        try {
+          for await (const chunkedMessage of this.messageConnector.getIterator()) {
+            if (this.stopped)
+              return;
+            const chat = toChatMessage(chunkedMessage);
+            if (chat != null)
+              this.options.onChat?.([chat]);
+          }
+        } catch (error) {
+          if (this.stopped || isAbortLikeError(error, signal))
+            return;
+          const reconnect2 = this.messageConnector.reconnect();
+          this.abortControllers.push(reconnect2.abortController);
+          await reconnect2.promise;
+          continue;
+        }
+        const reconnect = this.messageConnector.reconnect();
+        this.abortControllers.push(reconnect.abortController);
+        await reconnect.promise;
+      }
     }
   }
   function subscribeNicoLiveChat(options) {
@@ -16411,6 +16453,13 @@ postPasswordAuth: (liveId, password) => {
   function createUserscriptStreamTransport() {
     return {
       async fetch(uri, signal) {
+        if (uri.includes("/data/segment/")) {
+          const chunk = await gmFetchArrayBuffer(uri, signal);
+          return {
+            iterator: singleChunkIterable(chunk),
+            closed: Promise.resolve()
+          };
+        }
         const stream = await gmFetchReadableStream(uri, signal);
         const reader = stream.getReader();
         return {
@@ -16419,6 +16468,47 @@ postPasswordAuth: (liveId, password) => {
         };
       }
     };
+  }
+  function gmFetchArrayBuffer(url, signal) {
+    const gm = getGmXmlhttpRequest();
+    if (gm == null) {
+      return fetch(url, { signal }).then(async (response) => new Uint8Array(await response.arrayBuffer()));
+    }
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const settleResolve = (value) => {
+        if (settled)
+          return;
+        settled = true;
+        resolve(value);
+      };
+      const settleReject = (error) => {
+        if (settled)
+          return;
+        settled = true;
+        reject(error);
+      };
+      const request = gm({
+        method: "GET",
+        url,
+        responseType: "arraybuffer",
+        fetch: true,
+        onload: (response) => {
+          if (response.response == null) {
+            settleReject(new Error(`GM_xmlhttpRequest arraybuffer response is unavailable: ${url}`));
+            return;
+          }
+          settleResolve(new Uint8Array(response.response));
+        },
+        onerror: settleReject,
+        onabort: () => settleReject(createAbortError()),
+        ontimeout: () => settleReject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
+      });
+      signal?.addEventListener("abort", () => {
+        request.abort?.();
+        settleReject(createAbortError());
+      }, { once: true });
+    });
   }
   async function fetchTextAsResponse(url, signal) {
     const gm = getGmXmlhttpRequest();
@@ -16472,14 +16562,17 @@ postPasswordAuth: (liveId, password) => {
         method: "GET",
         url,
         responseType: "stream",
+        fetch: true,
         onloadstart: (response) => {
-          if (isReadableStream(response.response)) {
-            settleResolve(response.response);
+          const stream = response.response;
+          if (isReadableStream(stream)) {
+            settleResolve(stream);
           }
         },
         onload: (response) => {
-          if (isReadableStream(response.response)) {
-            settleResolve(response.response);
+          const stream = response.response;
+          if (isReadableStream(stream)) {
+            settleResolve(stream);
             return;
           }
           settleReject(new Error("GM_xmlhttpRequest stream response is unavailable. Tampermonkey responseType:'stream' support is required."));
@@ -16494,6 +16587,9 @@ postPasswordAuth: (liveId, password) => {
       }, { once: true });
     });
   }
+  async function* singleChunkIterable(chunk) {
+    yield chunk;
+  }
   function getGmXmlhttpRequest() {
     if (typeof GM_xmlhttpRequest === "function")
       return GM_xmlhttpRequest;
@@ -16504,8 +16600,8 @@ postPasswordAuth: (liveId, password) => {
   function createAbortError() {
     return new DOMException("Operation aborted", "AbortError");
   }
-  function isAbortLikeError(error) {
-    return error instanceof Error && error.name === "AbortError";
+  function isAbortLikeError(error, signal) {
+    return error instanceof Error && error.name === "AbortError" && signal?.aborted !== false;
   }
   function toError(error) {
     return error instanceof Error ? error : new Error(String(error));
