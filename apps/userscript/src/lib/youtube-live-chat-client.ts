@@ -3,7 +3,7 @@ import { GM_xmlhttpRequest } from "$";
 // ---- YouTube internal API shapes ----------------------------------------
 
 interface ChatMessage {
-	id: string;
+	userId: string;
 	author: string;
 	message: string;
 	timestampUsec: string;
@@ -38,6 +38,7 @@ interface LiveChatContinuationItem {
 
 interface LiveChatTextMessageRenderer {
 	id: string;
+	authorExternalChannelId?: string;
 	authorName?: { simpleText: string };
 	message?: { runs?: Array<{ text?: string }> };
 	timestampUsec: string;
@@ -231,7 +232,7 @@ class YTLiveChatClient {
 			.filter((r): r is LiveChatTextMessageRenderer => r !== undefined)
 			.filter((r) => Number(r.timestampUsec) > this._startedAt)
 			.map((r) => ({
-				id: r.id,
+				userId: r.authorExternalChannelId ?? r.id,
 				author: r.authorName?.simpleText ?? "",
 				message: r.message?.runs?.map((run) => run.text ?? "").join("") ?? "",
 				timestampUsec: r.timestampUsec,

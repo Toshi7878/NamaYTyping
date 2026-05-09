@@ -6,7 +6,7 @@ import { getNicoName } from "./niconico";
 type Platform = "youtube" | "twitch" | "niconico";
 export interface ChatMessage {
 	platform: Platform;
-	id: string;
+	userId: string;
 	author: string;
 	message: string;
 	timestampUsec: string;
@@ -40,7 +40,7 @@ function handleChat(messages: ChatMessage[]) {
 
 				if (!isWordComment && m.message.match(/^@(.+)/)) {
 					const newName = m.message.slice(1).trim().slice(0, 20);
-					ime.updateUserName(m.id, newName);
+					ime.updateUserName(m.userId, newName);
 					ime.addNotifications([`名前変更: ${name} -> ${newName}`]);
 				}
 				break;

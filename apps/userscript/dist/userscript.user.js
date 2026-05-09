@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      2.1.1
+// @version      2.1.2
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -16433,9 +16433,10 @@ postPasswordAuth: (liveId, password) => {
     if (data.case !== "chat")
       return;
     const chat = data.value;
+    const userId = chat.rawUserId?.toString() ?? chat.hashedUserId ?? "";
     const author = chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "";
     return {
-      id: message.meta?.id ?? `${chat.no}-${chat.vpos}`,
+      userId,
       author,
       message: chat.content,
       timestampUsec: timestampToUsecString(message.meta?.at),
@@ -23954,7 +23955,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         const timestampUsec = String(timestampMs * 1e3);
         if (Number(timestampUsec) <= this._startedAt) return;
         const chatMsg = {
-          id: tags["id"] ?? crypto.randomUUID(),
+          userId: tags["user-id"] ?? crypto.randomUUID(),
           author: tags["display-name"] ?? msg.prefix.split("!")[0] ?? "",
           message: msg.params[1] ?? "",
           timestampUsec,
@@ -24087,7 +24088,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       );
       if (next) this._continuation = next;
       const messages = (lcc.actions ?? []).map((a) => a?.addChatItemAction?.item?.liveChatTextMessageRenderer).filter((r2) => r2 !== void 0).filter((r2) => Number(r2.timestampUsec) > this._startedAt).map((r2) => ({
-        id: r2.id,
+        userId: r2.authorExternalChannelId ?? r2.id,
         author: r2.authorName?.simpleText ?? "",
         message: r2.message?.runs?.map((run) => run.text ?? "").join("") ?? "",
         timestampUsec: r2.timestampUsec,
@@ -24459,7 +24460,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
           const { isWordComment } = handleTyping(ime, { ...m, author: name });
           if (!isWordComment && m.message.match(/^@(.+)/)) {
             const newName = m.message.slice(1).trim().slice(0, 20);
-            ime.updateUserName(m.id, newName);
+            ime.updateUserName(m.userId, newName);
             ime.addNotifications([`名前変更: ${name} -> ${newName}`]);
           }
           break;

@@ -55,7 +55,7 @@ function parseIrcMessage(line: string): ParsedIrcMessage | null {
 // ---- Public types --------------------------------------------------------
 
 interface ChatMessage {
-	id: string;
+	userId: string;
 	author: string;
 	message: string;
 	timestampUsec: string;
@@ -175,7 +175,7 @@ class TwitchLiveChatClient {
 			if (Number(timestampUsec) <= this._startedAt) return;
 
 			const chatMsg: ChatMessage = {
-				id: tags["id"] ?? crypto.randomUUID(),
+				userId: tags["user-id"] ?? crypto.randomUUID(),
 				author: tags["display-name"] ?? msg.prefix.split("!")[0] ?? "",
 				message: msg.params[1] ?? "",
 				timestampUsec,
