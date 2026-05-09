@@ -1,6 +1,10 @@
+import { createResultWithUser, type ResultMap } from "@repo/firebase";
 import { unsafeWindow } from "$";
 import type { YTypingIme } from "../ytyping";
-import { ImeLiveChatConnector } from "./ime-live-chat-connerctor";
+import {
+	ImeLiveChatConnector,
+	type LiveChatDisconnectInfo,
+} from "./ime-live-chat-connerctor";
 import { getNicoName } from "./niconico";
 
 type Platform = "youtube" | "twitch" | "niconico";
@@ -20,12 +24,53 @@ export const NamaTypingContainer = () => {
 			onConnect={() =>
 				unsafeWindow.__ytyping?.toast.success("ライブチャットに接続しました")
 			}
+			onDisconnect={(info) =>
+				void (async () => {
+					await saveLiveResult(info);
+					unsafeWindow.__ytyping?.toast.success("リザルトを保存しました");
+				})().catch((e) => {
+					const error = e instanceof Error ? e : new Error(String(e));
+					unsafeWindow.__ytyping?.toast.error(
+						`リザルト保存エラー: ${error.message}`,
+					);
+				})
+			}
 			onError={(e) =>
 				unsafeWindow.__ytyping?.toast.error(`接続エラー: ${e.message}`)
 			}
 		/>
 	);
 };
+
+async function saveLiveResult({ liveId }: LiveChatDisconnectInfo) {
+	const ime = unsafeWindow.__ytyping_ime;
+	if (!ime) return;
+
+	const mapInfo = await ime.ensureMapInfo();
+	const builtMap = ime.getBuiltMap();
+
+	if (!builtMap || !mapInfo) {
+		throw new Error("保存する譜面情報を取得できませんでした");
+	}
+
+	await createResultWithUser(liveId, {
+		map: {
+			id: String(mapInfo.id),
+			mapId: mapInfo.id,
+			rating: mapInfo.difficulty.rating,
+			totalNotes: builtMap.totalNotes,
+			flatWords: builtMap.flatWords,
+			createdAt: mapInfo.createdAt as unknown as ResultMap["map"]["createdAt"],
+			media: mapInfo.media,
+			info: {
+				title: mapInfo.info.title,
+				artistName: mapInfo.info.artistName,
+				source: mapInfo.info.source,
+			},
+		},
+		userResults: ime.getUserResults(),
+	});
+}
 
 function handleChat(messages: ChatMessage[]) {
 	const ime = unsafeWindow.__ytyping_ime;

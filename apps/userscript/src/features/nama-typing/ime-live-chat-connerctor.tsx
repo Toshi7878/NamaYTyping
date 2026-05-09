@@ -24,14 +24,21 @@ const STORAGE_KEY_TWITCH = "nama-typing:twitch-channel-name";
 const STORAGE_KEY_NICONICO = "nama-typing:niconico-live-id";
 type Platform = ChatMessage["platform"];
 
+export type LiveChatDisconnectInfo = {
+	liveId: string;
+	platform: Platform;
+};
+
 interface ImeLiveChatConnectorProps {
 	onConnect: () => void;
+	onDisconnect: (info: LiveChatDisconnectInfo) => void;
 	onChat: (messages: ChatMessage[]) => void;
 	onError: (error: Error) => void;
 }
 
 export const ImeLiveChatConnector = ({
 	onConnect,
+	onDisconnect,
 	onChat,
 	onError,
 }: ImeLiveChatConnectorProps) => {
@@ -44,6 +51,7 @@ export const ImeLiveChatConnector = ({
 		inputRef,
 		platform,
 		onConnect,
+		onDisconnect,
 		onChat,
 		onError,
 	);
@@ -142,10 +150,12 @@ const useLiveChatSession = (
 	inputRef: RefObject<HTMLInputElement | null>,
 	platform: Platform,
 	onConnect: () => void,
+	onDisconnect: (info: LiveChatDisconnectInfo) => void,
 	onChat: (messages: ChatMessage[]) => void,
 	onError: (error: Error) => void,
 ) => {
 	const [isStarted, setIsStarted] = useState(false);
+	const activeSessionRef = useRef<LiveChatDisconnectInfo | null>(null);
 	const unsubscribeRef = useRef<(() => void) | null>(null);
 	const ime = useWindowProperty("__ytyping_ime");
 	const platformRef = useRef(platform);
@@ -164,6 +174,7 @@ const useLiveChatSession = (
 				case "youtube": {
 					const liveId = extractYouTubeLiveId(rawValue);
 					if (!liveId) return;
+					activeSessionRef.current = { liveId, platform: "youtube" };
 					unsubscribeRef.current = subscribeYTLiveChat({
 						liveId,
 						onChat: (messages) => onChat(withPlatform(messages, "youtube")),
@@ -175,6 +186,7 @@ const useLiveChatSession = (
 				case "twitch": {
 					const channelName = extractTwitchLiveId(rawValue);
 					if (!channelName) return;
+					activeSessionRef.current = { liveId: channelName, platform: "twitch" };
 					unsubscribeRef.current = subscribeTwitchLiveChat({
 						channelName,
 						onChat: (messages) => onChat(withPlatform(messages, "twitch")),
@@ -186,6 +198,7 @@ const useLiveChatSession = (
 				case "niconico": {
 					const liveId = extractNiconicoLiveId(rawValue);
 					if (!liveId) return;
+					activeSessionRef.current = { liveId, platform: "niconico" };
 					unsubscribeRef.current = subscribeNicoLiveChat({
 						liveId,
 						onChat: (messages) => onChat(withPlatform(messages, "niconico")),
@@ -198,7 +211,12 @@ const useLiveChatSession = (
 		}
 
 		function handleEnd() {
+			const activeSession = activeSessionRef.current;
+			unsubscribeRef.current?.();
+			unsubscribeRef.current = null;
+			activeSessionRef.current = null;
 			setIsStarted(false);
+			if (activeSession) onDisconnect(activeSession);
 		}
 
 		ime.removeEventListener("start", startClient);
@@ -209,10 +227,11 @@ const useLiveChatSession = (
 		return () => {
 			unsubscribeRef.current?.();
 			unsubscribeRef.current = null;
+			activeSessionRef.current = null;
 			ime.removeEventListener("start", startClient);
 			ime.removeEventListener("end", handleEnd);
 		};
-	}, [ime, inputRef, onChat, onConnect, onError]);
+	}, [ime, inputRef, onChat, onConnect, onDisconnect, onError]);
 
 	return { isStarted };
 };

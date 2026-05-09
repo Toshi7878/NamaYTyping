@@ -50,8 +50,8 @@ export interface YTypingIme extends EventTarget {
 		createdAt: Date;
 		updatedAt: Date;
 	} | null>;
-	getUserResult: (id: string) => (UserResult & { userId: string }) | undefined;
-	getUserResults: () => UserResult[];
+	getUserResult: (id: string) => UserResult | undefined;
+	getUserResults: () => Array<UserResult & { userId: string }>;
 	updateUserResult: (
 		id: string,
 		{

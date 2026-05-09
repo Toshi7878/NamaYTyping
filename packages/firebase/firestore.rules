@@ -61,16 +61,16 @@ service cloud.firestore {
     }
 
     match /lives/{liveId} {
-      allow read: true;
-      allow write: false;
+      allow read: if true;
+      allow write: if false;
 
       match /results/{resultId} {
-        allow read: true;
+        allow read: if true;
         allow create: if isResultCreate(request.resource.data);
         allow update, delete: if false;
 
         match /users/{userId} {
-          allow read: true;
+          allow read: if true;
           allow create: if isUserResultCreate(request.resource.data, userId);
           allow update, delete: if false;
         }

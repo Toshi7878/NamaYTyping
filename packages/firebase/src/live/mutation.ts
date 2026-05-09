@@ -15,7 +15,7 @@ const createExpireAt = () =>
 	Timestamp.fromMillis(Date.now() + ttlHours * 60 * 60 * 1000);
 
 type CreateResultWithUserInput = {
-	map: Omit<ResultMap, "id" | "expireAt">;
+	map: ResultMap["map"];
 	userResults: Omit<UserResult, "expireAt">[];
 };
 

@@ -50,6 +50,9 @@ importers:
       '@mujurin/nicolive-api-ts':
         specifier: file:C:/Users/toshi/Desktop/NDGRClient-ts
         version: file:../NDGRClient-ts(@bufbuild/protobuf@2.12.0)(postcss@8.5.13)(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0))
+      '@repo/firebase':
+        specifier: workspace:*
+        version: link:../../packages/firebase
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
