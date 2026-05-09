@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      2.1.3
+// @version      2.1.5
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -36,8 +36,8 @@
     }
     return Object.freeze(Object.defineProperty(n, Symbol.toStringTag, { value: "Module" }));
   }
-  function getDefaultExportFromCjs(x2) {
-    return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
+  function getDefaultExportFromCjs(x) {
+    return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
   }
   var jsxRuntime = { exports: {} };
   var reactJsxRuntime_production = {};
@@ -117,9 +117,9 @@
         }
         return first;
       }
-      function compare(a, b2) {
-        var diff = a.sortIndex - b2.sortIndex;
-        return 0 !== diff ? diff : a.id - b2.id;
+      function compare(a, b) {
+        var diff = a.sortIndex - b.sortIndex;
+        return 0 !== diff ? diff : a.id - b.id;
       }
       exports$1.unstable_now = void 0;
       if ("object" === typeof performance && "function" === typeof performance.now) {
@@ -370,26 +370,26 @@
       enqueueSetState: function() {
       }
     }, assign = Object.assign, emptyObject = {};
-    function Component2(props, context, updater) {
+    function Component(props, context, updater) {
       this.props = props;
       this.context = context;
       this.refs = emptyObject;
       this.updater = updater || ReactNoopUpdateQueue;
     }
-    Component2.prototype.isReactComponent = {};
-    Component2.prototype.setState = function(partialState, callback) {
+    Component.prototype.isReactComponent = {};
+    Component.prototype.setState = function(partialState, callback) {
       if ("object" !== typeof partialState && "function" !== typeof partialState && null != partialState)
         throw Error(
           "takes an object of state variables to update or a function which returns an object of state variables."
         );
       this.updater.enqueueSetState(this, partialState, callback, "setState");
     };
-    Component2.prototype.forceUpdate = function(callback) {
+    Component.prototype.forceUpdate = function(callback) {
       this.updater.enqueueForceUpdate(this, callback, "forceUpdate");
     };
     function ComponentDummy() {
     }
-    ComponentDummy.prototype = Component2.prototype;
+    ComponentDummy.prototype = Component.prototype;
     function PureComponent(props, context, updater) {
       this.props = props;
       this.context = context;
@@ -398,7 +398,7 @@
     }
     var pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
     pureComponentPrototype.constructor = PureComponent;
-    assign(pureComponentPrototype, Component2.prototype);
+    assign(pureComponentPrototype, Component.prototype);
     pureComponentPrototype.isPureReactComponent = true;
     var isArrayImpl = Array.isArray;
     function noop3() {
@@ -601,7 +601,7 @@
     };
     react_production.Activity = REACT_ACTIVITY_TYPE;
     react_production.Children = Children;
-    react_production.Component = Component2;
+    react_production.Component = Component;
     react_production.Fragment = REACT_FRAGMENT_TYPE;
     react_production.Profiler = REACT_PROFILER_TYPE;
     react_production.PureComponent = PureComponent;
@@ -1006,14 +1006,14 @@
         if (null === alternate) throw Error(formatProdErrorMessage(188));
         return alternate !== fiber ? null : fiber;
       }
-      for (var a = fiber, b2 = alternate; ; ) {
+      for (var a = fiber, b = alternate; ; ) {
         var parentA = a.return;
         if (null === parentA) break;
         var parentB = parentA.alternate;
         if (null === parentB) {
-          b2 = parentA.return;
-          if (null !== b2) {
-            a = b2;
+          b = parentA.return;
+          if (null !== b) {
+            a = b;
             continue;
           }
           break;
@@ -1021,23 +1021,23 @@
         if (parentA.child === parentB.child) {
           for (parentB = parentA.child; parentB; ) {
             if (parentB === a) return assertIsMounted(parentA), fiber;
-            if (parentB === b2) return assertIsMounted(parentA), alternate;
+            if (parentB === b) return assertIsMounted(parentA), alternate;
             parentB = parentB.sibling;
           }
           throw Error(formatProdErrorMessage(188));
         }
-        if (a.return !== b2.return) a = parentA, b2 = parentB;
+        if (a.return !== b.return) a = parentA, b = parentB;
         else {
           for (var didFindChild = false, child$0 = parentA.child; child$0; ) {
             if (child$0 === a) {
               didFindChild = true;
               a = parentA;
-              b2 = parentB;
+              b = parentB;
               break;
             }
-            if (child$0 === b2) {
+            if (child$0 === b) {
               didFindChild = true;
-              b2 = parentA;
+              b = parentA;
               a = parentB;
               break;
             }
@@ -1048,12 +1048,12 @@
               if (child$0 === a) {
                 didFindChild = true;
                 a = parentB;
-                b2 = parentA;
+                b = parentA;
                 break;
               }
-              if (child$0 === b2) {
+              if (child$0 === b) {
                 didFindChild = true;
-                b2 = parentB;
+                b = parentB;
                 a = parentA;
                 break;
               }
@@ -1062,7 +1062,7 @@
             if (!didFindChild) throw Error(formatProdErrorMessage(189));
           }
         }
-        if (a.alternate !== b2) throw Error(formatProdErrorMessage(190));
+        if (a.alternate !== b) throw Error(formatProdErrorMessage(190));
       }
       if (3 !== a.tag) throw Error(formatProdErrorMessage(188));
       return a.stateNode.current === a ? fiber : alternate;
@@ -1126,7 +1126,7 @@
             type = type._init;
             try {
               return getComponentNameFromType(type(innerType));
-            } catch (x2) {
+            } catch (x) {
             }
         }
       return null;
@@ -1192,16 +1192,16 @@
       hostTransitionProviderCursor.current === fiber && (pop(hostTransitionProviderCursor), HostTransitionContext._currentValue = sharedNotPendingObject);
     }
     var prefix, suffix;
-    function describeBuiltInComponentFrame(name2) {
+    function describeBuiltInComponentFrame(name) {
       if (void 0 === prefix)
         try {
           throw Error();
-        } catch (x2) {
-          var match = x2.stack.trim().match(/\n( *(at )?)/);
+        } catch (x) {
+          var match = x.stack.trim().match(/\n( *(at )?)/);
           prefix = match && match[1] || "";
-          suffix = -1 < x2.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x2.stack.indexOf("@") ? "@unknown:0:0" : "";
+          suffix = -1 < x.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
         }
-      return "\n" + prefix + name2 + suffix;
+      return "\n" + prefix + name + suffix;
     }
     var reentry = false;
     function describeNativeComponentFrame(fn, construct) {
@@ -1225,8 +1225,8 @@
                 if ("object" === typeof Reflect && Reflect.construct) {
                   try {
                     Reflect.construct(Fake, []);
-                  } catch (x2) {
-                    var control = x2;
+                  } catch (x) {
+                    var control = x;
                   }
                   Reflect.construct(fn, [], Fake);
                 } else {
@@ -1326,8 +1326,8 @@
           info += describeFiber(workInProgress2, previous), previous = workInProgress2, workInProgress2 = workInProgress2.return;
         while (workInProgress2);
         return info;
-      } catch (x2) {
-        return "\nError generating stack: " + x2.message + "\n" + x2.stack;
+      } catch (x) {
+        return "\nError generating stack: " + x.message + "\n" + x.stack;
       }
     }
     var hasOwnProperty = Object.prototype.hasOwnProperty, scheduleCallback$3 = Scheduler.unstable_scheduleCallback, cancelCallback$1 = Scheduler.unstable_cancelCallback, shouldYield = Scheduler.unstable_shouldYield, requestPaint = Scheduler.unstable_requestPaint, now = Scheduler.unstable_now, getCurrentPriorityLevel = Scheduler.unstable_getCurrentPriorityLevel, ImmediatePriority = Scheduler.unstable_ImmediatePriority, UserBlockingPriority = Scheduler.unstable_UserBlockingPriority, NormalPriority$1 = Scheduler.unstable_NormalPriority, LowPriority = Scheduler.unstable_LowPriority, IdlePriority = Scheduler.unstable_IdlePriority, log$1 = Scheduler.log, unstable_setDisableYieldValue = Scheduler.unstable_setDisableYieldValue, rendererID = null, injectedHook = null;
@@ -1340,9 +1340,9 @@
         }
     }
     var clz32 = Math.clz32 ? Math.clz32 : clz32Fallback, log = Math.log, LN2 = Math.LN2;
-    function clz32Fallback(x2) {
-      x2 >>>= 0;
-      return 0 === x2 ? 32 : 31 - (log(x2) / LN2 | 0) | 0;
+    function clz32Fallback(x) {
+      x >>>= 0;
+      return 0 === x ? 32 : 31 - (log(x) / LN2 | 0) | 0;
     }
     var nextTransitionUpdateLane = 256, nextTransitionDeferredLane = 262144, nextRetryLane = 4194304;
     function getHighestPriorityLanes(lanes) {
@@ -1639,52 +1639,52 @@
       illegalAttributeNameCache[attributeName] = true;
       return false;
     }
-    function setValueForAttribute(node, name2, value) {
-      if (isAttributeNameSafe(name2))
-        if (null === value) node.removeAttribute(name2);
+    function setValueForAttribute(node, name, value) {
+      if (isAttributeNameSafe(name))
+        if (null === value) node.removeAttribute(name);
         else {
           switch (typeof value) {
             case "undefined":
             case "function":
             case "symbol":
-              node.removeAttribute(name2);
+              node.removeAttribute(name);
               return;
             case "boolean":
-              var prefix$10 = name2.toLowerCase().slice(0, 5);
+              var prefix$10 = name.toLowerCase().slice(0, 5);
               if ("data-" !== prefix$10 && "aria-" !== prefix$10) {
-                node.removeAttribute(name2);
+                node.removeAttribute(name);
                 return;
               }
           }
-          node.setAttribute(name2, "" + value);
+          node.setAttribute(name, "" + value);
         }
     }
-    function setValueForKnownAttribute(node, name2, value) {
-      if (null === value) node.removeAttribute(name2);
+    function setValueForKnownAttribute(node, name, value) {
+      if (null === value) node.removeAttribute(name);
       else {
         switch (typeof value) {
           case "undefined":
           case "function":
           case "symbol":
           case "boolean":
-            node.removeAttribute(name2);
+            node.removeAttribute(name);
             return;
         }
-        node.setAttribute(name2, "" + value);
+        node.setAttribute(name, "" + value);
       }
     }
-    function setValueForNamespacedAttribute(node, namespace, name2, value) {
-      if (null === value) node.removeAttribute(name2);
+    function setValueForNamespacedAttribute(node, namespace, name, value) {
+      if (null === value) node.removeAttribute(name);
       else {
         switch (typeof value) {
           case "undefined":
           case "function":
           case "symbol":
           case "boolean":
-            node.removeAttribute(name2);
+            node.removeAttribute(name);
             return;
         }
-        node.setAttributeNS(namespace, name2, "" + value);
+        node.setAttributeNS(namespace, name, "" + value);
       }
     }
     function getToStringValue(value) {
@@ -1759,13 +1759,13 @@
       node = value;
       return node !== lastValue ? (tracker.setValue(node), true) : false;
     }
-    function getActiveElement(doc2) {
-      doc2 = doc2 || ("undefined" !== typeof document ? document : void 0);
-      if ("undefined" === typeof doc2) return null;
+    function getActiveElement(doc) {
+      doc = doc || ("undefined" !== typeof document ? document : void 0);
+      if ("undefined" === typeof doc) return null;
       try {
-        return doc2.activeElement || doc2.body;
+        return doc.activeElement || doc.body;
       } catch (e) {
-        return doc2.body;
+        return doc.body;
       }
     }
     var escapeSelectorAttributeValueInsideDoubleQuotesRegex = /[\n"\\]/g;
@@ -1777,7 +1777,7 @@
         }
       );
     }
-    function updateInput(element, value, defaultValue, lastDefaultValue, checked, defaultChecked, type, name2) {
+    function updateInput(element, value, defaultValue, lastDefaultValue, checked, defaultChecked, type, name) {
       element.name = "";
       null != type && "function" !== typeof type && "symbol" !== typeof type && "boolean" !== typeof type ? element.type = type : element.removeAttribute("type");
       if (null != value)
@@ -1791,9 +1791,9 @@
       null != value ? setDefaultValue(element, type, getToStringValue(value)) : null != defaultValue ? setDefaultValue(element, type, getToStringValue(defaultValue)) : null != lastDefaultValue && element.removeAttribute("value");
       null == checked && null != defaultChecked && (element.defaultChecked = !!defaultChecked);
       null != checked && (element.checked = checked && "function" !== typeof checked && "symbol" !== typeof checked);
-      null != name2 && "function" !== typeof name2 && "symbol" !== typeof name2 && "boolean" !== typeof name2 ? element.name = "" + getToStringValue(name2) : element.removeAttribute("name");
+      null != name && "function" !== typeof name && "symbol" !== typeof name && "boolean" !== typeof name ? element.name = "" + getToStringValue(name) : element.removeAttribute("name");
     }
-    function initInput(element, value, defaultValue, checked, defaultChecked, type, name2, isHydrating2) {
+    function initInput(element, value, defaultValue, checked, defaultChecked, type, name, isHydrating2) {
       null != type && "function" !== typeof type && "symbol" !== typeof type && "boolean" !== typeof type && (element.type = type);
       if (null != value || null != defaultValue) {
         if (!("submit" !== type && "reset" !== type || void 0 !== value && null !== value)) {
@@ -1809,7 +1809,7 @@
       checked = "function" !== typeof checked && "symbol" !== typeof checked && !!checked;
       element.checked = isHydrating2 ? element.checked : !!checked;
       element.defaultChecked = !!checked;
-      null != name2 && "function" !== typeof name2 && "symbol" !== typeof name2 && "boolean" !== typeof name2 && (element.name = name2);
+      null != name && "function" !== typeof name && "symbol" !== typeof name && "boolean" !== typeof name && (element.name = name);
       track(element);
     }
     function setDefaultValue(node, type, value) {
@@ -2057,8 +2057,8 @@
       }
     }
     var isInsideEventHandler = false;
-    function batchedUpdates$1(fn, a, b2) {
-      if (isInsideEventHandler) return fn(a, b2);
+    function batchedUpdates$1(fn, a, b) {
+      if (isInsideEventHandler) return fn(a, b);
       isInsideEventHandler = true;
       try {
         var JSCompiler_inline_result = fn(a);
@@ -2474,8 +2474,8 @@
       if ("input" === domEventName || "change" === domEventName)
         return getInstIfValueChanged(targetInst);
     }
-    function is(x2, y) {
-      return x2 === y && (0 !== x2 || 1 / x2 === 1 / y) || x2 !== x2 && y !== y;
+    function is(x, y) {
+      return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
     }
     var objectIs = "function" === typeof Object.is ? Object.is : is;
     function shallowEqual(objA, objB) {
@@ -2541,19 +2541,19 @@
     }
     var skipSelectionChangeEvent = canUseDOM && "documentMode" in document && 11 >= document.documentMode, activeElement = null, activeElementInst = null, lastSelection = null, mouseDown = false;
     function constructSelectEvent(dispatchQueue, nativeEvent, nativeEventTarget) {
-      var doc2 = nativeEventTarget.window === nativeEventTarget ? nativeEventTarget.document : 9 === nativeEventTarget.nodeType ? nativeEventTarget : nativeEventTarget.ownerDocument;
-      mouseDown || null == activeElement || activeElement !== getActiveElement(doc2) || (doc2 = activeElement, "selectionStart" in doc2 && hasSelectionCapabilities(doc2) ? doc2 = { start: doc2.selectionStart, end: doc2.selectionEnd } : (doc2 = (doc2.ownerDocument && doc2.ownerDocument.defaultView || window).getSelection(), doc2 = {
-        anchorNode: doc2.anchorNode,
-        anchorOffset: doc2.anchorOffset,
-        focusNode: doc2.focusNode,
-        focusOffset: doc2.focusOffset
-      }), lastSelection && shallowEqual(lastSelection, doc2) || (lastSelection = doc2, doc2 = accumulateTwoPhaseListeners(activeElementInst, "onSelect"), 0 < doc2.length && (nativeEvent = new SyntheticEvent(
+      var doc = nativeEventTarget.window === nativeEventTarget ? nativeEventTarget.document : 9 === nativeEventTarget.nodeType ? nativeEventTarget : nativeEventTarget.ownerDocument;
+      mouseDown || null == activeElement || activeElement !== getActiveElement(doc) || (doc = activeElement, "selectionStart" in doc && hasSelectionCapabilities(doc) ? doc = { start: doc.selectionStart, end: doc.selectionEnd } : (doc = (doc.ownerDocument && doc.ownerDocument.defaultView || window).getSelection(), doc = {
+        anchorNode: doc.anchorNode,
+        anchorOffset: doc.anchorOffset,
+        focusNode: doc.focusNode,
+        focusOffset: doc.focusOffset
+      }), lastSelection && shallowEqual(lastSelection, doc) || (lastSelection = doc, doc = accumulateTwoPhaseListeners(activeElementInst, "onSelect"), 0 < doc.length && (nativeEvent = new SyntheticEvent(
         "onSelect",
         "select",
         null,
         nativeEvent,
         nativeEventTarget
-      ), dispatchQueue.push({ event: nativeEvent, listeners: doc2 }), nativeEvent.target = activeElement)));
+      ), dispatchQueue.push({ event: nativeEvent, listeners: doc }), nativeEvent.target = activeElement)));
     }
     function makePrefixMap(styleProp, eventName) {
       var prefixes = {};
@@ -2673,9 +2673,9 @@
     function createFiberImplClass(tag, pendingProps, key, mode) {
       return new FiberNode(tag, pendingProps, key, mode);
     }
-    function shouldConstruct(Component2) {
-      Component2 = Component2.prototype;
-      return !(!Component2 || !Component2.isReactComponent);
+    function shouldConstruct(Component) {
+      Component = Component.prototype;
+      return !(!Component || !Component.isReactComponent);
     }
     function createWorkInProgress(current, pendingProps) {
       var workInProgress2 = current.alternate;
@@ -3275,10 +3275,10 @@
       try {
         var init = lazyType._init;
         return init(lazyType._payload);
-      } catch (x2) {
-        if (null !== x2 && "object" === typeof x2 && "function" === typeof x2.then)
-          throw suspendedThenable = x2, SuspenseException;
-        throw x2;
+      } catch (x) {
+        if (null !== x && "object" === typeof x && "function" === typeof x.then)
+          throw suspendedThenable = x, SuspenseException;
+        throw x;
       }
     }
     var suspendedThenable = null;
@@ -3741,9 +3741,9 @@
           );
           thenableState$1 = null;
           return firstChildFiber;
-        } catch (x2) {
-          if (x2 === SuspenseException || x2 === SuspenseActionException) throw x2;
-          var fiber = createFiberImplClass(29, x2, null, returnFiber.mode);
+        } catch (x) {
+          if (x === SuspenseException || x === SuspenseActionException) throw x;
+          var fiber = createFiberImplClass(29, x, null, returnFiber.mode);
           fiber.lanes = lanes;
           fiber.return = returnFiber;
           return fiber;
@@ -4006,7 +4006,7 @@
         if (!objectIs(nextDeps[i], prevDeps[i])) return false;
       return true;
     }
-    function renderWithHooks(current, workInProgress2, Component2, props, secondArg, nextRenderLanes) {
+    function renderWithHooks(current, workInProgress2, Component, props, secondArg, nextRenderLanes) {
       renderLanes = nextRenderLanes;
       currentlyRenderingFiber = workInProgress2;
       workInProgress2.memoizedState = null;
@@ -4014,11 +4014,11 @@
       workInProgress2.lanes = 0;
       ReactSharedInternals.H = null === current || null === current.memoizedState ? HooksDispatcherOnMount : HooksDispatcherOnUpdate;
       shouldDoubleInvokeUserFnsInHooksDEV = false;
-      nextRenderLanes = Component2(props, secondArg);
+      nextRenderLanes = Component(props, secondArg);
       shouldDoubleInvokeUserFnsInHooksDEV = false;
       didScheduleRenderPhaseUpdateDuringThisPass && (nextRenderLanes = renderWithHooksAgain(
         workInProgress2,
-        Component2,
+        Component,
         props,
         secondArg
       ));
@@ -4036,7 +4036,7 @@
       if (didRenderTooFewHooks) throw Error(formatProdErrorMessage(300));
       null === current || didReceiveUpdate || (current = current.dependencies, null !== current && checkIfContextChanged(current) && (didReceiveUpdate = true));
     }
-    function renderWithHooksAgain(workInProgress2, Component2, props, secondArg) {
+    function renderWithHooksAgain(workInProgress2, Component, props, secondArg) {
       currentlyRenderingFiber = workInProgress2;
       var numberOfReRenders = 0;
       do {
@@ -4054,7 +4054,7 @@
           null != children.memoCache && (children.memoCache.index = 0);
         }
         ReactSharedInternals.H = HooksDispatcherOnRerender;
-        children = Component2(props, secondArg);
+        children = Component(props, secondArg);
       } while (didScheduleRenderPhaseUpdateDuringThisPass);
       return children;
     }
@@ -4539,9 +4539,9 @@
       if ("object" === typeof currentStateHook && null !== currentStateHook && "function" === typeof currentStateHook.then)
         try {
           var state = useThenable(currentStateHook);
-        } catch (x2) {
-          if (x2 === SuspenseException) throw SuspenseActionException;
-          throw x2;
+        } catch (x) {
+          if (x === SuspenseException) throw SuspenseActionException;
+          throw x;
         }
       else state = currentStateHook;
       currentStateHook = updateWorkInProgressHook();
@@ -5254,17 +5254,17 @@
       "function" === typeof instance.UNSAFE_componentWillReceiveProps && instance.UNSAFE_componentWillReceiveProps(newProps, nextContext);
       instance.state !== workInProgress2 && classComponentUpdater.enqueueReplaceState(instance, instance.state, null);
     }
-    function resolveClassComponentProps(Component2, baseProps) {
+    function resolveClassComponentProps(Component, baseProps) {
       var newProps = baseProps;
       if ("ref" in baseProps) {
         newProps = {};
         for (var propName in baseProps)
           "ref" !== propName && (newProps[propName] = baseProps[propName]);
       }
-      if (Component2 = Component2.defaultProps) {
+      if (Component = Component.defaultProps) {
         newProps === baseProps && (newProps = assign({}, newProps));
-        for (var propName$73 in Component2)
-          void 0 === newProps[propName$73] && (newProps[propName$73] = Component2[propName$73]);
+        for (var propName$73 in Component)
+          void 0 === newProps[propName$73] && (newProps[propName$73] = Component[propName$73]);
       }
       return newProps;
     }
@@ -5407,8 +5407,8 @@
         renderLanes2
       );
     }
-    function updateForwardRef(current, workInProgress2, Component2, nextProps, renderLanes2) {
-      Component2 = Component2.render;
+    function updateForwardRef(current, workInProgress2, Component, nextProps, renderLanes2) {
+      Component = Component.render;
       var ref = workInProgress2.ref;
       if ("ref" in nextProps) {
         var propsWithoutRef = {};
@@ -5419,7 +5419,7 @@
       nextProps = renderWithHooks(
         current,
         workInProgress2,
-        Component2,
+        Component,
         propsWithoutRef,
         ref,
         renderLanes2
@@ -5432,10 +5432,10 @@
       reconcileChildren(current, workInProgress2, nextProps, renderLanes2);
       return workInProgress2.child;
     }
-    function updateMemoComponent(current, workInProgress2, Component2, nextProps, renderLanes2) {
+    function updateMemoComponent(current, workInProgress2, Component, nextProps, renderLanes2) {
       if (null === current) {
-        var type = Component2.type;
-        if ("function" === typeof type && !shouldConstruct(type) && void 0 === type.defaultProps && null === Component2.compare)
+        var type = Component.type;
+        if ("function" === typeof type && !shouldConstruct(type) && void 0 === type.defaultProps && null === Component.compare)
           return workInProgress2.tag = 15, workInProgress2.type = type, updateSimpleMemoComponent(
             current,
             workInProgress2,
@@ -5444,7 +5444,7 @@
             renderLanes2
           );
         current = createFiberFromTypeAndProps(
-          Component2.type,
+          Component.type,
           null,
           nextProps,
           workInProgress2,
@@ -5458,9 +5458,9 @@
       type = current.child;
       if (!checkScheduledUpdateOrContext(current, renderLanes2)) {
         var prevProps = type.memoizedProps;
-        Component2 = Component2.compare;
-        Component2 = null !== Component2 ? Component2 : shallowEqual;
-        if (Component2(prevProps, nextProps) && current.ref === workInProgress2.ref)
+        Component = Component.compare;
+        Component = null !== Component ? Component : shallowEqual;
+        if (Component(prevProps, nextProps) && current.ref === workInProgress2.ref)
           return bailoutOnAlreadyFinishedWork(current, workInProgress2, renderLanes2);
       }
       workInProgress2.flags |= 1;
@@ -5469,7 +5469,7 @@
       current.return = workInProgress2;
       return workInProgress2.child = current;
     }
-    function updateSimpleMemoComponent(current, workInProgress2, Component2, nextProps, renderLanes2) {
+    function updateSimpleMemoComponent(current, workInProgress2, Component, nextProps, renderLanes2) {
       if (null !== current) {
         var prevProps = current.memoizedProps;
         if (shallowEqual(prevProps, nextProps) && current.ref === workInProgress2.ref)
@@ -5481,7 +5481,7 @@
       return updateFunctionComponent(
         current,
         workInProgress2,
-        Component2,
+        Component,
         nextProps,
         renderLanes2
       );
@@ -5641,12 +5641,12 @@
           workInProgress2.flags |= 4194816;
       }
     }
-    function updateFunctionComponent(current, workInProgress2, Component2, nextProps, renderLanes2) {
+    function updateFunctionComponent(current, workInProgress2, Component, nextProps, renderLanes2) {
       prepareToReadContext(workInProgress2);
-      Component2 = renderWithHooks(
+      Component = renderWithHooks(
         current,
         workInProgress2,
-        Component2,
+        Component,
         nextProps,
         void 0,
         renderLanes2
@@ -5656,33 +5656,33 @@
         return bailoutHooks(current, workInProgress2, renderLanes2), bailoutOnAlreadyFinishedWork(current, workInProgress2, renderLanes2);
       isHydrating && nextProps && pushMaterializedTreeId(workInProgress2);
       workInProgress2.flags |= 1;
-      reconcileChildren(current, workInProgress2, Component2, renderLanes2);
+      reconcileChildren(current, workInProgress2, Component, renderLanes2);
       return workInProgress2.child;
     }
-    function replayFunctionComponent(current, workInProgress2, nextProps, Component2, secondArg, renderLanes2) {
+    function replayFunctionComponent(current, workInProgress2, nextProps, Component, secondArg, renderLanes2) {
       prepareToReadContext(workInProgress2);
       workInProgress2.updateQueue = null;
       nextProps = renderWithHooksAgain(
         workInProgress2,
-        Component2,
+        Component,
         nextProps,
         secondArg
       );
       finishRenderingHooks(current);
-      Component2 = checkDidRenderIdHook();
+      Component = checkDidRenderIdHook();
       if (null !== current && !didReceiveUpdate)
         return bailoutHooks(current, workInProgress2, renderLanes2), bailoutOnAlreadyFinishedWork(current, workInProgress2, renderLanes2);
-      isHydrating && Component2 && pushMaterializedTreeId(workInProgress2);
+      isHydrating && Component && pushMaterializedTreeId(workInProgress2);
       workInProgress2.flags |= 1;
       reconcileChildren(current, workInProgress2, nextProps, renderLanes2);
       return workInProgress2.child;
     }
-    function updateClassComponent(current, workInProgress2, Component2, nextProps, renderLanes2) {
+    function updateClassComponent(current, workInProgress2, Component, nextProps, renderLanes2) {
       prepareToReadContext(workInProgress2);
       if (null === workInProgress2.stateNode) {
-        var context = emptyContextObject, contextType = Component2.contextType;
+        var context = emptyContextObject, contextType = Component.contextType;
         "object" === typeof contextType && null !== contextType && (context = readContext(contextType));
-        context = new Component2(nextProps, context);
+        context = new Component(nextProps, context);
         workInProgress2.memoizedState = null !== context.state && void 0 !== context.state ? context.state : null;
         context.updater = classComponentUpdater;
         workInProgress2.stateNode = context;
@@ -5692,27 +5692,27 @@
         context.state = workInProgress2.memoizedState;
         context.refs = {};
         initializeUpdateQueue(workInProgress2);
-        contextType = Component2.contextType;
+        contextType = Component.contextType;
         context.context = "object" === typeof contextType && null !== contextType ? readContext(contextType) : emptyContextObject;
         context.state = workInProgress2.memoizedState;
-        contextType = Component2.getDerivedStateFromProps;
+        contextType = Component.getDerivedStateFromProps;
         "function" === typeof contextType && (applyDerivedStateFromProps(
           workInProgress2,
-          Component2,
+          Component,
           contextType,
           nextProps
         ), context.state = workInProgress2.memoizedState);
-        "function" === typeof Component2.getDerivedStateFromProps || "function" === typeof context.getSnapshotBeforeUpdate || "function" !== typeof context.UNSAFE_componentWillMount && "function" !== typeof context.componentWillMount || (contextType = context.state, "function" === typeof context.componentWillMount && context.componentWillMount(), "function" === typeof context.UNSAFE_componentWillMount && context.UNSAFE_componentWillMount(), contextType !== context.state && classComponentUpdater.enqueueReplaceState(context, context.state, null), processUpdateQueue(workInProgress2, nextProps, context, renderLanes2), suspendIfUpdateReadFromEntangledAsyncAction(), context.state = workInProgress2.memoizedState);
+        "function" === typeof Component.getDerivedStateFromProps || "function" === typeof context.getSnapshotBeforeUpdate || "function" !== typeof context.UNSAFE_componentWillMount && "function" !== typeof context.componentWillMount || (contextType = context.state, "function" === typeof context.componentWillMount && context.componentWillMount(), "function" === typeof context.UNSAFE_componentWillMount && context.UNSAFE_componentWillMount(), contextType !== context.state && classComponentUpdater.enqueueReplaceState(context, context.state, null), processUpdateQueue(workInProgress2, nextProps, context, renderLanes2), suspendIfUpdateReadFromEntangledAsyncAction(), context.state = workInProgress2.memoizedState);
         "function" === typeof context.componentDidMount && (workInProgress2.flags |= 4194308);
         nextProps = true;
       } else if (null === current) {
         context = workInProgress2.stateNode;
-        var unresolvedOldProps = workInProgress2.memoizedProps, oldProps = resolveClassComponentProps(Component2, unresolvedOldProps);
+        var unresolvedOldProps = workInProgress2.memoizedProps, oldProps = resolveClassComponentProps(Component, unresolvedOldProps);
         context.props = oldProps;
-        var oldContext = context.context, contextType$jscomp$0 = Component2.contextType;
+        var oldContext = context.context, contextType$jscomp$0 = Component.contextType;
         contextType = emptyContextObject;
         "object" === typeof contextType$jscomp$0 && null !== contextType$jscomp$0 && (contextType = readContext(contextType$jscomp$0));
-        var getDerivedStateFromProps = Component2.getDerivedStateFromProps;
+        var getDerivedStateFromProps = Component.getDerivedStateFromProps;
         contextType$jscomp$0 = "function" === typeof getDerivedStateFromProps || "function" === typeof context.getSnapshotBeforeUpdate;
         unresolvedOldProps = workInProgress2.pendingProps !== unresolvedOldProps;
         contextType$jscomp$0 || "function" !== typeof context.UNSAFE_componentWillReceiveProps && "function" !== typeof context.componentWillReceiveProps || (unresolvedOldProps || oldContext !== contextType) && callComponentWillReceiveProps(
@@ -5729,12 +5729,12 @@
         oldContext = workInProgress2.memoizedState;
         unresolvedOldProps || oldState !== oldContext || hasForceUpdate ? ("function" === typeof getDerivedStateFromProps && (applyDerivedStateFromProps(
           workInProgress2,
-          Component2,
+          Component,
           getDerivedStateFromProps,
           nextProps
         ), oldContext = workInProgress2.memoizedState), (oldProps = hasForceUpdate || checkShouldComponentUpdate(
           workInProgress2,
-          Component2,
+          Component,
           oldProps,
           nextProps,
           oldState,
@@ -5745,14 +5745,14 @@
         context = workInProgress2.stateNode;
         cloneUpdateQueue(current, workInProgress2);
         contextType = workInProgress2.memoizedProps;
-        contextType$jscomp$0 = resolveClassComponentProps(Component2, contextType);
+        contextType$jscomp$0 = resolveClassComponentProps(Component, contextType);
         context.props = contextType$jscomp$0;
         getDerivedStateFromProps = workInProgress2.pendingProps;
         oldState = context.context;
-        oldContext = Component2.contextType;
+        oldContext = Component.contextType;
         oldProps = emptyContextObject;
         "object" === typeof oldContext && null !== oldContext && (oldProps = readContext(oldContext));
-        unresolvedOldProps = Component2.getDerivedStateFromProps;
+        unresolvedOldProps = Component.getDerivedStateFromProps;
         (oldContext = "function" === typeof unresolvedOldProps || "function" === typeof context.getSnapshotBeforeUpdate) || "function" !== typeof context.UNSAFE_componentWillReceiveProps && "function" !== typeof context.componentWillReceiveProps || (contextType !== getDerivedStateFromProps || oldState !== oldProps) && callComponentWillReceiveProps(
           workInProgress2,
           context,
@@ -5767,12 +5767,12 @@
         var newState = workInProgress2.memoizedState;
         contextType !== getDerivedStateFromProps || oldState !== newState || hasForceUpdate || null !== current && null !== current.dependencies && checkIfContextChanged(current.dependencies) ? ("function" === typeof unresolvedOldProps && (applyDerivedStateFromProps(
           workInProgress2,
-          Component2,
+          Component,
           unresolvedOldProps,
           nextProps
         ), newState = workInProgress2.memoizedState), (contextType$jscomp$0 = hasForceUpdate || checkShouldComponentUpdate(
           workInProgress2,
-          Component2,
+          Component,
           contextType$jscomp$0,
           nextProps,
           oldState,
@@ -5787,7 +5787,7 @@
       context = nextProps;
       markRef(current, workInProgress2);
       nextProps = 0 !== (workInProgress2.flags & 128);
-      context || nextProps ? (context = workInProgress2.stateNode, Component2 = nextProps && "function" !== typeof Component2.getDerivedStateFromError ? null : context.render(), workInProgress2.flags |= 1, null !== current && nextProps ? (workInProgress2.child = reconcileChildFibers(
+      context || nextProps ? (context = workInProgress2.stateNode, Component = nextProps && "function" !== typeof Component.getDerivedStateFromError ? null : context.render(), workInProgress2.flags |= 1, null !== current && nextProps ? (workInProgress2.child = reconcileChildFibers(
         workInProgress2,
         current.child,
         null,
@@ -5795,9 +5795,9 @@
       ), workInProgress2.child = reconcileChildFibers(
         workInProgress2,
         null,
-        Component2,
+        Component,
         renderLanes2
-      )) : reconcileChildren(current, workInProgress2, Component2, renderLanes2), workInProgress2.memoizedState = context.state, current = workInProgress2.child) : current = bailoutOnAlreadyFinishedWork(
+      )) : reconcileChildren(current, workInProgress2, Component, renderLanes2), workInProgress2.memoizedState = context.state, current = workInProgress2.child) : current = bailoutOnAlreadyFinishedWork(
         current,
         workInProgress2,
         renderLanes2
@@ -9222,7 +9222,7 @@
                     priorFocusedElem.value.length
                   );
                 else {
-                  var doc2 = priorFocusedElem.ownerDocument || document, win = doc2 && doc2.defaultView || window;
+                  var doc = priorFocusedElem.ownerDocument || document, win = doc && doc.defaultView || window;
                   if (win.getSelection) {
                     var selection = win.getSelection(), length = priorFocusedElem.textContent.length, start$jscomp$0 = Math.min(priorSelectionRange.start, length), end$jscomp$0 = void 0 === priorSelectionRange.end ? start$jscomp$0 : Math.min(priorSelectionRange.end, length);
                     !selection.extend && start$jscomp$0 > end$jscomp$0 && (curFocusedElem = end$jscomp$0, end$jscomp$0 = start$jscomp$0, start$jscomp$0 = curFocusedElem);
@@ -9234,7 +9234,7 @@
                       end$jscomp$0
                     );
                     if (startMarker && endMarker && (1 !== selection.rangeCount || selection.anchorNode !== startMarker.node || selection.anchorOffset !== startMarker.offset || selection.focusNode !== endMarker.node || selection.focusOffset !== endMarker.offset)) {
-                      var range = doc2.createRange();
+                      var range = doc.createRange();
                       range.setStart(startMarker.node, startMarker.offset);
                       selection.removeAllRanges();
                       start$jscomp$0 > end$jscomp$0 ? (selection.addRange(range), selection.extend(endMarker.node, endMarker.offset)) : (range.setEnd(endMarker.node, endMarker.offset), selection.addRange(range));
@@ -9242,16 +9242,16 @@
                   }
                 }
               }
-              doc2 = [];
+              doc = [];
               for (selection = priorFocusedElem; selection = selection.parentNode; )
-                1 === selection.nodeType && doc2.push({
+                1 === selection.nodeType && doc.push({
                   element: selection,
                   left: selection.scrollLeft,
                   top: selection.scrollTop
                 });
               "function" === typeof priorFocusedElem.focus && priorFocusedElem.focus();
-              for (priorFocusedElem = 0; priorFocusedElem < doc2.length; priorFocusedElem++) {
-                var info = doc2[priorFocusedElem];
+              for (priorFocusedElem = 0; priorFocusedElem < doc.length; priorFocusedElem++) {
+                var info = doc[priorFocusedElem];
                 info.element.scrollLeft = info.left;
                 info.element.scrollTop = info.top;
               }
@@ -10705,7 +10705,7 @@
         case "li":
           break;
         case "input":
-          var name2 = null, type = null, value = null, defaultValue = null, lastDefaultValue = null, checked = null, defaultChecked = null;
+          var name = null, type = null, value = null, defaultValue = null, lastDefaultValue = null, checked = null, defaultChecked = null;
           for (propKey in lastProps) {
             var lastProp = lastProps[propKey];
             if (lastProps.hasOwnProperty(propKey) && null != lastProp)
@@ -10729,7 +10729,7 @@
                   type = propKey;
                   break;
                 case "name":
-                  name2 = propKey;
+                  name = propKey;
                   break;
                 case "checked":
                   checked = propKey;
@@ -10767,7 +10767,7 @@
             checked,
             defaultChecked,
             type,
-            name2
+            name
           );
           return;
         case "select":
@@ -10789,9 +10789,9 @@
                     lastDefaultValue
                   );
               }
-          for (name2 in nextProps)
-            if (type = nextProps[name2], lastDefaultValue = lastProps[name2], nextProps.hasOwnProperty(name2) && (null != type || null != lastDefaultValue))
-              switch (name2) {
+          for (name in nextProps)
+            if (type = nextProps[name], lastDefaultValue = lastProps[name], nextProps.hasOwnProperty(name) && (null != type || null != lastDefaultValue))
+              switch (name) {
                 case "value":
                   propKey$201 = type;
                   break;
@@ -10804,7 +10804,7 @@
                   type !== lastDefaultValue && setProp(
                     domElement,
                     tag,
-                    name2,
+                    name,
                     type,
                     nextProps,
                     lastDefaultValue
@@ -10818,31 +10818,31 @@
         case "textarea":
           propKey = propKey$201 = null;
           for (defaultValue in lastProps)
-            if (name2 = lastProps[defaultValue], lastProps.hasOwnProperty(defaultValue) && null != name2 && !nextProps.hasOwnProperty(defaultValue))
+            if (name = lastProps[defaultValue], lastProps.hasOwnProperty(defaultValue) && null != name && !nextProps.hasOwnProperty(defaultValue))
               switch (defaultValue) {
                 case "value":
                   break;
                 case "children":
                   break;
                 default:
-                  setProp(domElement, tag, defaultValue, null, nextProps, name2);
+                  setProp(domElement, tag, defaultValue, null, nextProps, name);
               }
           for (value in nextProps)
-            if (name2 = nextProps[value], type = lastProps[value], nextProps.hasOwnProperty(value) && (null != name2 || null != type))
+            if (name = nextProps[value], type = lastProps[value], nextProps.hasOwnProperty(value) && (null != name || null != type))
               switch (value) {
                 case "value":
-                  propKey$201 = name2;
+                  propKey$201 = name;
                   break;
                 case "defaultValue":
-                  propKey = name2;
+                  propKey = name;
                   break;
                 case "children":
                   break;
                 case "dangerouslySetInnerHTML":
-                  if (null != name2) throw Error(formatProdErrorMessage(91));
+                  if (null != name) throw Error(formatProdErrorMessage(91));
                   break;
                 default:
-                  name2 !== type && setProp(domElement, tag, value, name2, nextProps, type);
+                  name !== type && setProp(domElement, tag, value, name, nextProps, type);
               }
           updateTextarea(domElement, propKey$201, propKey);
           return;
@@ -11108,8 +11108,8 @@
             break;
         } else if (!inRootOrSingleton)
           if ("input" === type && "hidden" === instance.type) {
-            var name2 = null == anyProps.name ? null : "" + anyProps.name;
-            if ("hidden" === anyProps.type && instance.getAttribute("name") === name2)
+            var name = null == anyProps.name ? null : "" + anyProps.name;
+            if ("hidden" === anyProps.type && instance.getAttribute("name") === name)
               return instance;
           } else return instance;
         else if (!instance[internalHoistableMarker])
@@ -11118,18 +11118,18 @@
               if (!instance.hasAttribute("itemprop")) break;
               return instance;
             case "link":
-              name2 = instance.getAttribute("rel");
-              if ("stylesheet" === name2 && instance.hasAttribute("data-precedence"))
+              name = instance.getAttribute("rel");
+              if ("stylesheet" === name && instance.hasAttribute("data-precedence"))
                 break;
-              else if (name2 !== anyProps.rel || instance.getAttribute("href") !== (null == anyProps.href || "" === anyProps.href ? null : anyProps.href) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin) || instance.getAttribute("title") !== (null == anyProps.title ? null : anyProps.title))
+              else if (name !== anyProps.rel || instance.getAttribute("href") !== (null == anyProps.href || "" === anyProps.href ? null : anyProps.href) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin) || instance.getAttribute("title") !== (null == anyProps.title ? null : anyProps.title))
                 break;
               return instance;
             case "style":
               if (instance.hasAttribute("data-precedence")) break;
               return instance;
             case "script":
-              name2 = instance.getAttribute("src");
-              if ((name2 !== (null == anyProps.src ? null : anyProps.src) || instance.getAttribute("type") !== (null == anyProps.type ? null : anyProps.type) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin)) && name2 && instance.hasAttribute("async") && !instance.hasAttribute("itemprop"))
+              name = instance.getAttribute("src");
+              if ((name !== (null == anyProps.src ? null : anyProps.src) || instance.getAttribute("type") !== (null == anyProps.type ? null : anyProps.type) || instance.getAttribute("crossorigin") !== (null == anyProps.crossOrigin ? null : anyProps.crossOrigin)) && name && instance.hasAttribute("async") && !instance.hasAttribute("itemprop"))
                 break;
               return instance;
             default:
@@ -12490,10422 +12490,6 @@
   }
   var clientExports = requireClient();
   const ReactDOM$1 = getDefaultExportFromCjs(clientExports);
-  const getDefaultsFromPostinstall = () => void 0;
-  var define_process_env_default$1 = {};
-  const stringToByteArray$1 = function(str) {
-    const out = [];
-    let p = 0;
-    for (let i = 0; i < str.length; i++) {
-      let c = str.charCodeAt(i);
-      if (c < 128) {
-        out[p++] = c;
-      } else if (c < 2048) {
-        out[p++] = c >> 6 | 192;
-        out[p++] = c & 63 | 128;
-      } else if ((c & 64512) === 55296 && i + 1 < str.length && (str.charCodeAt(i + 1) & 64512) === 56320) {
-        c = 65536 + ((c & 1023) << 10) + (str.charCodeAt(++i) & 1023);
-        out[p++] = c >> 18 | 240;
-        out[p++] = c >> 12 & 63 | 128;
-        out[p++] = c >> 6 & 63 | 128;
-        out[p++] = c & 63 | 128;
-      } else {
-        out[p++] = c >> 12 | 224;
-        out[p++] = c >> 6 & 63 | 128;
-        out[p++] = c & 63 | 128;
-      }
-    }
-    return out;
-  };
-  const byteArrayToString = function(bytes) {
-    const out = [];
-    let pos = 0, c = 0;
-    while (pos < bytes.length) {
-      const c1 = bytes[pos++];
-      if (c1 < 128) {
-        out[c++] = String.fromCharCode(c1);
-      } else if (c1 > 191 && c1 < 224) {
-        const c2 = bytes[pos++];
-        out[c++] = String.fromCharCode((c1 & 31) << 6 | c2 & 63);
-      } else if (c1 > 239 && c1 < 365) {
-        const c2 = bytes[pos++];
-        const c3 = bytes[pos++];
-        const c4 = bytes[pos++];
-        const u = ((c1 & 7) << 18 | (c2 & 63) << 12 | (c3 & 63) << 6 | c4 & 63) - 65536;
-        out[c++] = String.fromCharCode(55296 + (u >> 10));
-        out[c++] = String.fromCharCode(56320 + (u & 1023));
-      } else {
-        const c2 = bytes[pos++];
-        const c3 = bytes[pos++];
-        out[c++] = String.fromCharCode((c1 & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
-      }
-    }
-    return out.join("");
-  };
-  const base64 = {
-byteToCharMap_: null,
-charToByteMap_: null,
-byteToCharMapWebSafe_: null,
-charToByteMapWebSafe_: null,
-ENCODED_VALS_BASE: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-get ENCODED_VALS() {
-      return this.ENCODED_VALS_BASE + "+/=";
-    },
-get ENCODED_VALS_WEBSAFE() {
-      return this.ENCODED_VALS_BASE + "-_.";
-    },
-HAS_NATIVE_SUPPORT: typeof atob === "function",
-encodeByteArray(input, webSafe) {
-      if (!Array.isArray(input)) {
-        throw Error("encodeByteArray takes an array as a parameter");
-      }
-      this.init_();
-      const byteToCharMap = webSafe ? this.byteToCharMapWebSafe_ : this.byteToCharMap_;
-      const output = [];
-      for (let i = 0; i < input.length; i += 3) {
-        const byte1 = input[i];
-        const haveByte2 = i + 1 < input.length;
-        const byte2 = haveByte2 ? input[i + 1] : 0;
-        const haveByte3 = i + 2 < input.length;
-        const byte3 = haveByte3 ? input[i + 2] : 0;
-        const outByte1 = byte1 >> 2;
-        const outByte2 = (byte1 & 3) << 4 | byte2 >> 4;
-        let outByte3 = (byte2 & 15) << 2 | byte3 >> 6;
-        let outByte4 = byte3 & 63;
-        if (!haveByte3) {
-          outByte4 = 64;
-          if (!haveByte2) {
-            outByte3 = 64;
-          }
-        }
-        output.push(byteToCharMap[outByte1], byteToCharMap[outByte2], byteToCharMap[outByte3], byteToCharMap[outByte4]);
-      }
-      return output.join("");
-    },
-encodeString(input, webSafe) {
-      if (this.HAS_NATIVE_SUPPORT && !webSafe) {
-        return btoa(input);
-      }
-      return this.encodeByteArray(stringToByteArray$1(input), webSafe);
-    },
-decodeString(input, webSafe) {
-      if (this.HAS_NATIVE_SUPPORT && !webSafe) {
-        return atob(input);
-      }
-      return byteArrayToString(this.decodeStringToByteArray(input, webSafe));
-    },
-decodeStringToByteArray(input, webSafe) {
-      this.init_();
-      const charToByteMap = webSafe ? this.charToByteMapWebSafe_ : this.charToByteMap_;
-      const output = [];
-      for (let i = 0; i < input.length; ) {
-        const byte1 = charToByteMap[input.charAt(i++)];
-        const haveByte2 = i < input.length;
-        const byte2 = haveByte2 ? charToByteMap[input.charAt(i)] : 0;
-        ++i;
-        const haveByte3 = i < input.length;
-        const byte3 = haveByte3 ? charToByteMap[input.charAt(i)] : 64;
-        ++i;
-        const haveByte4 = i < input.length;
-        const byte4 = haveByte4 ? charToByteMap[input.charAt(i)] : 64;
-        ++i;
-        if (byte1 == null || byte2 == null || byte3 == null || byte4 == null) {
-          throw new DecodeBase64StringError();
-        }
-        const outByte1 = byte1 << 2 | byte2 >> 4;
-        output.push(outByte1);
-        if (byte3 !== 64) {
-          const outByte2 = byte2 << 4 & 240 | byte3 >> 2;
-          output.push(outByte2);
-          if (byte4 !== 64) {
-            const outByte3 = byte3 << 6 & 192 | byte4;
-            output.push(outByte3);
-          }
-        }
-      }
-      return output;
-    },
-init_() {
-      if (!this.byteToCharMap_) {
-        this.byteToCharMap_ = {};
-        this.charToByteMap_ = {};
-        this.byteToCharMapWebSafe_ = {};
-        this.charToByteMapWebSafe_ = {};
-        for (let i = 0; i < this.ENCODED_VALS.length; i++) {
-          this.byteToCharMap_[i] = this.ENCODED_VALS.charAt(i);
-          this.charToByteMap_[this.byteToCharMap_[i]] = i;
-          this.byteToCharMapWebSafe_[i] = this.ENCODED_VALS_WEBSAFE.charAt(i);
-          this.charToByteMapWebSafe_[this.byteToCharMapWebSafe_[i]] = i;
-          if (i >= this.ENCODED_VALS_BASE.length) {
-            this.charToByteMap_[this.ENCODED_VALS_WEBSAFE.charAt(i)] = i;
-            this.charToByteMapWebSafe_[this.ENCODED_VALS.charAt(i)] = i;
-          }
-        }
-      }
-    }
-  };
-  class DecodeBase64StringError extends Error {
-    constructor() {
-      super(...arguments);
-      this.name = "DecodeBase64StringError";
-    }
-  }
-  const base64Encode = function(str) {
-    const utf8Bytes = stringToByteArray$1(str);
-    return base64.encodeByteArray(utf8Bytes, true);
-  };
-  const base64urlEncodeWithoutPadding = function(str) {
-    return base64Encode(str).replace(/\./g, "");
-  };
-  const base64Decode$1 = function(str) {
-    try {
-      return base64.decodeString(str, true);
-    } catch (e) {
-      console.error("base64Decode failed: ", e);
-    }
-    return null;
-  };
-  function getGlobal() {
-    if (typeof self !== "undefined") {
-      return self;
-    }
-    if (typeof window !== "undefined") {
-      return window;
-    }
-    if (typeof global !== "undefined") {
-      return global;
-    }
-    throw new Error("Unable to locate global object.");
-  }
-  const getDefaultsFromGlobal = () => getGlobal().__FIREBASE_DEFAULTS__;
-  const getDefaultsFromEnvVariable = () => {
-    if (typeof process === "undefined" || typeof define_process_env_default$1 === "undefined") {
-      return;
-    }
-    const defaultsJsonString = define_process_env_default$1.__FIREBASE_DEFAULTS__;
-    if (defaultsJsonString) {
-      return JSON.parse(defaultsJsonString);
-    }
-  };
-  const getDefaultsFromCookie = () => {
-    if (typeof document === "undefined") {
-      return;
-    }
-    let match;
-    try {
-      match = document.cookie.match(/__FIREBASE_DEFAULTS__=([^;]+)/);
-    } catch (e) {
-      return;
-    }
-    const decoded = match && base64Decode$1(match[1]);
-    return decoded && JSON.parse(decoded);
-  };
-  const getDefaults = () => {
-    try {
-      return getDefaultsFromPostinstall() || getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
-    } catch (e) {
-      console.info(`Unable to get __FIREBASE_DEFAULTS__ due to: ${e}`);
-      return;
-    }
-  };
-  const getDefaultEmulatorHost = (productName) => getDefaults()?.emulatorHosts?.[productName];
-  const getDefaultEmulatorHostnameAndPort = (productName) => {
-    const host = getDefaultEmulatorHost(productName);
-    if (!host) {
-      return void 0;
-    }
-    const separatorIndex = host.lastIndexOf(":");
-    if (separatorIndex <= 0 || separatorIndex + 1 === host.length) {
-      throw new Error(`Invalid host ${host} with no separate hostname and port!`);
-    }
-    const port = parseInt(host.substring(separatorIndex + 1), 10);
-    if (host[0] === "[") {
-      return [host.substring(1, separatorIndex - 1), port];
-    } else {
-      return [host.substring(0, separatorIndex), port];
-    }
-  };
-  const getDefaultAppConfig = () => getDefaults()?.config;
-  class Deferred {
-    constructor() {
-      this.reject = () => {
-      };
-      this.resolve = () => {
-      };
-      this.promise = new Promise((resolve, reject) => {
-        this.resolve = resolve;
-        this.reject = reject;
-      });
-    }
-wrapCallback(callback) {
-      return (error, value) => {
-        if (error) {
-          this.reject(error);
-        } else {
-          this.resolve(value);
-        }
-        if (typeof callback === "function") {
-          this.promise.catch(() => {
-          });
-          if (callback.length === 1) {
-            callback(error);
-          } else {
-            callback(error, value);
-          }
-        }
-      };
-    }
-  }
-  function createMockUserToken(token, projectId) {
-    if (token.uid) {
-      throw new Error('The "uid" field is no longer supported by mockUserToken. Please use "sub" instead for Firebase Auth User ID.');
-    }
-    const header = {
-      alg: "none",
-      type: "JWT"
-    };
-    const project = projectId || "demo-project";
-    const iat = token.iat || 0;
-    const sub = token.sub || token.user_id;
-    if (!sub) {
-      throw new Error("mockUserToken must contain 'sub' or 'user_id' field!");
-    }
-    const payload = {
-iss: `https://securetoken.google.com/${project}`,
-      aud: project,
-      iat,
-      exp: iat + 3600,
-      auth_time: iat,
-      sub,
-      user_id: sub,
-      firebase: {
-        sign_in_provider: "custom",
-        identities: {}
-      },
-...token
-    };
-    const signature = "";
-    return [
-      base64urlEncodeWithoutPadding(JSON.stringify(header)),
-      base64urlEncodeWithoutPadding(JSON.stringify(payload)),
-      signature
-    ].join(".");
-  }
-  function getUA() {
-    if (typeof navigator !== "undefined" && typeof navigator["userAgent"] === "string") {
-      return navigator["userAgent"];
-    } else {
-      return "";
-    }
-  }
-  function isNode$1() {
-    const forceEnvironment = getDefaults()?.forceEnvironment;
-    if (forceEnvironment === "node") {
-      return true;
-    } else if (forceEnvironment === "browser") {
-      return false;
-    }
-    try {
-      return Object.prototype.toString.call(global.process) === "[object process]";
-    } catch (e) {
-      return false;
-    }
-  }
-  function isSafari() {
-    return !isNode$1() && !!navigator.userAgent && navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome");
-  }
-  function isIndexedDBAvailable() {
-    try {
-      return typeof indexedDB === "object";
-    } catch (e) {
-      return false;
-    }
-  }
-  function validateIndexedDBOpenable() {
-    return new Promise((resolve, reject) => {
-      try {
-        let preExist = true;
-        const DB_CHECK_NAME = "validate-browser-context-for-indexeddb-analytics-module";
-        const request = self.indexedDB.open(DB_CHECK_NAME);
-        request.onsuccess = () => {
-          request.result.close();
-          if (!preExist) {
-            self.indexedDB.deleteDatabase(DB_CHECK_NAME);
-          }
-          resolve(true);
-        };
-        request.onupgradeneeded = () => {
-          preExist = false;
-        };
-        request.onerror = () => {
-          reject(request.error?.message || "");
-        };
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-  const ERROR_NAME = "FirebaseError";
-  class FirebaseError extends Error {
-    constructor(code, message, customData) {
-      super(message);
-      this.code = code;
-      this.customData = customData;
-      this.name = ERROR_NAME;
-      Object.setPrototypeOf(this, FirebaseError.prototype);
-      if (Error.captureStackTrace) {
-        Error.captureStackTrace(this, ErrorFactory.prototype.create);
-      }
-    }
-  }
-  class ErrorFactory {
-    constructor(service, serviceName, errors) {
-      this.service = service;
-      this.serviceName = serviceName;
-      this.errors = errors;
-    }
-    create(code, ...data) {
-      const customData = data[0] || {};
-      const fullCode = `${this.service}/${code}`;
-      const template = this.errors[code];
-      const message = template ? replaceTemplate(template, customData) : "Error";
-      const fullMessage = `${this.serviceName}: ${message} (${fullCode}).`;
-      const error = new FirebaseError(fullCode, fullMessage, customData);
-      return error;
-    }
-  }
-  function replaceTemplate(template, data) {
-    return template.replace(PATTERN, (_, key) => {
-      const value = data[key];
-      return value != null ? String(value) : `<${key}?>`;
-    });
-  }
-  const PATTERN = /\{\$([^}]+)}/g;
-  function deepEqual$1(a, b2) {
-    if (a === b2) {
-      return true;
-    }
-    const aKeys = Object.keys(a);
-    const bKeys = Object.keys(b2);
-    for (const k of aKeys) {
-      if (!bKeys.includes(k)) {
-        return false;
-      }
-      const aProp = a[k];
-      const bProp = b2[k];
-      if (isObject$1(aProp) && isObject$1(bProp)) {
-        if (!deepEqual$1(aProp, bProp)) {
-          return false;
-        }
-      } else if (aProp !== bProp) {
-        return false;
-      }
-    }
-    for (const k of bKeys) {
-      if (!aKeys.includes(k)) {
-        return false;
-      }
-    }
-    return true;
-  }
-  function isObject$1(thing) {
-    return thing !== null && typeof thing === "object";
-  }
-  function getModularInstance(service) {
-    if (service && service._delegate) {
-      return service._delegate;
-    } else {
-      return service;
-    }
-  }
-  function isCloudWorkstation(url) {
-    try {
-      const host = url.startsWith("http://") || url.startsWith("https://") ? new URL(url).hostname : url;
-      return host.endsWith(".cloudworkstations.dev");
-    } catch {
-      return false;
-    }
-  }
-  async function pingServer(endpoint) {
-    const result = await fetch(endpoint, {
-      credentials: "include"
-    });
-    return result.ok;
-  }
-  class Component {
-constructor(name2, instanceFactory, type) {
-      this.name = name2;
-      this.instanceFactory = instanceFactory;
-      this.type = type;
-      this.multipleInstances = false;
-      this.serviceProps = {};
-      this.instantiationMode = "LAZY";
-      this.onInstanceCreated = null;
-    }
-    setInstantiationMode(mode) {
-      this.instantiationMode = mode;
-      return this;
-    }
-    setMultipleInstances(multipleInstances) {
-      this.multipleInstances = multipleInstances;
-      return this;
-    }
-    setServiceProps(props) {
-      this.serviceProps = props;
-      return this;
-    }
-    setInstanceCreatedCallback(callback) {
-      this.onInstanceCreated = callback;
-      return this;
-    }
-  }
-  const DEFAULT_ENTRY_NAME$1 = "[DEFAULT]";
-  class Provider {
-    constructor(name2, container) {
-      this.name = name2;
-      this.container = container;
-      this.component = null;
-      this.instances = new Map();
-      this.instancesDeferred = new Map();
-      this.instancesOptions = new Map();
-      this.onInitCallbacks = new Map();
-    }
-get(identifier) {
-      const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
-      if (!this.instancesDeferred.has(normalizedIdentifier)) {
-        const deferred = new Deferred();
-        this.instancesDeferred.set(normalizedIdentifier, deferred);
-        if (this.isInitialized(normalizedIdentifier) || this.shouldAutoInitialize()) {
-          try {
-            const instance = this.getOrInitializeService({
-              instanceIdentifier: normalizedIdentifier
-            });
-            if (instance) {
-              deferred.resolve(instance);
-            }
-          } catch (e) {
-          }
-        }
-      }
-      return this.instancesDeferred.get(normalizedIdentifier).promise;
-    }
-    getImmediate(options) {
-      const normalizedIdentifier = this.normalizeInstanceIdentifier(options?.identifier);
-      const optional = options?.optional ?? false;
-      if (this.isInitialized(normalizedIdentifier) || this.shouldAutoInitialize()) {
-        try {
-          return this.getOrInitializeService({
-            instanceIdentifier: normalizedIdentifier
-          });
-        } catch (e) {
-          if (optional) {
-            return null;
-          } else {
-            throw e;
-          }
-        }
-      } else {
-        if (optional) {
-          return null;
-        } else {
-          throw Error(`Service ${this.name} is not available`);
-        }
-      }
-    }
-    getComponent() {
-      return this.component;
-    }
-    setComponent(component) {
-      if (component.name !== this.name) {
-        throw Error(`Mismatching Component ${component.name} for Provider ${this.name}.`);
-      }
-      if (this.component) {
-        throw Error(`Component for ${this.name} has already been provided`);
-      }
-      this.component = component;
-      if (!this.shouldAutoInitialize()) {
-        return;
-      }
-      if (isComponentEager(component)) {
-        try {
-          this.getOrInitializeService({ instanceIdentifier: DEFAULT_ENTRY_NAME$1 });
-        } catch (e) {
-        }
-      }
-      for (const [instanceIdentifier, instanceDeferred] of this.instancesDeferred.entries()) {
-        const normalizedIdentifier = this.normalizeInstanceIdentifier(instanceIdentifier);
-        try {
-          const instance = this.getOrInitializeService({
-            instanceIdentifier: normalizedIdentifier
-          });
-          instanceDeferred.resolve(instance);
-        } catch (e) {
-        }
-      }
-    }
-    clearInstance(identifier = DEFAULT_ENTRY_NAME$1) {
-      this.instancesDeferred.delete(identifier);
-      this.instancesOptions.delete(identifier);
-      this.instances.delete(identifier);
-    }
-
-async delete() {
-      const services = Array.from(this.instances.values());
-      await Promise.all([
-        ...services.filter((service) => "INTERNAL" in service).map((service) => service.INTERNAL.delete()),
-        ...services.filter((service) => "_delete" in service).map((service) => service._delete())
-      ]);
-    }
-    isComponentSet() {
-      return this.component != null;
-    }
-    isInitialized(identifier = DEFAULT_ENTRY_NAME$1) {
-      return this.instances.has(identifier);
-    }
-    getOptions(identifier = DEFAULT_ENTRY_NAME$1) {
-      return this.instancesOptions.get(identifier) || {};
-    }
-    initialize(opts = {}) {
-      const { options = {} } = opts;
-      const normalizedIdentifier = this.normalizeInstanceIdentifier(opts.instanceIdentifier);
-      if (this.isInitialized(normalizedIdentifier)) {
-        throw Error(`${this.name}(${normalizedIdentifier}) has already been initialized`);
-      }
-      if (!this.isComponentSet()) {
-        throw Error(`Component ${this.name} has not been registered yet`);
-      }
-      const instance = this.getOrInitializeService({
-        instanceIdentifier: normalizedIdentifier,
-        options
-      });
-      for (const [instanceIdentifier, instanceDeferred] of this.instancesDeferred.entries()) {
-        const normalizedDeferredIdentifier = this.normalizeInstanceIdentifier(instanceIdentifier);
-        if (normalizedIdentifier === normalizedDeferredIdentifier) {
-          instanceDeferred.resolve(instance);
-        }
-      }
-      return instance;
-    }
-onInit(callback, identifier) {
-      const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
-      const existingCallbacks = this.onInitCallbacks.get(normalizedIdentifier) ?? new Set();
-      existingCallbacks.add(callback);
-      this.onInitCallbacks.set(normalizedIdentifier, existingCallbacks);
-      const existingInstance = this.instances.get(normalizedIdentifier);
-      if (existingInstance) {
-        callback(existingInstance, normalizedIdentifier);
-      }
-      return () => {
-        existingCallbacks.delete(callback);
-      };
-    }
-invokeOnInitCallbacks(instance, identifier) {
-      const callbacks = this.onInitCallbacks.get(identifier);
-      if (!callbacks) {
-        return;
-      }
-      for (const callback of callbacks) {
-        try {
-          callback(instance, identifier);
-        } catch {
-        }
-      }
-    }
-    getOrInitializeService({ instanceIdentifier, options = {} }) {
-      let instance = this.instances.get(instanceIdentifier);
-      if (!instance && this.component) {
-        instance = this.component.instanceFactory(this.container, {
-          instanceIdentifier: normalizeIdentifierForFactory(instanceIdentifier),
-          options
-        });
-        this.instances.set(instanceIdentifier, instance);
-        this.instancesOptions.set(instanceIdentifier, options);
-        this.invokeOnInitCallbacks(instance, instanceIdentifier);
-        if (this.component.onInstanceCreated) {
-          try {
-            this.component.onInstanceCreated(this.container, instanceIdentifier, instance);
-          } catch {
-          }
-        }
-      }
-      return instance || null;
-    }
-    normalizeInstanceIdentifier(identifier = DEFAULT_ENTRY_NAME$1) {
-      if (this.component) {
-        return this.component.multipleInstances ? identifier : DEFAULT_ENTRY_NAME$1;
-      } else {
-        return identifier;
-      }
-    }
-    shouldAutoInitialize() {
-      return !!this.component && this.component.instantiationMode !== "EXPLICIT";
-    }
-  }
-  function normalizeIdentifierForFactory(identifier) {
-    return identifier === DEFAULT_ENTRY_NAME$1 ? void 0 : identifier;
-  }
-  function isComponentEager(component) {
-    return component.instantiationMode === "EAGER";
-  }
-  class ComponentContainer {
-    constructor(name2) {
-      this.name = name2;
-      this.providers = new Map();
-    }
-addComponent(component) {
-      const provider = this.getProvider(component.name);
-      if (provider.isComponentSet()) {
-        throw new Error(`Component ${component.name} has already been registered with ${this.name}`);
-      }
-      provider.setComponent(component);
-    }
-    addOrOverwriteComponent(component) {
-      const provider = this.getProvider(component.name);
-      if (provider.isComponentSet()) {
-        this.providers.delete(component.name);
-      }
-      this.addComponent(component);
-    }
-getProvider(name2) {
-      if (this.providers.has(name2)) {
-        return this.providers.get(name2);
-      }
-      const provider = new Provider(name2, this);
-      this.providers.set(name2, provider);
-      return provider;
-    }
-    getProviders() {
-      return Array.from(this.providers.values());
-    }
-  }
-  var LogLevel;
-  (function(LogLevel2) {
-    LogLevel2[LogLevel2["DEBUG"] = 0] = "DEBUG";
-    LogLevel2[LogLevel2["VERBOSE"] = 1] = "VERBOSE";
-    LogLevel2[LogLevel2["INFO"] = 2] = "INFO";
-    LogLevel2[LogLevel2["WARN"] = 3] = "WARN";
-    LogLevel2[LogLevel2["ERROR"] = 4] = "ERROR";
-    LogLevel2[LogLevel2["SILENT"] = 5] = "SILENT";
-  })(LogLevel || (LogLevel = {}));
-  const levelStringToEnum = {
-    "debug": LogLevel.DEBUG,
-    "verbose": LogLevel.VERBOSE,
-    "info": LogLevel.INFO,
-    "warn": LogLevel.WARN,
-    "error": LogLevel.ERROR,
-    "silent": LogLevel.SILENT
-  };
-  const defaultLogLevel = LogLevel.INFO;
-  const ConsoleMethod = {
-    [LogLevel.DEBUG]: "log",
-    [LogLevel.VERBOSE]: "log",
-    [LogLevel.INFO]: "info",
-    [LogLevel.WARN]: "warn",
-    [LogLevel.ERROR]: "error"
-  };
-  const defaultLogHandler = (instance, logType, ...args) => {
-    if (logType < instance.logLevel) {
-      return;
-    }
-    const now = ( new Date()).toISOString();
-    const method = ConsoleMethod[logType];
-    if (method) {
-      console[method](`[${now}]  ${instance.name}:`, ...args);
-    } else {
-      throw new Error(`Attempted to log a message with an invalid logType (value: ${logType})`);
-    }
-  };
-  class Logger {
-constructor(name2) {
-      this.name = name2;
-      this._logLevel = defaultLogLevel;
-      this._logHandler = defaultLogHandler;
-      this._userLogHandler = null;
-    }
-    get logLevel() {
-      return this._logLevel;
-    }
-    set logLevel(val) {
-      if (!(val in LogLevel)) {
-        throw new TypeError(`Invalid value "${val}" assigned to \`logLevel\``);
-      }
-      this._logLevel = val;
-    }
-setLogLevel(val) {
-      this._logLevel = typeof val === "string" ? levelStringToEnum[val] : val;
-    }
-    get logHandler() {
-      return this._logHandler;
-    }
-    set logHandler(val) {
-      if (typeof val !== "function") {
-        throw new TypeError("Value assigned to `logHandler` must be a function");
-      }
-      this._logHandler = val;
-    }
-    get userLogHandler() {
-      return this._userLogHandler;
-    }
-    set userLogHandler(val) {
-      this._userLogHandler = val;
-    }
-debug(...args) {
-      this._userLogHandler && this._userLogHandler(this, LogLevel.DEBUG, ...args);
-      this._logHandler(this, LogLevel.DEBUG, ...args);
-    }
-    log(...args) {
-      this._userLogHandler && this._userLogHandler(this, LogLevel.VERBOSE, ...args);
-      this._logHandler(this, LogLevel.VERBOSE, ...args);
-    }
-    info(...args) {
-      this._userLogHandler && this._userLogHandler(this, LogLevel.INFO, ...args);
-      this._logHandler(this, LogLevel.INFO, ...args);
-    }
-    warn(...args) {
-      this._userLogHandler && this._userLogHandler(this, LogLevel.WARN, ...args);
-      this._logHandler(this, LogLevel.WARN, ...args);
-    }
-    error(...args) {
-      this._userLogHandler && this._userLogHandler(this, LogLevel.ERROR, ...args);
-      this._logHandler(this, LogLevel.ERROR, ...args);
-    }
-  }
-  const instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
-  let idbProxyableTypes;
-  let cursorAdvanceMethods;
-  function getIdbProxyableTypes() {
-    return idbProxyableTypes || (idbProxyableTypes = [
-      IDBDatabase,
-      IDBObjectStore,
-      IDBIndex,
-      IDBCursor,
-      IDBTransaction
-    ]);
-  }
-  function getCursorAdvanceMethods() {
-    return cursorAdvanceMethods || (cursorAdvanceMethods = [
-      IDBCursor.prototype.advance,
-      IDBCursor.prototype.continue,
-      IDBCursor.prototype.continuePrimaryKey
-    ]);
-  }
-  const cursorRequestMap = new WeakMap();
-  const transactionDoneMap = new WeakMap();
-  const transactionStoreNamesMap = new WeakMap();
-  const transformCache = new WeakMap();
-  const reverseTransformCache = new WeakMap();
-  function promisifyRequest(request) {
-    const promise = new Promise((resolve, reject) => {
-      const unlisten = () => {
-        request.removeEventListener("success", success);
-        request.removeEventListener("error", error);
-      };
-      const success = () => {
-        resolve(wrap(request.result));
-        unlisten();
-      };
-      const error = () => {
-        reject(request.error);
-        unlisten();
-      };
-      request.addEventListener("success", success);
-      request.addEventListener("error", error);
-    });
-    promise.then((value) => {
-      if (value instanceof IDBCursor) {
-        cursorRequestMap.set(value, request);
-      }
-    }).catch(() => {
-    });
-    reverseTransformCache.set(promise, request);
-    return promise;
-  }
-  function cacheDonePromiseForTransaction(tx) {
-    if (transactionDoneMap.has(tx))
-      return;
-    const done = new Promise((resolve, reject) => {
-      const unlisten = () => {
-        tx.removeEventListener("complete", complete);
-        tx.removeEventListener("error", error);
-        tx.removeEventListener("abort", error);
-      };
-      const complete = () => {
-        resolve();
-        unlisten();
-      };
-      const error = () => {
-        reject(tx.error || new DOMException("AbortError", "AbortError"));
-        unlisten();
-      };
-      tx.addEventListener("complete", complete);
-      tx.addEventListener("error", error);
-      tx.addEventListener("abort", error);
-    });
-    transactionDoneMap.set(tx, done);
-  }
-  let idbProxyTraps = {
-    get(target, prop, receiver) {
-      if (target instanceof IDBTransaction) {
-        if (prop === "done")
-          return transactionDoneMap.get(target);
-        if (prop === "objectStoreNames") {
-          return target.objectStoreNames || transactionStoreNamesMap.get(target);
-        }
-        if (prop === "store") {
-          return receiver.objectStoreNames[1] ? void 0 : receiver.objectStore(receiver.objectStoreNames[0]);
-        }
-      }
-      return wrap(target[prop]);
-    },
-    set(target, prop, value) {
-      target[prop] = value;
-      return true;
-    },
-    has(target, prop) {
-      if (target instanceof IDBTransaction && (prop === "done" || prop === "store")) {
-        return true;
-      }
-      return prop in target;
-    }
-  };
-  function replaceTraps(callback) {
-    idbProxyTraps = callback(idbProxyTraps);
-  }
-  function wrapFunction(func) {
-    if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
-      return function(storeNames, ...args) {
-        const tx = func.call(unwrap(this), storeNames, ...args);
-        transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
-        return wrap(tx);
-      };
-    }
-    if (getCursorAdvanceMethods().includes(func)) {
-      return function(...args) {
-        func.apply(unwrap(this), args);
-        return wrap(cursorRequestMap.get(this));
-      };
-    }
-    return function(...args) {
-      return wrap(func.apply(unwrap(this), args));
-    };
-  }
-  function transformCachableValue(value) {
-    if (typeof value === "function")
-      return wrapFunction(value);
-    if (value instanceof IDBTransaction)
-      cacheDonePromiseForTransaction(value);
-    if (instanceOfAny(value, getIdbProxyableTypes()))
-      return new Proxy(value, idbProxyTraps);
-    return value;
-  }
-  function wrap(value) {
-    if (value instanceof IDBRequest)
-      return promisifyRequest(value);
-    if (transformCache.has(value))
-      return transformCache.get(value);
-    const newValue = transformCachableValue(value);
-    if (newValue !== value) {
-      transformCache.set(value, newValue);
-      reverseTransformCache.set(newValue, value);
-    }
-    return newValue;
-  }
-  const unwrap = (value) => reverseTransformCache.get(value);
-  function openDB(name2, version2, { blocked, upgrade, blocking, terminated } = {}) {
-    const request = indexedDB.open(name2, version2);
-    const openPromise = wrap(request);
-    if (upgrade) {
-      request.addEventListener("upgradeneeded", (event) => {
-        upgrade(wrap(request.result), event.oldVersion, event.newVersion, wrap(request.transaction), event);
-      });
-    }
-    if (blocked) {
-      request.addEventListener("blocked", (event) => blocked(
-event.oldVersion,
-        event.newVersion,
-        event
-      ));
-    }
-    openPromise.then((db2) => {
-      if (terminated)
-        db2.addEventListener("close", () => terminated());
-      if (blocking) {
-        db2.addEventListener("versionchange", (event) => blocking(event.oldVersion, event.newVersion, event));
-      }
-    }).catch(() => {
-    });
-    return openPromise;
-  }
-  const readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
-  const writeMethods = ["put", "add", "delete", "clear"];
-  const cachedMethods = new Map();
-  function getMethod(target, prop) {
-    if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
-      return;
-    }
-    if (cachedMethods.get(prop))
-      return cachedMethods.get(prop);
-    const targetFuncName = prop.replace(/FromIndex$/, "");
-    const useIndex = prop !== targetFuncName;
-    const isWrite = writeMethods.includes(targetFuncName);
-    if (
-!(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
-    ) {
-      return;
-    }
-    const method = async function(storeName, ...args) {
-      const tx = this.transaction(storeName, isWrite ? "readwrite" : "readonly");
-      let target2 = tx.store;
-      if (useIndex)
-        target2 = target2.index(args.shift());
-      return (await Promise.all([
-        target2[targetFuncName](...args),
-        isWrite && tx.done
-      ]))[0];
-    };
-    cachedMethods.set(prop, method);
-    return method;
-  }
-  replaceTraps((oldTraps) => ({
-    ...oldTraps,
-    get: (target, prop, receiver) => getMethod(target, prop) || oldTraps.get(target, prop, receiver),
-    has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
-  }));
-  class PlatformLoggerServiceImpl {
-    constructor(container) {
-      this.container = container;
-    }
-
-getPlatformInfoString() {
-      const providers = this.container.getProviders();
-      return providers.map((provider) => {
-        if (isVersionServiceProvider(provider)) {
-          const service = provider.getImmediate();
-          return `${service.library}/${service.version}`;
-        } else {
-          return null;
-        }
-      }).filter((logString) => logString).join(" ");
-    }
-  }
-  function isVersionServiceProvider(provider) {
-    const component = provider.getComponent();
-    return component?.type === "VERSION";
-  }
-  const name$q = "@firebase/app";
-  const version$1 = "0.14.12";
-  const logger = new Logger("@firebase/app");
-  const name$p = "@firebase/app-compat";
-  const name$o = "@firebase/analytics-compat";
-  const name$n = "@firebase/analytics";
-  const name$m = "@firebase/app-check-compat";
-  const name$l = "@firebase/app-check";
-  const name$k = "@firebase/auth";
-  const name$j = "@firebase/auth-compat";
-  const name$i = "@firebase/database";
-  const name$h = "@firebase/data-connect";
-  const name$g = "@firebase/database-compat";
-  const name$f = "@firebase/functions";
-  const name$e = "@firebase/functions-compat";
-  const name$d = "@firebase/installations";
-  const name$c = "@firebase/installations-compat";
-  const name$b = "@firebase/messaging";
-  const name$a = "@firebase/messaging-compat";
-  const name$9 = "@firebase/performance";
-  const name$8 = "@firebase/performance-compat";
-  const name$7 = "@firebase/remote-config";
-  const name$6 = "@firebase/remote-config-compat";
-  const name$5 = "@firebase/storage";
-  const name$4 = "@firebase/storage-compat";
-  const name$3 = "@firebase/firestore";
-  const name$2 = "@firebase/ai";
-  const name$1 = "@firebase/firestore-compat";
-  const name$r = "firebase";
-  const version$2 = "12.13.0";
-  const DEFAULT_ENTRY_NAME = "[DEFAULT]";
-  const PLATFORM_LOG_STRING = {
-    [name$q]: "fire-core",
-    [name$p]: "fire-core-compat",
-    [name$n]: "fire-analytics",
-    [name$o]: "fire-analytics-compat",
-    [name$l]: "fire-app-check",
-    [name$m]: "fire-app-check-compat",
-    [name$k]: "fire-auth",
-    [name$j]: "fire-auth-compat",
-    [name$i]: "fire-rtdb",
-    [name$h]: "fire-data-connect",
-    [name$g]: "fire-rtdb-compat",
-    [name$f]: "fire-fn",
-    [name$e]: "fire-fn-compat",
-    [name$d]: "fire-iid",
-    [name$c]: "fire-iid-compat",
-    [name$b]: "fire-fcm",
-    [name$a]: "fire-fcm-compat",
-    [name$9]: "fire-perf",
-    [name$8]: "fire-perf-compat",
-    [name$7]: "fire-rc",
-    [name$6]: "fire-rc-compat",
-    [name$5]: "fire-gcs",
-    [name$4]: "fire-gcs-compat",
-    [name$3]: "fire-fst",
-    [name$1]: "fire-fst-compat",
-    [name$2]: "fire-vertex",
-    "fire-js": "fire-js",
-[name$r]: "fire-js-all"
-  };
-  const _apps = new Map();
-  const _serverApps = new Map();
-  const _components = new Map();
-  function _addComponent(app2, component) {
-    try {
-      app2.container.addComponent(component);
-    } catch (e) {
-      logger.debug(`Component ${component.name} failed to register with FirebaseApp ${app2.name}`, e);
-    }
-  }
-  function _registerComponent(component) {
-    const componentName = component.name;
-    if (_components.has(componentName)) {
-      logger.debug(`There were multiple attempts to register component ${componentName}.`);
-      return false;
-    }
-    _components.set(componentName, component);
-    for (const app2 of _apps.values()) {
-      _addComponent(app2, component);
-    }
-    for (const serverApp of _serverApps.values()) {
-      _addComponent(serverApp, component);
-    }
-    return true;
-  }
-  function _getProvider(app2, name2) {
-    const heartbeatController = app2.container.getProvider("heartbeat").getImmediate({ optional: true });
-    if (heartbeatController) {
-      void heartbeatController.triggerHeartbeat();
-    }
-    return app2.container.getProvider(name2);
-  }
-  function _isFirebaseServerApp(obj) {
-    if (obj === null || obj === void 0) {
-      return false;
-    }
-    return obj.settings !== void 0;
-  }
-  const ERRORS = {
-    [
-      "no-app"
-]: "No Firebase App '{$appName}' has been created - call initializeApp() first",
-    [
-      "bad-app-name"
-]: "Illegal App name: '{$appName}'",
-    [
-      "duplicate-app"
-]: "Firebase App named '{$appName}' already exists with different options or config",
-    [
-      "app-deleted"
-]: "Firebase App named '{$appName}' already deleted",
-    [
-      "server-app-deleted"
-]: "Firebase Server App has been deleted",
-    [
-      "no-options"
-]: "Need to provide options, when not being deployed to hosting via source.",
-    [
-      "invalid-app-argument"
-]: "firebase.{$appName}() takes either no argument or a Firebase App instance.",
-    [
-      "invalid-log-argument"
-]: "First argument to `onLog` must be null or a function.",
-    [
-      "idb-open"
-]: "Error thrown when opening IndexedDB. Original error: {$originalErrorMessage}.",
-    [
-      "idb-get"
-]: "Error thrown when reading from IndexedDB. Original error: {$originalErrorMessage}.",
-    [
-      "idb-set"
-]: "Error thrown when writing to IndexedDB. Original error: {$originalErrorMessage}.",
-    [
-      "idb-delete"
-]: "Error thrown when deleting from IndexedDB. Original error: {$originalErrorMessage}.",
-    [
-      "finalization-registry-not-supported"
-]: "FirebaseServerApp deleteOnDeref field defined but the JS runtime does not support FinalizationRegistry.",
-    [
-      "invalid-server-app-environment"
-]: "FirebaseServerApp is not for use in browser environments."
-  };
-  const ERROR_FACTORY = new ErrorFactory("app", "Firebase", ERRORS);
-  class FirebaseAppImpl {
-    constructor(options, config, container) {
-      this._isDeleted = false;
-      this._options = { ...options };
-      this._config = { ...config };
-      this._name = config.name;
-      this._automaticDataCollectionEnabled = config.automaticDataCollectionEnabled;
-      this._container = container;
-      this.container.addComponent(new Component(
-        "app",
-        () => this,
-        "PUBLIC"
-));
-    }
-    get automaticDataCollectionEnabled() {
-      this.checkDestroyed();
-      return this._automaticDataCollectionEnabled;
-    }
-    set automaticDataCollectionEnabled(val) {
-      this.checkDestroyed();
-      this._automaticDataCollectionEnabled = val;
-    }
-    get name() {
-      this.checkDestroyed();
-      return this._name;
-    }
-    get options() {
-      this.checkDestroyed();
-      return this._options;
-    }
-    get config() {
-      this.checkDestroyed();
-      return this._config;
-    }
-    get container() {
-      return this._container;
-    }
-    get isDeleted() {
-      return this._isDeleted;
-    }
-    set isDeleted(val) {
-      this._isDeleted = val;
-    }
-checkDestroyed() {
-      if (this.isDeleted) {
-        throw ERROR_FACTORY.create("app-deleted", { appName: this._name });
-      }
-    }
-  }
-  const SDK_VERSION = version$2;
-  function initializeApp(_options, rawConfig = {}) {
-    let options = _options;
-    if (typeof rawConfig !== "object") {
-      const name3 = rawConfig;
-      rawConfig = { name: name3 };
-    }
-    const config = {
-      name: DEFAULT_ENTRY_NAME,
-      automaticDataCollectionEnabled: true,
-      ...rawConfig
-    };
-    const name2 = config.name;
-    if (typeof name2 !== "string" || !name2) {
-      throw ERROR_FACTORY.create("bad-app-name", {
-        appName: String(name2)
-      });
-    }
-    options || (options = getDefaultAppConfig());
-    if (!options) {
-      throw ERROR_FACTORY.create(
-        "no-options"
-);
-    }
-    const existingApp = _apps.get(name2);
-    if (existingApp) {
-      if (deepEqual$1(options, existingApp.options) && deepEqual$1(config, existingApp.config)) {
-        return existingApp;
-      } else {
-        throw ERROR_FACTORY.create("duplicate-app", { appName: name2 });
-      }
-    }
-    const container = new ComponentContainer(name2);
-    for (const component of _components.values()) {
-      container.addComponent(component);
-    }
-    const newApp = new FirebaseAppImpl(options, config, container);
-    _apps.set(name2, newApp);
-    return newApp;
-  }
-  function getApp(name2 = DEFAULT_ENTRY_NAME) {
-    const app2 = _apps.get(name2);
-    if (!app2 && name2 === DEFAULT_ENTRY_NAME && getDefaultAppConfig()) {
-      return initializeApp();
-    }
-    if (!app2) {
-      throw ERROR_FACTORY.create("no-app", { appName: name2 });
-    }
-    return app2;
-  }
-  function getApps() {
-    return Array.from(_apps.values());
-  }
-  function registerVersion(libraryKeyOrName, version2, variant) {
-    let library = PLATFORM_LOG_STRING[libraryKeyOrName] ?? libraryKeyOrName;
-    if (variant) {
-      library += `-${variant}`;
-    }
-    const libraryMismatch = library.match(/\s|\//);
-    const versionMismatch = version2.match(/\s|\//);
-    if (libraryMismatch || versionMismatch) {
-      const warning = [
-        `Unable to register library "${library}" with version "${version2}":`
-      ];
-      if (libraryMismatch) {
-        warning.push(`library name "${library}" contains illegal characters (whitespace or "/")`);
-      }
-      if (libraryMismatch && versionMismatch) {
-        warning.push("and");
-      }
-      if (versionMismatch) {
-        warning.push(`version name "${version2}" contains illegal characters (whitespace or "/")`);
-      }
-      logger.warn(warning.join(" "));
-      return;
-    }
-    _registerComponent(new Component(
-      `${library}-version`,
-      () => ({ library, version: version2 }),
-      "VERSION"
-));
-  }
-  const DB_NAME = "firebase-heartbeat-database";
-  const DB_VERSION = 1;
-  const STORE_NAME = "firebase-heartbeat-store";
-  let dbPromise = null;
-  function getDbPromise() {
-    if (!dbPromise) {
-      dbPromise = openDB(DB_NAME, DB_VERSION, {
-        upgrade: (db2, oldVersion) => {
-          switch (oldVersion) {
-            case 0:
-              try {
-                db2.createObjectStore(STORE_NAME);
-              } catch (e) {
-                console.warn(e);
-              }
-          }
-        }
-      }).catch((e) => {
-        throw ERROR_FACTORY.create("idb-open", {
-          originalErrorMessage: e.message
-        });
-      });
-    }
-    return dbPromise;
-  }
-  async function readHeartbeatsFromIndexedDB(app2) {
-    try {
-      const db2 = await getDbPromise();
-      const tx = db2.transaction(STORE_NAME);
-      const result = await tx.objectStore(STORE_NAME).get(computeKey(app2));
-      await tx.done;
-      return result;
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        logger.warn(e.message);
-      } else {
-        const idbGetError = ERROR_FACTORY.create("idb-get", {
-          originalErrorMessage: e?.message
-        });
-        logger.warn(idbGetError.message);
-      }
-    }
-  }
-  async function writeHeartbeatsToIndexedDB(app2, heartbeatObject) {
-    try {
-      const db2 = await getDbPromise();
-      const tx = db2.transaction(STORE_NAME, "readwrite");
-      const objectStore = tx.objectStore(STORE_NAME);
-      await objectStore.put(heartbeatObject, computeKey(app2));
-      await tx.done;
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        logger.warn(e.message);
-      } else {
-        const idbGetError = ERROR_FACTORY.create("idb-set", {
-          originalErrorMessage: e?.message
-        });
-        logger.warn(idbGetError.message);
-      }
-    }
-  }
-  function computeKey(app2) {
-    return `${app2.name}!${app2.options.appId}`;
-  }
-  const MAX_HEADER_BYTES = 1024;
-  const MAX_NUM_STORED_HEARTBEATS = 30;
-  class HeartbeatServiceImpl {
-    constructor(container) {
-      this.container = container;
-      this._heartbeatsCache = null;
-      const app2 = this.container.getProvider("app").getImmediate();
-      this._storage = new HeartbeatStorageImpl(app2);
-      this._heartbeatsCachePromise = this._storage.read().then((result) => {
-        this._heartbeatsCache = result;
-        return result;
-      });
-    }
-async triggerHeartbeat() {
-      try {
-        const platformLogger = this.container.getProvider("platform-logger").getImmediate();
-        const agent = platformLogger.getPlatformInfoString();
-        const date = getUTCDateString();
-        if (this._heartbeatsCache?.heartbeats == null) {
-          this._heartbeatsCache = await this._heartbeatsCachePromise;
-          if (this._heartbeatsCache?.heartbeats == null) {
-            return;
-          }
-        }
-        if (this._heartbeatsCache.lastSentHeartbeatDate === date || this._heartbeatsCache.heartbeats.some((singleDateHeartbeat) => singleDateHeartbeat.date === date)) {
-          return;
-        } else {
-          this._heartbeatsCache.heartbeats.push({ date, agent });
-          if (this._heartbeatsCache.heartbeats.length > MAX_NUM_STORED_HEARTBEATS) {
-            const earliestHeartbeatIdx = getEarliestHeartbeatIdx(this._heartbeatsCache.heartbeats);
-            this._heartbeatsCache.heartbeats.splice(earliestHeartbeatIdx, 1);
-          }
-        }
-        return this._storage.overwrite(this._heartbeatsCache);
-      } catch (e) {
-        logger.warn(e);
-      }
-    }
-async getHeartbeatsHeader() {
-      try {
-        if (this._heartbeatsCache === null) {
-          await this._heartbeatsCachePromise;
-        }
-        if (this._heartbeatsCache?.heartbeats == null || this._heartbeatsCache.heartbeats.length === 0) {
-          return "";
-        }
-        const date = getUTCDateString();
-        const { heartbeatsToSend, unsentEntries } = extractHeartbeatsForHeader(this._heartbeatsCache.heartbeats);
-        const headerString = base64urlEncodeWithoutPadding(JSON.stringify({ version: 2, heartbeats: heartbeatsToSend }));
-        this._heartbeatsCache.lastSentHeartbeatDate = date;
-        if (unsentEntries.length > 0) {
-          this._heartbeatsCache.heartbeats = unsentEntries;
-          await this._storage.overwrite(this._heartbeatsCache);
-        } else {
-          this._heartbeatsCache.heartbeats = [];
-          void this._storage.overwrite(this._heartbeatsCache);
-        }
-        return headerString;
-      } catch (e) {
-        logger.warn(e);
-        return "";
-      }
-    }
-  }
-  function getUTCDateString() {
-    const today = new Date();
-    return today.toISOString().substring(0, 10);
-  }
-  function extractHeartbeatsForHeader(heartbeatsCache, maxSize = MAX_HEADER_BYTES) {
-    const heartbeatsToSend = [];
-    let unsentEntries = heartbeatsCache.slice();
-    for (const singleDateHeartbeat of heartbeatsCache) {
-      const heartbeatEntry = heartbeatsToSend.find((hb) => hb.agent === singleDateHeartbeat.agent);
-      if (!heartbeatEntry) {
-        heartbeatsToSend.push({
-          agent: singleDateHeartbeat.agent,
-          dates: [singleDateHeartbeat.date]
-        });
-        if (countBytes(heartbeatsToSend) > maxSize) {
-          heartbeatsToSend.pop();
-          break;
-        }
-      } else {
-        heartbeatEntry.dates.push(singleDateHeartbeat.date);
-        if (countBytes(heartbeatsToSend) > maxSize) {
-          heartbeatEntry.dates.pop();
-          break;
-        }
-      }
-      unsentEntries = unsentEntries.slice(1);
-    }
-    return {
-      heartbeatsToSend,
-      unsentEntries
-    };
-  }
-  class HeartbeatStorageImpl {
-    constructor(app2) {
-      this.app = app2;
-      this._canUseIndexedDBPromise = this.runIndexedDBEnvironmentCheck();
-    }
-    async runIndexedDBEnvironmentCheck() {
-      if (!isIndexedDBAvailable()) {
-        return false;
-      } else {
-        return validateIndexedDBOpenable().then(() => true).catch(() => false);
-      }
-    }
-async read() {
-      const canUseIndexedDB = await this._canUseIndexedDBPromise;
-      if (!canUseIndexedDB) {
-        return { heartbeats: [] };
-      } else {
-        const idbHeartbeatObject = await readHeartbeatsFromIndexedDB(this.app);
-        if (idbHeartbeatObject?.heartbeats) {
-          return idbHeartbeatObject;
-        } else {
-          return { heartbeats: [] };
-        }
-      }
-    }
-async overwrite(heartbeatsObject) {
-      const canUseIndexedDB = await this._canUseIndexedDBPromise;
-      if (!canUseIndexedDB) {
-        return;
-      } else {
-        const existingHeartbeatsObject = await this.read();
-        return writeHeartbeatsToIndexedDB(this.app, {
-          lastSentHeartbeatDate: heartbeatsObject.lastSentHeartbeatDate ?? existingHeartbeatsObject.lastSentHeartbeatDate,
-          heartbeats: heartbeatsObject.heartbeats
-        });
-      }
-    }
-async add(heartbeatsObject) {
-      const canUseIndexedDB = await this._canUseIndexedDBPromise;
-      if (!canUseIndexedDB) {
-        return;
-      } else {
-        const existingHeartbeatsObject = await this.read();
-        return writeHeartbeatsToIndexedDB(this.app, {
-          lastSentHeartbeatDate: heartbeatsObject.lastSentHeartbeatDate ?? existingHeartbeatsObject.lastSentHeartbeatDate,
-          heartbeats: [
-            ...existingHeartbeatsObject.heartbeats,
-            ...heartbeatsObject.heartbeats
-          ]
-        });
-      }
-    }
-  }
-  function countBytes(heartbeatsCache) {
-    return base64urlEncodeWithoutPadding(
-JSON.stringify({ version: 2, heartbeats: heartbeatsCache })
-    ).length;
-  }
-  function getEarliestHeartbeatIdx(heartbeats) {
-    if (heartbeats.length === 0) {
-      return -1;
-    }
-    let earliestHeartbeatIdx = 0;
-    let earliestHeartbeatDate = heartbeats[0].date;
-    for (let i = 1; i < heartbeats.length; i++) {
-      if (heartbeats[i].date < earliestHeartbeatDate) {
-        earliestHeartbeatDate = heartbeats[i].date;
-        earliestHeartbeatIdx = i;
-      }
-    }
-    return earliestHeartbeatIdx;
-  }
-  function registerCoreComponents(variant) {
-    _registerComponent(new Component(
-      "platform-logger",
-      (container) => new PlatformLoggerServiceImpl(container),
-      "PRIVATE"
-));
-    _registerComponent(new Component(
-      "heartbeat",
-      (container) => new HeartbeatServiceImpl(container),
-      "PRIVATE"
-));
-    registerVersion(name$q, version$1, variant);
-    registerVersion(name$q, version$1, "esm2020");
-    registerVersion("fire-js", "");
-  }
-  registerCoreComponents("");
-  var commonjsGlobal$1 = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-  var Integer;
-  (function() {
-    var h;
-    function k(d, a) {
-      function c() {
-      }
-      c.prototype = a.prototype;
-      d.F = a.prototype;
-      d.prototype = new c();
-      d.prototype.constructor = d;
-      d.D = function(f, e, g) {
-        for (var b2 = Array(arguments.length - 2), r2 = 2; r2 < arguments.length; r2++) b2[r2 - 2] = arguments[r2];
-        return a.prototype[e].apply(f, b2);
-      };
-    }
-    function l() {
-      this.blockSize = -1;
-    }
-    function m() {
-      this.blockSize = -1;
-      this.blockSize = 64;
-      this.g = Array(4);
-      this.C = Array(this.blockSize);
-      this.o = this.h = 0;
-      this.u();
-    }
-    k(m, l);
-    m.prototype.u = function() {
-      this.g[0] = 1732584193;
-      this.g[1] = 4023233417;
-      this.g[2] = 2562383102;
-      this.g[3] = 271733878;
-      this.o = this.h = 0;
-    };
-    function n(d, a, c) {
-      c || (c = 0);
-      const f = Array(16);
-      if (typeof a === "string") for (var e = 0; e < 16; ++e) f[e] = a.charCodeAt(c++) | a.charCodeAt(c++) << 8 | a.charCodeAt(c++) << 16 | a.charCodeAt(c++) << 24;
-      else for (e = 0; e < 16; ++e) f[e] = a[c++] | a[c++] << 8 | a[c++] << 16 | a[c++] << 24;
-      a = d.g[0];
-      c = d.g[1];
-      e = d.g[2];
-      let g = d.g[3], b2;
-      b2 = a + (g ^ c & (e ^ g)) + f[0] + 3614090360 & 4294967295;
-      a = c + (b2 << 7 & 4294967295 | b2 >>> 25);
-      b2 = g + (e ^ a & (c ^ e)) + f[1] + 3905402710 & 4294967295;
-      g = a + (b2 << 12 & 4294967295 | b2 >>> 20);
-      b2 = e + (c ^ g & (a ^ c)) + f[2] + 606105819 & 4294967295;
-      e = g + (b2 << 17 & 4294967295 | b2 >>> 15);
-      b2 = c + (a ^ e & (g ^ a)) + f[3] + 3250441966 & 4294967295;
-      c = e + (b2 << 22 & 4294967295 | b2 >>> 10);
-      b2 = a + (g ^ c & (e ^ g)) + f[4] + 4118548399 & 4294967295;
-      a = c + (b2 << 7 & 4294967295 | b2 >>> 25);
-      b2 = g + (e ^ a & (c ^ e)) + f[5] + 1200080426 & 4294967295;
-      g = a + (b2 << 12 & 4294967295 | b2 >>> 20);
-      b2 = e + (c ^ g & (a ^ c)) + f[6] + 2821735955 & 4294967295;
-      e = g + (b2 << 17 & 4294967295 | b2 >>> 15);
-      b2 = c + (a ^ e & (g ^ a)) + f[7] + 4249261313 & 4294967295;
-      c = e + (b2 << 22 & 4294967295 | b2 >>> 10);
-      b2 = a + (g ^ c & (e ^ g)) + f[8] + 1770035416 & 4294967295;
-      a = c + (b2 << 7 & 4294967295 | b2 >>> 25);
-      b2 = g + (e ^ a & (c ^ e)) + f[9] + 2336552879 & 4294967295;
-      g = a + (b2 << 12 & 4294967295 | b2 >>> 20);
-      b2 = e + (c ^ g & (a ^ c)) + f[10] + 4294925233 & 4294967295;
-      e = g + (b2 << 17 & 4294967295 | b2 >>> 15);
-      b2 = c + (a ^ e & (g ^ a)) + f[11] + 2304563134 & 4294967295;
-      c = e + (b2 << 22 & 4294967295 | b2 >>> 10);
-      b2 = a + (g ^ c & (e ^ g)) + f[12] + 1804603682 & 4294967295;
-      a = c + (b2 << 7 & 4294967295 | b2 >>> 25);
-      b2 = g + (e ^ a & (c ^ e)) + f[13] + 4254626195 & 4294967295;
-      g = a + (b2 << 12 & 4294967295 | b2 >>> 20);
-      b2 = e + (c ^ g & (a ^ c)) + f[14] + 2792965006 & 4294967295;
-      e = g + (b2 << 17 & 4294967295 | b2 >>> 15);
-      b2 = c + (a ^ e & (g ^ a)) + f[15] + 1236535329 & 4294967295;
-      c = e + (b2 << 22 & 4294967295 | b2 >>> 10);
-      b2 = a + (e ^ g & (c ^ e)) + f[1] + 4129170786 & 4294967295;
-      a = c + (b2 << 5 & 4294967295 | b2 >>> 27);
-      b2 = g + (c ^ e & (a ^ c)) + f[6] + 3225465664 & 4294967295;
-      g = a + (b2 << 9 & 4294967295 | b2 >>> 23);
-      b2 = e + (a ^ c & (g ^ a)) + f[11] + 643717713 & 4294967295;
-      e = g + (b2 << 14 & 4294967295 | b2 >>> 18);
-      b2 = c + (g ^ a & (e ^ g)) + f[0] + 3921069994 & 4294967295;
-      c = e + (b2 << 20 & 4294967295 | b2 >>> 12);
-      b2 = a + (e ^ g & (c ^ e)) + f[5] + 3593408605 & 4294967295;
-      a = c + (b2 << 5 & 4294967295 | b2 >>> 27);
-      b2 = g + (c ^ e & (a ^ c)) + f[10] + 38016083 & 4294967295;
-      g = a + (b2 << 9 & 4294967295 | b2 >>> 23);
-      b2 = e + (a ^ c & (g ^ a)) + f[15] + 3634488961 & 4294967295;
-      e = g + (b2 << 14 & 4294967295 | b2 >>> 18);
-      b2 = c + (g ^ a & (e ^ g)) + f[4] + 3889429448 & 4294967295;
-      c = e + (b2 << 20 & 4294967295 | b2 >>> 12);
-      b2 = a + (e ^ g & (c ^ e)) + f[9] + 568446438 & 4294967295;
-      a = c + (b2 << 5 & 4294967295 | b2 >>> 27);
-      b2 = g + (c ^ e & (a ^ c)) + f[14] + 3275163606 & 4294967295;
-      g = a + (b2 << 9 & 4294967295 | b2 >>> 23);
-      b2 = e + (a ^ c & (g ^ a)) + f[3] + 4107603335 & 4294967295;
-      e = g + (b2 << 14 & 4294967295 | b2 >>> 18);
-      b2 = c + (g ^ a & (e ^ g)) + f[8] + 1163531501 & 4294967295;
-      c = e + (b2 << 20 & 4294967295 | b2 >>> 12);
-      b2 = a + (e ^ g & (c ^ e)) + f[13] + 2850285829 & 4294967295;
-      a = c + (b2 << 5 & 4294967295 | b2 >>> 27);
-      b2 = g + (c ^ e & (a ^ c)) + f[2] + 4243563512 & 4294967295;
-      g = a + (b2 << 9 & 4294967295 | b2 >>> 23);
-      b2 = e + (a ^ c & (g ^ a)) + f[7] + 1735328473 & 4294967295;
-      e = g + (b2 << 14 & 4294967295 | b2 >>> 18);
-      b2 = c + (g ^ a & (e ^ g)) + f[12] + 2368359562 & 4294967295;
-      c = e + (b2 << 20 & 4294967295 | b2 >>> 12);
-      b2 = a + (c ^ e ^ g) + f[5] + 4294588738 & 4294967295;
-      a = c + (b2 << 4 & 4294967295 | b2 >>> 28);
-      b2 = g + (a ^ c ^ e) + f[8] + 2272392833 & 4294967295;
-      g = a + (b2 << 11 & 4294967295 | b2 >>> 21);
-      b2 = e + (g ^ a ^ c) + f[11] + 1839030562 & 4294967295;
-      e = g + (b2 << 16 & 4294967295 | b2 >>> 16);
-      b2 = c + (e ^ g ^ a) + f[14] + 4259657740 & 4294967295;
-      c = e + (b2 << 23 & 4294967295 | b2 >>> 9);
-      b2 = a + (c ^ e ^ g) + f[1] + 2763975236 & 4294967295;
-      a = c + (b2 << 4 & 4294967295 | b2 >>> 28);
-      b2 = g + (a ^ c ^ e) + f[4] + 1272893353 & 4294967295;
-      g = a + (b2 << 11 & 4294967295 | b2 >>> 21);
-      b2 = e + (g ^ a ^ c) + f[7] + 4139469664 & 4294967295;
-      e = g + (b2 << 16 & 4294967295 | b2 >>> 16);
-      b2 = c + (e ^ g ^ a) + f[10] + 3200236656 & 4294967295;
-      c = e + (b2 << 23 & 4294967295 | b2 >>> 9);
-      b2 = a + (c ^ e ^ g) + f[13] + 681279174 & 4294967295;
-      a = c + (b2 << 4 & 4294967295 | b2 >>> 28);
-      b2 = g + (a ^ c ^ e) + f[0] + 3936430074 & 4294967295;
-      g = a + (b2 << 11 & 4294967295 | b2 >>> 21);
-      b2 = e + (g ^ a ^ c) + f[3] + 3572445317 & 4294967295;
-      e = g + (b2 << 16 & 4294967295 | b2 >>> 16);
-      b2 = c + (e ^ g ^ a) + f[6] + 76029189 & 4294967295;
-      c = e + (b2 << 23 & 4294967295 | b2 >>> 9);
-      b2 = a + (c ^ e ^ g) + f[9] + 3654602809 & 4294967295;
-      a = c + (b2 << 4 & 4294967295 | b2 >>> 28);
-      b2 = g + (a ^ c ^ e) + f[12] + 3873151461 & 4294967295;
-      g = a + (b2 << 11 & 4294967295 | b2 >>> 21);
-      b2 = e + (g ^ a ^ c) + f[15] + 530742520 & 4294967295;
-      e = g + (b2 << 16 & 4294967295 | b2 >>> 16);
-      b2 = c + (e ^ g ^ a) + f[2] + 3299628645 & 4294967295;
-      c = e + (b2 << 23 & 4294967295 | b2 >>> 9);
-      b2 = a + (e ^ (c | ~g)) + f[0] + 4096336452 & 4294967295;
-      a = c + (b2 << 6 & 4294967295 | b2 >>> 26);
-      b2 = g + (c ^ (a | ~e)) + f[7] + 1126891415 & 4294967295;
-      g = a + (b2 << 10 & 4294967295 | b2 >>> 22);
-      b2 = e + (a ^ (g | ~c)) + f[14] + 2878612391 & 4294967295;
-      e = g + (b2 << 15 & 4294967295 | b2 >>> 17);
-      b2 = c + (g ^ (e | ~a)) + f[5] + 4237533241 & 4294967295;
-      c = e + (b2 << 21 & 4294967295 | b2 >>> 11);
-      b2 = a + (e ^ (c | ~g)) + f[12] + 1700485571 & 4294967295;
-      a = c + (b2 << 6 & 4294967295 | b2 >>> 26);
-      b2 = g + (c ^ (a | ~e)) + f[3] + 2399980690 & 4294967295;
-      g = a + (b2 << 10 & 4294967295 | b2 >>> 22);
-      b2 = e + (a ^ (g | ~c)) + f[10] + 4293915773 & 4294967295;
-      e = g + (b2 << 15 & 4294967295 | b2 >>> 17);
-      b2 = c + (g ^ (e | ~a)) + f[1] + 2240044497 & 4294967295;
-      c = e + (b2 << 21 & 4294967295 | b2 >>> 11);
-      b2 = a + (e ^ (c | ~g)) + f[8] + 1873313359 & 4294967295;
-      a = c + (b2 << 6 & 4294967295 | b2 >>> 26);
-      b2 = g + (c ^ (a | ~e)) + f[15] + 4264355552 & 4294967295;
-      g = a + (b2 << 10 & 4294967295 | b2 >>> 22);
-      b2 = e + (a ^ (g | ~c)) + f[6] + 2734768916 & 4294967295;
-      e = g + (b2 << 15 & 4294967295 | b2 >>> 17);
-      b2 = c + (g ^ (e | ~a)) + f[13] + 1309151649 & 4294967295;
-      c = e + (b2 << 21 & 4294967295 | b2 >>> 11);
-      b2 = a + (e ^ (c | ~g)) + f[4] + 4149444226 & 4294967295;
-      a = c + (b2 << 6 & 4294967295 | b2 >>> 26);
-      b2 = g + (c ^ (a | ~e)) + f[11] + 3174756917 & 4294967295;
-      g = a + (b2 << 10 & 4294967295 | b2 >>> 22);
-      b2 = e + (a ^ (g | ~c)) + f[2] + 718787259 & 4294967295;
-      e = g + (b2 << 15 & 4294967295 | b2 >>> 17);
-      b2 = c + (g ^ (e | ~a)) + f[9] + 3951481745 & 4294967295;
-      d.g[0] = d.g[0] + a & 4294967295;
-      d.g[1] = d.g[1] + (e + (b2 << 21 & 4294967295 | b2 >>> 11)) & 4294967295;
-      d.g[2] = d.g[2] + e & 4294967295;
-      d.g[3] = d.g[3] + g & 4294967295;
-    }
-    m.prototype.v = function(d, a) {
-      a === void 0 && (a = d.length);
-      const c = a - this.blockSize, f = this.C;
-      let e = this.h, g = 0;
-      for (; g < a; ) {
-        if (e == 0) for (; g <= c; ) n(this, d, g), g += this.blockSize;
-        if (typeof d === "string") for (; g < a; ) {
-          if (f[e++] = d.charCodeAt(g++), e == this.blockSize) {
-            n(this, f);
-            e = 0;
-            break;
-          }
-        }
-        else for (; g < a; ) if (f[e++] = d[g++], e == this.blockSize) {
-          n(this, f);
-          e = 0;
-          break;
-        }
-      }
-      this.h = e;
-      this.o += a;
-    };
-    m.prototype.A = function() {
-      var d = Array((this.h < 56 ? this.blockSize : this.blockSize * 2) - this.h);
-      d[0] = 128;
-      for (var a = 1; a < d.length - 8; ++a) d[a] = 0;
-      a = this.o * 8;
-      for (var c = d.length - 8; c < d.length; ++c) d[c] = a & 255, a /= 256;
-      this.v(d);
-      d = Array(16);
-      a = 0;
-      for (c = 0; c < 4; ++c) for (let f = 0; f < 32; f += 8) d[a++] = this.g[c] >>> f & 255;
-      return d;
-    };
-    function p(d, a) {
-      var c = q2;
-      return Object.prototype.hasOwnProperty.call(c, d) ? c[d] : c[d] = a(d);
-    }
-    function t(d, a) {
-      this.h = a;
-      const c = [];
-      let f = true;
-      for (let e = d.length - 1; e >= 0; e--) {
-        const g = d[e] | 0;
-        f && g == a || (c[e] = g, f = false);
-      }
-      this.g = c;
-    }
-    var q2 = {};
-    function u(d) {
-      return -128 <= d && d < 128 ? p(d, function(a) {
-        return new t([a | 0], a < 0 ? -1 : 0);
-      }) : new t([d | 0], d < 0 ? -1 : 0);
-    }
-    function v2(d) {
-      if (isNaN(d) || !isFinite(d)) return w;
-      if (d < 0) return x2(v2(-d));
-      const a = [];
-      let c = 1;
-      for (let f = 0; d >= c; f++) a[f] = d / c | 0, c *= 4294967296;
-      return new t(a, 0);
-    }
-    function y(d, a) {
-      if (d.length == 0) throw Error("number format error: empty string");
-      a = a || 10;
-      if (a < 2 || 36 < a) throw Error("radix out of range: " + a);
-      if (d.charAt(0) == "-") return x2(y(d.substring(1), a));
-      if (d.indexOf("-") >= 0) throw Error('number format error: interior "-" character');
-      const c = v2(Math.pow(a, 8));
-      let f = w;
-      for (let g = 0; g < d.length; g += 8) {
-        var e = Math.min(8, d.length - g);
-        const b2 = parseInt(d.substring(g, g + e), a);
-        e < 8 ? (e = v2(Math.pow(a, e)), f = f.j(e).add(v2(b2))) : (f = f.j(c), f = f.add(v2(b2)));
-      }
-      return f;
-    }
-    var w = u(0), z = u(1), A = u(16777216);
-    h = t.prototype;
-    h.m = function() {
-      if (B2(this)) return -x2(this).m();
-      let d = 0, a = 1;
-      for (let c = 0; c < this.g.length; c++) {
-        const f = this.i(c);
-        d += (f >= 0 ? f : 4294967296 + f) * a;
-        a *= 4294967296;
-      }
-      return d;
-    };
-    h.toString = function(d) {
-      d = d || 10;
-      if (d < 2 || 36 < d) throw Error("radix out of range: " + d);
-      if (C2(this)) return "0";
-      if (B2(this)) return "-" + x2(this).toString(d);
-      const a = v2(Math.pow(d, 6));
-      var c = this;
-      let f = "";
-      for (; ; ) {
-        const e = D2(c, a).g;
-        c = F2(c, e.j(a));
-        let g = ((c.g.length > 0 ? c.g[0] : c.h) >>> 0).toString(d);
-        c = e;
-        if (C2(c)) return g + f;
-        for (; g.length < 6; ) g = "0" + g;
-        f = g + f;
-      }
-    };
-    h.i = function(d) {
-      return d < 0 ? 0 : d < this.g.length ? this.g[d] : this.h;
-    };
-    function C2(d) {
-      if (d.h != 0) return false;
-      for (let a = 0; a < d.g.length; a++) if (d.g[a] != 0) return false;
-      return true;
-    }
-    function B2(d) {
-      return d.h == -1;
-    }
-    h.l = function(d) {
-      d = F2(this, d);
-      return B2(d) ? -1 : C2(d) ? 0 : 1;
-    };
-    function x2(d) {
-      const a = d.g.length, c = [];
-      for (let f = 0; f < a; f++) c[f] = ~d.g[f];
-      return new t(c, ~d.h).add(z);
-    }
-    h.abs = function() {
-      return B2(this) ? x2(this) : this;
-    };
-    h.add = function(d) {
-      const a = Math.max(this.g.length, d.g.length), c = [];
-      let f = 0;
-      for (let e = 0; e <= a; e++) {
-        let g = f + (this.i(e) & 65535) + (d.i(e) & 65535), b2 = (g >>> 16) + (this.i(e) >>> 16) + (d.i(e) >>> 16);
-        f = b2 >>> 16;
-        g &= 65535;
-        b2 &= 65535;
-        c[e] = b2 << 16 | g;
-      }
-      return new t(c, c[c.length - 1] & -2147483648 ? -1 : 0);
-    };
-    function F2(d, a) {
-      return d.add(x2(a));
-    }
-    h.j = function(d) {
-      if (C2(this) || C2(d)) return w;
-      if (B2(this)) return B2(d) ? x2(this).j(x2(d)) : x2(x2(this).j(d));
-      if (B2(d)) return x2(this.j(x2(d)));
-      if (this.l(A) < 0 && d.l(A) < 0) return v2(this.m() * d.m());
-      const a = this.g.length + d.g.length, c = [];
-      for (var f = 0; f < 2 * a; f++) c[f] = 0;
-      for (f = 0; f < this.g.length; f++) for (let e = 0; e < d.g.length; e++) {
-        const g = this.i(f) >>> 16, b2 = this.i(f) & 65535, r2 = d.i(e) >>> 16, E = d.i(e) & 65535;
-        c[2 * f + 2 * e] += b2 * E;
-        G(c, 2 * f + 2 * e);
-        c[2 * f + 2 * e + 1] += g * E;
-        G(c, 2 * f + 2 * e + 1);
-        c[2 * f + 2 * e + 1] += b2 * r2;
-        G(c, 2 * f + 2 * e + 1);
-        c[2 * f + 2 * e + 2] += g * r2;
-        G(c, 2 * f + 2 * e + 2);
-      }
-      for (d = 0; d < a; d++) c[d] = c[2 * d + 1] << 16 | c[2 * d];
-      for (d = a; d < 2 * a; d++) c[d] = 0;
-      return new t(c, 0);
-    };
-    function G(d, a) {
-      for (; (d[a] & 65535) != d[a]; ) d[a + 1] += d[a] >>> 16, d[a] &= 65535, a++;
-    }
-    function H(d, a) {
-      this.g = d;
-      this.h = a;
-    }
-    function D2(d, a) {
-      if (C2(a)) throw Error("division by zero");
-      if (C2(d)) return new H(w, w);
-      if (B2(d)) return a = D2(x2(d), a), new H(x2(a.g), x2(a.h));
-      if (B2(a)) return a = D2(d, x2(a)), new H(x2(a.g), a.h);
-      if (d.g.length > 30) {
-        if (B2(d) || B2(a)) throw Error("slowDivide_ only works with positive integers.");
-        for (var c = z, f = a; f.l(d) <= 0; ) c = I(c), f = I(f);
-        var e = J(c, 1), g = J(f, 1);
-        f = J(f, 2);
-        for (c = J(c, 2); !C2(f); ) {
-          var b2 = g.add(f);
-          b2.l(d) <= 0 && (e = e.add(c), g = b2);
-          f = J(f, 1);
-          c = J(c, 1);
-        }
-        a = F2(d, e.j(a));
-        return new H(e, a);
-      }
-      for (e = w; d.l(a) >= 0; ) {
-        c = Math.max(1, Math.floor(d.m() / a.m()));
-        f = Math.ceil(Math.log(c) / Math.LN2);
-        f = f <= 48 ? 1 : Math.pow(2, f - 48);
-        g = v2(c);
-        for (b2 = g.j(a); B2(b2) || b2.l(d) > 0; ) c -= f, g = v2(c), b2 = g.j(a);
-        C2(g) && (g = z);
-        e = e.add(g);
-        d = F2(d, b2);
-      }
-      return new H(e, d);
-    }
-    h.B = function(d) {
-      return D2(this, d).h;
-    };
-    h.and = function(d) {
-      const a = Math.max(this.g.length, d.g.length), c = [];
-      for (let f = 0; f < a; f++) c[f] = this.i(f) & d.i(f);
-      return new t(c, this.h & d.h);
-    };
-    h.or = function(d) {
-      const a = Math.max(this.g.length, d.g.length), c = [];
-      for (let f = 0; f < a; f++) c[f] = this.i(f) | d.i(f);
-      return new t(c, this.h | d.h);
-    };
-    h.xor = function(d) {
-      const a = Math.max(this.g.length, d.g.length), c = [];
-      for (let f = 0; f < a; f++) c[f] = this.i(f) ^ d.i(f);
-      return new t(c, this.h ^ d.h);
-    };
-    function I(d) {
-      const a = d.g.length + 1, c = [];
-      for (let f = 0; f < a; f++) c[f] = d.i(f) << 1 | d.i(f - 1) >>> 31;
-      return new t(c, d.h);
-    }
-    function J(d, a) {
-      const c = a >> 5;
-      a %= 32;
-      const f = d.g.length - c, e = [];
-      for (let g = 0; g < f; g++) e[g] = a > 0 ? d.i(g + c) >>> a | d.i(g + c + 1) << 32 - a : d.i(g + c);
-      return new t(e, d.h);
-    }
-    m.prototype.digest = m.prototype.A;
-    m.prototype.reset = m.prototype.u;
-    m.prototype.update = m.prototype.v;
-    t.prototype.add = t.prototype.add;
-    t.prototype.multiply = t.prototype.j;
-    t.prototype.modulo = t.prototype.B;
-    t.prototype.compare = t.prototype.l;
-    t.prototype.toNumber = t.prototype.m;
-    t.prototype.toString = t.prototype.toString;
-    t.prototype.getBits = t.prototype.i;
-    t.fromNumber = v2;
-    t.fromString = y;
-    Integer = t;
-  }).apply(typeof commonjsGlobal$1 !== "undefined" ? commonjsGlobal$1 : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-  var XhrIo;
-  var WebChannel;
-  var EventType;
-  var ErrorCode;
-  var Stat;
-  var Event$1;
-  var getStatEventTarget;
-  var createWebChannelTransport;
-  (function() {
-    var h, aa = Object.defineProperty;
-    function ba(a) {
-      a = ["object" == typeof globalThis && globalThis, a, "object" == typeof window && window, "object" == typeof self && self, "object" == typeof commonjsGlobal && commonjsGlobal];
-      for (var b2 = 0; b2 < a.length; ++b2) {
-        var c = a[b2];
-        if (c && c.Math == Math) return c;
-      }
-      throw Error("Cannot find global object");
-    }
-    var ca = ba(this);
-    function da(a, b2) {
-      if (b2) a: {
-        var c = ca;
-        a = a.split(".");
-        for (var d = 0; d < a.length - 1; d++) {
-          var e = a[d];
-          if (!(e in c)) break a;
-          c = c[e];
-        }
-        a = a[a.length - 1];
-        d = c[a];
-        b2 = b2(d);
-        b2 != d && b2 != null && aa(c, a, { configurable: true, writable: true, value: b2 });
-      }
-    }
-    da("Symbol.dispose", function(a) {
-      return a ? a : Symbol("Symbol.dispose");
-    });
-    da("Array.prototype.values", function(a) {
-      return a ? a : function() {
-        return this[Symbol.iterator]();
-      };
-    });
-    da("Object.entries", function(a) {
-      return a ? a : function(b2) {
-        var c = [], d;
-        for (d in b2) Object.prototype.hasOwnProperty.call(b2, d) && c.push([d, b2[d]]);
-        return c;
-      };
-    });
-    var ea = ea || {}, l = this || self;
-    function n(a) {
-      var b2 = typeof a;
-      return b2 == "object" && a != null || b2 == "function";
-    }
-    function fa(a, b2, c) {
-      return a.call.apply(a.bind, arguments);
-    }
-    function p(a, b2, c) {
-      p = fa;
-      return p.apply(null, arguments);
-    }
-    function ha(a, b2) {
-      var c = Array.prototype.slice.call(arguments, 1);
-      return function() {
-        var d = c.slice();
-        d.push.apply(d, arguments);
-        return a.apply(this, d);
-      };
-    }
-    function t(a, b2) {
-      function c() {
-      }
-      c.prototype = b2.prototype;
-      a.Z = b2.prototype;
-      a.prototype = new c();
-      a.prototype.constructor = a;
-      a.Ob = function(d, e, f) {
-        for (var g = Array(arguments.length - 2), k = 2; k < arguments.length; k++) g[k - 2] = arguments[k];
-        return b2.prototype[e].apply(d, g);
-      };
-    }
-    var ia = typeof AsyncContext !== "undefined" && typeof AsyncContext.Snapshot === "function" ? (a) => a && AsyncContext.Snapshot.wrap(a) : (a) => a;
-    function ja(a) {
-      const b2 = a.length;
-      if (b2 > 0) {
-        const c = Array(b2);
-        for (let d = 0; d < b2; d++) c[d] = a[d];
-        return c;
-      }
-      return [];
-    }
-    function ka(a, b2) {
-      for (let d = 1; d < arguments.length; d++) {
-        const e = arguments[d];
-        var c = typeof e;
-        c = c != "object" ? c : e ? Array.isArray(e) ? "array" : c : "null";
-        if (c == "array" || c == "object" && typeof e.length == "number") {
-          c = a.length || 0;
-          const f = e.length || 0;
-          a.length = c + f;
-          for (let g = 0; g < f; g++) a[c + g] = e[g];
-        } else a.push(e);
-      }
-    }
-    class la {
-      constructor(a, b2) {
-        this.i = a;
-        this.j = b2;
-        this.h = 0;
-        this.g = null;
-      }
-      get() {
-        let a;
-        this.h > 0 ? (this.h--, a = this.g, this.g = a.next, a.next = null) : a = this.i();
-        return a;
-      }
-    }
-    function ma(a) {
-      l.setTimeout(() => {
-        throw a;
-      }, 0);
-    }
-    function na() {
-      var a = oa;
-      let b2 = null;
-      a.g && (b2 = a.g, a.g = a.g.next, a.g || (a.h = null), b2.next = null);
-      return b2;
-    }
-    class pa {
-      constructor() {
-        this.h = this.g = null;
-      }
-      add(a, b2) {
-        const c = qa.get();
-        c.set(a, b2);
-        this.h ? this.h.next = c : this.g = c;
-        this.h = c;
-      }
-    }
-    var qa = new la(() => new ra(), (a) => a.reset());
-    class ra {
-      constructor() {
-        this.next = this.g = this.h = null;
-      }
-      set(a, b2) {
-        this.h = a;
-        this.g = b2;
-        this.next = null;
-      }
-      reset() {
-        this.next = this.g = this.h = null;
-      }
-    }
-    let u, v2 = false, oa = new pa(), ta = () => {
-      const a = Promise.resolve(void 0);
-      u = () => {
-        a.then(sa);
-      };
-    };
-    function sa() {
-      for (var a; a = na(); ) {
-        try {
-          a.h.call(a.g);
-        } catch (c) {
-          ma(c);
-        }
-        var b2 = qa;
-        b2.j(a);
-        b2.h < 100 && (b2.h++, a.next = b2.g, b2.g = a);
-      }
-      v2 = false;
-    }
-    function w() {
-      this.u = this.u;
-      this.C = this.C;
-    }
-    w.prototype.u = false;
-    w.prototype.dispose = function() {
-      this.u || (this.u = true, this.N());
-    };
-    w.prototype[Symbol.dispose] = function() {
-      this.dispose();
-    };
-    w.prototype.N = function() {
-      if (this.C) for (; this.C.length; ) this.C.shift()();
-    };
-    function x2(a, b2) {
-      this.type = a;
-      this.g = this.target = b2;
-      this.defaultPrevented = false;
-    }
-    x2.prototype.h = function() {
-      this.defaultPrevented = true;
-    };
-    var ua = (function() {
-      if (!l.addEventListener || !Object.defineProperty) return false;
-      var a = false, b2 = Object.defineProperty({}, "passive", { get: function() {
-        a = true;
-      } });
-      try {
-        const c = () => {
-        };
-        l.addEventListener("test", c, b2);
-        l.removeEventListener("test", c, b2);
-      } catch (c) {
-      }
-      return a;
-    })();
-    function y(a) {
-      return /^[\s\xa0]*$/.test(a);
-    }
-    function z(a, b2) {
-      x2.call(this, a ? a.type : "");
-      this.relatedTarget = this.g = this.target = null;
-      this.button = this.screenY = this.screenX = this.clientY = this.clientX = 0;
-      this.key = "";
-      this.metaKey = this.shiftKey = this.altKey = this.ctrlKey = false;
-      this.state = null;
-      this.pointerId = 0;
-      this.pointerType = "";
-      this.i = null;
-      a && this.init(a, b2);
-    }
-    t(z, x2);
-    z.prototype.init = function(a, b2) {
-      const c = this.type = a.type, d = a.changedTouches && a.changedTouches.length ? a.changedTouches[0] : null;
-      this.target = a.target || a.srcElement;
-      this.g = b2;
-      b2 = a.relatedTarget;
-      b2 || (c == "mouseover" ? b2 = a.fromElement : c == "mouseout" && (b2 = a.toElement));
-      this.relatedTarget = b2;
-      d ? (this.clientX = d.clientX !== void 0 ? d.clientX : d.pageX, this.clientY = d.clientY !== void 0 ? d.clientY : d.pageY, this.screenX = d.screenX || 0, this.screenY = d.screenY || 0) : (this.clientX = a.clientX !== void 0 ? a.clientX : a.pageX, this.clientY = a.clientY !== void 0 ? a.clientY : a.pageY, this.screenX = a.screenX || 0, this.screenY = a.screenY || 0);
-      this.button = a.button;
-      this.key = a.key || "";
-      this.ctrlKey = a.ctrlKey;
-      this.altKey = a.altKey;
-      this.shiftKey = a.shiftKey;
-      this.metaKey = a.metaKey;
-      this.pointerId = a.pointerId || 0;
-      this.pointerType = a.pointerType;
-      this.state = a.state;
-      this.i = a;
-      a.defaultPrevented && z.Z.h.call(this);
-    };
-    z.prototype.h = function() {
-      z.Z.h.call(this);
-      const a = this.i;
-      a.preventDefault ? a.preventDefault() : a.returnValue = false;
-    };
-    var B2 = "closure_listenable_" + (Math.random() * 1e6 | 0);
-    var va = 0;
-    function wa(a, b2, c, d, e) {
-      this.listener = a;
-      this.proxy = null;
-      this.src = b2;
-      this.type = c;
-      this.capture = !!d;
-      this.ha = e;
-      this.key = ++va;
-      this.da = this.fa = false;
-    }
-    function xa(a) {
-      a.da = true;
-      a.listener = null;
-      a.proxy = null;
-      a.src = null;
-      a.ha = null;
-    }
-    function ya(a, b2, c) {
-      for (const d in a) b2.call(c, a[d], d, a);
-    }
-    function Aa(a, b2) {
-      for (const c in a) b2.call(void 0, a[c], c, a);
-    }
-    function Ba(a) {
-      const b2 = {};
-      for (const c in a) b2[c] = a[c];
-      return b2;
-    }
-    const Ca = "constructor hasOwnProperty isPrototypeOf propertyIsEnumerable toLocaleString toString valueOf".split(" ");
-    function Da(a, b2) {
-      let c, d;
-      for (let e = 1; e < arguments.length; e++) {
-        d = arguments[e];
-        for (c in d) a[c] = d[c];
-        for (let f = 0; f < Ca.length; f++) c = Ca[f], Object.prototype.hasOwnProperty.call(d, c) && (a[c] = d[c]);
-      }
-    }
-    function Ea(a) {
-      this.src = a;
-      this.g = {};
-      this.h = 0;
-    }
-    Ea.prototype.add = function(a, b2, c, d, e) {
-      const f = a.toString();
-      a = this.g[f];
-      a || (a = this.g[f] = [], this.h++);
-      const g = Fa(a, b2, d, e);
-      g > -1 ? (b2 = a[g], c || (b2.fa = false)) : (b2 = new wa(b2, this.src, f, !!d, e), b2.fa = c, a.push(b2));
-      return b2;
-    };
-    function Ga(a, b2) {
-      const c = b2.type;
-      if (c in a.g) {
-        var d = a.g[c], e = Array.prototype.indexOf.call(d, b2, void 0), f;
-        (f = e >= 0) && Array.prototype.splice.call(d, e, 1);
-        f && (xa(b2), a.g[c].length == 0 && (delete a.g[c], a.h--));
-      }
-    }
-    function Fa(a, b2, c, d) {
-      for (let e = 0; e < a.length; ++e) {
-        const f = a[e];
-        if (!f.da && f.listener == b2 && f.capture == !!c && f.ha == d) return e;
-      }
-      return -1;
-    }
-    var Ha = "closure_lm_" + (Math.random() * 1e6 | 0), Ia = {};
-    function Ka(a, b2, c, d, e) {
-      if (Array.isArray(b2)) {
-        for (let f = 0; f < b2.length; f++) Ka(a, b2[f], c, d, e);
-        return null;
-      }
-      c = Ma(c);
-      return a && a[B2] ? a.J(b2, c, n(d) ? !!d.capture : false, e) : Na(a, b2, c, false, d, e);
-    }
-    function Na(a, b2, c, d, e, f) {
-      if (!b2) throw Error("Invalid event type");
-      const g = n(e) ? !!e.capture : !!e;
-      let k = Oa(a);
-      k || (a[Ha] = k = new Ea(a));
-      c = k.add(b2, c, d, g, f);
-      if (c.proxy) return c;
-      d = Pa();
-      c.proxy = d;
-      d.src = a;
-      d.listener = c;
-      if (a.addEventListener) ua || (e = g), e === void 0 && (e = false), a.addEventListener(b2.toString(), d, e);
-      else if (a.attachEvent) a.attachEvent(Qa(b2.toString()), d);
-      else if (a.addListener && a.removeListener) a.addListener(d);
-      else throw Error("addEventListener and attachEvent are unavailable.");
-      return c;
-    }
-    function Pa() {
-      function a(c) {
-        return b2.call(a.src, a.listener, c);
-      }
-      const b2 = Ra;
-      return a;
-    }
-    function Sa(a, b2, c, d, e) {
-      if (Array.isArray(b2)) for (var f = 0; f < b2.length; f++) Sa(a, b2[f], c, d, e);
-      else (d = n(d) ? !!d.capture : !!d, c = Ma(c), a && a[B2]) ? (a = a.i, f = String(b2).toString(), f in a.g && (b2 = a.g[f], c = Fa(b2, c, d, e), c > -1 && (xa(b2[c]), Array.prototype.splice.call(b2, c, 1), b2.length == 0 && (delete a.g[f], a.h--)))) : a && (a = Oa(a)) && (b2 = a.g[b2.toString()], a = -1, b2 && (a = Fa(b2, c, d, e)), (c = a > -1 ? b2[a] : null) && Ta(c));
-    }
-    function Ta(a) {
-      if (typeof a !== "number" && a && !a.da) {
-        var b2 = a.src;
-        if (b2 && b2[B2]) Ga(b2.i, a);
-        else {
-          var c = a.type, d = a.proxy;
-          b2.removeEventListener ? b2.removeEventListener(c, d, a.capture) : b2.detachEvent ? b2.detachEvent(Qa(c), d) : b2.addListener && b2.removeListener && b2.removeListener(d);
-          (c = Oa(b2)) ? (Ga(c, a), c.h == 0 && (c.src = null, b2[Ha] = null)) : xa(a);
-        }
-      }
-    }
-    function Qa(a) {
-      return a in Ia ? Ia[a] : Ia[a] = "on" + a;
-    }
-    function Ra(a, b2) {
-      if (a.da) a = true;
-      else {
-        b2 = new z(b2, this);
-        const c = a.listener, d = a.ha || a.src;
-        a.fa && Ta(a);
-        a = c.call(d, b2);
-      }
-      return a;
-    }
-    function Oa(a) {
-      a = a[Ha];
-      return a instanceof Ea ? a : null;
-    }
-    var Ua = "__closure_events_fn_" + (Math.random() * 1e9 >>> 0);
-    function Ma(a) {
-      if (typeof a === "function") return a;
-      a[Ua] || (a[Ua] = function(b2) {
-        return a.handleEvent(b2);
-      });
-      return a[Ua];
-    }
-    function C2() {
-      w.call(this);
-      this.i = new Ea(this);
-      this.M = this;
-      this.G = null;
-    }
-    t(C2, w);
-    C2.prototype[B2] = true;
-    C2.prototype.removeEventListener = function(a, b2, c, d) {
-      Sa(this, a, b2, c, d);
-    };
-    function D2(a, b2) {
-      var c, d = a.G;
-      if (d) for (c = []; d; d = d.G) c.push(d);
-      a = a.M;
-      d = b2.type || b2;
-      if (typeof b2 === "string") b2 = new x2(b2, a);
-      else if (b2 instanceof x2) b2.target = b2.target || a;
-      else {
-        var e = b2;
-        b2 = new x2(d, a);
-        Da(b2, e);
-      }
-      e = true;
-      let f, g;
-      if (c) for (g = c.length - 1; g >= 0; g--) f = b2.g = c[g], e = Va(f, d, true, b2) && e;
-      f = b2.g = a;
-      e = Va(f, d, true, b2) && e;
-      e = Va(f, d, false, b2) && e;
-      if (c) for (g = 0; g < c.length; g++) f = b2.g = c[g], e = Va(f, d, false, b2) && e;
-    }
-    C2.prototype.N = function() {
-      C2.Z.N.call(this);
-      if (this.i) {
-        var a = this.i;
-        for (const c in a.g) {
-          const d = a.g[c];
-          for (let e = 0; e < d.length; e++) xa(d[e]);
-          delete a.g[c];
-          a.h--;
-        }
-      }
-      this.G = null;
-    };
-    C2.prototype.J = function(a, b2, c, d) {
-      return this.i.add(String(a), b2, false, c, d);
-    };
-    C2.prototype.K = function(a, b2, c, d) {
-      return this.i.add(String(a), b2, true, c, d);
-    };
-    function Va(a, b2, c, d) {
-      b2 = a.i.g[String(b2)];
-      if (!b2) return true;
-      b2 = b2.concat();
-      let e = true;
-      for (let f = 0; f < b2.length; ++f) {
-        const g = b2[f];
-        if (g && !g.da && g.capture == c) {
-          const k = g.listener, q2 = g.ha || g.src;
-          g.fa && Ga(a.i, g);
-          e = k.call(q2, d) !== false && e;
-        }
-      }
-      return e && !d.defaultPrevented;
-    }
-    function Wa(a, b2) {
-      if (typeof a !== "function") if (a && typeof a.handleEvent == "function") a = p(a.handleEvent, a);
-      else throw Error("Invalid listener argument");
-      return Number(b2) > 2147483647 ? -1 : l.setTimeout(a, b2 || 0);
-    }
-    function Xa(a) {
-      a.g = Wa(() => {
-        a.g = null;
-        a.i && (a.i = false, Xa(a));
-      }, a.l);
-      const b2 = a.h;
-      a.h = null;
-      a.m.apply(null, b2);
-    }
-    class Ya extends w {
-      constructor(a, b2) {
-        super();
-        this.m = a;
-        this.l = b2;
-        this.h = null;
-        this.i = false;
-        this.g = null;
-      }
-      j(a) {
-        this.h = arguments;
-        this.g ? this.i = true : Xa(this);
-      }
-      N() {
-        super.N();
-        this.g && (l.clearTimeout(this.g), this.g = null, this.i = false, this.h = null);
-      }
-    }
-    function E(a) {
-      w.call(this);
-      this.h = a;
-      this.g = {};
-    }
-    t(E, w);
-    var Za = [];
-    function $a(a) {
-      ya(a.g, function(b2, c) {
-        this.g.hasOwnProperty(c) && Ta(b2);
-      }, a);
-      a.g = {};
-    }
-    E.prototype.N = function() {
-      E.Z.N.call(this);
-      $a(this);
-    };
-    E.prototype.handleEvent = function() {
-      throw Error("EventHandler.handleEvent not implemented");
-    };
-    var ab = l.JSON.stringify;
-    var cb = l.JSON.parse;
-    var db2 = class {
-      stringify(a) {
-        return l.JSON.stringify(a, void 0);
-      }
-      parse(a) {
-        return l.JSON.parse(a, void 0);
-      }
-    };
-    function eb() {
-    }
-    function fb() {
-    }
-    var H = { OPEN: "a", hb: "b", ERROR: "c", tb: "d" };
-    function gb() {
-      x2.call(this, "d");
-    }
-    t(gb, x2);
-    function hb() {
-      x2.call(this, "c");
-    }
-    t(hb, x2);
-    var I = {}, ib = null;
-    function jb() {
-      return ib = ib || new C2();
-    }
-    I.Ia = "serverreachability";
-    function kb(a) {
-      x2.call(this, I.Ia, a);
-    }
-    t(kb, x2);
-    function lb(a) {
-      const b2 = jb();
-      D2(b2, new kb(b2));
-    }
-    I.STAT_EVENT = "statevent";
-    function mb(a, b2) {
-      x2.call(this, I.STAT_EVENT, a);
-      this.stat = b2;
-    }
-    t(mb, x2);
-    function J(a) {
-      const b2 = jb();
-      D2(b2, new mb(b2, a));
-    }
-    I.Ja = "timingevent";
-    function nb(a, b2) {
-      x2.call(this, I.Ja, a);
-      this.size = b2;
-    }
-    t(nb, x2);
-    function ob(a, b2) {
-      if (typeof a !== "function") throw Error("Fn must not be null and must be a function");
-      return l.setTimeout(function() {
-        a();
-      }, b2);
-    }
-    function pb() {
-      this.g = true;
-    }
-    pb.prototype.ua = function() {
-      this.g = false;
-    };
-    function qb(a, b2, c, d, e, f) {
-      a.info(function() {
-        if (a.g) if (f) {
-          var g = "";
-          var k = f.split("&");
-          for (let m = 0; m < k.length; m++) {
-            var q2 = k[m].split("=");
-            if (q2.length > 1) {
-              const r2 = q2[0];
-              q2 = q2[1];
-              const A = r2.split("_");
-              g = A.length >= 2 && A[1] == "type" ? g + (r2 + "=" + q2 + "&") : g + (r2 + "=redacted&");
-            }
-          }
-        } else g = null;
-        else g = f;
-        return "XMLHTTP REQ (" + d + ") [attempt " + e + "]: " + b2 + "\n" + c + "\n" + g;
-      });
-    }
-    function rb(a, b2, c, d, e, f, g) {
-      a.info(function() {
-        return "XMLHTTP RESP (" + d + ") [ attempt " + e + "]: " + b2 + "\n" + c + "\n" + f + " " + g;
-      });
-    }
-    function K(a, b2, c, d) {
-      a.info(function() {
-        return "XMLHTTP TEXT (" + b2 + "): " + sb(a, c) + (d ? " " + d : "");
-      });
-    }
-    function tb(a, b2) {
-      a.info(function() {
-        return "TIMEOUT: " + b2;
-      });
-    }
-    pb.prototype.info = function() {
-    };
-    function sb(a, b2) {
-      if (!a.g) return b2;
-      if (!b2) return null;
-      try {
-        const f = JSON.parse(b2);
-        if (f) {
-          for (a = 0; a < f.length; a++) if (Array.isArray(f[a])) {
-            var c = f[a];
-            if (!(c.length < 2)) {
-              var d = c[1];
-              if (Array.isArray(d) && !(d.length < 1)) {
-                var e = d[0];
-                if (e != "noop" && e != "stop" && e != "close") for (let g = 1; g < d.length; g++) d[g] = "";
-              }
-            }
-          }
-        }
-        return ab(f);
-      } catch (f) {
-        return b2;
-      }
-    }
-    var ub = { NO_ERROR: 0, cb: 1, qb: 2, pb: 3, kb: 4, ob: 5, rb: 6, Ga: 7, TIMEOUT: 8, ub: 9 };
-    var vb = { ib: "complete", Fb: "success", ERROR: "error", Ga: "abort", xb: "ready", yb: "readystatechange", TIMEOUT: "timeout", sb: "incrementaldata", wb: "progress", lb: "downloadprogress", Nb: "uploadprogress" };
-    var wb;
-    function xb() {
-    }
-    t(xb, eb);
-    xb.prototype.g = function() {
-      return new XMLHttpRequest();
-    };
-    wb = new xb();
-    function L(a) {
-      return encodeURIComponent(String(a));
-    }
-    function yb(a) {
-      var b2 = 1;
-      a = a.split(":");
-      const c = [];
-      for (; b2 > 0 && a.length; ) c.push(a.shift()), b2--;
-      a.length && c.push(a.join(":"));
-      return c;
-    }
-    function N2(a, b2, c, d) {
-      this.j = a;
-      this.i = b2;
-      this.l = c;
-      this.S = d || 1;
-      this.V = new E(this);
-      this.H = 45e3;
-      this.J = null;
-      this.o = false;
-      this.u = this.B = this.A = this.M = this.F = this.T = this.D = null;
-      this.G = [];
-      this.g = null;
-      this.C = 0;
-      this.m = this.v = null;
-      this.X = -1;
-      this.K = false;
-      this.P = 0;
-      this.O = null;
-      this.W = this.L = this.U = this.R = false;
-      this.h = new zb();
-    }
-    function zb() {
-      this.i = null;
-      this.g = "";
-      this.h = false;
-    }
-    var Ab = {}, Bb = {};
-    function Cb(a, b2, c) {
-      a.M = 1;
-      a.A = Db(O2(b2));
-      a.u = c;
-      a.R = true;
-      Eb(a, null);
-    }
-    function Eb(a, b2) {
-      a.F = Date.now();
-      Fb(a);
-      a.B = O2(a.A);
-      var c = a.B, d = a.S;
-      Array.isArray(d) || (d = [String(d)]);
-      Gb(c.i, "t", d);
-      a.C = 0;
-      c = a.j.L;
-      a.h = new zb();
-      a.g = Hb(a.j, c ? b2 : null, !a.u);
-      a.P > 0 && (a.O = new Ya(p(a.Y, a, a.g), a.P));
-      b2 = a.V;
-      c = a.g;
-      d = a.ba;
-      var e = "readystatechange";
-      Array.isArray(e) || (e && (Za[0] = e.toString()), e = Za);
-      for (let f = 0; f < e.length; f++) {
-        const g = Ka(c, e[f], d || b2.handleEvent, false, b2.h || b2);
-        if (!g) break;
-        b2.g[g.key] = g;
-      }
-      b2 = a.J ? Ba(a.J) : {};
-      a.u ? (a.v || (a.v = "POST"), b2["Content-Type"] = "application/x-www-form-urlencoded", a.g.ea(
-        a.B,
-        a.v,
-        a.u,
-        b2
-      )) : (a.v = "GET", a.g.ea(a.B, a.v, null, b2));
-      lb();
-      qb(a.i, a.v, a.B, a.l, a.S, a.u);
-    }
-    N2.prototype.ba = function(a) {
-      a = a.target;
-      const b2 = this.O;
-      b2 && P(a) == 3 ? b2.j() : this.Y(a);
-    };
-    N2.prototype.Y = function(a) {
-      try {
-        if (a == this.g) a: {
-          const k = P(this.g), q2 = this.g.ya(), m = this.g.ca();
-          if (!(k < 3) && (k != 3 || this.g && (this.h.h || this.g.la() || Ib(this.g)))) {
-            this.K || k != 4 || q2 == 7 || (q2 == 8 || m <= 0 ? lb(3) : lb(2));
-            Jb(this);
-            var b2 = this.g.ca();
-            this.X = b2;
-            var c = Kb(this);
-            this.o = b2 == 200;
-            rb(this.i, this.v, this.B, this.l, this.S, k, b2);
-            if (this.o) {
-              if (this.U && !this.L) {
-                b: {
-                  if (this.g) {
-                    var d, e = this.g;
-                    if ((d = e.g ? e.g.getResponseHeader("X-HTTP-Initial-Response") : null) && !y(d)) {
-                      var f = d;
-                      break b;
-                    }
-                  }
-                  f = null;
-                }
-                if (a = f) K(this.i, this.l, a, "Initial handshake response via X-HTTP-Initial-Response"), this.L = true, Lb(this, a);
-                else {
-                  this.o = false;
-                  this.m = 3;
-                  J(12);
-                  Q(this);
-                  Mb(this);
-                  break a;
-                }
-              }
-              if (this.R) {
-                a = true;
-                let r2;
-                for (; !this.K && this.C < c.length; ) if (r2 = Nb(this, c), r2 == Bb) {
-                  k == 4 && (this.m = 4, J(14), a = false);
-                  K(this.i, this.l, null, "[Incomplete Response]");
-                  break;
-                } else if (r2 == Ab) {
-                  this.m = 4;
-                  J(15);
-                  K(this.i, this.l, c, "[Invalid Chunk]");
-                  a = false;
-                  break;
-                } else K(this.i, this.l, r2, null), Lb(this, r2);
-                Ob(this) && this.C != 0 && (this.h.g = this.h.g.slice(this.C), this.C = 0);
-                k != 4 || c.length != 0 || this.h.h || (this.m = 1, J(16), a = false);
-                this.o = this.o && a;
-                if (!a) K(
-                  this.i,
-                  this.l,
-                  c,
-                  "[Invalid Chunked Response]"
-                ), Q(this), Mb(this);
-                else if (c.length > 0 && !this.W) {
-                  this.W = true;
-                  var g = this.j;
-                  g.g == this && g.aa && !g.P && (g.j.info("Great, no buffering proxy detected. Bytes received: " + c.length), Pb(g), g.P = true, J(11));
-                }
-              } else K(this.i, this.l, c, null), Lb(this, c);
-              k == 4 && Q(this);
-              this.o && !this.K && (k == 4 ? Qb(this.j, this) : (this.o = false, Fb(this)));
-            } else Rb(this.g), b2 == 400 && c.indexOf("Unknown SID") > 0 ? (this.m = 3, J(12)) : (this.m = 0, J(13)), Q(this), Mb(this);
-          }
-        }
-      } catch (k) {
-      } finally {
-      }
-    };
-    function Kb(a) {
-      if (!Ob(a)) return a.g.la();
-      const b2 = Ib(a.g);
-      if (b2 === "") return "";
-      let c = "";
-      const d = b2.length, e = P(a.g) == 4;
-      if (!a.h.i) {
-        if (typeof TextDecoder === "undefined") return Q(a), Mb(a), "";
-        a.h.i = new l.TextDecoder();
-      }
-      for (let f = 0; f < d; f++) a.h.h = true, c += a.h.i.decode(b2[f], { stream: !(e && f == d - 1) });
-      b2.length = 0;
-      a.h.g += c;
-      a.C = 0;
-      return a.h.g;
-    }
-    function Ob(a) {
-      return a.g ? a.v == "GET" && a.M != 2 && a.j.Aa : false;
-    }
-    function Nb(a, b2) {
-      var c = a.C, d = b2.indexOf("\n", c);
-      if (d == -1) return Bb;
-      c = Number(b2.substring(c, d));
-      if (isNaN(c)) return Ab;
-      d += 1;
-      if (d + c > b2.length) return Bb;
-      b2 = b2.slice(d, d + c);
-      a.C = d + c;
-      return b2;
-    }
-    N2.prototype.cancel = function() {
-      this.K = true;
-      Q(this);
-    };
-    function Fb(a) {
-      a.T = Date.now() + a.H;
-      Sb(a, a.H);
-    }
-    function Sb(a, b2) {
-      if (a.D != null) throw Error("WatchDog timer not null");
-      a.D = ob(p(a.aa, a), b2);
-    }
-    function Jb(a) {
-      a.D && (l.clearTimeout(a.D), a.D = null);
-    }
-    N2.prototype.aa = function() {
-      this.D = null;
-      const a = Date.now();
-      a - this.T >= 0 ? (tb(this.i, this.B), this.M != 2 && (lb(), J(17)), Q(this), this.m = 2, Mb(this)) : Sb(this, this.T - a);
-    };
-    function Mb(a) {
-      a.j.I == 0 || a.K || Qb(a.j, a);
-    }
-    function Q(a) {
-      Jb(a);
-      var b2 = a.O;
-      b2 && typeof b2.dispose == "function" && b2.dispose();
-      a.O = null;
-      $a(a.V);
-      a.g && (b2 = a.g, a.g = null, b2.abort(), b2.dispose());
-    }
-    function Lb(a, b2) {
-      try {
-        var c = a.j;
-        if (c.I != 0 && (c.g == a || Tb(c.h, a))) {
-          if (!a.L && Tb(c.h, a) && c.I == 3) {
-            try {
-              var d = c.Ba.g.parse(b2);
-            } catch (m) {
-              d = null;
-            }
-            if (Array.isArray(d) && d.length == 3) {
-              var e = d;
-              if (e[0] == 0) a: {
-                if (!c.v) {
-                  if (c.g) if (c.g.F + 3e3 < a.F) Ub(c), Vb(c);
-                  else break a;
-                  Wb(c);
-                  J(18);
-                }
-              }
-              else c.xa = e[1], 0 < c.xa - c.K && e[2] < 37500 && c.F && c.A == 0 && !c.C && (c.C = ob(p(c.Va, c), 6e3));
-              Xb(c.h) <= 1 && c.ta && (c.ta = void 0);
-            } else R(c, 11);
-          } else if ((a.L || c.g == a) && Ub(c), !y(b2)) for (e = c.Ba.g.parse(b2), b2 = 0; b2 < e.length; b2++) {
-            let m = e[b2];
-            const r2 = m[0];
-            if (!(r2 <= c.K)) if (c.K = r2, m = m[1], c.I == 2) if (m[0] == "c") {
-              c.M = m[1];
-              c.ba = m[2];
-              const A = m[3];
-              A != null && (c.ka = A, c.j.info("VER=" + c.ka));
-              const M2 = m[4];
-              M2 != null && (c.za = M2, c.j.info("SVER=" + c.za));
-              const F2 = m[5];
-              F2 != null && typeof F2 === "number" && F2 > 0 && (d = 1.5 * F2, c.O = d, c.j.info("backChannelRequestTimeoutMs_=" + d));
-              d = c;
-              const G = a.g;
-              if (G) {
-                const za = G.g ? G.g.getResponseHeader("X-Client-Wire-Protocol") : null;
-                if (za) {
-                  var f = d.h;
-                  f.g || za.indexOf("spdy") == -1 && za.indexOf("quic") == -1 && za.indexOf("h2") == -1 || (f.j = f.l, f.g = new Set(), f.h && (Yb(f, f.h), f.h = null));
-                }
-                if (d.G) {
-                  const bb = G.g ? G.g.getResponseHeader("X-HTTP-Session-Id") : null;
-                  bb && (d.wa = bb, S2(d.J, d.G, bb));
-                }
-              }
-              c.I = 3;
-              c.l && c.l.ra();
-              c.aa && (c.T = Date.now() - a.F, c.j.info("Handshake RTT: " + c.T + "ms"));
-              d = c;
-              var g = a;
-              d.na = Zb(d, d.L ? d.ba : null, d.W);
-              if (g.L) {
-                $b(d.h, g);
-                var k = g, q2 = d.O;
-                q2 && (k.H = q2);
-                k.D && (Jb(k), Fb(k));
-                d.g = g;
-              } else ac(d);
-              c.i.length > 0 && bc(c);
-            } else m[0] != "stop" && m[0] != "close" || R(c, 7);
-            else c.I == 3 && (m[0] == "stop" || m[0] == "close" ? m[0] == "stop" ? R(c, 7) : cc(c) : m[0] != "noop" && c.l && c.l.qa(m), c.A = 0);
-          }
-        }
-        lb(4);
-      } catch (m) {
-      }
-    }
-    var dc = class {
-      constructor(a, b2) {
-        this.g = a;
-        this.map = b2;
-      }
-    };
-    function ec(a) {
-      this.l = a || 10;
-      l.PerformanceNavigationTiming ? (a = l.performance.getEntriesByType("navigation"), a = a.length > 0 && (a[0].nextHopProtocol == "hq" || a[0].nextHopProtocol == "h2")) : a = !!(l.chrome && l.chrome.loadTimes && l.chrome.loadTimes() && l.chrome.loadTimes().wasFetchedViaSpdy);
-      this.j = a ? this.l : 1;
-      this.g = null;
-      this.j > 1 && (this.g = new Set());
-      this.h = null;
-      this.i = [];
-    }
-    function fc(a) {
-      return a.h ? true : a.g ? a.g.size >= a.j : false;
-    }
-    function Xb(a) {
-      return a.h ? 1 : a.g ? a.g.size : 0;
-    }
-    function Tb(a, b2) {
-      return a.h ? a.h == b2 : a.g ? a.g.has(b2) : false;
-    }
-    function Yb(a, b2) {
-      a.g ? a.g.add(b2) : a.h = b2;
-    }
-    function $b(a, b2) {
-      a.h && a.h == b2 ? a.h = null : a.g && a.g.has(b2) && a.g.delete(b2);
-    }
-    ec.prototype.cancel = function() {
-      this.i = hc(this);
-      if (this.h) this.h.cancel(), this.h = null;
-      else if (this.g && this.g.size !== 0) {
-        for (const a of this.g.values()) a.cancel();
-        this.g.clear();
-      }
-    };
-    function hc(a) {
-      if (a.h != null) return a.i.concat(a.h.G);
-      if (a.g != null && a.g.size !== 0) {
-        let b2 = a.i;
-        for (const c of a.g.values()) b2 = b2.concat(c.G);
-        return b2;
-      }
-      return ja(a.i);
-    }
-    var ic = RegExp("^(?:([^:/?#.]+):)?(?://(?:([^\\\\/?#]*)@)?([^\\\\/?#]*?)(?::([0-9]+))?(?=[\\\\/?#]|$))?([^?#]+)?(?:\\?([^#]*))?(?:#([\\s\\S]*))?$");
-    function jc(a, b2) {
-      if (a) {
-        a = a.split("&");
-        for (let c = 0; c < a.length; c++) {
-          const d = a[c].indexOf("=");
-          let e, f = null;
-          d >= 0 ? (e = a[c].substring(0, d), f = a[c].substring(d + 1)) : e = a[c];
-          b2(e, f ? decodeURIComponent(f.replace(/\+/g, " ")) : "");
-        }
-      }
-    }
-    function T(a) {
-      this.g = this.o = this.j = "";
-      this.u = null;
-      this.m = this.h = "";
-      this.l = false;
-      let b2;
-      a instanceof T ? (this.l = a.l, kc(this, a.j), this.o = a.o, this.g = a.g, lc(this, a.u), this.h = a.h, mc(this, nc(a.i)), this.m = a.m) : a && (b2 = String(a).match(ic)) ? (this.l = false, kc(this, b2[1] || "", true), this.o = oc(b2[2] || ""), this.g = oc(b2[3] || "", true), lc(this, b2[4]), this.h = oc(b2[5] || "", true), mc(this, b2[6] || "", true), this.m = oc(b2[7] || "")) : (this.l = false, this.i = new pc(null, this.l));
-    }
-    T.prototype.toString = function() {
-      const a = [];
-      var b2 = this.j;
-      b2 && a.push(qc(b2, rc, true), ":");
-      var c = this.g;
-      if (c || b2 == "file") a.push("//"), (b2 = this.o) && a.push(qc(b2, rc, true), "@"), a.push(L(c).replace(/%25([0-9a-fA-F]{2})/g, "%$1")), c = this.u, c != null && a.push(":", String(c));
-      if (c = this.h) this.g && c.charAt(0) != "/" && a.push("/"), a.push(qc(c, c.charAt(0) == "/" ? sc : tc, true));
-      (c = this.i.toString()) && a.push("?", c);
-      (c = this.m) && a.push("#", qc(c, uc));
-      return a.join("");
-    };
-    T.prototype.resolve = function(a) {
-      const b2 = O2(this);
-      let c = !!a.j;
-      c ? kc(b2, a.j) : c = !!a.o;
-      c ? b2.o = a.o : c = !!a.g;
-      c ? b2.g = a.g : c = a.u != null;
-      var d = a.h;
-      if (c) lc(b2, a.u);
-      else if (c = !!a.h) {
-        if (d.charAt(0) != "/") if (this.g && !this.h) d = "/" + d;
-        else {
-          var e = b2.h.lastIndexOf("/");
-          e != -1 && (d = b2.h.slice(0, e + 1) + d);
-        }
-        e = d;
-        if (e == ".." || e == ".") d = "";
-        else if (e.indexOf("./") != -1 || e.indexOf("/.") != -1) {
-          d = e.lastIndexOf("/", 0) == 0;
-          e = e.split("/");
-          const f = [];
-          for (let g = 0; g < e.length; ) {
-            const k = e[g++];
-            k == "." ? d && g == e.length && f.push("") : k == ".." ? ((f.length > 1 || f.length == 1 && f[0] != "") && f.pop(), d && g == e.length && f.push("")) : (f.push(k), d = true);
-          }
-          d = f.join("/");
-        } else d = e;
-      }
-      c ? b2.h = d : c = a.i.toString() !== "";
-      c ? mc(b2, nc(a.i)) : c = !!a.m;
-      c && (b2.m = a.m);
-      return b2;
-    };
-    function O2(a) {
-      return new T(a);
-    }
-    function kc(a, b2, c) {
-      a.j = c ? oc(b2, true) : b2;
-      a.j && (a.j = a.j.replace(/:$/, ""));
-    }
-    function lc(a, b2) {
-      if (b2) {
-        b2 = Number(b2);
-        if (isNaN(b2) || b2 < 0) throw Error("Bad port number " + b2);
-        a.u = b2;
-      } else a.u = null;
-    }
-    function mc(a, b2, c) {
-      b2 instanceof pc ? (a.i = b2, vc(a.i, a.l)) : (c || (b2 = qc(b2, wc)), a.i = new pc(b2, a.l));
-    }
-    function S2(a, b2, c) {
-      a.i.set(b2, c);
-    }
-    function Db(a) {
-      S2(a, "zx", Math.floor(Math.random() * 2147483648).toString(36) + Math.abs(Math.floor(Math.random() * 2147483648) ^ Date.now()).toString(36));
-      return a;
-    }
-    function oc(a, b2) {
-      return a ? b2 ? decodeURI(a.replace(/%25/g, "%2525")) : decodeURIComponent(a) : "";
-    }
-    function qc(a, b2, c) {
-      return typeof a === "string" ? (a = encodeURI(a).replace(b2, xc), c && (a = a.replace(/%25([0-9a-fA-F]{2})/g, "%$1")), a) : null;
-    }
-    function xc(a) {
-      a = a.charCodeAt(0);
-      return "%" + (a >> 4 & 15).toString(16) + (a & 15).toString(16);
-    }
-    var rc = /[#\/\?@]/g, tc = /[#\?:]/g, sc = /[#\?]/g, wc = /[#\?@]/g, uc = /#/g;
-    function pc(a, b2) {
-      this.h = this.g = null;
-      this.i = a || null;
-      this.j = !!b2;
-    }
-    function U2(a) {
-      a.g || (a.g = new Map(), a.h = 0, a.i && jc(a.i, function(b2, c) {
-        a.add(decodeURIComponent(b2.replace(/\+/g, " ")), c);
-      }));
-    }
-    h = pc.prototype;
-    h.add = function(a, b2) {
-      U2(this);
-      this.i = null;
-      a = V(this, a);
-      let c = this.g.get(a);
-      c || this.g.set(a, c = []);
-      c.push(b2);
-      this.h += 1;
-      return this;
-    };
-    function yc(a, b2) {
-      U2(a);
-      b2 = V(a, b2);
-      a.g.has(b2) && (a.i = null, a.h -= a.g.get(b2).length, a.g.delete(b2));
-    }
-    function zc(a, b2) {
-      U2(a);
-      b2 = V(a, b2);
-      return a.g.has(b2);
-    }
-    h.forEach = function(a, b2) {
-      U2(this);
-      this.g.forEach(function(c, d) {
-        c.forEach(function(e) {
-          a.call(b2, e, d, this);
-        }, this);
-      }, this);
-    };
-    function Ac(a, b2) {
-      U2(a);
-      let c = [];
-      if (typeof b2 === "string") zc(a, b2) && (c = c.concat(a.g.get(V(a, b2))));
-      else for (a = Array.from(a.g.values()), b2 = 0; b2 < a.length; b2++) c = c.concat(a[b2]);
-      return c;
-    }
-    h.set = function(a, b2) {
-      U2(this);
-      this.i = null;
-      a = V(this, a);
-      zc(this, a) && (this.h -= this.g.get(a).length);
-      this.g.set(a, [b2]);
-      this.h += 1;
-      return this;
-    };
-    h.get = function(a, b2) {
-      if (!a) return b2;
-      a = Ac(this, a);
-      return a.length > 0 ? String(a[0]) : b2;
-    };
-    function Gb(a, b2, c) {
-      yc(a, b2);
-      c.length > 0 && (a.i = null, a.g.set(V(a, b2), ja(c)), a.h += c.length);
-    }
-    h.toString = function() {
-      if (this.i) return this.i;
-      if (!this.g) return "";
-      const a = [], b2 = Array.from(this.g.keys());
-      for (let d = 0; d < b2.length; d++) {
-        var c = b2[d];
-        const e = L(c);
-        c = Ac(this, c);
-        for (let f = 0; f < c.length; f++) {
-          let g = e;
-          c[f] !== "" && (g += "=" + L(c[f]));
-          a.push(g);
-        }
-      }
-      return this.i = a.join("&");
-    };
-    function nc(a) {
-      const b2 = new pc();
-      b2.i = a.i;
-      a.g && (b2.g = new Map(a.g), b2.h = a.h);
-      return b2;
-    }
-    function V(a, b2) {
-      b2 = String(b2);
-      a.j && (b2 = b2.toLowerCase());
-      return b2;
-    }
-    function vc(a, b2) {
-      b2 && !a.j && (U2(a), a.i = null, a.g.forEach(function(c, d) {
-        const e = d.toLowerCase();
-        d != e && (yc(this, d), Gb(this, e, c));
-      }, a));
-      a.j = b2;
-    }
-    function Bc(a, b2) {
-      const c = new pb();
-      if (l.Image) {
-        const d = new Image();
-        d.onload = ha(W, c, "TestLoadImage: loaded", true, b2, d);
-        d.onerror = ha(W, c, "TestLoadImage: error", false, b2, d);
-        d.onabort = ha(W, c, "TestLoadImage: abort", false, b2, d);
-        d.ontimeout = ha(W, c, "TestLoadImage: timeout", false, b2, d);
-        l.setTimeout(function() {
-          if (d.ontimeout) d.ontimeout();
-        }, 1e4);
-        d.src = a;
-      } else b2(false);
-    }
-    function Cc(a, b2) {
-      const c = new pb(), d = new AbortController(), e = setTimeout(() => {
-        d.abort();
-        W(c, "TestPingServer: timeout", false, b2);
-      }, 1e4);
-      fetch(a, { signal: d.signal }).then((f) => {
-        clearTimeout(e);
-        f.ok ? W(c, "TestPingServer: ok", true, b2) : W(c, "TestPingServer: server error", false, b2);
-      }).catch(() => {
-        clearTimeout(e);
-        W(c, "TestPingServer: error", false, b2);
-      });
-    }
-    function W(a, b2, c, d, e) {
-      try {
-        e && (e.onload = null, e.onerror = null, e.onabort = null, e.ontimeout = null), d(c);
-      } catch (f) {
-      }
-    }
-    function Dc() {
-      this.g = new db2();
-    }
-    function Ec(a) {
-      this.i = a.Sb || null;
-      this.h = a.ab || false;
-    }
-    t(Ec, eb);
-    Ec.prototype.g = function() {
-      return new Fc(this.i, this.h);
-    };
-    function Fc(a, b2) {
-      C2.call(this);
-      this.H = a;
-      this.o = b2;
-      this.m = void 0;
-      this.status = this.readyState = 0;
-      this.responseType = this.responseText = this.response = this.statusText = "";
-      this.onreadystatechange = null;
-      this.A = new Headers();
-      this.h = null;
-      this.F = "GET";
-      this.D = "";
-      this.g = false;
-      this.B = this.j = this.l = null;
-      this.v = new AbortController();
-    }
-    t(Fc, C2);
-    h = Fc.prototype;
-    h.open = function(a, b2) {
-      if (this.readyState != 0) throw this.abort(), Error("Error reopening a connection");
-      this.F = a;
-      this.D = b2;
-      this.readyState = 1;
-      Gc(this);
-    };
-    h.send = function(a) {
-      if (this.readyState != 1) throw this.abort(), Error("need to call open() first. ");
-      if (this.v.signal.aborted) throw this.abort(), Error("Request was aborted.");
-      this.g = true;
-      const b2 = { headers: this.A, method: this.F, credentials: this.m, cache: void 0, signal: this.v.signal };
-      a && (b2.body = a);
-      (this.H || l).fetch(new Request(this.D, b2)).then(this.Pa.bind(this), this.ga.bind(this));
-    };
-    h.abort = function() {
-      this.response = this.responseText = "";
-      this.A = new Headers();
-      this.status = 0;
-      this.v.abort();
-      this.j && this.j.cancel("Request was aborted.").catch(() => {
-      });
-      this.readyState >= 1 && this.g && this.readyState != 4 && (this.g = false, Hc(this));
-      this.readyState = 0;
-    };
-    h.Pa = function(a) {
-      if (this.g && (this.l = a, this.h || (this.status = this.l.status, this.statusText = this.l.statusText, this.h = a.headers, this.readyState = 2, Gc(this)), this.g && (this.readyState = 3, Gc(this), this.g))) if (this.responseType === "arraybuffer") a.arrayBuffer().then(this.Na.bind(this), this.ga.bind(this));
-      else if (typeof l.ReadableStream !== "undefined" && "body" in a) {
-        this.j = a.body.getReader();
-        if (this.o) {
-          if (this.responseType) throw Error('responseType must be empty for "streamBinaryChunks" mode responses.');
-          this.response = [];
-        } else this.response = this.responseText = "", this.B = new TextDecoder();
-        Ic(this);
-      } else a.text().then(this.Oa.bind(this), this.ga.bind(this));
-    };
-    function Ic(a) {
-      a.j.read().then(a.Ma.bind(a)).catch(a.ga.bind(a));
-    }
-    h.Ma = function(a) {
-      if (this.g) {
-        if (this.o && a.value) this.response.push(a.value);
-        else if (!this.o) {
-          var b2 = a.value ? a.value : new Uint8Array(0);
-          if (b2 = this.B.decode(b2, { stream: !a.done })) this.response = this.responseText += b2;
-        }
-        a.done ? Hc(this) : Gc(this);
-        this.readyState == 3 && Ic(this);
-      }
-    };
-    h.Oa = function(a) {
-      this.g && (this.response = this.responseText = a, Hc(this));
-    };
-    h.Na = function(a) {
-      this.g && (this.response = a, Hc(this));
-    };
-    h.ga = function() {
-      this.g && Hc(this);
-    };
-    function Hc(a) {
-      a.readyState = 4;
-      a.l = null;
-      a.j = null;
-      a.B = null;
-      Gc(a);
-    }
-    h.setRequestHeader = function(a, b2) {
-      this.A.append(a, b2);
-    };
-    h.getResponseHeader = function(a) {
-      return this.h ? this.h.get(a.toLowerCase()) || "" : "";
-    };
-    h.getAllResponseHeaders = function() {
-      if (!this.h) return "";
-      const a = [], b2 = this.h.entries();
-      for (var c = b2.next(); !c.done; ) c = c.value, a.push(c[0] + ": " + c[1]), c = b2.next();
-      return a.join("\r\n");
-    };
-    function Gc(a) {
-      a.onreadystatechange && a.onreadystatechange.call(a);
-    }
-    Object.defineProperty(Fc.prototype, "withCredentials", { get: function() {
-      return this.m === "include";
-    }, set: function(a) {
-      this.m = a ? "include" : "same-origin";
-    } });
-    function Jc(a) {
-      let b2 = "";
-      ya(a, function(c, d) {
-        b2 += d;
-        b2 += ":";
-        b2 += c;
-        b2 += "\r\n";
-      });
-      return b2;
-    }
-    function Kc(a, b2, c) {
-      a: {
-        for (d in c) {
-          var d = false;
-          break a;
-        }
-        d = true;
-      }
-      d || (c = Jc(c), typeof a === "string" ? c != null && L(c) : S2(a, b2, c));
-    }
-    function X(a) {
-      C2.call(this);
-      this.headers = new Map();
-      this.L = a || null;
-      this.h = false;
-      this.g = null;
-      this.D = "";
-      this.o = 0;
-      this.l = "";
-      this.j = this.B = this.v = this.A = false;
-      this.m = null;
-      this.F = "";
-      this.H = false;
-    }
-    t(X, C2);
-    var Lc = /^https?$/i, Mc = ["POST", "PUT"];
-    h = X.prototype;
-    h.Fa = function(a) {
-      this.H = a;
-    };
-    h.ea = function(a, b2, c, d) {
-      if (this.g) throw Error("[goog.net.XhrIo] Object is active with another request=" + this.D + "; newUri=" + a);
-      b2 = b2 ? b2.toUpperCase() : "GET";
-      this.D = a;
-      this.l = "";
-      this.o = 0;
-      this.A = false;
-      this.h = true;
-      this.g = this.L ? this.L.g() : wb.g();
-      this.g.onreadystatechange = ia(p(this.Ca, this));
-      try {
-        this.B = true, this.g.open(b2, String(a), true), this.B = false;
-      } catch (f) {
-        Nc(this, f);
-        return;
-      }
-      a = c || "";
-      c = new Map(this.headers);
-      if (d) if (Object.getPrototypeOf(d) === Object.prototype) for (var e in d) c.set(e, d[e]);
-      else if (typeof d.keys === "function" && typeof d.get === "function") for (const f of d.keys()) c.set(f, d.get(f));
-      else throw Error("Unknown input type for opt_headers: " + String(d));
-      d = Array.from(c.keys()).find((f) => "content-type" == f.toLowerCase());
-      e = l.FormData && a instanceof l.FormData;
-      !(Array.prototype.indexOf.call(Mc, b2, void 0) >= 0) || d || e || c.set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-      for (const [f, g] of c) this.g.setRequestHeader(f, g);
-      this.F && (this.g.responseType = this.F);
-      "withCredentials" in this.g && this.g.withCredentials !== this.H && (this.g.withCredentials = this.H);
-      try {
-        this.m && (clearTimeout(this.m), this.m = null), this.v = true, this.g.send(a), this.v = false;
-      } catch (f) {
-        Nc(this, f);
-      }
-    };
-    function Nc(a, b2) {
-      a.h = false;
-      a.g && (a.j = true, a.g.abort(), a.j = false);
-      a.l = b2;
-      a.o = 5;
-      Oc(a);
-      Pc(a);
-    }
-    function Oc(a) {
-      a.A || (a.A = true, D2(a, "complete"), D2(a, "error"));
-    }
-    h.abort = function(a) {
-      this.g && this.h && (this.h = false, this.j = true, this.g.abort(), this.j = false, this.o = a || 7, D2(this, "complete"), D2(this, "abort"), Pc(this));
-    };
-    h.N = function() {
-      this.g && (this.h && (this.h = false, this.j = true, this.g.abort(), this.j = false), Pc(this, true));
-      X.Z.N.call(this);
-    };
-    h.Ca = function() {
-      this.u || (this.B || this.v || this.j ? Qc(this) : this.Xa());
-    };
-    h.Xa = function() {
-      Qc(this);
-    };
-    function Qc(a) {
-      if (a.h && typeof ea != "undefined") {
-        if (a.v && P(a) == 4) setTimeout(a.Ca.bind(a), 0);
-        else if (D2(a, "readystatechange"), P(a) == 4) {
-          a.h = false;
-          try {
-            const f = a.ca();
-            a: switch (f) {
-              case 200:
-              case 201:
-              case 202:
-              case 204:
-              case 206:
-              case 304:
-              case 1223:
-                var b2 = true;
-                break a;
-              default:
-                b2 = false;
-            }
-            var c;
-            if (!(c = b2)) {
-              var d;
-              if (d = f === 0) {
-                let g = String(a.D).match(ic)[1] || null;
-                !g && l.self && l.self.location && (g = l.self.location.protocol.slice(0, -1));
-                d = !Lc.test(g ? g.toLowerCase() : "");
-              }
-              c = d;
-            }
-            if (c) D2(a, "complete"), D2(a, "success");
-            else {
-              a.o = 6;
-              try {
-                var e = P(a) > 2 ? a.g.statusText : "";
-              } catch (g) {
-                e = "";
-              }
-              a.l = e + " [" + a.ca() + "]";
-              Oc(a);
-            }
-          } finally {
-            Pc(a);
-          }
-        }
-      }
-    }
-    function Pc(a, b2) {
-      if (a.g) {
-        a.m && (clearTimeout(a.m), a.m = null);
-        const c = a.g;
-        a.g = null;
-        b2 || D2(a, "ready");
-        try {
-          c.onreadystatechange = null;
-        } catch (d) {
-        }
-      }
-    }
-    h.isActive = function() {
-      return !!this.g;
-    };
-    function P(a) {
-      return a.g ? a.g.readyState : 0;
-    }
-    h.ca = function() {
-      try {
-        return P(this) > 2 ? this.g.status : -1;
-      } catch (a) {
-        return -1;
-      }
-    };
-    h.la = function() {
-      try {
-        return this.g ? this.g.responseText : "";
-      } catch (a) {
-        return "";
-      }
-    };
-    h.La = function(a) {
-      if (this.g) {
-        var b2 = this.g.responseText;
-        a && b2.indexOf(a) == 0 && (b2 = b2.substring(a.length));
-        return cb(b2);
-      }
-    };
-    function Ib(a) {
-      try {
-        if (!a.g) return null;
-        if ("response" in a.g) return a.g.response;
-        switch (a.F) {
-          case "":
-          case "text":
-            return a.g.responseText;
-          case "arraybuffer":
-            if ("mozResponseArrayBuffer" in a.g) return a.g.mozResponseArrayBuffer;
-        }
-        return null;
-      } catch (b2) {
-        return null;
-      }
-    }
-    function Rb(a) {
-      const b2 = {};
-      a = (a.g && P(a) >= 2 ? a.g.getAllResponseHeaders() || "" : "").split("\r\n");
-      for (let d = 0; d < a.length; d++) {
-        if (y(a[d])) continue;
-        var c = yb(a[d]);
-        const e = c[0];
-        c = c[1];
-        if (typeof c !== "string") continue;
-        c = c.trim();
-        const f = b2[e] || [];
-        b2[e] = f;
-        f.push(c);
-      }
-      Aa(b2, function(d) {
-        return d.join(", ");
-      });
-    }
-    h.ya = function() {
-      return this.o;
-    };
-    h.Ha = function() {
-      return typeof this.l === "string" ? this.l : String(this.l);
-    };
-    function Rc(a, b2, c) {
-      return c && c.internalChannelParams ? c.internalChannelParams[a] || b2 : b2;
-    }
-    function Sc(a) {
-      this.za = 0;
-      this.i = [];
-      this.j = new pb();
-      this.ba = this.na = this.J = this.W = this.g = this.wa = this.G = this.H = this.u = this.U = this.o = null;
-      this.Ya = this.V = 0;
-      this.Sa = Rc("failFast", false, a);
-      this.F = this.C = this.v = this.m = this.l = null;
-      this.X = true;
-      this.xa = this.K = -1;
-      this.Y = this.A = this.D = 0;
-      this.Qa = Rc("baseRetryDelayMs", 5e3, a);
-      this.Za = Rc("retryDelaySeedMs", 1e4, a);
-      this.Ta = Rc("forwardChannelMaxRetries", 2, a);
-      this.va = Rc("forwardChannelRequestTimeoutMs", 2e4, a);
-      this.ma = a && a.xmlHttpFactory || void 0;
-      this.Ua = a && a.Rb || void 0;
-      this.Aa = a && a.useFetchStreams || false;
-      this.O = void 0;
-      this.L = a && a.supportsCrossDomainXhr || false;
-      this.M = "";
-      this.h = new ec(a && a.concurrentRequestLimit);
-      this.Ba = new Dc();
-      this.S = a && a.fastHandshake || false;
-      this.R = a && a.encodeInitMessageHeaders || false;
-      this.S && this.R && (this.R = false);
-      this.Ra = a && a.Pb || false;
-      a && a.ua && this.j.ua();
-      a && a.forceLongPolling && (this.X = false);
-      this.aa = !this.S && this.X && a && a.detectBufferingProxy || false;
-      this.ia = void 0;
-      a && a.longPollingTimeout && a.longPollingTimeout > 0 && (this.ia = a.longPollingTimeout);
-      this.ta = void 0;
-      this.T = 0;
-      this.P = false;
-      this.ja = this.B = null;
-    }
-    h = Sc.prototype;
-    h.ka = 8;
-    h.I = 1;
-    h.connect = function(a, b2, c, d) {
-      J(0);
-      this.W = a;
-      this.H = b2 || {};
-      c && d !== void 0 && (this.H.OSID = c, this.H.OAID = d);
-      this.F = this.X;
-      this.J = Zb(this, null, this.W);
-      bc(this);
-    };
-    function cc(a) {
-      Tc(a);
-      if (a.I == 3) {
-        var b2 = a.V++, c = O2(a.J);
-        S2(c, "SID", a.M);
-        S2(c, "RID", b2);
-        S2(c, "TYPE", "terminate");
-        Uc(a, c);
-        b2 = new N2(a, a.j, b2);
-        b2.M = 2;
-        b2.A = Db(O2(c));
-        c = false;
-        if (l.navigator && l.navigator.sendBeacon) try {
-          c = l.navigator.sendBeacon(b2.A.toString(), "");
-        } catch (d) {
-        }
-        !c && l.Image && (new Image().src = b2.A, c = true);
-        c || (b2.g = Hb(b2.j, null), b2.g.ea(b2.A));
-        b2.F = Date.now();
-        Fb(b2);
-      }
-      Vc(a);
-    }
-    function Vb(a) {
-      a.g && (Pb(a), a.g.cancel(), a.g = null);
-    }
-    function Tc(a) {
-      Vb(a);
-      a.v && (l.clearTimeout(a.v), a.v = null);
-      Ub(a);
-      a.h.cancel();
-      a.m && (typeof a.m === "number" && l.clearTimeout(a.m), a.m = null);
-    }
-    function bc(a) {
-      if (!fc(a.h) && !a.m) {
-        a.m = true;
-        var b2 = a.Ea;
-        u || ta();
-        v2 || (u(), v2 = true);
-        oa.add(b2, a);
-        a.D = 0;
-      }
-    }
-    function Wc(a, b2) {
-      if (Xb(a.h) >= a.h.j - (a.m ? 1 : 0)) return false;
-      if (a.m) return a.i = b2.G.concat(a.i), true;
-      if (a.I == 1 || a.I == 2 || a.D >= (a.Sa ? 0 : a.Ta)) return false;
-      a.m = ob(p(a.Ea, a, b2), Xc(a, a.D));
-      a.D++;
-      return true;
-    }
-    h.Ea = function(a) {
-      if (this.m) if (this.m = null, this.I == 1) {
-        if (!a) {
-          this.V = Math.floor(Math.random() * 1e5);
-          a = this.V++;
-          const e = new N2(this, this.j, a);
-          let f = this.o;
-          this.U && (f ? (f = Ba(f), Da(f, this.U)) : f = this.U);
-          this.u !== null || this.R || (e.J = f, f = null);
-          if (this.S) a: {
-            var b2 = 0;
-            for (var c = 0; c < this.i.length; c++) {
-              b: {
-                var d = this.i[c];
-                if ("__data__" in d.map && (d = d.map.__data__, typeof d === "string")) {
-                  d = d.length;
-                  break b;
-                }
-                d = void 0;
-              }
-              if (d === void 0) break;
-              b2 += d;
-              if (b2 > 4096) {
-                b2 = c;
-                break a;
-              }
-              if (b2 === 4096 || c === this.i.length - 1) {
-                b2 = c + 1;
-                break a;
-              }
-            }
-            b2 = 1e3;
-          }
-          else b2 = 1e3;
-          b2 = Yc(this, e, b2);
-          c = O2(this.J);
-          S2(c, "RID", a);
-          S2(c, "CVER", 22);
-          this.G && S2(c, "X-HTTP-Session-Id", this.G);
-          Uc(this, c);
-          f && (this.R ? b2 = "headers=" + L(Jc(f)) + "&" + b2 : this.u && Kc(c, this.u, f));
-          Yb(this.h, e);
-          this.Ra && S2(c, "TYPE", "init");
-          this.S ? (S2(c, "$req", b2), S2(c, "SID", "null"), e.U = true, Cb(e, c, null)) : Cb(e, c, b2);
-          this.I = 2;
-        }
-      } else this.I == 3 && (a ? Zc(this, a) : this.i.length == 0 || fc(this.h) || Zc(this));
-    };
-    function Zc(a, b2) {
-      var c;
-      b2 ? c = b2.l : c = a.V++;
-      const d = O2(a.J);
-      S2(d, "SID", a.M);
-      S2(d, "RID", c);
-      S2(d, "AID", a.K);
-      Uc(a, d);
-      a.u && a.o && Kc(d, a.u, a.o);
-      c = new N2(a, a.j, c, a.D + 1);
-      a.u === null && (c.J = a.o);
-      b2 && (a.i = b2.G.concat(a.i));
-      b2 = Yc(a, c, 1e3);
-      c.H = Math.round(a.va * 0.5) + Math.round(a.va * 0.5 * Math.random());
-      Yb(a.h, c);
-      Cb(c, d, b2);
-    }
-    function Uc(a, b2) {
-      a.H && ya(a.H, function(c, d) {
-        S2(b2, d, c);
-      });
-      a.l && ya({}, function(c, d) {
-        S2(b2, d, c);
-      });
-    }
-    function Yc(a, b2, c) {
-      c = Math.min(a.i.length, c);
-      const d = a.l ? p(a.l.Ka, a.l, a) : null;
-      a: {
-        var e = a.i;
-        let k = -1;
-        for (; ; ) {
-          const q2 = ["count=" + c];
-          k == -1 ? c > 0 ? (k = e[0].g, q2.push("ofs=" + k)) : k = 0 : q2.push("ofs=" + k);
-          let m = true;
-          for (let r2 = 0; r2 < c; r2++) {
-            var f = e[r2].g;
-            const A = e[r2].map;
-            f -= k;
-            if (f < 0) k = Math.max(0, e[r2].g - 100), m = false;
-            else try {
-              f = "req" + f + "_" || "";
-              try {
-                var g = A instanceof Map ? A : Object.entries(A);
-                for (const [M2, F2] of g) {
-                  let G = F2;
-                  n(F2) && (G = ab(F2));
-                  q2.push(f + M2 + "=" + encodeURIComponent(G));
-                }
-              } catch (M2) {
-                throw q2.push(f + "type=" + encodeURIComponent("_badmap")), M2;
-              }
-            } catch (M2) {
-              d && d(A);
-            }
-          }
-          if (m) {
-            g = q2.join("&");
-            break a;
-          }
-        }
-        g = void 0;
-      }
-      a = a.i.splice(0, c);
-      b2.G = a;
-      return g;
-    }
-    function ac(a) {
-      if (!a.g && !a.v) {
-        a.Y = 1;
-        var b2 = a.Da;
-        u || ta();
-        v2 || (u(), v2 = true);
-        oa.add(b2, a);
-        a.A = 0;
-      }
-    }
-    function Wb(a) {
-      if (a.g || a.v || a.A >= 3) return false;
-      a.Y++;
-      a.v = ob(p(a.Da, a), Xc(a, a.A));
-      a.A++;
-      return true;
-    }
-    h.Da = function() {
-      this.v = null;
-      $c(this);
-      if (this.aa && !(this.P || this.g == null || this.T <= 0)) {
-        var a = 4 * this.T;
-        this.j.info("BP detection timer enabled: " + a);
-        this.B = ob(p(this.Wa, this), a);
-      }
-    };
-    h.Wa = function() {
-      this.B && (this.B = null, this.j.info("BP detection timeout reached."), this.j.info("Buffering proxy detected and switch to long-polling!"), this.F = false, this.P = true, J(10), Vb(this), $c(this));
-    };
-    function Pb(a) {
-      a.B != null && (l.clearTimeout(a.B), a.B = null);
-    }
-    function $c(a) {
-      a.g = new N2(a, a.j, "rpc", a.Y);
-      a.u === null && (a.g.J = a.o);
-      a.g.P = 0;
-      var b2 = O2(a.na);
-      S2(b2, "RID", "rpc");
-      S2(b2, "SID", a.M);
-      S2(b2, "AID", a.K);
-      S2(b2, "CI", a.F ? "0" : "1");
-      !a.F && a.ia && S2(b2, "TO", a.ia);
-      S2(b2, "TYPE", "xmlhttp");
-      Uc(a, b2);
-      a.u && a.o && Kc(b2, a.u, a.o);
-      a.O && (a.g.H = a.O);
-      var c = a.g;
-      a = a.ba;
-      c.M = 1;
-      c.A = Db(O2(b2));
-      c.u = null;
-      c.R = true;
-      Eb(c, a);
-    }
-    h.Va = function() {
-      this.C != null && (this.C = null, Vb(this), Wb(this), J(19));
-    };
-    function Ub(a) {
-      a.C != null && (l.clearTimeout(a.C), a.C = null);
-    }
-    function Qb(a, b2) {
-      var c = null;
-      if (a.g == b2) {
-        Ub(a);
-        Pb(a);
-        a.g = null;
-        var d = 2;
-      } else if (Tb(a.h, b2)) c = b2.G, $b(a.h, b2), d = 1;
-      else return;
-      if (a.I != 0) {
-        if (b2.o) if (d == 1) {
-          c = b2.u ? b2.u.length : 0;
-          b2 = Date.now() - b2.F;
-          var e = a.D;
-          d = jb();
-          D2(d, new nb(d, c));
-          bc(a);
-        } else ac(a);
-        else if (e = b2.m, e == 3 || e == 0 && b2.X > 0 || !(d == 1 && Wc(a, b2) || d == 2 && Wb(a))) switch (c && c.length > 0 && (b2 = a.h, b2.i = b2.i.concat(c)), e) {
-          case 1:
-            R(a, 5);
-            break;
-          case 4:
-            R(a, 10);
-            break;
-          case 3:
-            R(a, 6);
-            break;
-          default:
-            R(a, 2);
-        }
-      }
-    }
-    function Xc(a, b2) {
-      let c = a.Qa + Math.floor(Math.random() * a.Za);
-      a.isActive() || (c *= 2);
-      return c * b2;
-    }
-    function R(a, b2) {
-      a.j.info("Error code " + b2);
-      if (b2 == 2) {
-        var c = p(a.bb, a), d = a.Ua;
-        const e = !d;
-        d = new T(d || "//www.google.com/images/cleardot.gif");
-        l.location && l.location.protocol == "http" || kc(d, "https");
-        Db(d);
-        e ? Bc(d.toString(), c) : Cc(d.toString(), c);
-      } else J(2);
-      a.I = 0;
-      a.l && a.l.pa(b2);
-      Vc(a);
-      Tc(a);
-    }
-    h.bb = function(a) {
-      a ? (this.j.info("Successfully pinged google.com"), J(2)) : (this.j.info("Failed to ping google.com"), J(1));
-    };
-    function Vc(a) {
-      a.I = 0;
-      a.ja = [];
-      if (a.l) {
-        const b2 = hc(a.h);
-        if (b2.length != 0 || a.i.length != 0) ka(a.ja, b2), ka(a.ja, a.i), a.h.i.length = 0, ja(a.i), a.i.length = 0;
-        a.l.oa();
-      }
-    }
-    function Zb(a, b2, c) {
-      var d = c instanceof T ? O2(c) : new T(c);
-      if (d.g != "") b2 && (d.g = b2 + "." + d.g), lc(d, d.u);
-      else {
-        var e = l.location;
-        d = e.protocol;
-        b2 = b2 ? b2 + "." + e.hostname : e.hostname;
-        e = +e.port;
-        const f = new T(null);
-        d && kc(f, d);
-        b2 && (f.g = b2);
-        e && lc(f, e);
-        c && (f.h = c);
-        d = f;
-      }
-      c = a.G;
-      b2 = a.wa;
-      c && b2 && S2(d, c, b2);
-      S2(d, "VER", a.ka);
-      Uc(a, d);
-      return d;
-    }
-    function Hb(a, b2, c) {
-      if (b2 && !a.L) throw Error("Can't create secondary domain capable XhrIo object.");
-      b2 = a.Aa && !a.ma ? new X(new Ec({ ab: c })) : new X(a.ma);
-      b2.Fa(a.L);
-      return b2;
-    }
-    h.isActive = function() {
-      return !!this.l && this.l.isActive(this);
-    };
-    function ad() {
-    }
-    h = ad.prototype;
-    h.ra = function() {
-    };
-    h.qa = function() {
-    };
-    h.pa = function() {
-    };
-    h.oa = function() {
-    };
-    h.isActive = function() {
-      return true;
-    };
-    h.Ka = function() {
-    };
-    function bd() {
-    }
-    bd.prototype.g = function(a, b2) {
-      return new Y(a, b2);
-    };
-    function Y(a, b2) {
-      C2.call(this);
-      this.g = new Sc(b2);
-      this.l = a;
-      this.h = b2 && b2.messageUrlParams || null;
-      a = b2 && b2.messageHeaders || null;
-      b2 && b2.clientProtocolHeaderRequired && (a ? a["X-Client-Protocol"] = "webchannel" : a = { "X-Client-Protocol": "webchannel" });
-      this.g.o = a;
-      a = b2 && b2.initMessageHeaders || null;
-      b2 && b2.messageContentType && (a ? a["X-WebChannel-Content-Type"] = b2.messageContentType : a = { "X-WebChannel-Content-Type": b2.messageContentType });
-      b2 && b2.sa && (a ? a["X-WebChannel-Client-Profile"] = b2.sa : a = { "X-WebChannel-Client-Profile": b2.sa });
-      this.g.U = a;
-      (a = b2 && b2.Qb) && !y(a) && (this.g.u = a);
-      this.A = b2 && b2.supportsCrossDomainXhr || false;
-      this.v = b2 && b2.sendRawJson || false;
-      (b2 = b2 && b2.httpSessionIdParam) && !y(b2) && (this.g.G = b2, a = this.h, a !== null && b2 in a && (a = this.h, b2 in a && delete a[b2]));
-      this.j = new Z(this);
-    }
-    t(Y, C2);
-    Y.prototype.m = function() {
-      this.g.l = this.j;
-      this.A && (this.g.L = true);
-      this.g.connect(this.l, this.h || void 0);
-    };
-    Y.prototype.close = function() {
-      cc(this.g);
-    };
-    Y.prototype.o = function(a) {
-      var b2 = this.g;
-      if (typeof a === "string") {
-        var c = {};
-        c.__data__ = a;
-        a = c;
-      } else this.v && (c = {}, c.__data__ = ab(a), a = c);
-      b2.i.push(new dc(b2.Ya++, a));
-      b2.I == 3 && bc(b2);
-    };
-    Y.prototype.N = function() {
-      this.g.l = null;
-      delete this.j;
-      cc(this.g);
-      delete this.g;
-      Y.Z.N.call(this);
-    };
-    function cd(a) {
-      gb.call(this);
-      a.__headers__ && (this.headers = a.__headers__, this.statusCode = a.__status__, delete a.__headers__, delete a.__status__);
-      var b2 = a.__sm__;
-      if (b2) {
-        a: {
-          for (const c in b2) {
-            a = c;
-            break a;
-          }
-          a = void 0;
-        }
-        if (this.i = a) a = this.i, b2 = b2 !== null && a in b2 ? b2[a] : void 0;
-        this.data = b2;
-      } else this.data = a;
-    }
-    t(cd, gb);
-    function dd() {
-      hb.call(this);
-      this.status = 1;
-    }
-    t(dd, hb);
-    function Z(a) {
-      this.g = a;
-    }
-    t(Z, ad);
-    Z.prototype.ra = function() {
-      D2(this.g, "a");
-    };
-    Z.prototype.qa = function(a) {
-      D2(this.g, new cd(a));
-    };
-    Z.prototype.pa = function(a) {
-      D2(this.g, new dd());
-    };
-    Z.prototype.oa = function() {
-      D2(this.g, "b");
-    };
-    bd.prototype.createWebChannel = bd.prototype.g;
-    Y.prototype.send = Y.prototype.o;
-    Y.prototype.open = Y.prototype.m;
-    Y.prototype.close = Y.prototype.close;
-    createWebChannelTransport = function() {
-      return new bd();
-    };
-    getStatEventTarget = function() {
-      return jb();
-    };
-    Event$1 = I;
-    Stat = { jb: 0, mb: 1, nb: 2, Hb: 3, Mb: 4, Jb: 5, Kb: 6, Ib: 7, Gb: 8, Lb: 9, PROXY: 10, NOPROXY: 11, Eb: 12, Ab: 13, Bb: 14, zb: 15, Cb: 16, Db: 17, fb: 18, eb: 19, gb: 20 };
-    ub.NO_ERROR = 0;
-    ub.TIMEOUT = 8;
-    ub.HTTP_ERROR = 6;
-    ErrorCode = ub;
-    vb.COMPLETE = "complete";
-    EventType = vb;
-    fb.EventType = H;
-    H.OPEN = "a";
-    H.CLOSE = "b";
-    H.ERROR = "c";
-    H.MESSAGE = "d";
-    C2.prototype.listen = C2.prototype.J;
-    WebChannel = fb;
-    X.prototype.listenOnce = X.prototype.K;
-    X.prototype.getLastError = X.prototype.Ha;
-    X.prototype.getLastErrorCode = X.prototype.ya;
-    X.prototype.getStatus = X.prototype.ca;
-    X.prototype.getResponseJson = X.prototype.La;
-    X.prototype.getResponseText = X.prototype.la;
-    X.prototype.send = X.prototype.ea;
-    X.prototype.setWithCredentials = X.prototype.Fa;
-    XhrIo = X;
-  }).apply(typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {});
-  class User {
-    constructor(e) {
-      this.uid = e;
-    }
-    isAuthenticated() {
-      return null != this.uid;
-    }
-toKey() {
-      return this.isAuthenticated() ? "uid:" + this.uid : "anonymous-user";
-    }
-    isEqual(e) {
-      return e.uid === this.uid;
-    }
-  }
-  User.UNAUTHENTICATED = new User(null),
-
-User.GOOGLE_CREDENTIALS = new User("google-credentials-uid"), User.FIRST_PARTY = new User("first-party-uid"), User.MOCK_USER = new User("mock-user");
-  let b = "12.13.0";
-  function __PRIVATE_setSDKVersion(e) {
-    b = e;
-  }
-  const S = new Logger("@firebase/firestore");
-  function __PRIVATE_getLogLevel() {
-    return S.logLevel;
-  }
-  function __PRIVATE_logDebug(e, ...t) {
-    if (S.logLevel <= LogLevel.DEBUG) {
-      const n = t.map(__PRIVATE_argToString);
-      S.debug(`Firestore (${b}): ${e}`, ...n);
-    }
-  }
-  function __PRIVATE_logError(e, ...t) {
-    if (S.logLevel <= LogLevel.ERROR) {
-      const n = t.map(__PRIVATE_argToString);
-      S.error(`Firestore (${b}): ${e}`, ...n);
-    }
-  }
-  function __PRIVATE_logWarn(e, ...t) {
-    if (S.logLevel <= LogLevel.WARN) {
-      const n = t.map(__PRIVATE_argToString);
-      S.warn(`Firestore (${b}): ${e}`, ...n);
-    }
-  }
-  function __PRIVATE_argToString(e) {
-    if ("string" == typeof e) return e;
-    try {
-      return (function __PRIVATE_formatJSON(e2) {
-        return JSON.stringify(e2);
-      })(e);
-    } catch (t) {
-      return e;
-    }
-  }
-  function fail(e, t, n) {
-    let r2 = "Unexpected state";
-    "string" == typeof t ? r2 = t : n = t, __PRIVATE__fail(e, r2, n);
-  }
-  function __PRIVATE__fail(e, t, n) {
-    let r2 = `FIRESTORE (${b}) INTERNAL ASSERTION FAILED: ${t} (ID: ${e.toString(16)})`;
-    if (void 0 !== n) try {
-      r2 += " CONTEXT: " + JSON.stringify(n);
-    } catch (e2) {
-      r2 += " CONTEXT: " + n;
-    }
-    throw __PRIVATE_logError(r2), new Error(r2);
-  }
-  function __PRIVATE_hardAssert(e, t, n, r2) {
-    let i = "Unexpected state";
-    "string" == typeof n ? i = n : r2 = n, e || __PRIVATE__fail(t, i, r2);
-  }
-  function __PRIVATE_debugCast(e, t) {
-    return e;
-  }
-  const D = {
-
-
-OK: "ok",
-CANCELLED: "cancelled",
-UNKNOWN: "unknown",
-INVALID_ARGUMENT: "invalid-argument",
-DEADLINE_EXCEEDED: "deadline-exceeded",
-NOT_FOUND: "not-found",
-ALREADY_EXISTS: "already-exists",
-PERMISSION_DENIED: "permission-denied",
-UNAUTHENTICATED: "unauthenticated",
-RESOURCE_EXHAUSTED: "resource-exhausted",
-FAILED_PRECONDITION: "failed-precondition",
-ABORTED: "aborted",
-OUT_OF_RANGE: "out-of-range",
-UNIMPLEMENTED: "unimplemented",
-INTERNAL: "internal",
-UNAVAILABLE: "unavailable",
-DATA_LOSS: "data-loss"
-  };
-  class FirestoreError extends FirebaseError {
-constructor(e, t) {
-      super(e, t), this.code = e, this.message = t,
-
-
-this.toString = () => `${this.name}: [code=${this.code}]: ${this.message}`;
-    }
-  }
-  class __PRIVATE_Deferred {
-    constructor() {
-      this.promise = new Promise(((e, t) => {
-        this.resolve = e, this.reject = t;
-      }));
-    }
-  }
-  class __PRIVATE_OAuthToken {
-    constructor(e, t) {
-      this.user = t, this.type = "OAuth", this.headers = new Map(), this.headers.set("Authorization", `Bearer ${e}`);
-    }
-  }
-  class __PRIVATE_EmptyAuthCredentialsProvider {
-    getToken() {
-      return Promise.resolve(null);
-    }
-    invalidateToken() {
-    }
-    start(e, t) {
-      e.enqueueRetryable((() => t(User.UNAUTHENTICATED)));
-    }
-    shutdown() {
-    }
-  }
-  class __PRIVATE_EmulatorAuthCredentialsProvider {
-    constructor(e) {
-      this.token = e,
-this.changeListener = null;
-    }
-    getToken() {
-      return Promise.resolve(this.token);
-    }
-    invalidateToken() {
-    }
-    start(e, t) {
-      this.changeListener = t,
-e.enqueueRetryable((() => t(this.token.user)));
-    }
-    shutdown() {
-      this.changeListener = null;
-    }
-  }
-  class __PRIVATE_FirebaseAuthCredentialsProvider {
-    constructor(e) {
-      this.t = e,
-this.currentUser = User.UNAUTHENTICATED,
-this.i = 0, this.forceRefresh = false, this.auth = null;
-    }
-    start(e, t) {
-      __PRIVATE_hardAssert(void 0 === this.o, 42304);
-      let n = this.i;
-      const __PRIVATE_guardedChangeListener = (e2) => this.i !== n ? (n = this.i, t(e2)) : Promise.resolve();
-      let r2 = new __PRIVATE_Deferred();
-      this.o = () => {
-        this.i++, this.currentUser = this.u(), r2.resolve(), r2 = new __PRIVATE_Deferred(), e.enqueueRetryable((() => __PRIVATE_guardedChangeListener(this.currentUser)));
-      };
-      const __PRIVATE_awaitNextToken = () => {
-        const t2 = r2;
-        e.enqueueRetryable((async () => {
-          await t2.promise, await __PRIVATE_guardedChangeListener(this.currentUser);
-        }));
-      }, __PRIVATE_registerAuth = (e2) => {
-        __PRIVATE_logDebug("FirebaseAuthCredentialsProvider", "Auth detected"), this.auth = e2, this.o && (this.auth.addAuthTokenListener(this.o), __PRIVATE_awaitNextToken());
-      };
-      this.t.onInit(((e2) => __PRIVATE_registerAuth(e2))),
-
-
-setTimeout((() => {
-        if (!this.auth) {
-          const e2 = this.t.getImmediate({
-            optional: true
-          });
-          e2 ? __PRIVATE_registerAuth(e2) : (
-(__PRIVATE_logDebug("FirebaseAuthCredentialsProvider", "Auth not yet detected"), r2.resolve(), r2 = new __PRIVATE_Deferred())
-          );
-        }
-      }), 0), __PRIVATE_awaitNextToken();
-    }
-    getToken() {
-      const e = this.i, t = this.forceRefresh;
-      return this.forceRefresh = false, this.auth ? this.auth.getToken(t).then(((t2) => (
-
-
-this.i !== e ? (__PRIVATE_logDebug("FirebaseAuthCredentialsProvider", "getToken aborted due to token change."), this.getToken()) : t2 ? (__PRIVATE_hardAssert("string" == typeof t2.accessToken, 31837, {
-          l: t2
-        }), new __PRIVATE_OAuthToken(t2.accessToken, this.currentUser)) : null
-      ))) : Promise.resolve(null);
-    }
-    invalidateToken() {
-      this.forceRefresh = true;
-    }
-    shutdown() {
-      this.auth && this.o && this.auth.removeAuthTokenListener(this.o), this.o = void 0;
-    }
-
-
-
-u() {
-      const e = this.auth && this.auth.getUid();
-      return __PRIVATE_hardAssert(null === e || "string" == typeof e, 2055, {
-        h: e
-      }), new User(e);
-    }
-  }
-  class __PRIVATE_FirstPartyToken {
-    constructor(e, t, n) {
-      this.P = e, this.T = t, this.I = n, this.type = "FirstParty", this.user = User.FIRST_PARTY, this.R = new Map();
-    }
-A() {
-      return this.I ? this.I() : null;
-    }
-    get headers() {
-      this.R.set("X-Goog-AuthUser", this.P);
-      const e = this.A();
-      return e && this.R.set("Authorization", e), this.T && this.R.set("X-Goog-Iam-Authorization-Token", this.T), this.R;
-    }
-  }
-  class __PRIVATE_FirstPartyAuthCredentialsProvider {
-    constructor(e, t, n) {
-      this.P = e, this.T = t, this.I = n;
-    }
-    getToken() {
-      return Promise.resolve(new __PRIVATE_FirstPartyToken(this.P, this.T, this.I));
-    }
-    start(e, t) {
-      e.enqueueRetryable((() => t(User.FIRST_PARTY)));
-    }
-    shutdown() {
-    }
-    invalidateToken() {
-    }
-  }
-  class AppCheckToken {
-    constructor(e) {
-      this.value = e, this.type = "AppCheck", this.headers = new Map(), e && e.length > 0 && this.headers.set("x-firebase-appcheck", this.value);
-    }
-  }
-  class __PRIVATE_FirebaseAppCheckTokenProvider {
-    constructor(t, n) {
-      this.V = n, this.forceRefresh = false, this.appCheck = null, this.m = null, this.p = null, _isFirebaseServerApp(t) && t.settings.appCheckToken && (this.p = t.settings.appCheckToken);
-    }
-    start(e, t) {
-      __PRIVATE_hardAssert(void 0 === this.o, 3512);
-      const onTokenChanged = (e2) => {
-        null != e2.error && __PRIVATE_logDebug("FirebaseAppCheckTokenProvider", `Error getting App Check token; using placeholder token instead. Error: ${e2.error.message}`);
-        const n = e2.token !== this.m;
-        return this.m = e2.token, __PRIVATE_logDebug("FirebaseAppCheckTokenProvider", `Received ${n ? "new" : "existing"} token.`), n ? t(e2.token) : Promise.resolve();
-      };
-      this.o = (t2) => {
-        e.enqueueRetryable((() => onTokenChanged(t2)));
-      };
-      const __PRIVATE_registerAppCheck = (e2) => {
-        __PRIVATE_logDebug("FirebaseAppCheckTokenProvider", "AppCheck detected"), this.appCheck = e2, this.o && this.appCheck.addTokenListener(this.o);
-      };
-      this.V.onInit(((e2) => __PRIVATE_registerAppCheck(e2))),
-
-setTimeout((() => {
-        if (!this.appCheck) {
-          const e2 = this.V.getImmediate({
-            optional: true
-          });
-          e2 ? __PRIVATE_registerAppCheck(e2) : (
-__PRIVATE_logDebug("FirebaseAppCheckTokenProvider", "AppCheck not yet detected")
-          );
-        }
-      }), 0);
-    }
-    getToken() {
-      if (this.p) return Promise.resolve(new AppCheckToken(this.p));
-      const e = this.forceRefresh;
-      return this.forceRefresh = false, this.appCheck ? this.appCheck.getToken(e).then(((e2) => e2 ? (__PRIVATE_hardAssert("string" == typeof e2.token, 44558, {
-        tokenResult: e2
-      }), this.m = e2.token, new AppCheckToken(e2.token)) : null)) : Promise.resolve(null);
-    }
-    invalidateToken() {
-      this.forceRefresh = true;
-    }
-    shutdown() {
-      this.appCheck && this.o && this.appCheck.removeTokenListener(this.o), this.o = void 0;
-    }
-  }
-  function __PRIVATE_randomBytes(e) {
-    const t = (
-"undefined" != typeof self && (self.crypto || self.msCrypto)
-    ), n = new Uint8Array(e);
-    if (t && "function" == typeof t.getRandomValues) t.getRandomValues(n);
-    else
-      for (let t2 = 0; t2 < e; t2++) n[t2] = Math.floor(256 * Math.random());
-    return n;
-  }
-  class __PRIVATE_AutoId {
-    static newId() {
-      const e = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", t = 62 * Math.floor(256 / 62);
-      let n = "";
-      for (; n.length < 20; ) {
-        const r2 = __PRIVATE_randomBytes(40);
-        for (let i = 0; i < r2.length; ++i)
-          n.length < 20 && r2[i] < t && (n += e.charAt(r2[i] % 62));
-      }
-      return n;
-    }
-  }
-  function __PRIVATE_primitiveComparator(e, t) {
-    return e < t ? -1 : e > t ? 1 : 0;
-  }
-  function __PRIVATE_compareUtf8Strings(e, t) {
-    const n = Math.min(e.length, t.length);
-    for (let r2 = 0; r2 < n; r2++) {
-      const n2 = e.charAt(r2), i = t.charAt(r2);
-      if (n2 !== i) return __PRIVATE_isSurrogate(n2) === __PRIVATE_isSurrogate(i) ? __PRIVATE_primitiveComparator(n2, i) : __PRIVATE_isSurrogate(n2) ? 1 : -1;
-    }
-    return __PRIVATE_primitiveComparator(e.length, t.length);
-  }
-  const C = 55296, v = 57343;
-  function __PRIVATE_isSurrogate(e) {
-    const t = e.charCodeAt(0);
-    return t >= C && t <= v;
-  }
-  function __PRIVATE_arrayEquals(e, t, n) {
-    return e.length === t.length && e.every(((e2, r2) => n(e2, t[r2])));
-  }
-  const F = "__name__";
-  class BasePath {
-    constructor(e, t, n) {
-      void 0 === t ? t = 0 : t > e.length && fail(637, {
-        offset: t,
-        range: e.length
-      }), void 0 === n ? n = e.length - t : n > e.length - t && fail(1746, {
-        length: n,
-        range: e.length - t
-      }), this.segments = e, this.offset = t, this.len = n;
-    }
-    get length() {
-      return this.len;
-    }
-    isEqual(e) {
-      return 0 === BasePath.comparator(this, e);
-    }
-    child(e) {
-      const t = this.segments.slice(this.offset, this.limit());
-      return e instanceof BasePath ? e.forEach(((e2) => {
-        t.push(e2);
-      })) : t.push(e), this.construct(t);
-    }
-limit() {
-      return this.offset + this.length;
-    }
-    popFirst(e) {
-      return e = void 0 === e ? 1 : e, this.construct(this.segments, this.offset + e, this.length - e);
-    }
-    popLast() {
-      return this.construct(this.segments, this.offset, this.length - 1);
-    }
-    firstSegment() {
-      return this.segments[this.offset];
-    }
-    lastSegment() {
-      return this.get(this.length - 1);
-    }
-    get(e) {
-      return this.segments[this.offset + e];
-    }
-    isEmpty() {
-      return 0 === this.length;
-    }
-    isPrefixOf(e) {
-      if (e.length < this.length) return false;
-      for (let t = 0; t < this.length; t++) if (this.get(t) !== e.get(t)) return false;
-      return true;
-    }
-    isImmediateParentOf(e) {
-      if (this.length + 1 !== e.length) return false;
-      for (let t = 0; t < this.length; t++) if (this.get(t) !== e.get(t)) return false;
-      return true;
-    }
-    forEach(e) {
-      for (let t = this.offset, n = this.limit(); t < n; t++) e(this.segments[t]);
-    }
-    toArray() {
-      return this.segments.slice(this.offset, this.limit());
-    }
-static comparator(e, t) {
-      const n = Math.min(e.length, t.length);
-      for (let r2 = 0; r2 < n; r2++) {
-        const n2 = BasePath.compareSegments(e.get(r2), t.get(r2));
-        if (0 !== n2) return n2;
-      }
-      return __PRIVATE_primitiveComparator(e.length, t.length);
-    }
-    static compareSegments(e, t) {
-      const n = BasePath.isNumericId(e), r2 = BasePath.isNumericId(t);
-      return n && !r2 ? -1 : !n && r2 ? 1 : n && r2 ? BasePath.extractNumericId(e).compare(BasePath.extractNumericId(t)) : __PRIVATE_compareUtf8Strings(e, t);
-    }
-static isNumericId(e) {
-      return e.startsWith("__id") && e.endsWith("__");
-    }
-    static extractNumericId(e) {
-      return Integer.fromString(e.substring(4, e.length - 2));
-    }
-  }
-  class ResourcePath extends BasePath {
-    construct(e, t, n) {
-      return new ResourcePath(e, t, n);
-    }
-    canonicalString() {
-      return this.toArray().join("/");
-    }
-    toString() {
-      return this.canonicalString();
-    }
-toUriEncodedString() {
-      return this.toArray().map(encodeURIComponent).join("/");
-    }
-static fromString(...e) {
-      const t = [];
-      for (const n of e) {
-        if (n.indexOf("//") >= 0) throw new FirestoreError(D.INVALID_ARGUMENT, `Invalid segment (${n}). Paths must not contain // in them.`);
-        t.push(...n.split("/").filter(((e2) => e2.length > 0)));
-      }
-      return new ResourcePath(t);
-    }
-    static emptyPath() {
-      return new ResourcePath([]);
-    }
-  }
-  const M = /^[_a-zA-Z][_a-zA-Z0-9]*$/;
-  class FieldPath$1 extends BasePath {
-    construct(e, t, n) {
-      return new FieldPath$1(e, t, n);
-    }
-static isValidIdentifier(e) {
-      return M.test(e);
-    }
-    canonicalString() {
-      return this.toArray().map(((e) => (e = e.replace(/\\/g, "\\\\").replace(/`/g, "\\`"), FieldPath$1.isValidIdentifier(e) || (e = "`" + e + "`"), e))).join(".");
-    }
-    toString() {
-      return this.canonicalString();
-    }
-isKeyField() {
-      return 1 === this.length && this.get(0) === F;
-    }
-static keyField() {
-      return new FieldPath$1([F]);
-    }
-static fromServerFormat(e) {
-      const t = [];
-      let n = "", r2 = 0;
-      const __PRIVATE_addCurrentSegment = () => {
-        if (0 === n.length) throw new FirestoreError(D.INVALID_ARGUMENT, `Invalid field path (${e}). Paths must not be empty, begin with '.', end with '.', or contain '..'`);
-        t.push(n), n = "";
-      };
-      let i = false;
-      for (; r2 < e.length; ) {
-        const t2 = e[r2];
-        if ("\\" === t2) {
-          if (r2 + 1 === e.length) throw new FirestoreError(D.INVALID_ARGUMENT, "Path has trailing escape character: " + e);
-          const t3 = e[r2 + 1];
-          if ("\\" !== t3 && "." !== t3 && "`" !== t3) throw new FirestoreError(D.INVALID_ARGUMENT, "Path has invalid escape sequence: " + e);
-          n += t3, r2 += 2;
-        } else "`" === t2 ? (i = !i, r2++) : "." !== t2 || i ? (n += t2, r2++) : (__PRIVATE_addCurrentSegment(), r2++);
-      }
-      if (__PRIVATE_addCurrentSegment(), i) throw new FirestoreError(D.INVALID_ARGUMENT, "Unterminated ` in path: " + e);
-      return new FieldPath$1(t);
-    }
-    static emptyPath() {
-      return new FieldPath$1([]);
-    }
-  }
-  class DocumentKey {
-    constructor(e) {
-      this.path = e;
-    }
-    static fromPath(e) {
-      return new DocumentKey(ResourcePath.fromString(e));
-    }
-    static fromName(e) {
-      return new DocumentKey(ResourcePath.fromString(e).popFirst(5));
-    }
-    static empty() {
-      return new DocumentKey(ResourcePath.emptyPath());
-    }
-    get collectionGroup() {
-      return this.path.popLast().lastSegment();
-    }
-hasCollectionId(e) {
-      return this.path.length >= 2 && this.path.get(this.path.length - 2) === e;
-    }
-getCollectionGroup() {
-      return this.path.get(this.path.length - 2);
-    }
-getCollectionPath() {
-      return this.path.popLast();
-    }
-    isEqual(e) {
-      return null !== e && 0 === ResourcePath.comparator(this.path, e.path);
-    }
-    toString() {
-      return this.path.toString();
-    }
-    static comparator(e, t) {
-      return ResourcePath.comparator(e.path, t.path);
-    }
-    static isDocumentKey(e) {
-      return e.length % 2 == 0;
-    }
-static fromSegments(e) {
-      return new DocumentKey(new ResourcePath(e.slice()));
-    }
-  }
-  function __PRIVATE_validateNonEmptyArgument(e, t, n) {
-    if (!n) throw new FirestoreError(D.INVALID_ARGUMENT, `Function ${e}() cannot be called with an empty ${t}.`);
-  }
-  function __PRIVATE_validateIsNotUsedTogether(e, t, n, r2) {
-    if (true === t && true === r2) throw new FirestoreError(D.INVALID_ARGUMENT, `${e} and ${n} cannot be used together.`);
-  }
-  function __PRIVATE_validateDocumentPath(e) {
-    if (!DocumentKey.isDocumentKey(e)) throw new FirestoreError(D.INVALID_ARGUMENT, `Invalid document reference. Document references must have an even number of segments, but ${e} has ${e.length}.`);
-  }
-  function __PRIVATE_validateCollectionPath(e) {
-    if (DocumentKey.isDocumentKey(e)) throw new FirestoreError(D.INVALID_ARGUMENT, `Invalid collection reference. Collection references must have an odd number of segments, but ${e} has ${e.length}.`);
-  }
-  function __PRIVATE_isPlainObject(e) {
-    return "object" == typeof e && null !== e && (Object.getPrototypeOf(e) === Object.prototype || null === Object.getPrototypeOf(e));
-  }
-  function __PRIVATE_valueDescription(e) {
-    if (void 0 === e) return "undefined";
-    if (null === e) return "null";
-    if ("string" == typeof e) return e.length > 20 && (e = `${e.substring(0, 20)}...`), JSON.stringify(e);
-    if ("number" == typeof e || "boolean" == typeof e) return "" + e;
-    if ("object" == typeof e) {
-      if (e instanceof Array) return "an array";
-      {
-        const t = (
-(function __PRIVATE_tryGetCustomObjectType(e2) {
-            if (e2.constructor) return e2.constructor.name;
-            return null;
-          })(e)
-        );
-        return t ? `a custom ${t} object` : "an object";
-      }
-    }
-    return "function" == typeof e ? "a function" : fail(12329, {
-      type: typeof e
-    });
-  }
-  function __PRIVATE_cast(e, t) {
-    if ("_delegate" in e &&
-
-(e = e._delegate), !(e instanceof t)) {
-      if (t.name === e.constructor.name) throw new FirestoreError(D.INVALID_ARGUMENT, "Type does not match the expected instance. Did you pass a reference from a different Firestore SDK?");
-      {
-        const n = __PRIVATE_valueDescription(e);
-        throw new FirestoreError(D.INVALID_ARGUMENT, `Expected type '${t.name}', but it was: ${n}`);
-      }
-    }
-    return e;
-  }
-  function property(e, t) {
-    const n = {
-      typeString: e
-    };
-    return t && (n.value = t), n;
-  }
-  function __PRIVATE_validateJSON(e, t) {
-    if (!__PRIVATE_isPlainObject(e)) throw new FirestoreError(D.INVALID_ARGUMENT, "JSON must be an object");
-    let n;
-    for (const r2 in t) if (t[r2]) {
-      const i = t[r2].typeString, s = "value" in t[r2] ? {
-        value: t[r2].value
-      } : void 0;
-      if (!(r2 in e)) {
-        n = `JSON missing required field: '${r2}'`;
-        break;
-      }
-      const o = e[r2];
-      if (i && typeof o !== i) {
-        n = `JSON field '${r2}' must be a ${i}.`;
-        break;
-      }
-      if (void 0 !== s && o !== s.value) {
-        n = `Expected '${r2}' field to equal '${s.value}'`;
-        break;
-      }
-    }
-    if (n) throw new FirestoreError(D.INVALID_ARGUMENT, n);
-    return true;
-  }
-  const x = -62135596800, O = 1e6;
-  class Timestamp {
-static now() {
-      return Timestamp.fromMillis(Date.now());
-    }
-static fromDate(e) {
-      return Timestamp.fromMillis(e.getTime());
-    }
-static fromMillis(e) {
-      const t = Math.floor(e / 1e3), n = Math.floor((e - 1e3 * t) * O);
-      return new Timestamp(t, n);
-    }
-constructor(e, t) {
-      if (this.seconds = e, this.nanoseconds = t, t < 0) throw new FirestoreError(D.INVALID_ARGUMENT, "Timestamp nanoseconds out of range: " + t);
-      if (t >= 1e9) throw new FirestoreError(D.INVALID_ARGUMENT, "Timestamp nanoseconds out of range: " + t);
-      if (e < x) throw new FirestoreError(D.INVALID_ARGUMENT, "Timestamp seconds out of range: " + e);
-      if (e >= 253402300800) throw new FirestoreError(D.INVALID_ARGUMENT, "Timestamp seconds out of range: " + e);
-    }
-toDate() {
-      return new Date(this.toMillis());
-    }
-toMillis() {
-      return 1e3 * this.seconds + this.nanoseconds / O;
-    }
-    _compareTo(e) {
-      return this.seconds === e.seconds ? __PRIVATE_primitiveComparator(this.nanoseconds, e.nanoseconds) : __PRIVATE_primitiveComparator(this.seconds, e.seconds);
-    }
-isEqual(e) {
-      return e.seconds === this.seconds && e.nanoseconds === this.nanoseconds;
-    }
-toString() {
-      return "Timestamp(seconds=" + this.seconds + ", nanoseconds=" + this.nanoseconds + ")";
-    }
-toJSON() {
-      return {
-        type: Timestamp._jsonSchemaVersion,
-        seconds: this.seconds,
-        nanoseconds: this.nanoseconds
-      };
-    }
-static fromJSON(e) {
-      if (__PRIVATE_validateJSON(e, Timestamp._jsonSchema)) return new Timestamp(e.seconds, e.nanoseconds);
-    }
-valueOf() {
-      const e = this.seconds - x;
-      return String(e).padStart(12, "0") + "." + String(this.nanoseconds).padStart(9, "0");
-    }
-  }
-  Timestamp._jsonSchemaVersion = "firestore/timestamp/1.0", Timestamp._jsonSchema = {
-    type: property("string", Timestamp._jsonSchemaVersion),
-    seconds: property("number"),
-    nanoseconds: property("number")
-  };
-  class SnapshotVersion {
-    static fromTimestamp(e) {
-      return new SnapshotVersion(e);
-    }
-    static min() {
-      return new SnapshotVersion(new Timestamp(0, 0));
-    }
-    static max() {
-      return new SnapshotVersion(new Timestamp(253402300799, 999999999));
-    }
-    constructor(e) {
-      this.timestamp = e;
-    }
-    compareTo(e) {
-      return this.timestamp._compareTo(e.timestamp);
-    }
-    isEqual(e) {
-      return this.timestamp.isEqual(e.timestamp);
-    }
-toMicroseconds() {
-      return 1e6 * this.timestamp.seconds + this.timestamp.nanoseconds / 1e3;
-    }
-    toString() {
-      return "SnapshotVersion(" + this.timestamp.toString() + ")";
-    }
-    toTimestamp() {
-      return this.timestamp;
-    }
-  }
-  const N = -1;
-  function __PRIVATE_newIndexOffsetSuccessorFromReadTime(e, t) {
-    const n = e.toTimestamp().seconds, r2 = e.toTimestamp().nanoseconds + 1, i = SnapshotVersion.fromTimestamp(1e9 === r2 ? new Timestamp(n + 1, 0) : new Timestamp(n, r2));
-    return new IndexOffset(i, DocumentKey.empty(), t);
-  }
-  function __PRIVATE_newIndexOffsetFromDocument(e) {
-    return new IndexOffset(e.readTime, e.key, N);
-  }
-  class IndexOffset {
-    constructor(e, t, n) {
-      this.readTime = e, this.documentKey = t, this.largestBatchId = n;
-    }
-static min() {
-      return new IndexOffset(SnapshotVersion.min(), DocumentKey.empty(), N);
-    }
-static max() {
-      return new IndexOffset(SnapshotVersion.max(), DocumentKey.empty(), N);
-    }
-  }
-  function __PRIVATE_indexOffsetComparator(e, t) {
-    let n = e.readTime.compareTo(t.readTime);
-    return 0 !== n ? n : (n = DocumentKey.comparator(e.documentKey, t.documentKey), 0 !== n ? n : __PRIVATE_primitiveComparator(e.largestBatchId, t.largestBatchId));
-  }
-  const B = "The current tab is not in the required state to perform this operation. It might be necessary to refresh the browser tab.";
-  class PersistenceTransaction {
-    constructor() {
-      this.onCommittedListeners = [];
-    }
-    addOnCommittedListener(e) {
-      this.onCommittedListeners.push(e);
-    }
-    raiseOnCommittedEvent() {
-      this.onCommittedListeners.forEach(((e) => e()));
-    }
-  }
-  async function __PRIVATE_ignoreIfPrimaryLeaseLoss(e) {
-    if (e.code !== D.FAILED_PRECONDITION || e.message !== B) throw e;
-    __PRIVATE_logDebug("LocalStore", "Unexpectedly lost primary lease");
-  }
-  class PersistencePromise {
-    constructor(e) {
-      this.nextCallback = null, this.catchCallback = null,
-this.result = void 0, this.error = void 0, this.isDone = false,
-
-this.callbackAttached = false, e(((e2) => {
-        this.isDone = true, this.result = e2, this.nextCallback &&
-
-this.nextCallback(e2);
-      }), ((e2) => {
-        this.isDone = true, this.error = e2, this.catchCallback && this.catchCallback(e2);
-      }));
-    }
-    catch(e) {
-      return this.next(void 0, e);
-    }
-    next(e, t) {
-      return this.callbackAttached && fail(59440), this.callbackAttached = true, this.isDone ? this.error ? this.wrapFailure(t, this.error) : this.wrapSuccess(e, this.result) : new PersistencePromise(((n, r2) => {
-        this.nextCallback = (t2) => {
-          this.wrapSuccess(e, t2).next(n, r2);
-        }, this.catchCallback = (e2) => {
-          this.wrapFailure(t, e2).next(n, r2);
-        };
-      }));
-    }
-    toPromise() {
-      return new Promise(((e, t) => {
-        this.next(e, t);
-      }));
-    }
-    wrapUserFunction(e) {
-      try {
-        const t = e();
-        return t instanceof PersistencePromise ? t : PersistencePromise.resolve(t);
-      } catch (e2) {
-        return PersistencePromise.reject(e2);
-      }
-    }
-    wrapSuccess(e, t) {
-      return e ? this.wrapUserFunction((() => e(t))) : PersistencePromise.resolve(t);
-    }
-    wrapFailure(e, t) {
-      return e ? this.wrapUserFunction((() => e(t))) : PersistencePromise.reject(t);
-    }
-    static resolve(e) {
-      return new PersistencePromise(((t, n) => {
-        t(e);
-      }));
-    }
-    static reject(e) {
-      return new PersistencePromise(((t, n) => {
-        n(e);
-      }));
-    }
-    static waitFor(e) {
-      return new PersistencePromise(((t, n) => {
-        let r2 = 0, i = 0, s = false;
-        e.forEach(((e2) => {
-          ++r2, e2.next((() => {
-            ++i, s && i === r2 && t();
-          }), ((e3) => n(e3)));
-        })), s = true, i === r2 && t();
-      }));
-    }
-static or(e) {
-      let t = PersistencePromise.resolve(false);
-      for (const n of e) t = t.next(((e2) => e2 ? PersistencePromise.resolve(e2) : n()));
-      return t;
-    }
-    static forEach(e, t) {
-      const n = [];
-      return e.forEach(((e2, r2) => {
-        n.push(t.call(this, e2, r2));
-      })), this.waitFor(n);
-    }
-static mapArray(e, t) {
-      return new PersistencePromise(((n, r2) => {
-        const i = e.length, s = new Array(i);
-        let o = 0;
-        for (let _ = 0; _ < i; _++) {
-          const a = _;
-          t(e[a]).next(((e2) => {
-            s[a] = e2, ++o, o === i && n(s);
-          }), ((e2) => r2(e2)));
-        }
-      }));
-    }
-static doWhile(e, t) {
-      return new PersistencePromise(((n, r2) => {
-        const process2 = () => {
-          true === e() ? t().next((() => {
-            process2();
-          }), r2) : n();
-        };
-        process2();
-      }));
-    }
-  }
-  function __PRIVATE_getAndroidVersion(e) {
-    const t = e.match(/Android ([\d.]+)/i), n = t ? t[1].split(".").slice(0, 2).join(".") : "-1";
-    return Number(n);
-  }
-  function __PRIVATE_isIndexedDbTransactionError(e) {
-    return "IndexedDbTransactionError" === e.name;
-  }
-  class __PRIVATE_ListenSequence {
-    constructor(e, t) {
-      this.previousValue = e, t && (t.sequenceNumberHandler = (e2) => this.ae(e2), this.ue = (e2) => t.writeSequenceNumber(e2));
-    }
-    ae(e) {
-      return this.previousValue = Math.max(e, this.previousValue), this.previousValue;
-    }
-    next() {
-      const e = ++this.previousValue;
-      return this.ue && this.ue(e), e;
-    }
-  }
-  __PRIVATE_ListenSequence.ce = -1;
-  const q = -1;
-  function __PRIVATE_isNullOrUndefined(e) {
-    return null == e;
-  }
-  function __PRIVATE_isNegativeZero(e) {
-    return 0 === e && 1 / e == -1 / 0;
-  }
-  function isSafeInteger(e) {
-    return "number" == typeof e && Number.isInteger(e) && !__PRIVATE_isNegativeZero(e) && e <= Number.MAX_SAFE_INTEGER && e >= Number.MIN_SAFE_INTEGER;
-  }
-  const U = "";
-  function __PRIVATE_encodeResourcePath(e) {
-    let t = "";
-    for (let n = 0; n < e.length; n++) t.length > 0 && (t = __PRIVATE_encodeSeparator(t)), t = __PRIVATE_encodeSegment(e.get(n), t);
-    return __PRIVATE_encodeSeparator(t);
-  }
-  function __PRIVATE_encodeSegment(e, t) {
-    let n = t;
-    const r2 = e.length;
-    for (let t2 = 0; t2 < r2; t2++) {
-      const r3 = e.charAt(t2);
-      switch (r3) {
-        case "\0":
-          n += "";
-          break;
-        case U:
-          n += "";
-          break;
-        default:
-          n += r3;
-      }
-    }
-    return n;
-  }
-  function __PRIVATE_encodeSeparator(e) {
-    return e + U + "";
-  }
-  function __PRIVATE_objectSize(e) {
-    let t = 0;
-    for (const n in e) Object.prototype.hasOwnProperty.call(e, n) && t++;
-    return t;
-  }
-  function forEach(e, t) {
-    for (const n in e) Object.prototype.hasOwnProperty.call(e, n) && t(n, e[n]);
-  }
-  function isEmpty(e) {
-    for (const t in e) if (Object.prototype.hasOwnProperty.call(e, t)) return false;
-    return true;
-  }
-  class SortedMap {
-    constructor(e, t) {
-      this.comparator = e, this.root = t || LLRBNode.EMPTY;
-    }
-insert(e, t) {
-      return new SortedMap(this.comparator, this.root.insert(e, t, this.comparator).copy(null, null, LLRBNode.BLACK, null, null));
-    }
-remove(e) {
-      return new SortedMap(this.comparator, this.root.remove(e, this.comparator).copy(null, null, LLRBNode.BLACK, null, null));
-    }
-get(e) {
-      let t = this.root;
-      for (; !t.isEmpty(); ) {
-        const n = this.comparator(e, t.key);
-        if (0 === n) return t.value;
-        n < 0 ? t = t.left : n > 0 && (t = t.right);
-      }
-      return null;
-    }
-
-indexOf(e) {
-      let t = 0, n = this.root;
-      for (; !n.isEmpty(); ) {
-        const r2 = this.comparator(e, n.key);
-        if (0 === r2) return t + n.left.size;
-        r2 < 0 ? n = n.left : (
-(t += n.left.size + 1, n = n.right)
-        );
-      }
-      return -1;
-    }
-    isEmpty() {
-      return this.root.isEmpty();
-    }
-get size() {
-      return this.root.size;
-    }
-minKey() {
-      return this.root.minKey();
-    }
-maxKey() {
-      return this.root.maxKey();
-    }
-
-
-
-inorderTraversal(e) {
-      return this.root.inorderTraversal(e);
-    }
-    forEach(e) {
-      this.inorderTraversal(((t, n) => (e(t, n), false)));
-    }
-    toString() {
-      const e = [];
-      return this.inorderTraversal(((t, n) => (e.push(`${t}:${n}`), false))), `{${e.join(", ")}}`;
-    }
-
-
-
-
-reverseTraversal(e) {
-      return this.root.reverseTraversal(e);
-    }
-getIterator() {
-      return new SortedMapIterator(this.root, null, this.comparator, false);
-    }
-    getIteratorFrom(e) {
-      return new SortedMapIterator(this.root, e, this.comparator, false);
-    }
-    getReverseIterator() {
-      return new SortedMapIterator(this.root, null, this.comparator, true);
-    }
-    getReverseIteratorFrom(e) {
-      return new SortedMapIterator(this.root, e, this.comparator, true);
-    }
-  }
-  class SortedMapIterator {
-    constructor(e, t, n, r2) {
-      this.isReverse = r2, this.nodeStack = [];
-      let i = 1;
-      for (; !e.isEmpty(); ) if (i = t ? n(e.key, t) : 1,
-t && r2 && (i *= -1), i < 0)
-        e = this.isReverse ? e.left : e.right;
-      else {
-        if (0 === i) {
-          this.nodeStack.push(e);
-          break;
-        }
-        this.nodeStack.push(e), e = this.isReverse ? e.right : e.left;
-      }
-    }
-    getNext() {
-      let e = this.nodeStack.pop();
-      const t = {
-        key: e.key,
-        value: e.value
-      };
-      if (this.isReverse) for (e = e.left; !e.isEmpty(); ) this.nodeStack.push(e), e = e.right;
-      else for (e = e.right; !e.isEmpty(); ) this.nodeStack.push(e), e = e.left;
-      return t;
-    }
-    hasNext() {
-      return this.nodeStack.length > 0;
-    }
-    peek() {
-      if (0 === this.nodeStack.length) return null;
-      const e = this.nodeStack[this.nodeStack.length - 1];
-      return {
-        key: e.key,
-        value: e.value
-      };
-    }
-  }
-  class LLRBNode {
-    constructor(e, t, n, r2, i) {
-      this.key = e, this.value = t, this.color = null != n ? n : LLRBNode.RED, this.left = null != r2 ? r2 : LLRBNode.EMPTY, this.right = null != i ? i : LLRBNode.EMPTY, this.size = this.left.size + 1 + this.right.size;
-    }
-copy(e, t, n, r2, i) {
-      return new LLRBNode(null != e ? e : this.key, null != t ? t : this.value, null != n ? n : this.color, null != r2 ? r2 : this.left, null != i ? i : this.right);
-    }
-    isEmpty() {
-      return false;
-    }
-
-
-
-inorderTraversal(e) {
-      return this.left.inorderTraversal(e) || e(this.key, this.value) || this.right.inorderTraversal(e);
-    }
-
-
-
-reverseTraversal(e) {
-      return this.right.reverseTraversal(e) || e(this.key, this.value) || this.left.reverseTraversal(e);
-    }
-min() {
-      return this.left.isEmpty() ? this : this.left.min();
-    }
-minKey() {
-      return this.min().key;
-    }
-maxKey() {
-      return this.right.isEmpty() ? this.key : this.right.maxKey();
-    }
-insert(e, t, n) {
-      let r2 = this;
-      const i = n(e, r2.key);
-      return r2 = i < 0 ? r2.copy(null, null, null, r2.left.insert(e, t, n), null) : 0 === i ? r2.copy(null, t, null, null, null) : r2.copy(null, null, null, null, r2.right.insert(e, t, n)), r2.fixUp();
-    }
-    removeMin() {
-      if (this.left.isEmpty()) return LLRBNode.EMPTY;
-      let e = this;
-      return e.left.isRed() || e.left.left.isRed() || (e = e.moveRedLeft()), e = e.copy(null, null, null, e.left.removeMin(), null), e.fixUp();
-    }
-remove(e, t) {
-      let n, r2 = this;
-      if (t(e, r2.key) < 0) r2.left.isEmpty() || r2.left.isRed() || r2.left.left.isRed() || (r2 = r2.moveRedLeft()), r2 = r2.copy(null, null, null, r2.left.remove(e, t), null);
-      else {
-        if (r2.left.isRed() && (r2 = r2.rotateRight()), r2.right.isEmpty() || r2.right.isRed() || r2.right.left.isRed() || (r2 = r2.moveRedRight()), 0 === t(e, r2.key)) {
-          if (r2.right.isEmpty()) return LLRBNode.EMPTY;
-          n = r2.right.min(), r2 = r2.copy(n.key, n.value, null, null, r2.right.removeMin());
-        }
-        r2 = r2.copy(null, null, null, null, r2.right.remove(e, t));
-      }
-      return r2.fixUp();
-    }
-    isRed() {
-      return this.color;
-    }
-fixUp() {
-      let e = this;
-      return e.right.isRed() && !e.left.isRed() && (e = e.rotateLeft()), e.left.isRed() && e.left.left.isRed() && (e = e.rotateRight()), e.left.isRed() && e.right.isRed() && (e = e.colorFlip()), e;
-    }
-    moveRedLeft() {
-      let e = this.colorFlip();
-      return e.right.left.isRed() && (e = e.copy(null, null, null, null, e.right.rotateRight()), e = e.rotateLeft(), e = e.colorFlip()), e;
-    }
-    moveRedRight() {
-      let e = this.colorFlip();
-      return e.left.left.isRed() && (e = e.rotateRight(), e = e.colorFlip()), e;
-    }
-    rotateLeft() {
-      const e = this.copy(null, null, LLRBNode.RED, null, this.right.left);
-      return this.right.copy(null, null, this.color, e, null);
-    }
-    rotateRight() {
-      const e = this.copy(null, null, LLRBNode.RED, this.left.right, null);
-      return this.left.copy(null, null, this.color, null, e);
-    }
-    colorFlip() {
-      const e = this.left.copy(null, null, !this.left.color, null, null), t = this.right.copy(null, null, !this.right.color, null, null);
-      return this.copy(null, null, !this.color, e, t);
-    }
-checkMaxDepth() {
-      const e = this.check();
-      return Math.pow(2, e) <= this.size + 1;
-    }
-
-check() {
-      if (this.isRed() && this.left.isRed()) throw fail(43730, {
-        key: this.key,
-        value: this.value
-      });
-      if (this.right.isRed()) throw fail(14113, {
-        key: this.key,
-        value: this.value
-      });
-      const e = this.left.check();
-      if (e !== this.right.check()) throw fail(27949);
-      return e + (this.isRed() ? 0 : 1);
-    }
-  }
-  LLRBNode.EMPTY = null, LLRBNode.RED = true, LLRBNode.BLACK = false;
-  LLRBNode.EMPTY = new
-class LLRBEmptyNode {
-    constructor() {
-      this.size = 0;
-    }
-    get key() {
-      throw fail(57766);
-    }
-    get value() {
-      throw fail(16141);
-    }
-    get color() {
-      throw fail(16727);
-    }
-    get left() {
-      throw fail(29726);
-    }
-    get right() {
-      throw fail(36894);
-    }
-copy(e, t, n, r2, i) {
-      return this;
-    }
-insert(e, t, n) {
-      return new LLRBNode(e, t);
-    }
-remove(e, t) {
-      return this;
-    }
-    isEmpty() {
-      return true;
-    }
-    inorderTraversal(e) {
-      return false;
-    }
-    reverseTraversal(e) {
-      return false;
-    }
-    minKey() {
-      return null;
-    }
-    maxKey() {
-      return null;
-    }
-    isRed() {
-      return false;
-    }
-checkMaxDepth() {
-      return true;
-    }
-    check() {
-      return 0;
-    }
-  }();
-  class SortedSet {
-    constructor(e) {
-      this.comparator = e, this.data = new SortedMap(this.comparator);
-    }
-    has(e) {
-      return null !== this.data.get(e);
-    }
-    first() {
-      return this.data.minKey();
-    }
-    last() {
-      return this.data.maxKey();
-    }
-    get size() {
-      return this.data.size;
-    }
-    indexOf(e) {
-      return this.data.indexOf(e);
-    }
-forEach(e) {
-      this.data.inorderTraversal(((t, n) => (e(t), false)));
-    }
-forEachInRange(e, t) {
-      const n = this.data.getIteratorFrom(e[0]);
-      for (; n.hasNext(); ) {
-        const r2 = n.getNext();
-        if (this.comparator(r2.key, e[1]) >= 0) return;
-        t(r2.key);
-      }
-    }
-forEachWhile(e, t) {
-      let n;
-      for (n = void 0 !== t ? this.data.getIteratorFrom(t) : this.data.getIterator(); n.hasNext(); ) {
-        if (!e(n.getNext().key)) return;
-      }
-    }
-firstAfterOrEqual(e) {
-      const t = this.data.getIteratorFrom(e);
-      return t.hasNext() ? t.getNext().key : null;
-    }
-    getIterator() {
-      return new SortedSetIterator(this.data.getIterator());
-    }
-    getIteratorFrom(e) {
-      return new SortedSetIterator(this.data.getIteratorFrom(e));
-    }
-add(e) {
-      return this.copy(this.data.remove(e).insert(e, true));
-    }
-delete(e) {
-      return this.has(e) ? this.copy(this.data.remove(e)) : this;
-    }
-    isEmpty() {
-      return this.data.isEmpty();
-    }
-    unionWith(e) {
-      let t = this;
-      return t.size < e.size && (t = e, e = this), e.forEach(((e2) => {
-        t = t.add(e2);
-      })), t;
-    }
-    isEqual(e) {
-      if (!(e instanceof SortedSet)) return false;
-      if (this.size !== e.size) return false;
-      const t = this.data.getIterator(), n = e.data.getIterator();
-      for (; t.hasNext(); ) {
-        const e2 = t.getNext().key, r2 = n.getNext().key;
-        if (0 !== this.comparator(e2, r2)) return false;
-      }
-      return true;
-    }
-    toArray() {
-      const e = [];
-      return this.forEach(((t) => {
-        e.push(t);
-      })), e;
-    }
-    toString() {
-      const e = [];
-      return this.forEach(((t) => e.push(t))), "SortedSet(" + e.toString() + ")";
-    }
-    copy(e) {
-      const t = new SortedSet(this.comparator);
-      return t.data = e, t;
-    }
-  }
-  class SortedSetIterator {
-    constructor(e) {
-      this.iter = e;
-    }
-    getNext() {
-      return this.iter.getNext().key;
-    }
-    hasNext() {
-      return this.iter.hasNext();
-    }
-  }
-  class FieldMask {
-    constructor(e) {
-      this.fields = e,
-
-e.sort(FieldPath$1.comparator);
-    }
-    static empty() {
-      return new FieldMask([]);
-    }
-unionWith(e) {
-      let t = new SortedSet(FieldPath$1.comparator);
-      for (const e2 of this.fields) t = t.add(e2);
-      for (const n of e) t = t.add(n);
-      return new FieldMask(t.toArray());
-    }
-covers(e) {
-      for (const t of this.fields) if (t.isPrefixOf(e)) return true;
-      return false;
-    }
-    isEqual(e) {
-      return __PRIVATE_arrayEquals(this.fields, e.fields, ((e2, t) => e2.isEqual(t)));
-    }
-  }
-  class __PRIVATE_Base64DecodeError extends Error {
-    constructor() {
-      super(...arguments), this.name = "Base64DecodeError";
-    }
-  }
-  class ByteString {
-    constructor(e) {
-      this.binaryString = e;
-    }
-    static fromBase64String(e) {
-      const t = (function __PRIVATE_decodeBase64(e2) {
-        try {
-          return atob(e2);
-        } catch (e3) {
-          throw "undefined" != typeof DOMException && e3 instanceof DOMException ? new __PRIVATE_Base64DecodeError("Invalid base64 string: " + e3) : e3;
-        }
-      })(e);
-      return new ByteString(t);
-    }
-    static fromUint8Array(e) {
-      const t = (
-(function __PRIVATE_binaryStringFromUint8Array(e2) {
-          let t2 = "";
-          for (let n = 0; n < e2.length; ++n) t2 += String.fromCharCode(e2[n]);
-          return t2;
-        })(e)
-      );
-      return new ByteString(t);
-    }
-    [Symbol.iterator]() {
-      let e = 0;
-      return {
-        next: () => e < this.binaryString.length ? {
-          value: this.binaryString.charCodeAt(e++),
-          done: false
-        } : {
-          value: void 0,
-          done: true
-        }
-      };
-    }
-    toBase64() {
-      return (function __PRIVATE_encodeBase64(e) {
-        return btoa(e);
-      })(this.binaryString);
-    }
-    toUint8Array() {
-      return (function __PRIVATE_uint8ArrayFromBinaryString(e) {
-        const t = new Uint8Array(e.length);
-        for (let n = 0; n < e.length; n++) t[n] = e.charCodeAt(n);
-        return t;
-      })(this.binaryString);
-    }
-    approximateByteSize() {
-      return 2 * this.binaryString.length;
-    }
-    compareTo(e) {
-      return __PRIVATE_primitiveComparator(this.binaryString, e.binaryString);
-    }
-    isEqual(e) {
-      return this.binaryString === e.binaryString;
-    }
-  }
-  ByteString.EMPTY_BYTE_STRING = new ByteString("");
-  const Ye = new RegExp(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.(\d+))?Z$/);
-  function __PRIVATE_normalizeTimestamp(e) {
-    if (__PRIVATE_hardAssert(!!e, 39018), "string" == typeof e) {
-      let t = 0;
-      const n = Ye.exec(e);
-      if (__PRIVATE_hardAssert(!!n, 46558, {
-        timestamp: e
-      }), n[1]) {
-        let e2 = n[1];
-        e2 = (e2 + "000000000").substr(0, 9), t = Number(e2);
-      }
-      const r2 = new Date(e);
-      return {
-        seconds: Math.floor(r2.getTime() / 1e3),
-        nanos: t
-      };
-    }
-    return {
-      seconds: __PRIVATE_normalizeNumber(e.seconds),
-      nanos: __PRIVATE_normalizeNumber(e.nanos)
-    };
-  }
-  function __PRIVATE_normalizeNumber(e) {
-    return "number" == typeof e ? e : "string" == typeof e ? Number(e) : 0;
-  }
-  function __PRIVATE_normalizeByteString(e) {
-    return "string" == typeof e ? ByteString.fromBase64String(e) : ByteString.fromUint8Array(e);
-  }
-  const et = "server_timestamp", tt = "__type__", nt = "__previous_value__", rt = "__local_write_time__";
-  function __PRIVATE_isServerTimestamp(e) {
-    const t = (e?.mapValue?.fields || {})[tt]?.stringValue;
-    return t === et;
-  }
-  function __PRIVATE_getPreviousValue(e) {
-    const t = e.mapValue.fields[nt];
-    return __PRIVATE_isServerTimestamp(t) ? __PRIVATE_getPreviousValue(t) : t;
-  }
-  function __PRIVATE_getLocalWriteTime(e) {
-    const t = __PRIVATE_normalizeTimestamp(e.mapValue.fields[rt].timestampValue);
-    return new Timestamp(t.seconds, t.nanos);
-  }
-  class DatabaseInfo {
-constructor(e, t, n, r2, i, s, o, _, a, u, c) {
-      this.databaseId = e, this.appId = t, this.persistenceKey = n, this.host = r2, this.ssl = i, this.forceLongPolling = s, this.autoDetectLongPolling = o, this.longPollingOptions = _, this.useFetchStreams = a, this.isUsingEmulator = u, this.apiKey = c;
-    }
-  }
-  const it = "(default)";
-  class DatabaseId {
-    constructor(e, t) {
-      this.projectId = e, this.database = t || it;
-    }
-    static empty() {
-      return new DatabaseId("", "");
-    }
-    get isDefaultDatabase() {
-      return this.database === it;
-    }
-    isEqual(e) {
-      return e instanceof DatabaseId && e.projectId === this.projectId && e.database === this.database;
-    }
-  }
-  function __PRIVATE_databaseIdFromApp(e, t) {
-    if (!Object.prototype.hasOwnProperty.apply(e.options, ["projectId"])) throw new FirestoreError(D.INVALID_ARGUMENT, '"projectId" not provided in firebase.initializeApp.');
-    return new DatabaseId(e.options.projectId, t);
-  }
-  const st = "__type__", ot = "__max__", _t = {
-    mapValue: {}
-  }, at = "__vector__", ut = "value";
-  function __PRIVATE_typeOrder(e) {
-    return "nullValue" in e ? 0 : "booleanValue" in e ? 1 : "integerValue" in e || "doubleValue" in e ? 2 : "timestampValue" in e ? 3 : "stringValue" in e ? 5 : "bytesValue" in e ? 6 : "referenceValue" in e ? 7 : "geoPointValue" in e ? 8 : "arrayValue" in e ? 9 : "mapValue" in e ? __PRIVATE_isServerTimestamp(e) ? 4 : __PRIVATE_isMaxValue(e) ? 9007199254740991 : __PRIVATE_isVectorValue(e) ? 10 : 11 : fail(28295, {
-      value: e
-    });
-  }
-  function __PRIVATE_valueEquals(e, t) {
-    if (e === t) return true;
-    const n = __PRIVATE_typeOrder(e);
-    if (n !== __PRIVATE_typeOrder(t)) return false;
-    switch (n) {
-      case 0:
-      case 9007199254740991:
-        return true;
-      case 1:
-        return e.booleanValue === t.booleanValue;
-      case 4:
-        return __PRIVATE_getLocalWriteTime(e).isEqual(__PRIVATE_getLocalWriteTime(t));
-      case 3:
-        return (function __PRIVATE_timestampEquals(e2, t2) {
-          if ("string" == typeof e2.timestampValue && "string" == typeof t2.timestampValue && e2.timestampValue.length === t2.timestampValue.length)
-            return e2.timestampValue === t2.timestampValue;
-          const n2 = __PRIVATE_normalizeTimestamp(e2.timestampValue), r2 = __PRIVATE_normalizeTimestamp(t2.timestampValue);
-          return n2.seconds === r2.seconds && n2.nanos === r2.nanos;
-        })(e, t);
-      case 5:
-        return e.stringValue === t.stringValue;
-      case 6:
-        return (function __PRIVATE_blobEquals(e2, t2) {
-          return __PRIVATE_normalizeByteString(e2.bytesValue).isEqual(__PRIVATE_normalizeByteString(t2.bytesValue));
-        })(e, t);
-      case 7:
-        return e.referenceValue === t.referenceValue;
-      case 8:
-        return (function __PRIVATE_geoPointEquals(e2, t2) {
-          return __PRIVATE_normalizeNumber(e2.geoPointValue.latitude) === __PRIVATE_normalizeNumber(t2.geoPointValue.latitude) && __PRIVATE_normalizeNumber(e2.geoPointValue.longitude) === __PRIVATE_normalizeNumber(t2.geoPointValue.longitude);
-        })(e, t);
-      case 2:
-        return (function __PRIVATE_numberEquals(e2, t2) {
-          if ("integerValue" in e2 && "integerValue" in t2) return __PRIVATE_normalizeNumber(e2.integerValue) === __PRIVATE_normalizeNumber(t2.integerValue);
-          if ("doubleValue" in e2 && "doubleValue" in t2) {
-            const n2 = __PRIVATE_normalizeNumber(e2.doubleValue), r2 = __PRIVATE_normalizeNumber(t2.doubleValue);
-            return n2 === r2 ? __PRIVATE_isNegativeZero(n2) === __PRIVATE_isNegativeZero(r2) : isNaN(n2) && isNaN(r2);
-          }
-          return false;
-        })(e, t);
-      case 9:
-        return __PRIVATE_arrayEquals(e.arrayValue.values || [], t.arrayValue.values || [], __PRIVATE_valueEquals);
-      case 10:
-      case 11:
-        return (function __PRIVATE_objectEquals(e2, t2) {
-          const n2 = e2.mapValue.fields || {}, r2 = t2.mapValue.fields || {};
-          if (__PRIVATE_objectSize(n2) !== __PRIVATE_objectSize(r2)) return false;
-          for (const e3 in n2) if (n2.hasOwnProperty(e3) && (void 0 === r2[e3] || !__PRIVATE_valueEquals(n2[e3], r2[e3]))) return false;
-          return true;
-        })(e, t);
-      default:
-        return fail(52216, {
-          left: e
-        });
-    }
-  }
-  function __PRIVATE_arrayValueContains(e, t) {
-    return void 0 !== (e.values || []).find(((e2) => __PRIVATE_valueEquals(e2, t)));
-  }
-  function __PRIVATE_valueCompare(e, t) {
-    if (e === t) return 0;
-    const n = __PRIVATE_typeOrder(e), r2 = __PRIVATE_typeOrder(t);
-    if (n !== r2) return __PRIVATE_primitiveComparator(n, r2);
-    switch (n) {
-      case 0:
-      case 9007199254740991:
-        return 0;
-      case 1:
-        return __PRIVATE_primitiveComparator(e.booleanValue, t.booleanValue);
-      case 2:
-        return (function __PRIVATE_compareNumbers(e2, t2) {
-          const n2 = __PRIVATE_normalizeNumber(e2.integerValue || e2.doubleValue), r3 = __PRIVATE_normalizeNumber(t2.integerValue || t2.doubleValue);
-          return n2 < r3 ? -1 : n2 > r3 ? 1 : n2 === r3 ? 0 : (
-isNaN(n2) ? isNaN(r3) ? 0 : -1 : 1
-          );
-        })(e, t);
-      case 3:
-        return __PRIVATE_compareTimestamps(e.timestampValue, t.timestampValue);
-      case 4:
-        return __PRIVATE_compareTimestamps(__PRIVATE_getLocalWriteTime(e), __PRIVATE_getLocalWriteTime(t));
-      case 5:
-        return __PRIVATE_compareUtf8Strings(e.stringValue, t.stringValue);
-      case 6:
-        return (function __PRIVATE_compareBlobs(e2, t2) {
-          const n2 = __PRIVATE_normalizeByteString(e2), r3 = __PRIVATE_normalizeByteString(t2);
-          return n2.compareTo(r3);
-        })(e.bytesValue, t.bytesValue);
-      case 7:
-        return (function __PRIVATE_compareReferences(e2, t2) {
-          const n2 = e2.split("/"), r3 = t2.split("/");
-          for (let e3 = 0; e3 < n2.length && e3 < r3.length; e3++) {
-            const t3 = __PRIVATE_primitiveComparator(n2[e3], r3[e3]);
-            if (0 !== t3) return t3;
-          }
-          return __PRIVATE_primitiveComparator(n2.length, r3.length);
-        })(e.referenceValue, t.referenceValue);
-      case 8:
-        return (function __PRIVATE_compareGeoPoints(e2, t2) {
-          const n2 = __PRIVATE_primitiveComparator(__PRIVATE_normalizeNumber(e2.latitude), __PRIVATE_normalizeNumber(t2.latitude));
-          if (0 !== n2) return n2;
-          return __PRIVATE_primitiveComparator(__PRIVATE_normalizeNumber(e2.longitude), __PRIVATE_normalizeNumber(t2.longitude));
-        })(e.geoPointValue, t.geoPointValue);
-      case 9:
-        return __PRIVATE_compareArrays(e.arrayValue, t.arrayValue);
-      case 10:
-        return (function __PRIVATE_compareVectors(e2, t2) {
-          const n2 = e2.fields || {}, r3 = t2.fields || {}, i = n2[ut]?.arrayValue, s = r3[ut]?.arrayValue, o = __PRIVATE_primitiveComparator(i?.values?.length || 0, s?.values?.length || 0);
-          if (0 !== o) return o;
-          return __PRIVATE_compareArrays(i, s);
-        })(e.mapValue, t.mapValue);
-      case 11:
-        return (function __PRIVATE_compareMaps(e2, t2) {
-          if (e2 === _t.mapValue && t2 === _t.mapValue) return 0;
-          if (e2 === _t.mapValue) return 1;
-          if (t2 === _t.mapValue) return -1;
-          const n2 = e2.fields || {}, r3 = Object.keys(n2), i = t2.fields || {}, s = Object.keys(i);
-          r3.sort(), s.sort();
-          for (let e3 = 0; e3 < r3.length && e3 < s.length; ++e3) {
-            const t3 = __PRIVATE_compareUtf8Strings(r3[e3], s[e3]);
-            if (0 !== t3) return t3;
-            const o = __PRIVATE_valueCompare(n2[r3[e3]], i[s[e3]]);
-            if (0 !== o) return o;
-          }
-          return __PRIVATE_primitiveComparator(r3.length, s.length);
-        })(e.mapValue, t.mapValue);
-      default:
-        throw fail(23264, {
-          he: n
-        });
-    }
-  }
-  function __PRIVATE_compareTimestamps(e, t) {
-    if ("string" == typeof e && "string" == typeof t && e.length === t.length) return __PRIVATE_primitiveComparator(e, t);
-    const n = __PRIVATE_normalizeTimestamp(e), r2 = __PRIVATE_normalizeTimestamp(t), i = __PRIVATE_primitiveComparator(n.seconds, r2.seconds);
-    return 0 !== i ? i : __PRIVATE_primitiveComparator(n.nanos, r2.nanos);
-  }
-  function __PRIVATE_compareArrays(e, t) {
-    const n = e.values || [], r2 = t.values || [];
-    for (let e2 = 0; e2 < n.length && e2 < r2.length; ++e2) {
-      const t2 = __PRIVATE_valueCompare(n[e2], r2[e2]);
-      if (t2) return t2;
-    }
-    return __PRIVATE_primitiveComparator(n.length, r2.length);
-  }
-  function canonicalId(e) {
-    return __PRIVATE_canonifyValue(e);
-  }
-  function __PRIVATE_canonifyValue(e) {
-    return "nullValue" in e ? "null" : "booleanValue" in e ? "" + e.booleanValue : "integerValue" in e ? "" + e.integerValue : "doubleValue" in e ? "" + e.doubleValue : "timestampValue" in e ? (function __PRIVATE_canonifyTimestamp(e2) {
-      const t = __PRIVATE_normalizeTimestamp(e2);
-      return `time(${t.seconds},${t.nanos})`;
-    })(e.timestampValue) : "stringValue" in e ? e.stringValue : "bytesValue" in e ? (function __PRIVATE_canonifyByteString(e2) {
-      return __PRIVATE_normalizeByteString(e2).toBase64();
-    })(e.bytesValue) : "referenceValue" in e ? (function __PRIVATE_canonifyReference(e2) {
-      return DocumentKey.fromName(e2).toString();
-    })(e.referenceValue) : "geoPointValue" in e ? (function __PRIVATE_canonifyGeoPoint(e2) {
-      return `geo(${e2.latitude},${e2.longitude})`;
-    })(e.geoPointValue) : "arrayValue" in e ? (function __PRIVATE_canonifyArray(e2) {
-      let t = "[", n = true;
-      for (const r2 of e2.values || []) n ? n = false : t += ",", t += __PRIVATE_canonifyValue(r2);
-      return t + "]";
-    })(e.arrayValue) : "mapValue" in e ? (function __PRIVATE_canonifyMap(e2) {
-      const t = Object.keys(e2.fields || {}).sort();
-      let n = "{", r2 = true;
-      for (const i of t) r2 ? r2 = false : n += ",", n += `${i}:${__PRIVATE_canonifyValue(e2.fields[i])}`;
-      return n + "}";
-    })(e.mapValue) : fail(61005, {
-      value: e
-    });
-  }
-  function __PRIVATE_estimateByteSize(e) {
-    switch (__PRIVATE_typeOrder(e)) {
-      case 0:
-      case 1:
-        return 4;
-      case 2:
-        return 8;
-      case 3:
-      case 8:
-        return 16;
-      case 4:
-        const t = __PRIVATE_getPreviousValue(e);
-        return t ? 16 + __PRIVATE_estimateByteSize(t) : 16;
-      case 5:
-        return 2 * e.stringValue.length;
-      case 6:
-        return __PRIVATE_normalizeByteString(e.bytesValue).approximateByteSize();
-      case 7:
-        return e.referenceValue.length;
-      case 9:
-        return (function __PRIVATE_estimateArrayByteSize(e2) {
-          return (e2.values || []).reduce(((e3, t2) => e3 + __PRIVATE_estimateByteSize(t2)), 0);
-        })(e.arrayValue);
-      case 10:
-      case 11:
-        return (function __PRIVATE_estimateMapByteSize(e2) {
-          let t2 = 0;
-          return forEach(e2.fields, ((e3, n) => {
-            t2 += e3.length + __PRIVATE_estimateByteSize(n);
-          })), t2;
-        })(e.mapValue);
-      default:
-        throw fail(13486, {
-          value: e
-        });
-    }
-  }
-  function isInteger$1(e) {
-    return !!e && "integerValue" in e;
-  }
-  function isArray(e) {
-    return !!e && "arrayValue" in e;
-  }
-  function __PRIVATE_isMapValue(e) {
-    return !!e && "mapValue" in e;
-  }
-  function __PRIVATE_isVectorValue(e) {
-    const t = (e?.mapValue?.fields || {})[st]?.stringValue;
-    return t === at;
-  }
-  function __PRIVATE_deepClone(e) {
-    if (e.geoPointValue) return {
-      geoPointValue: {
-        ...e.geoPointValue
-      }
-    };
-    if (e.timestampValue && "object" == typeof e.timestampValue) return {
-      timestampValue: {
-        ...e.timestampValue
-      }
-    };
-    if (e.mapValue) {
-      const t = {
-        mapValue: {
-          fields: {}
-        }
-      };
-      return forEach(e.mapValue.fields, ((e2, n) => t.mapValue.fields[e2] = __PRIVATE_deepClone(n))), t;
-    }
-    if (e.arrayValue) {
-      const t = {
-        arrayValue: {
-          values: []
-        }
-      };
-      for (let n = 0; n < (e.arrayValue.values || []).length; ++n) t.arrayValue.values[n] = __PRIVATE_deepClone(e.arrayValue.values[n]);
-      return t;
-    }
-    return {
-      ...e
-    };
-  }
-  function __PRIVATE_isMaxValue(e) {
-    return (((e.mapValue || {}).fields || {}).__type__ || {}).stringValue === ot;
-  }
-  class ObjectValue {
-    constructor(e) {
-      this.value = e;
-    }
-    static empty() {
-      return new ObjectValue({
-        mapValue: {}
-      });
-    }
-field(e) {
-      if (e.isEmpty()) return this.value;
-      {
-        let t = this.value;
-        for (let n = 0; n < e.length - 1; ++n) if (t = (t.mapValue.fields || {})[e.get(n)], !__PRIVATE_isMapValue(t)) return null;
-        return t = (t.mapValue.fields || {})[e.lastSegment()], t || null;
-      }
-    }
-set(e, t) {
-      this.getFieldsMap(e.popLast())[e.lastSegment()] = __PRIVATE_deepClone(t);
-    }
-setAll(e) {
-      let t = FieldPath$1.emptyPath(), n = {}, r2 = [];
-      e.forEach(((e2, i2) => {
-        if (!t.isImmediateParentOf(i2)) {
-          const e3 = this.getFieldsMap(t);
-          this.applyChanges(e3, n, r2), n = {}, r2 = [], t = i2.popLast();
-        }
-        e2 ? n[i2.lastSegment()] = __PRIVATE_deepClone(e2) : r2.push(i2.lastSegment());
-      }));
-      const i = this.getFieldsMap(t);
-      this.applyChanges(i, n, r2);
-    }
-delete(e) {
-      const t = this.field(e.popLast());
-      __PRIVATE_isMapValue(t) && t.mapValue.fields && delete t.mapValue.fields[e.lastSegment()];
-    }
-    isEqual(e) {
-      return __PRIVATE_valueEquals(this.value, e.value);
-    }
-getFieldsMap(e) {
-      let t = this.value;
-      t.mapValue.fields || (t.mapValue = {
-        fields: {}
-      });
-      for (let n = 0; n < e.length; ++n) {
-        let r2 = t.mapValue.fields[e.get(n)];
-        __PRIVATE_isMapValue(r2) && r2.mapValue.fields || (r2 = {
-          mapValue: {
-            fields: {}
-          }
-        }, t.mapValue.fields[e.get(n)] = r2), t = r2;
-      }
-      return t.mapValue.fields;
-    }
-applyChanges(e, t, n) {
-      forEach(t, ((t2, n2) => e[t2] = n2));
-      for (const t2 of n) delete e[t2];
-    }
-    clone() {
-      return new ObjectValue(__PRIVATE_deepClone(this.value));
-    }
-  }
-  function __PRIVATE_extractFieldMask(e) {
-    const t = [];
-    return forEach(e.fields, ((e2, n) => {
-      const r2 = new FieldPath$1([e2]);
-      if (__PRIVATE_isMapValue(n)) {
-        const e3 = __PRIVATE_extractFieldMask(n.mapValue).fields;
-        if (0 === e3.length)
-          t.push(r2);
-        else
-          for (const n2 of e3) t.push(r2.child(n2));
-      } else
-        t.push(r2);
-    })), new FieldMask(t);
-  }
-  class MutableDocument {
-    constructor(e, t, n, r2, i, s, o) {
-      this.key = e, this.documentType = t, this.version = n, this.readTime = r2, this.createTime = i, this.data = s, this.documentState = o;
-    }
-static newInvalidDocument(e) {
-      return new MutableDocument(
-        e,
-        0,
-SnapshotVersion.min(),
-SnapshotVersion.min(),
-SnapshotVersion.min(),
-        ObjectValue.empty(),
-        0
-);
-    }
-static newFoundDocument(e, t, n, r2) {
-      return new MutableDocument(
-        e,
-        1,
-t,
-SnapshotVersion.min(),
-n,
-        r2,
-        0
-);
-    }
-static newNoDocument(e, t) {
-      return new MutableDocument(
-        e,
-        2,
-t,
-SnapshotVersion.min(),
-SnapshotVersion.min(),
-        ObjectValue.empty(),
-        0
-);
-    }
-static newUnknownDocument(e, t) {
-      return new MutableDocument(
-        e,
-        3,
-t,
-SnapshotVersion.min(),
-SnapshotVersion.min(),
-        ObjectValue.empty(),
-        2
-);
-    }
-convertToFoundDocument(e, t) {
-      return !this.createTime.isEqual(SnapshotVersion.min()) || 2 !== this.documentType && 0 !== this.documentType || (this.createTime = e), this.version = e, this.documentType = 1, this.data = t, this.documentState = 0, this;
-    }
-convertToNoDocument(e) {
-      return this.version = e, this.documentType = 2, this.data = ObjectValue.empty(), this.documentState = 0, this;
-    }
-convertToUnknownDocument(e) {
-      return this.version = e, this.documentType = 3, this.data = ObjectValue.empty(), this.documentState = 2, this;
-    }
-    setHasCommittedMutations() {
-      return this.documentState = 2, this;
-    }
-    setHasLocalMutations() {
-      return this.documentState = 1, this.version = SnapshotVersion.min(), this;
-    }
-    setReadTime(e) {
-      return this.readTime = e, this;
-    }
-    get hasLocalMutations() {
-      return 1 === this.documentState;
-    }
-    get hasCommittedMutations() {
-      return 2 === this.documentState;
-    }
-    get hasPendingWrites() {
-      return this.hasLocalMutations || this.hasCommittedMutations;
-    }
-    isValidDocument() {
-      return 0 !== this.documentType;
-    }
-    isFoundDocument() {
-      return 1 === this.documentType;
-    }
-    isNoDocument() {
-      return 2 === this.documentType;
-    }
-    isUnknownDocument() {
-      return 3 === this.documentType;
-    }
-    isEqual(e) {
-      return e instanceof MutableDocument && this.key.isEqual(e.key) && this.version.isEqual(e.version) && this.documentType === e.documentType && this.documentState === e.documentState && this.data.isEqual(e.data);
-    }
-    mutableCopy() {
-      return new MutableDocument(this.key, this.documentType, this.version, this.readTime, this.createTime, this.data.clone(), this.documentState);
-    }
-    toString() {
-      return `Document(${this.key}, ${this.version}, ${JSON.stringify(this.data.value)}, {createTime: ${this.createTime}}), {documentType: ${this.documentType}}), {documentState: ${this.documentState}})`;
-    }
-  }
-  class Bound {
-    constructor(e, t) {
-      this.position = e, this.inclusive = t;
-    }
-  }
-  function __PRIVATE_boundCompareToDocument(e, t, n) {
-    let r2 = 0;
-    for (let i = 0; i < e.position.length; i++) {
-      const s = t[i], o = e.position[i];
-      if (s.field.isKeyField()) r2 = DocumentKey.comparator(DocumentKey.fromName(o.referenceValue), n.key);
-      else {
-        r2 = __PRIVATE_valueCompare(o, n.data.field(s.field));
-      }
-      if ("desc" === s.dir && (r2 *= -1), 0 !== r2) break;
-    }
-    return r2;
-  }
-  function __PRIVATE_boundEquals(e, t) {
-    if (null === e) return null === t;
-    if (null === t) return false;
-    if (e.inclusive !== t.inclusive || e.position.length !== t.position.length) return false;
-    for (let n = 0; n < e.position.length; n++) {
-      if (!__PRIVATE_valueEquals(e.position[n], t.position[n])) return false;
-    }
-    return true;
-  }
-  class OrderBy {
-    constructor(e, t = "asc") {
-      this.field = e, this.dir = t;
-    }
-  }
-  function __PRIVATE_orderByEquals(e, t) {
-    return e.dir === t.dir && e.field.isEqual(t.field);
-  }
-  class Filter {
-  }
-  class FieldFilter extends Filter {
-    constructor(e, t, n) {
-      super(), this.field = e, this.op = t, this.value = n;
-    }
-static create(e, t, n) {
-      return e.isKeyField() ? "in" === t || "not-in" === t ? this.createKeyFieldInFilter(e, t, n) : new __PRIVATE_KeyFieldFilter(e, t, n) : "array-contains" === t ? new __PRIVATE_ArrayContainsFilter(e, n) : "in" === t ? new __PRIVATE_InFilter(e, n) : "not-in" === t ? new __PRIVATE_NotInFilter(e, n) : "array-contains-any" === t ? new __PRIVATE_ArrayContainsAnyFilter(e, n) : new FieldFilter(e, t, n);
-    }
-    static createKeyFieldInFilter(e, t, n) {
-      return "in" === t ? new __PRIVATE_KeyFieldInFilter(e, n) : new __PRIVATE_KeyFieldNotInFilter(e, n);
-    }
-    matches(e) {
-      const t = e.data.field(this.field);
-      return "!=" === this.op ? null !== t && void 0 === t.nullValue && this.matchesComparison(__PRIVATE_valueCompare(t, this.value)) : null !== t && __PRIVATE_typeOrder(this.value) === __PRIVATE_typeOrder(t) && this.matchesComparison(__PRIVATE_valueCompare(t, this.value));
-    }
-    matchesComparison(e) {
-      switch (this.op) {
-        case "<":
-          return e < 0;
-        case "<=":
-          return e <= 0;
-        case "==":
-          return 0 === e;
-        case "!=":
-          return 0 !== e;
-        case ">":
-          return e > 0;
-        case ">=":
-          return e >= 0;
-        default:
-          return fail(47266, {
-            operator: this.op
-          });
-      }
-    }
-    isInequality() {
-      return [
-        "<",
-        "<=",
-        ">",
-        ">=",
-        "!=",
-        "not-in"
-].indexOf(this.op) >= 0;
-    }
-    getFlattenedFilters() {
-      return [this];
-    }
-    getFilters() {
-      return [this];
-    }
-  }
-  class CompositeFilter extends Filter {
-    constructor(e, t) {
-      super(), this.filters = e, this.op = t, this.Pe = null;
-    }
-static create(e, t) {
-      return new CompositeFilter(e, t);
-    }
-    matches(e) {
-      return __PRIVATE_compositeFilterIsConjunction(this) ? void 0 === this.filters.find(((t) => !t.matches(e))) : void 0 !== this.filters.find(((t) => t.matches(e)));
-    }
-    getFlattenedFilters() {
-      return null !== this.Pe || (this.Pe = this.filters.reduce(((e, t) => e.concat(t.getFlattenedFilters())), [])), this.Pe;
-    }
-getFilters() {
-      return Object.assign([], this.filters);
-    }
-  }
-  function __PRIVATE_compositeFilterIsConjunction(e) {
-    return "and" === e.op;
-  }
-  function __PRIVATE_compositeFilterIsFlatConjunction(e) {
-    return __PRIVATE_compositeFilterIsFlat(e) && __PRIVATE_compositeFilterIsConjunction(e);
-  }
-  function __PRIVATE_compositeFilterIsFlat(e) {
-    for (const t of e.filters) if (t instanceof CompositeFilter) return false;
-    return true;
-  }
-  function __PRIVATE_canonifyFilter(e) {
-    if (e instanceof FieldFilter)
-      return e.field.canonicalString() + e.op.toString() + canonicalId(e.value);
-    if (__PRIVATE_compositeFilterIsFlatConjunction(e))
-      return e.filters.map(((e2) => __PRIVATE_canonifyFilter(e2))).join(",");
-    {
-      const t = e.filters.map(((e2) => __PRIVATE_canonifyFilter(e2))).join(",");
-      return `${e.op}(${t})`;
-    }
-  }
-  function __PRIVATE_filterEquals(e, t) {
-    return e instanceof FieldFilter ? (function __PRIVATE_fieldFilterEquals(e2, t2) {
-      return t2 instanceof FieldFilter && e2.op === t2.op && e2.field.isEqual(t2.field) && __PRIVATE_valueEquals(e2.value, t2.value);
-    })(e, t) : e instanceof CompositeFilter ? (function __PRIVATE_compositeFilterEquals(e2, t2) {
-      if (t2 instanceof CompositeFilter && e2.op === t2.op && e2.filters.length === t2.filters.length) {
-        return e2.filters.reduce(((e3, n, r2) => e3 && __PRIVATE_filterEquals(n, t2.filters[r2])), true);
-      }
-      return false;
-    })(e, t) : void fail(19439);
-  }
-  function __PRIVATE_stringifyFilter(e) {
-    return e instanceof FieldFilter ? (function __PRIVATE_stringifyFieldFilter(e2) {
-      return `${e2.field.canonicalString()} ${e2.op} ${canonicalId(e2.value)}`;
-    })(e) : e instanceof CompositeFilter ? (function __PRIVATE_stringifyCompositeFilter(e2) {
-      return e2.op.toString() + " {" + e2.getFilters().map(__PRIVATE_stringifyFilter).join(" ,") + "}";
-    })(e) : "Filter";
-  }
-  class __PRIVATE_KeyFieldFilter extends FieldFilter {
-    constructor(e, t, n) {
-      super(e, t, n), this.key = DocumentKey.fromName(n.referenceValue);
-    }
-    matches(e) {
-      const t = DocumentKey.comparator(e.key, this.key);
-      return this.matchesComparison(t);
-    }
-  }
-  class __PRIVATE_KeyFieldInFilter extends FieldFilter {
-    constructor(e, t) {
-      super(e, "in", t), this.keys = __PRIVATE_extractDocumentKeysFromArrayValue("in", t);
-    }
-    matches(e) {
-      return this.keys.some(((t) => t.isEqual(e.key)));
-    }
-  }
-  class __PRIVATE_KeyFieldNotInFilter extends FieldFilter {
-    constructor(e, t) {
-      super(e, "not-in", t), this.keys = __PRIVATE_extractDocumentKeysFromArrayValue("not-in", t);
-    }
-    matches(e) {
-      return !this.keys.some(((t) => t.isEqual(e.key)));
-    }
-  }
-  function __PRIVATE_extractDocumentKeysFromArrayValue(e, t) {
-    return (t.arrayValue?.values || []).map(((e2) => DocumentKey.fromName(e2.referenceValue)));
-  }
-  class __PRIVATE_ArrayContainsFilter extends FieldFilter {
-    constructor(e, t) {
-      super(e, "array-contains", t);
-    }
-    matches(e) {
-      const t = e.data.field(this.field);
-      return isArray(t) && __PRIVATE_arrayValueContains(t.arrayValue, this.value);
-    }
-  }
-  class __PRIVATE_InFilter extends FieldFilter {
-    constructor(e, t) {
-      super(e, "in", t);
-    }
-    matches(e) {
-      const t = e.data.field(this.field);
-      return null !== t && __PRIVATE_arrayValueContains(this.value.arrayValue, t);
-    }
-  }
-  class __PRIVATE_NotInFilter extends FieldFilter {
-    constructor(e, t) {
-      super(e, "not-in", t);
-    }
-    matches(e) {
-      if (__PRIVATE_arrayValueContains(this.value.arrayValue, {
-        nullValue: "NULL_VALUE"
-      })) return false;
-      const t = e.data.field(this.field);
-      return null !== t && void 0 === t.nullValue && !__PRIVATE_arrayValueContains(this.value.arrayValue, t);
-    }
-  }
-  class __PRIVATE_ArrayContainsAnyFilter extends FieldFilter {
-    constructor(e, t) {
-      super(e, "array-contains-any", t);
-    }
-    matches(e) {
-      const t = e.data.field(this.field);
-      return !(!isArray(t) || !t.arrayValue.values) && t.arrayValue.values.some(((e2) => __PRIVATE_arrayValueContains(this.value.arrayValue, e2)));
-    }
-  }
-  class __PRIVATE_TargetImpl {
-    constructor(e, t = null, n = [], r2 = [], i = null, s = null, o = null) {
-      this.path = e, this.collectionGroup = t, this.orderBy = n, this.filters = r2, this.limit = i, this.startAt = s, this.endAt = o, this.Te = null;
-    }
-  }
-  function __PRIVATE_newTarget(e, t = null, n = [], r2 = [], i = null, s = null, o = null) {
-    return new __PRIVATE_TargetImpl(e, t, n, r2, i, s, o);
-  }
-  function __PRIVATE_canonifyTarget(e) {
-    const t = __PRIVATE_debugCast(e);
-    if (null === t.Te) {
-      let e2 = t.path.canonicalString();
-      null !== t.collectionGroup && (e2 += "|cg:" + t.collectionGroup), e2 += "|f:", e2 += t.filters.map(((e3) => __PRIVATE_canonifyFilter(e3))).join(","), e2 += "|ob:", e2 += t.orderBy.map(((e3) => (function __PRIVATE_canonifyOrderBy(e4) {
-        return e4.field.canonicalString() + e4.dir;
-      })(e3))).join(","), __PRIVATE_isNullOrUndefined(t.limit) || (e2 += "|l:", e2 += t.limit), t.startAt && (e2 += "|lb:", e2 += t.startAt.inclusive ? "b:" : "a:", e2 += t.startAt.position.map(((e3) => canonicalId(e3))).join(",")), t.endAt && (e2 += "|ub:", e2 += t.endAt.inclusive ? "a:" : "b:", e2 += t.endAt.position.map(((e3) => canonicalId(e3))).join(",")), t.Te = e2;
-    }
-    return t.Te;
-  }
-  function __PRIVATE_targetEquals(e, t) {
-    if (e.limit !== t.limit) return false;
-    if (e.orderBy.length !== t.orderBy.length) return false;
-    for (let n = 0; n < e.orderBy.length; n++) if (!__PRIVATE_orderByEquals(e.orderBy[n], t.orderBy[n])) return false;
-    if (e.filters.length !== t.filters.length) return false;
-    for (let n = 0; n < e.filters.length; n++) if (!__PRIVATE_filterEquals(e.filters[n], t.filters[n])) return false;
-    return e.collectionGroup === t.collectionGroup && (!!e.path.isEqual(t.path) && (!!__PRIVATE_boundEquals(e.startAt, t.startAt) && __PRIVATE_boundEquals(e.endAt, t.endAt)));
-  }
-  class __PRIVATE_QueryImpl {
-constructor(e, t = null, n = [], r2 = [], i = null, s = "F", o = null, _ = null) {
-      this.path = e, this.collectionGroup = t, this.explicitOrderBy = n, this.filters = r2, this.limit = i, this.limitType = s, this.startAt = o, this.endAt = _, this.Ie = null,
-
-this.Ee = null,
-
-
-
-this.Re = null, this.startAt, this.endAt;
-    }
-  }
-  function __PRIVATE_newQuery(e, t, n, r2, i, s, o, _) {
-    return new __PRIVATE_QueryImpl(e, t, n, r2, i, s, o, _);
-  }
-  function __PRIVATE_newQueryForPath(e) {
-    return new __PRIVATE_QueryImpl(e);
-  }
-  function __PRIVATE_queryMatchesAllDocuments(e) {
-    return 0 === e.filters.length && null === e.limit && null == e.startAt && null == e.endAt && (0 === e.explicitOrderBy.length || 1 === e.explicitOrderBy.length && e.explicitOrderBy[0].field.isKeyField());
-  }
-  function __PRIVATE_isDocumentQuery$1(e) {
-    return DocumentKey.isDocumentKey(e.path) && null === e.collectionGroup && 0 === e.filters.length;
-  }
-  function __PRIVATE_isCollectionGroupQuery(e) {
-    return null !== e.collectionGroup;
-  }
-  function __PRIVATE_queryNormalizedOrderBy(e) {
-    const t = __PRIVATE_debugCast(e);
-    if (null === t.Ie) {
-      t.Ie = [];
-      const e2 = new Set();
-      for (const n2 of t.explicitOrderBy) t.Ie.push(n2), e2.add(n2.field.canonicalString());
-      const n = t.explicitOrderBy.length > 0 ? t.explicitOrderBy[t.explicitOrderBy.length - 1].dir : "asc", r2 = (function __PRIVATE_getInequalityFilterFields(e3) {
-        let t2 = new SortedSet(FieldPath$1.comparator);
-        return e3.filters.forEach(((e4) => {
-          e4.getFlattenedFilters().forEach(((e5) => {
-            e5.isInequality() && (t2 = t2.add(e5.field));
-          }));
-        })), t2;
-      })(t);
-      r2.forEach(((r3) => {
-        e2.has(r3.canonicalString()) || r3.isKeyField() || t.Ie.push(new OrderBy(r3, n));
-      })),
-e2.has(FieldPath$1.keyField().canonicalString()) || t.Ie.push(new OrderBy(FieldPath$1.keyField(), n));
-    }
-    return t.Ie;
-  }
-  function __PRIVATE_queryToTarget(e) {
-    const t = __PRIVATE_debugCast(e);
-    return t.Ee || (t.Ee = __PRIVATE__queryToTarget(t, __PRIVATE_queryNormalizedOrderBy(e))), t.Ee;
-  }
-  function __PRIVATE__queryToTarget(e, t) {
-    if ("F" === e.limitType) return __PRIVATE_newTarget(e.path, e.collectionGroup, t, e.filters, e.limit, e.startAt, e.endAt);
-    {
-      t = t.map(((e2) => {
-        const t2 = "desc" === e2.dir ? "asc" : "desc";
-        return new OrderBy(e2.field, t2);
-      }));
-      const n = e.endAt ? new Bound(e.endAt.position, e.endAt.inclusive) : null, r2 = e.startAt ? new Bound(e.startAt.position, e.startAt.inclusive) : null;
-      return __PRIVATE_newTarget(e.path, e.collectionGroup, t, e.filters, e.limit, n, r2);
-    }
-  }
-  function __PRIVATE_queryWithLimit(e, t, n) {
-    return new __PRIVATE_QueryImpl(e.path, e.collectionGroup, e.explicitOrderBy.slice(), e.filters.slice(), t, n, e.startAt, e.endAt);
-  }
-  function __PRIVATE_queryEquals(e, t) {
-    return __PRIVATE_targetEquals(__PRIVATE_queryToTarget(e), __PRIVATE_queryToTarget(t)) && e.limitType === t.limitType;
-  }
-  function __PRIVATE_canonifyQuery(e) {
-    return `${__PRIVATE_canonifyTarget(__PRIVATE_queryToTarget(e))}|lt:${e.limitType}`;
-  }
-  function __PRIVATE_stringifyQuery(e) {
-    return `Query(target=${(function __PRIVATE_stringifyTarget(e2) {
-    let t = e2.path.canonicalString();
-    return null !== e2.collectionGroup && (t += " collectionGroup=" + e2.collectionGroup), e2.filters.length > 0 && (t += `, filters: [${e2.filters.map(((e3) => __PRIVATE_stringifyFilter(e3))).join(", ")}]`), __PRIVATE_isNullOrUndefined(e2.limit) || (t += ", limit: " + e2.limit), e2.orderBy.length > 0 && (t += `, orderBy: [${e2.orderBy.map(((e3) => (function __PRIVATE_stringifyOrderBy(e4) {
-      return `${e4.field.canonicalString()} (${e4.dir})`;
-    })(e3))).join(", ")}]`), e2.startAt && (t += ", startAt: ", t += e2.startAt.inclusive ? "b:" : "a:", t += e2.startAt.position.map(((e3) => canonicalId(e3))).join(",")), e2.endAt && (t += ", endAt: ", t += e2.endAt.inclusive ? "a:" : "b:", t += e2.endAt.position.map(((e3) => canonicalId(e3))).join(",")), `Target(${t})`;
-  })(__PRIVATE_queryToTarget(e))}; limitType=${e.limitType})`;
-  }
-  function __PRIVATE_queryMatches(e, t) {
-    return t.isFoundDocument() && (function __PRIVATE_queryMatchesPathAndCollectionGroup(e2, t2) {
-      const n = t2.key.path;
-      return null !== e2.collectionGroup ? t2.key.hasCollectionId(e2.collectionGroup) && e2.path.isPrefixOf(n) : DocumentKey.isDocumentKey(e2.path) ? e2.path.isEqual(n) : e2.path.isImmediateParentOf(n);
-    })(e, t) && (function __PRIVATE_queryMatchesOrderBy(e2, t2) {
-      for (const n of __PRIVATE_queryNormalizedOrderBy(e2))
-        if (!n.field.isKeyField() && null === t2.data.field(n.field)) return false;
-      return true;
-    })(e, t) && (function __PRIVATE_queryMatchesFilters(e2, t2) {
-      for (const n of e2.filters) if (!n.matches(t2)) return false;
-      return true;
-    })(e, t) && (function __PRIVATE_queryMatchesBounds(e2, t2) {
-      if (e2.startAt && !
-(function __PRIVATE_boundSortsBeforeDocument(e3, t3, n) {
-        const r2 = __PRIVATE_boundCompareToDocument(e3, t3, n);
-        return e3.inclusive ? r2 <= 0 : r2 < 0;
-      })(e2.startAt, __PRIVATE_queryNormalizedOrderBy(e2), t2)) return false;
-      if (e2.endAt && !(function __PRIVATE_boundSortsAfterDocument(e3, t3, n) {
-        const r2 = __PRIVATE_boundCompareToDocument(e3, t3, n);
-        return e3.inclusive ? r2 >= 0 : r2 > 0;
-      })(e2.endAt, __PRIVATE_queryNormalizedOrderBy(e2), t2)) return false;
-      return true;
-    })(e, t);
-  }
-  function __PRIVATE_newQueryComparator(e) {
-    return (t, n) => {
-      let r2 = false;
-      for (const i of __PRIVATE_queryNormalizedOrderBy(e)) {
-        const e2 = __PRIVATE_compareDocs(i, t, n);
-        if (0 !== e2) return e2;
-        r2 = r2 || i.field.isKeyField();
-      }
-      return 0;
-    };
-  }
-  function __PRIVATE_compareDocs(e, t, n) {
-    const r2 = e.field.isKeyField() ? DocumentKey.comparator(t.key, n.key) : (function __PRIVATE_compareDocumentsByField(e2, t2, n2) {
-      const r3 = t2.data.field(e2), i = n2.data.field(e2);
-      return null !== r3 && null !== i ? __PRIVATE_valueCompare(r3, i) : fail(42886);
-    })(e.field, t, n);
-    switch (e.dir) {
-      case "asc":
-        return r2;
-      case "desc":
-        return -1 * r2;
-      default:
-        return fail(19790, {
-          direction: e.dir
-        });
-    }
-  }
-  class ObjectMap {
-    constructor(e, t) {
-      this.mapKeyFn = e, this.equalsFn = t,
-this.inner = {},
-this.innerSize = 0;
-    }
-get(e) {
-      const t = this.mapKeyFn(e), n = this.inner[t];
-      if (void 0 !== n) {
-        for (const [t2, r2] of n) if (this.equalsFn(t2, e)) return r2;
-      }
-    }
-    has(e) {
-      return void 0 !== this.get(e);
-    }
-set(e, t) {
-      const n = this.mapKeyFn(e), r2 = this.inner[n];
-      if (void 0 === r2) return this.inner[n] = [[e, t]], void this.innerSize++;
-      for (let n2 = 0; n2 < r2.length; n2++) if (this.equalsFn(r2[n2][0], e))
-        return void (r2[n2] = [e, t]);
-      r2.push([e, t]), this.innerSize++;
-    }
-delete(e) {
-      const t = this.mapKeyFn(e), n = this.inner[t];
-      if (void 0 === n) return false;
-      for (let r2 = 0; r2 < n.length; r2++) if (this.equalsFn(n[r2][0], e)) return 1 === n.length ? delete this.inner[t] : n.splice(r2, 1), this.innerSize--, true;
-      return false;
-    }
-    forEach(e) {
-      forEach(this.inner, ((t, n) => {
-        for (const [t2, r2] of n) e(t2, r2);
-      }));
-    }
-    isEmpty() {
-      return isEmpty(this.inner);
-    }
-    size() {
-      return this.innerSize;
-    }
-  }
-  const ht = new SortedMap(DocumentKey.comparator);
-  function __PRIVATE_mutableDocumentMap() {
-    return ht;
-  }
-  const Pt = new SortedMap(DocumentKey.comparator);
-  function documentMap(...e) {
-    let t = Pt;
-    for (const n of e) t = t.insert(n.key, n);
-    return t;
-  }
-  function __PRIVATE_convertOverlayedDocumentMapToDocumentMap(e) {
-    let t = Pt;
-    return e.forEach(((e2, n) => t = t.insert(e2, n.overlayedDocument))), t;
-  }
-  function __PRIVATE_newOverlayMap() {
-    return __PRIVATE_newDocumentKeyMap();
-  }
-  function __PRIVATE_newMutationMap() {
-    return __PRIVATE_newDocumentKeyMap();
-  }
-  function __PRIVATE_newDocumentKeyMap() {
-    return new ObjectMap(((e) => e.toString()), ((e, t) => e.isEqual(t)));
-  }
-  const Tt = new SortedMap(DocumentKey.comparator);
-  const It = new SortedSet(DocumentKey.comparator);
-  function __PRIVATE_documentKeySet(...e) {
-    let t = It;
-    for (const n of e) t = t.add(n);
-    return t;
-  }
-  const Et = new SortedSet(__PRIVATE_primitiveComparator);
-  function __PRIVATE_targetIdSet() {
-    return Et;
-  }
-  function __PRIVATE_toDouble(e, t) {
-    if (e.useProto3Json) {
-      if (isNaN(t)) return {
-        doubleValue: "NaN"
-      };
-      if (t === 1 / 0) return {
-        doubleValue: "Infinity"
-      };
-      if (t === -1 / 0) return {
-        doubleValue: "-Infinity"
-      };
-    }
-    return {
-      doubleValue: __PRIVATE_isNegativeZero(t) ? "-0" : t
-    };
-  }
-  function __PRIVATE_toInteger(e) {
-    return {
-      integerValue: "" + e
-    };
-  }
-  function toNumber(e, t) {
-    return isSafeInteger(t) ? __PRIVATE_toInteger(t) : __PRIVATE_toDouble(e, t);
-  }
-  class TransformOperation {
-    constructor() {
-      this._ = void 0;
-    }
-  }
-  function __PRIVATE_applyTransformOperationToLocalView(e, t, n) {
-    return e instanceof __PRIVATE_ServerTimestampTransform ? (function serverTimestamp$1(e2, t2) {
-      const n2 = {
-        fields: {
-          [tt]: {
-            stringValue: et
-          },
-          [rt]: {
-            timestampValue: {
-              seconds: e2.seconds,
-              nanos: e2.nanoseconds
-            }
-          }
-        }
-      };
-      return t2 && __PRIVATE_isServerTimestamp(t2) && (t2 = __PRIVATE_getPreviousValue(t2)), t2 && (n2.fields[nt] = t2), {
-        mapValue: n2
-      };
-    })(n, t) : e instanceof __PRIVATE_ArrayUnionTransformOperation ? __PRIVATE_applyArrayUnionTransformOperation(e, t) : e instanceof __PRIVATE_ArrayRemoveTransformOperation ? __PRIVATE_applyArrayRemoveTransformOperation(e, t) : (function __PRIVATE_applyNumericIncrementTransformOperationToLocalView(e2, t2) {
-      const n2 = __PRIVATE_computeTransformOperationBaseValue(e2, t2), r2 = asNumber(n2) + asNumber(e2.Ae);
-      return isInteger$1(n2) && isInteger$1(e2.Ae) ? __PRIVATE_toInteger(r2) : __PRIVATE_toDouble(e2.serializer, r2);
-    })(e, t);
-  }
-  function __PRIVATE_applyTransformOperationToRemoteDocument(e, t, n) {
-    return e instanceof __PRIVATE_ArrayUnionTransformOperation ? __PRIVATE_applyArrayUnionTransformOperation(e, t) : e instanceof __PRIVATE_ArrayRemoveTransformOperation ? __PRIVATE_applyArrayRemoveTransformOperation(e, t) : n;
-  }
-  function __PRIVATE_computeTransformOperationBaseValue(e, t) {
-    return e instanceof __PRIVATE_NumericIncrementTransformOperation ? (
-(function __PRIVATE_isNumber(e2) {
-        return isInteger$1(e2) || (function __PRIVATE_isDouble(e3) {
-          return !!e3 && "doubleValue" in e3;
-        })(e2);
-      })(t) ? t : {
-        integerValue: 0
-      }
-    ) : null;
-  }
-  class __PRIVATE_ServerTimestampTransform extends TransformOperation {
-  }
-  class __PRIVATE_ArrayUnionTransformOperation extends TransformOperation {
-    constructor(e) {
-      super(), this.elements = e;
-    }
-  }
-  function __PRIVATE_applyArrayUnionTransformOperation(e, t) {
-    const n = __PRIVATE_coercedFieldValuesArray(t);
-    for (const t2 of e.elements) n.some(((e2) => __PRIVATE_valueEquals(e2, t2))) || n.push(t2);
-    return {
-      arrayValue: {
-        values: n
-      }
-    };
-  }
-  class __PRIVATE_ArrayRemoveTransformOperation extends TransformOperation {
-    constructor(e) {
-      super(), this.elements = e;
-    }
-  }
-  function __PRIVATE_applyArrayRemoveTransformOperation(e, t) {
-    let n = __PRIVATE_coercedFieldValuesArray(t);
-    for (const t2 of e.elements) n = n.filter(((e2) => !__PRIVATE_valueEquals(e2, t2)));
-    return {
-      arrayValue: {
-        values: n
-      }
-    };
-  }
-  class __PRIVATE_NumericIncrementTransformOperation extends TransformOperation {
-    constructor(e, t) {
-      super(), this.serializer = e, this.Ae = t;
-    }
-  }
-  function asNumber(e) {
-    return __PRIVATE_normalizeNumber(e.integerValue || e.doubleValue);
-  }
-  function __PRIVATE_coercedFieldValuesArray(e) {
-    return isArray(e) && e.arrayValue.values ? e.arrayValue.values.slice() : [];
-  }
-  class FieldTransform {
-    constructor(e, t) {
-      this.field = e, this.transform = t;
-    }
-  }
-  function __PRIVATE_fieldTransformEquals(e, t) {
-    return e.field.isEqual(t.field) && (function __PRIVATE_transformOperationEquals(e2, t2) {
-      return e2 instanceof __PRIVATE_ArrayUnionTransformOperation && t2 instanceof __PRIVATE_ArrayUnionTransformOperation || e2 instanceof __PRIVATE_ArrayRemoveTransformOperation && t2 instanceof __PRIVATE_ArrayRemoveTransformOperation ? __PRIVATE_arrayEquals(e2.elements, t2.elements, __PRIVATE_valueEquals) : e2 instanceof __PRIVATE_NumericIncrementTransformOperation && t2 instanceof __PRIVATE_NumericIncrementTransformOperation ? __PRIVATE_valueEquals(e2.Ae, t2.Ae) : e2 instanceof __PRIVATE_ServerTimestampTransform && t2 instanceof __PRIVATE_ServerTimestampTransform;
-    })(e.transform, t.transform);
-  }
-  class MutationResult {
-    constructor(e, t) {
-      this.version = e, this.transformResults = t;
-    }
-  }
-  class Precondition {
-    constructor(e, t) {
-      this.updateTime = e, this.exists = t;
-    }
-static none() {
-      return new Precondition();
-    }
-static exists(e) {
-      return new Precondition(void 0, e);
-    }
-static updateTime(e) {
-      return new Precondition(e);
-    }
-get isNone() {
-      return void 0 === this.updateTime && void 0 === this.exists;
-    }
-    isEqual(e) {
-      return this.exists === e.exists && (this.updateTime ? !!e.updateTime && this.updateTime.isEqual(e.updateTime) : !e.updateTime);
-    }
-  }
-  function __PRIVATE_preconditionIsValidForDocument(e, t) {
-    return void 0 !== e.updateTime ? t.isFoundDocument() && t.version.isEqual(e.updateTime) : void 0 === e.exists || e.exists === t.isFoundDocument();
-  }
-  class Mutation {
-  }
-  function __PRIVATE_calculateOverlayMutation(e, t) {
-    if (!e.hasLocalMutations || t && 0 === t.fields.length) return null;
-    if (null === t) return e.isNoDocument() ? new __PRIVATE_DeleteMutation(e.key, Precondition.none()) : new __PRIVATE_SetMutation(e.key, e.data, Precondition.none());
-    {
-      const n = e.data, r2 = ObjectValue.empty();
-      let i = new SortedSet(FieldPath$1.comparator);
-      for (let e2 of t.fields) if (!i.has(e2)) {
-        let t2 = n.field(e2);
-        null === t2 && e2.length > 1 && (e2 = e2.popLast(), t2 = n.field(e2)), null === t2 ? r2.delete(e2) : r2.set(e2, t2), i = i.add(e2);
-      }
-      return new __PRIVATE_PatchMutation(e.key, r2, new FieldMask(i.toArray()), Precondition.none());
-    }
-  }
-  function __PRIVATE_mutationApplyToRemoteDocument(e, t, n) {
-    e instanceof __PRIVATE_SetMutation ? (function __PRIVATE_setMutationApplyToRemoteDocument(e2, t2, n2) {
-      const r2 = e2.value.clone(), i = __PRIVATE_serverTransformResults(e2.fieldTransforms, t2, n2.transformResults);
-      r2.setAll(i), t2.convertToFoundDocument(n2.version, r2).setHasCommittedMutations();
-    })(e, t, n) : e instanceof __PRIVATE_PatchMutation ? (function __PRIVATE_patchMutationApplyToRemoteDocument(e2, t2, n2) {
-      if (!__PRIVATE_preconditionIsValidForDocument(e2.precondition, t2))
-        return void t2.convertToUnknownDocument(n2.version);
-      const r2 = __PRIVATE_serverTransformResults(e2.fieldTransforms, t2, n2.transformResults), i = t2.data;
-      i.setAll(__PRIVATE_getPatch(e2)), i.setAll(r2), t2.convertToFoundDocument(n2.version, i).setHasCommittedMutations();
-    })(e, t, n) : (function __PRIVATE_deleteMutationApplyToRemoteDocument(e2, t2, n2) {
-      t2.convertToNoDocument(n2.version).setHasCommittedMutations();
-    })(0, t, n);
-  }
-  function __PRIVATE_mutationApplyToLocalView(e, t, n, r2) {
-    return e instanceof __PRIVATE_SetMutation ? (function __PRIVATE_setMutationApplyToLocalView(e2, t2, n2, r3) {
-      if (!__PRIVATE_preconditionIsValidForDocument(e2.precondition, t2))
-        return n2;
-      const i = e2.value.clone(), s = __PRIVATE_localTransformResults(e2.fieldTransforms, r3, t2);
-      return i.setAll(s), t2.convertToFoundDocument(t2.version, i).setHasLocalMutations(), null;
-    })(e, t, n, r2) : e instanceof __PRIVATE_PatchMutation ? (function __PRIVATE_patchMutationApplyToLocalView(e2, t2, n2, r3) {
-      if (!__PRIVATE_preconditionIsValidForDocument(e2.precondition, t2)) return n2;
-      const i = __PRIVATE_localTransformResults(e2.fieldTransforms, r3, t2), s = t2.data;
-      if (s.setAll(__PRIVATE_getPatch(e2)), s.setAll(i), t2.convertToFoundDocument(t2.version, s).setHasLocalMutations(), null === n2) return null;
-      return n2.unionWith(e2.fieldMask.fields).unionWith(e2.fieldTransforms.map(((e3) => e3.field)));
-    })(e, t, n, r2) : (function __PRIVATE_deleteMutationApplyToLocalView(e2, t2, n2) {
-      if (__PRIVATE_preconditionIsValidForDocument(e2.precondition, t2)) return t2.convertToNoDocument(t2.version).setHasLocalMutations(), null;
-      return n2;
-    })(e, t, n);
-  }
-  function __PRIVATE_mutationExtractBaseValue(e, t) {
-    let n = null;
-    for (const r2 of e.fieldTransforms) {
-      const e2 = t.data.field(r2.field), i = __PRIVATE_computeTransformOperationBaseValue(r2.transform, e2 || null);
-      null != i && (null === n && (n = ObjectValue.empty()), n.set(r2.field, i));
-    }
-    return n || null;
-  }
-  function __PRIVATE_mutationEquals(e, t) {
-    return e.type === t.type && (!!e.key.isEqual(t.key) && (!!e.precondition.isEqual(t.precondition) && (!!(function __PRIVATE_fieldTransformsAreEqual(e2, t2) {
-      return void 0 === e2 && void 0 === t2 || !(!e2 || !t2) && __PRIVATE_arrayEquals(e2, t2, ((e3, t3) => __PRIVATE_fieldTransformEquals(e3, t3)));
-    })(e.fieldTransforms, t.fieldTransforms) && (0 === e.type ? e.value.isEqual(t.value) : 1 !== e.type || e.data.isEqual(t.data) && e.fieldMask.isEqual(t.fieldMask)))));
-  }
-  class __PRIVATE_SetMutation extends Mutation {
-    constructor(e, t, n, r2 = []) {
-      super(), this.key = e, this.value = t, this.precondition = n, this.fieldTransforms = r2, this.type = 0;
-    }
-    getFieldMask() {
-      return null;
-    }
-  }
-  class __PRIVATE_PatchMutation extends Mutation {
-    constructor(e, t, n, r2, i = []) {
-      super(), this.key = e, this.data = t, this.fieldMask = n, this.precondition = r2, this.fieldTransforms = i, this.type = 1;
-    }
-    getFieldMask() {
-      return this.fieldMask;
-    }
-  }
-  function __PRIVATE_getPatch(e) {
-    const t = new Map();
-    return e.fieldMask.fields.forEach(((n) => {
-      if (!n.isEmpty()) {
-        const r2 = e.data.field(n);
-        t.set(n, r2);
-      }
-    })), t;
-  }
-  function __PRIVATE_serverTransformResults(e, t, n) {
-    const r2 = new Map();
-    __PRIVATE_hardAssert(e.length === n.length, 32656, {
-      Ve: n.length,
-      de: e.length
-    });
-    for (let i = 0; i < n.length; i++) {
-      const s = e[i], o = s.transform, _ = t.data.field(s.field);
-      r2.set(s.field, __PRIVATE_applyTransformOperationToRemoteDocument(o, _, n[i]));
-    }
-    return r2;
-  }
-  function __PRIVATE_localTransformResults(e, t, n) {
-    const r2 = new Map();
-    for (const i of e) {
-      const e2 = i.transform, s = n.data.field(i.field);
-      r2.set(i.field, __PRIVATE_applyTransformOperationToLocalView(e2, s, t));
-    }
-    return r2;
-  }
-  class __PRIVATE_DeleteMutation extends Mutation {
-    constructor(e, t) {
-      super(), this.key = e, this.precondition = t, this.type = 2, this.fieldTransforms = [];
-    }
-    getFieldMask() {
-      return null;
-    }
-  }
-  class __PRIVATE_VerifyMutation extends Mutation {
-    constructor(e, t) {
-      super(), this.key = e, this.precondition = t, this.type = 3, this.fieldTransforms = [];
-    }
-    getFieldMask() {
-      return null;
-    }
-  }
-  class MutationBatch {
-constructor(e, t, n, r2) {
-      this.batchId = e, this.localWriteTime = t, this.baseMutations = n, this.mutations = r2;
-    }
-applyToRemoteDocument(e, t) {
-      const n = t.mutationResults;
-      for (let t2 = 0; t2 < this.mutations.length; t2++) {
-        const r2 = this.mutations[t2];
-        if (r2.key.isEqual(e.key)) {
-          __PRIVATE_mutationApplyToRemoteDocument(r2, e, n[t2]);
-        }
-      }
-    }
-applyToLocalView(e, t) {
-      for (const n of this.baseMutations) n.key.isEqual(e.key) && (t = __PRIVATE_mutationApplyToLocalView(n, e, t, this.localWriteTime));
-      for (const n of this.mutations) n.key.isEqual(e.key) && (t = __PRIVATE_mutationApplyToLocalView(n, e, t, this.localWriteTime));
-      return t;
-    }
-applyToLocalDocumentSet(e, t) {
-      const n = __PRIVATE_newMutationMap();
-      return this.mutations.forEach(((r2) => {
-        const i = e.get(r2.key), s = i.overlayedDocument;
-        let o = this.applyToLocalView(s, i.mutatedFields);
-        o = t.has(r2.key) ? null : o;
-        const _ = __PRIVATE_calculateOverlayMutation(s, o);
-        null !== _ && n.set(r2.key, _), s.isValidDocument() || s.convertToNoDocument(SnapshotVersion.min());
-      })), n;
-    }
-    keys() {
-      return this.mutations.reduce(((e, t) => e.add(t.key)), __PRIVATE_documentKeySet());
-    }
-    isEqual(e) {
-      return this.batchId === e.batchId && __PRIVATE_arrayEquals(this.mutations, e.mutations, ((e2, t) => __PRIVATE_mutationEquals(e2, t))) && __PRIVATE_arrayEquals(this.baseMutations, e.baseMutations, ((e2, t) => __PRIVATE_mutationEquals(e2, t)));
-    }
-  }
-  class MutationBatchResult {
-    constructor(e, t, n, r2) {
-      this.batch = e, this.commitVersion = t, this.mutationResults = n, this.docVersions = r2;
-    }
-static from(e, t, n) {
-      __PRIVATE_hardAssert(e.mutations.length === n.length, 58842, {
-        me: e.mutations.length,
-        fe: n.length
-      });
-      let r2 = (function __PRIVATE_documentVersionMap() {
-        return Tt;
-      })();
-      const i = e.mutations;
-      for (let e2 = 0; e2 < i.length; e2++) r2 = r2.insert(i[e2].key, n[e2].version);
-      return new MutationBatchResult(e, t, n, r2);
-    }
-  }
-  class Overlay {
-    constructor(e, t) {
-      this.largestBatchId = e, this.mutation = t;
-    }
-    getKey() {
-      return this.mutation.key;
-    }
-    isEqual(e) {
-      return null !== e && this.mutation === e.mutation;
-    }
-    toString() {
-      return `Overlay{
-      largestBatchId: ${this.largestBatchId},
-      mutation: ${this.mutation.toString()}
-    }`;
-    }
-  }
-  var Rt, At;
-  function __PRIVATE_isPermanentError(e) {
-    switch (e) {
-      case D.OK:
-        return fail(64938);
-      case D.CANCELLED:
-      case D.UNKNOWN:
-      case D.DEADLINE_EXCEEDED:
-      case D.RESOURCE_EXHAUSTED:
-      case D.INTERNAL:
-      case D.UNAVAILABLE:
-
-case D.UNAUTHENTICATED:
-        return false;
-      case D.INVALID_ARGUMENT:
-      case D.NOT_FOUND:
-      case D.ALREADY_EXISTS:
-      case D.PERMISSION_DENIED:
-      case D.FAILED_PRECONDITION:
-
-
-case D.ABORTED:
-      case D.OUT_OF_RANGE:
-      case D.UNIMPLEMENTED:
-      case D.DATA_LOSS:
-        return true;
-      default:
-        return fail(15467, {
-          code: e
-        });
-    }
-  }
-  function __PRIVATE_mapCodeFromRpcCode(e) {
-    if (void 0 === e)
-      return __PRIVATE_logError("GRPC error has no .code"), D.UNKNOWN;
-    switch (e) {
-      case Rt.OK:
-        return D.OK;
-      case Rt.CANCELLED:
-        return D.CANCELLED;
-      case Rt.UNKNOWN:
-        return D.UNKNOWN;
-      case Rt.DEADLINE_EXCEEDED:
-        return D.DEADLINE_EXCEEDED;
-      case Rt.RESOURCE_EXHAUSTED:
-        return D.RESOURCE_EXHAUSTED;
-      case Rt.INTERNAL:
-        return D.INTERNAL;
-      case Rt.UNAVAILABLE:
-        return D.UNAVAILABLE;
-      case Rt.UNAUTHENTICATED:
-        return D.UNAUTHENTICATED;
-      case Rt.INVALID_ARGUMENT:
-        return D.INVALID_ARGUMENT;
-      case Rt.NOT_FOUND:
-        return D.NOT_FOUND;
-      case Rt.ALREADY_EXISTS:
-        return D.ALREADY_EXISTS;
-      case Rt.PERMISSION_DENIED:
-        return D.PERMISSION_DENIED;
-      case Rt.FAILED_PRECONDITION:
-        return D.FAILED_PRECONDITION;
-      case Rt.ABORTED:
-        return D.ABORTED;
-      case Rt.OUT_OF_RANGE:
-        return D.OUT_OF_RANGE;
-      case Rt.UNIMPLEMENTED:
-        return D.UNIMPLEMENTED;
-      case Rt.DATA_LOSS:
-        return D.DATA_LOSS;
-      default:
-        return fail(39323, {
-          code: e
-        });
-    }
-  }
-  (At = Rt || (Rt = {}))[At.OK = 0] = "OK", At[At.CANCELLED = 1] = "CANCELLED", At[At.UNKNOWN = 2] = "UNKNOWN", At[At.INVALID_ARGUMENT = 3] = "INVALID_ARGUMENT", At[At.DEADLINE_EXCEEDED = 4] = "DEADLINE_EXCEEDED", At[At.NOT_FOUND = 5] = "NOT_FOUND", At[At.ALREADY_EXISTS = 6] = "ALREADY_EXISTS", At[At.PERMISSION_DENIED = 7] = "PERMISSION_DENIED", At[At.UNAUTHENTICATED = 16] = "UNAUTHENTICATED", At[At.RESOURCE_EXHAUSTED = 8] = "RESOURCE_EXHAUSTED", At[At.FAILED_PRECONDITION = 9] = "FAILED_PRECONDITION", At[At.ABORTED = 10] = "ABORTED", At[At.OUT_OF_RANGE = 11] = "OUT_OF_RANGE", At[At.UNIMPLEMENTED = 12] = "UNIMPLEMENTED", At[At.INTERNAL = 13] = "INTERNAL", At[At.UNAVAILABLE = 14] = "UNAVAILABLE", At[At.DATA_LOSS = 15] = "DATA_LOSS";
-  new Integer([4294967295, 4294967295], 0);
-  class JsonProtoSerializer {
-    constructor(e, t) {
-      this.databaseId = e, this.useProto3Json = t;
-    }
-  }
-  function toTimestamp(e, t) {
-    if (e.useProto3Json) {
-      return `${new Date(1e3 * t.seconds).toISOString().replace(/\.\d*/, "").replace("Z", "")}.${("000000000" + t.nanoseconds).slice(-9)}Z`;
-    }
-    return {
-      seconds: "" + t.seconds,
-      nanos: t.nanoseconds
-    };
-  }
-  function __PRIVATE_toBytes(e, t) {
-    return e.useProto3Json ? t.toBase64() : t.toUint8Array();
-  }
-  function __PRIVATE_toVersion(e, t) {
-    return toTimestamp(e, t.toTimestamp());
-  }
-  function __PRIVATE_fromVersion(e) {
-    return __PRIVATE_hardAssert(!!e, 49232), SnapshotVersion.fromTimestamp((function fromTimestamp(e2) {
-      const t = __PRIVATE_normalizeTimestamp(e2);
-      return new Timestamp(t.seconds, t.nanos);
-    })(e));
-  }
-  function __PRIVATE_toResourceName(e, t) {
-    return __PRIVATE_toResourcePath(e, t).canonicalString();
-  }
-  function __PRIVATE_toResourcePath(e, t) {
-    const n = (function __PRIVATE_fullyQualifiedPrefixPath(e2) {
-      return new ResourcePath(["projects", e2.projectId, "databases", e2.database]);
-    })(e).child("documents");
-    return void 0 === t ? n : n.child(t);
-  }
-  function __PRIVATE_fromResourceName(e) {
-    const t = ResourcePath.fromString(e);
-    return __PRIVATE_hardAssert(__PRIVATE_isValidResourceName(t), 10190, {
-      key: t.toString()
-    }), t;
-  }
-  function __PRIVATE_toName(e, t) {
-    return __PRIVATE_toResourceName(e.databaseId, t.path);
-  }
-  function __PRIVATE_fromQueryPath(e) {
-    const t = __PRIVATE_fromResourceName(e);
-    return 4 === t.length ? ResourcePath.emptyPath() : __PRIVATE_extractLocalPathFromResourceName(t);
-  }
-  function __PRIVATE_getEncodedDatabaseId(e) {
-    return new ResourcePath(["projects", e.databaseId.projectId, "databases", e.databaseId.database]).canonicalString();
-  }
-  function __PRIVATE_extractLocalPathFromResourceName(e) {
-    return __PRIVATE_hardAssert(e.length > 4 && "documents" === e.get(4), 29091, {
-      key: e.toString()
-    }), e.popFirst(5);
-  }
-  function __PRIVATE_toMutationDocument(e, t, n) {
-    return {
-      name: __PRIVATE_toName(e, t),
-      fields: n.value.mapValue.fields
-    };
-  }
-  function toMutation(e, t) {
-    let n;
-    if (t instanceof __PRIVATE_SetMutation) n = {
-      update: __PRIVATE_toMutationDocument(e, t.key, t.value)
-    };
-    else if (t instanceof __PRIVATE_DeleteMutation) n = {
-      delete: __PRIVATE_toName(e, t.key)
-    };
-    else if (t instanceof __PRIVATE_PatchMutation) n = {
-      update: __PRIVATE_toMutationDocument(e, t.key, t.data),
-      updateMask: __PRIVATE_toDocumentMask(t.fieldMask)
-    };
-    else {
-      if (!(t instanceof __PRIVATE_VerifyMutation)) return fail(16599, {
-        dt: t.type
-      });
-      n = {
-        verify: __PRIVATE_toName(e, t.key)
-      };
-    }
-    return t.fieldTransforms.length > 0 && (n.updateTransforms = t.fieldTransforms.map(((e2) => (function __PRIVATE_toFieldTransform(e3, t2) {
-      const n2 = t2.transform;
-      if (n2 instanceof __PRIVATE_ServerTimestampTransform) return {
-        fieldPath: t2.field.canonicalString(),
-        setToServerValue: "REQUEST_TIME"
-      };
-      if (n2 instanceof __PRIVATE_ArrayUnionTransformOperation) return {
-        fieldPath: t2.field.canonicalString(),
-        appendMissingElements: {
-          values: n2.elements
-        }
-      };
-      if (n2 instanceof __PRIVATE_ArrayRemoveTransformOperation) return {
-        fieldPath: t2.field.canonicalString(),
-        removeAllFromArray: {
-          values: n2.elements
-        }
-      };
-      if (n2 instanceof __PRIVATE_NumericIncrementTransformOperation) return {
-        fieldPath: t2.field.canonicalString(),
-        increment: n2.Ae
-      };
-      throw fail(20930, {
-        transform: t2.transform
-      });
-    })(0, e2)))), t.precondition.isNone || (n.currentDocument = (function __PRIVATE_toPrecondition(e2, t2) {
-      return void 0 !== t2.updateTime ? {
-        updateTime: __PRIVATE_toVersion(e2, t2.updateTime)
-      } : void 0 !== t2.exists ? {
-        exists: t2.exists
-      } : fail(27497);
-    })(e, t.precondition)), n;
-  }
-  function __PRIVATE_fromWriteResults(e, t) {
-    return e && e.length > 0 ? (__PRIVATE_hardAssert(void 0 !== t, 14353), e.map(((e2) => (function __PRIVATE_fromWriteResult(e3, t2) {
-      let n = e3.updateTime ? __PRIVATE_fromVersion(e3.updateTime) : __PRIVATE_fromVersion(t2);
-      return n.isEqual(SnapshotVersion.min()) &&
-
-
-
-
-(n = __PRIVATE_fromVersion(t2)), new MutationResult(n, e3.transformResults || []);
-    })(e2, t)))) : [];
-  }
-  function __PRIVATE_convertQueryTargetToQuery(e) {
-    let t = __PRIVATE_fromQueryPath(e.parent);
-    const n = e.structuredQuery, r2 = n.from ? n.from.length : 0;
-    let i = null;
-    if (r2 > 0) {
-      __PRIVATE_hardAssert(1 === r2, 65062);
-      const e2 = n.from[0];
-      e2.allDescendants ? i = e2.collectionId : t = t.child(e2.collectionId);
-    }
-    let s = [];
-    n.where && (s = (function __PRIVATE_fromFilters(e2) {
-      const t2 = __PRIVATE_fromFilter(e2);
-      if (t2 instanceof CompositeFilter && __PRIVATE_compositeFilterIsFlatConjunction(t2)) return t2.getFilters();
-      return [t2];
-    })(n.where));
-    let o = [];
-    n.orderBy && (o = (function __PRIVATE_fromOrder(e2) {
-      return e2.map(((e3) => (function __PRIVATE_fromPropertyOrder(e4) {
-        return new OrderBy(
-          __PRIVATE_fromFieldPathReference(e4.field),
-(function __PRIVATE_fromDirection(e5) {
-            switch (e5) {
-              case "ASCENDING":
-                return "asc";
-              case "DESCENDING":
-                return "desc";
-              default:
-                return;
-            }
-          })(e4.direction)
-        );
-      })(e3)));
-    })(n.orderBy));
-    let _ = null;
-    n.limit && (_ = (function __PRIVATE_fromInt32Proto(e2) {
-      let t2;
-      return t2 = "object" == typeof e2 ? e2.value : e2, __PRIVATE_isNullOrUndefined(t2) ? null : t2;
-    })(n.limit));
-    let a = null;
-    n.startAt && (a = (function __PRIVATE_fromStartAtCursor(e2) {
-      const t2 = !!e2.before, n2 = e2.values || [];
-      return new Bound(n2, t2);
-    })(n.startAt));
-    let u = null;
-    return n.endAt && (u = (function __PRIVATE_fromEndAtCursor(e2) {
-      const t2 = !e2.before, n2 = e2.values || [];
-      return new Bound(n2, t2);
-    })(n.endAt)), __PRIVATE_newQuery(t, i, o, s, _, "F", a, u);
-  }
-  function __PRIVATE_fromFilter(e) {
-    return void 0 !== e.unaryFilter ? (function __PRIVATE_fromUnaryFilter(e2) {
-      switch (e2.unaryFilter.op) {
-        case "IS_NAN":
-          const t = __PRIVATE_fromFieldPathReference(e2.unaryFilter.field);
-          return FieldFilter.create(t, "==", {
-            doubleValue: NaN
-          });
-        case "IS_NULL":
-          const n = __PRIVATE_fromFieldPathReference(e2.unaryFilter.field);
-          return FieldFilter.create(n, "==", {
-            nullValue: "NULL_VALUE"
-          });
-        case "IS_NOT_NAN":
-          const r2 = __PRIVATE_fromFieldPathReference(e2.unaryFilter.field);
-          return FieldFilter.create(r2, "!=", {
-            doubleValue: NaN
-          });
-        case "IS_NOT_NULL":
-          const i = __PRIVATE_fromFieldPathReference(e2.unaryFilter.field);
-          return FieldFilter.create(i, "!=", {
-            nullValue: "NULL_VALUE"
-          });
-        case "OPERATOR_UNSPECIFIED":
-          return fail(61313);
-        default:
-          return fail(60726);
-      }
-    })(e) : void 0 !== e.fieldFilter ? (function __PRIVATE_fromFieldFilter(e2) {
-      return FieldFilter.create(__PRIVATE_fromFieldPathReference(e2.fieldFilter.field), (function __PRIVATE_fromOperatorName(e3) {
-        switch (e3) {
-          case "EQUAL":
-            return "==";
-          case "NOT_EQUAL":
-            return "!=";
-          case "GREATER_THAN":
-            return ">";
-          case "GREATER_THAN_OR_EQUAL":
-            return ">=";
-          case "LESS_THAN":
-            return "<";
-          case "LESS_THAN_OR_EQUAL":
-            return "<=";
-          case "ARRAY_CONTAINS":
-            return "array-contains";
-          case "IN":
-            return "in";
-          case "NOT_IN":
-            return "not-in";
-          case "ARRAY_CONTAINS_ANY":
-            return "array-contains-any";
-          case "OPERATOR_UNSPECIFIED":
-            return fail(58110);
-          default:
-            return fail(50506);
-        }
-      })(e2.fieldFilter.op), e2.fieldFilter.value);
-    })(e) : void 0 !== e.compositeFilter ? (function __PRIVATE_fromCompositeFilter(e2) {
-      return CompositeFilter.create(e2.compositeFilter.filters.map(((e3) => __PRIVATE_fromFilter(e3))), (function __PRIVATE_fromCompositeOperatorName(e3) {
-        switch (e3) {
-          case "AND":
-            return "and";
-          case "OR":
-            return "or";
-          default:
-            return fail(1026);
-        }
-      })(e2.compositeFilter.op));
-    })(e) : fail(30097, {
-      filter: e
-    });
-  }
-  function __PRIVATE_fromFieldPathReference(e) {
-    return FieldPath$1.fromServerFormat(e.fieldPath);
-  }
-  function __PRIVATE_toDocumentMask(e) {
-    const t = [];
-    return e.fields.forEach(((e2) => t.push(e2.canonicalString()))), {
-      fieldPaths: t
-    };
-  }
-  function __PRIVATE_isValidResourceName(e) {
-    return e.length >= 4 && "projects" === e.get(0) && "databases" === e.get(2);
-  }
-  function __PRIVATE_isProtoValueSerializable(e) {
-    return !!e && "function" == typeof e._toProto && "ProtoValue" === e._protoValueType;
-  }
-  class __PRIVATE_LocalSerializer {
-    constructor(e) {
-      this.yt = e;
-    }
-  }
-  function __PRIVATE_fromBundledQuery(e) {
-    const t = __PRIVATE_convertQueryTargetToQuery({
-      parent: e.parent,
-      structuredQuery: e.structuredQuery
-    });
-    return "LAST" === e.limitType ? __PRIVATE_queryWithLimit(
-      t,
-      t.limit,
-      "L"
-) : t;
-  }
-  class __PRIVATE_MemoryIndexManager {
-    constructor() {
-      this.bn = new __PRIVATE_MemoryCollectionParentIndex();
-    }
-    addToCollectionParentIndex(e, t) {
-      return this.bn.add(t), PersistencePromise.resolve();
-    }
-    getCollectionParents(e, t) {
-      return PersistencePromise.resolve(this.bn.getEntries(t));
-    }
-    addFieldIndex(e, t) {
-      return PersistencePromise.resolve();
-    }
-    deleteFieldIndex(e, t) {
-      return PersistencePromise.resolve();
-    }
-    deleteAllFieldIndexes(e) {
-      return PersistencePromise.resolve();
-    }
-    createTargetIndexes(e, t) {
-      return PersistencePromise.resolve();
-    }
-    getDocumentsMatchingTarget(e, t) {
-      return PersistencePromise.resolve(null);
-    }
-    getIndexType(e, t) {
-      return PersistencePromise.resolve(
-        0
-);
-    }
-    getFieldIndexes(e, t) {
-      return PersistencePromise.resolve([]);
-    }
-    getNextCollectionGroupToUpdate(e) {
-      return PersistencePromise.resolve(null);
-    }
-    getMinOffset(e, t) {
-      return PersistencePromise.resolve(IndexOffset.min());
-    }
-    getMinOffsetFromCollectionGroup(e, t) {
-      return PersistencePromise.resolve(IndexOffset.min());
-    }
-    updateCollectionGroup(e, t, n) {
-      return PersistencePromise.resolve();
-    }
-    updateIndexEntries(e, t) {
-      return PersistencePromise.resolve();
-    }
-  }
-  class __PRIVATE_MemoryCollectionParentIndex {
-    constructor() {
-      this.index = {};
-    }
-add(e) {
-      const t = e.lastSegment(), n = e.popLast(), r2 = this.index[t] || new SortedSet(ResourcePath.comparator), i = !r2.has(n);
-      return this.index[t] = r2.add(n), i;
-    }
-    has(e) {
-      const t = e.lastSegment(), n = e.popLast(), r2 = this.index[t];
-      return r2 && r2.has(n);
-    }
-    getEntries(e) {
-      return (this.index[e] || new SortedSet(ResourcePath.comparator)).toArray();
-    }
-  }
-  const bt = {
-    didRun: false,
-    sequenceNumbersCollected: 0,
-    targetsRemoved: 0,
-    documentsRemoved: 0
-  }, St = 41943040;
-  class LruParams {
-    static withCacheSize(e) {
-      return new LruParams(e, LruParams.DEFAULT_COLLECTION_PERCENTILE, LruParams.DEFAULT_MAX_SEQUENCE_NUMBERS_TO_COLLECT);
-    }
-    constructor(e, t, n) {
-      this.cacheSizeCollectionThreshold = e, this.percentileToCollect = t, this.maximumSequenceNumbersToCollect = n;
-    }
-  }
-  LruParams.DEFAULT_COLLECTION_PERCENTILE = 10, LruParams.DEFAULT_MAX_SEQUENCE_NUMBERS_TO_COLLECT = 1e3, LruParams.DEFAULT = new LruParams(St, LruParams.DEFAULT_COLLECTION_PERCENTILE, LruParams.DEFAULT_MAX_SEQUENCE_NUMBERS_TO_COLLECT), LruParams.DISABLED = new LruParams(-1, 0, 0);
-  class __PRIVATE_TargetIdGenerator {
-    constructor(e) {
-      this.sr = e;
-    }
-    next() {
-      return this.sr += 2, this.sr;
-    }
-    static _r() {
-      return new __PRIVATE_TargetIdGenerator(0);
-    }
-    static ar() {
-      return new __PRIVATE_TargetIdGenerator(-1);
-    }
-  }
-  const Dt = "LruGarbageCollector", Ct = 1048576;
-  function __PRIVATE_bufferEntryComparator([e, t], [n, r2]) {
-    const i = __PRIVATE_primitiveComparator(e, n);
-    return 0 === i ? __PRIVATE_primitiveComparator(t, r2) : i;
-  }
-  class __PRIVATE_RollingSequenceNumberBuffer {
-    constructor(e) {
-      this.Pr = e, this.buffer = new SortedSet(__PRIVATE_bufferEntryComparator), this.Tr = 0;
-    }
-    Ir() {
-      return ++this.Tr;
-    }
-    Er(e) {
-      const t = [e, this.Ir()];
-      if (this.buffer.size < this.Pr) this.buffer = this.buffer.add(t);
-      else {
-        const e2 = this.buffer.last();
-        __PRIVATE_bufferEntryComparator(t, e2) < 0 && (this.buffer = this.buffer.delete(e2).add(t));
-      }
-    }
-    get maxValue() {
-      return this.buffer.last()[0];
-    }
-  }
-  class __PRIVATE_LruScheduler {
-    constructor(e, t, n) {
-      this.garbageCollector = e, this.asyncQueue = t, this.localStore = n, this.Rr = null;
-    }
-    start() {
-      -1 !== this.garbageCollector.params.cacheSizeCollectionThreshold && this.Ar(6e4);
-    }
-    stop() {
-      this.Rr && (this.Rr.cancel(), this.Rr = null);
-    }
-    get started() {
-      return null !== this.Rr;
-    }
-    Ar(e) {
-      __PRIVATE_logDebug(Dt, `Garbage collection scheduled in ${e}ms`), this.Rr = this.asyncQueue.enqueueAfterDelay("lru_garbage_collection", e, (async () => {
-        this.Rr = null;
-        try {
-          await this.localStore.collectGarbage(this.garbageCollector);
-        } catch (e2) {
-          __PRIVATE_isIndexedDbTransactionError(e2) ? __PRIVATE_logDebug(Dt, "Ignoring IndexedDB error during garbage collection: ", e2) : await __PRIVATE_ignoreIfPrimaryLeaseLoss(e2);
-        }
-        await this.Ar(3e5);
-      }));
-    }
-  }
-  class __PRIVATE_LruGarbageCollectorImpl {
-    constructor(e, t) {
-      this.Vr = e, this.params = t;
-    }
-    calculateTargetCount(e, t) {
-      return this.Vr.dr(e).next(((e2) => Math.floor(t / 100 * e2)));
-    }
-    nthSequenceNumber(e, t) {
-      if (0 === t) return PersistencePromise.resolve(__PRIVATE_ListenSequence.ce);
-      const n = new __PRIVATE_RollingSequenceNumberBuffer(t);
-      return this.Vr.forEachTarget(e, ((e2) => n.Er(e2.sequenceNumber))).next((() => this.Vr.mr(e, ((e2) => n.Er(e2))))).next((() => n.maxValue));
-    }
-    removeTargets(e, t, n) {
-      return this.Vr.removeTargets(e, t, n);
-    }
-    removeOrphanedDocuments(e, t) {
-      return this.Vr.removeOrphanedDocuments(e, t);
-    }
-    collect(e, t) {
-      return -1 === this.params.cacheSizeCollectionThreshold ? (__PRIVATE_logDebug("LruGarbageCollector", "Garbage collection skipped; disabled"), PersistencePromise.resolve(bt)) : this.getCacheSize(e).next(((n) => n < this.params.cacheSizeCollectionThreshold ? (__PRIVATE_logDebug("LruGarbageCollector", `Garbage collection skipped; Cache size ${n} is lower than threshold ${this.params.cacheSizeCollectionThreshold}`), bt) : this.gr(e, t)));
-    }
-    getCacheSize(e) {
-      return this.Vr.getCacheSize(e);
-    }
-    gr(e, t) {
-      let n, r2, i, s, o, _, a;
-      const u = Date.now();
-      return this.calculateTargetCount(e, this.params.percentileToCollect).next(((t2) => (
-(t2 > this.params.maximumSequenceNumbersToCollect ? (__PRIVATE_logDebug("LruGarbageCollector", `Capping sequence numbers to collect down to the maximum of ${this.params.maximumSequenceNumbersToCollect} from ${t2}`), r2 = this.params.maximumSequenceNumbersToCollect) : r2 = t2, s = Date.now(), this.nthSequenceNumber(e, r2))
-      ))).next(((r3) => (n = r3, o = Date.now(), this.removeTargets(e, n, t)))).next(((t2) => (i = t2, _ = Date.now(), this.removeOrphanedDocuments(e, n)))).next(((e2) => {
-        if (a = Date.now(), __PRIVATE_getLogLevel() <= LogLevel.DEBUG) {
-          __PRIVATE_logDebug("LruGarbageCollector", `LRU Garbage Collection
-	Counted targets in ${s - u}ms
-	Determined least recently used ${r2} in ` + (o - s) + `ms
-	Removed ${i} targets in ` + (_ - o) + `ms
-	Removed ${e2} documents in ` + (a - _) + `ms
-Total Duration: ${a - u}ms`);
-        }
-        return PersistencePromise.resolve({
-          didRun: true,
-          sequenceNumbersCollected: r2,
-          targetsRemoved: i,
-          documentsRemoved: e2
-        });
-      }));
-    }
-  }
-  function __PRIVATE_newLruGarbageCollector(e, t) {
-    return new __PRIVATE_LruGarbageCollectorImpl(e, t);
-  }
-  class RemoteDocumentChangeBuffer {
-    constructor() {
-      this.changes = new ObjectMap(((e) => e.toString()), ((e, t) => e.isEqual(t))), this.changesApplied = false;
-    }
-addEntry(e) {
-      this.assertNotApplied(), this.changes.set(e.key, e);
-    }
-removeEntry(e, t) {
-      this.assertNotApplied(), this.changes.set(e, MutableDocument.newInvalidDocument(e).setReadTime(t));
-    }
-getEntry(e, t) {
-      this.assertNotApplied();
-      const n = this.changes.get(t);
-      return void 0 !== n ? PersistencePromise.resolve(n) : this.getFromCache(e, t);
-    }
-getEntries(e, t) {
-      return this.getAllFromCache(e, t);
-    }
-apply(e) {
-      return this.assertNotApplied(), this.changesApplied = true, this.applyChanges(e);
-    }
-assertNotApplied() {
-    }
-  }
-  class OverlayedDocument {
-    constructor(e, t) {
-      this.overlayedDocument = e, this.mutatedFields = t;
-    }
-  }
-  class LocalDocumentsView {
-    constructor(e, t, n, r2) {
-      this.remoteDocumentCache = e, this.mutationQueue = t, this.documentOverlayCache = n, this.indexManager = r2;
-    }
-getDocument(e, t) {
-      let n = null;
-      return this.documentOverlayCache.getOverlay(e, t).next(((r2) => (n = r2, this.remoteDocumentCache.getEntry(e, t)))).next(((e2) => (null !== n && __PRIVATE_mutationApplyToLocalView(n.mutation, e2, FieldMask.empty(), Timestamp.now()), e2)));
-    }
-getDocuments(e, t) {
-      return this.remoteDocumentCache.getEntries(e, t).next(((t2) => this.getLocalViewOfDocuments(e, t2, __PRIVATE_documentKeySet()).next((() => t2))));
-    }
-getLocalViewOfDocuments(e, t, n = __PRIVATE_documentKeySet()) {
-      const r2 = __PRIVATE_newOverlayMap();
-      return this.populateOverlays(e, r2, t).next((() => this.computeViews(e, t, r2, n).next(((e2) => {
-        let t2 = documentMap();
-        return e2.forEach(((e3, n2) => {
-          t2 = t2.insert(e3, n2.overlayedDocument);
-        })), t2;
-      }))));
-    }
-getOverlayedDocuments(e, t) {
-      const n = __PRIVATE_newOverlayMap();
-      return this.populateOverlays(e, n, t).next((() => this.computeViews(e, t, n, __PRIVATE_documentKeySet())));
-    }
-populateOverlays(e, t, n) {
-      const r2 = [];
-      return n.forEach(((e2) => {
-        t.has(e2) || r2.push(e2);
-      })), this.documentOverlayCache.getOverlays(e, r2).next(((e2) => {
-        e2.forEach(((e3, n2) => {
-          t.set(e3, n2);
-        }));
-      }));
-    }
-computeViews(e, t, n, r2) {
-      let i = __PRIVATE_mutableDocumentMap();
-      const s = __PRIVATE_newDocumentKeyMap(), o = (function __PRIVATE_newOverlayedDocumentMap() {
-        return __PRIVATE_newDocumentKeyMap();
-      })();
-      return t.forEach(((e2, t2) => {
-        const o2 = n.get(t2.key);
-        r2.has(t2.key) && (void 0 === o2 || o2.mutation instanceof __PRIVATE_PatchMutation) ? i = i.insert(t2.key, t2) : void 0 !== o2 ? (s.set(t2.key, o2.mutation.getFieldMask()), __PRIVATE_mutationApplyToLocalView(o2.mutation, t2, o2.mutation.getFieldMask(), Timestamp.now())) : (
-
-s.set(t2.key, FieldMask.empty())
-        );
-      })), this.recalculateAndSaveOverlays(e, i).next(((e2) => (e2.forEach(((e3, t2) => s.set(e3, t2))), t.forEach(((e3, t2) => o.set(e3, new OverlayedDocument(t2, s.get(e3) ?? null)))), o)));
-    }
-    recalculateAndSaveOverlays(e, t) {
-      const n = __PRIVATE_newDocumentKeyMap();
-      let r2 = new SortedMap(((e2, t2) => e2 - t2)), i = __PRIVATE_documentKeySet();
-      return this.mutationQueue.getAllMutationBatchesAffectingDocumentKeys(e, t).next(((e2) => {
-        for (const i2 of e2) i2.keys().forEach(((e3) => {
-          const s = t.get(e3);
-          if (null === s) return;
-          let o = n.get(e3) || FieldMask.empty();
-          o = i2.applyToLocalView(s, o), n.set(e3, o);
-          const _ = (r2.get(i2.batchId) || __PRIVATE_documentKeySet()).add(e3);
-          r2 = r2.insert(i2.batchId, _);
-        }));
-      })).next((() => {
-        const s = [], o = r2.getReverseIterator();
-        for (; o.hasNext(); ) {
-          const r3 = o.getNext(), _ = r3.key, a = r3.value, u = __PRIVATE_newMutationMap();
-          a.forEach(((e2) => {
-            if (!i.has(e2)) {
-              const r4 = __PRIVATE_calculateOverlayMutation(t.get(e2), n.get(e2));
-              null !== r4 && u.set(e2, r4), i = i.add(e2);
-            }
-          })), s.push(this.documentOverlayCache.saveOverlays(e, _, u));
-        }
-        return PersistencePromise.waitFor(s);
-      })).next((() => n));
-    }
-recalculateAndSaveOverlaysForDocumentKeys(e, t) {
-      return this.remoteDocumentCache.getEntries(e, t).next(((t2) => this.recalculateAndSaveOverlays(e, t2)));
-    }
-getDocumentsMatchingQuery(e, t, n, r2) {
-      return __PRIVATE_isDocumentQuery$1(t) ? this.getDocumentsMatchingDocumentQuery(e, t.path) : __PRIVATE_isCollectionGroupQuery(t) ? this.getDocumentsMatchingCollectionGroupQuery(e, t, n, r2) : this.getDocumentsMatchingCollectionQuery(e, t, n, r2);
-    }
-getNextDocuments(e, t, n, r2) {
-      return this.remoteDocumentCache.getAllFromCollectionGroup(e, t, n, r2).next(((i) => {
-        const s = r2 - i.size > 0 ? this.documentOverlayCache.getOverlaysForCollectionGroup(e, t, n.largestBatchId, r2 - i.size) : PersistencePromise.resolve(__PRIVATE_newOverlayMap());
-        let o = N, _ = i;
-        return s.next(((t2) => PersistencePromise.forEach(t2, ((t3, n2) => (o < n2.largestBatchId && (o = n2.largestBatchId), i.get(t3) ? PersistencePromise.resolve() : this.remoteDocumentCache.getEntry(e, t3).next(((e2) => {
-          _ = _.insert(t3, e2);
-        }))))).next((() => this.populateOverlays(e, t2, i))).next((() => this.computeViews(e, _, t2, __PRIVATE_documentKeySet()))).next(((e2) => ({
-          batchId: o,
-          changes: __PRIVATE_convertOverlayedDocumentMapToDocumentMap(e2)
-        })))));
-      }));
-    }
-    getDocumentsMatchingDocumentQuery(e, t) {
-      return this.getDocument(e, new DocumentKey(t)).next(((e2) => {
-        let t2 = documentMap();
-        return e2.isFoundDocument() && (t2 = t2.insert(e2.key, e2)), t2;
-      }));
-    }
-    getDocumentsMatchingCollectionGroupQuery(e, t, n, r2) {
-      const i = t.collectionGroup;
-      let s = documentMap();
-      return this.indexManager.getCollectionParents(e, i).next(((o) => PersistencePromise.forEach(o, ((o2) => {
-        const _ = (function __PRIVATE_asCollectionQueryAtPath(e2, t2) {
-          return new __PRIVATE_QueryImpl(
-            t2,
-null,
-            e2.explicitOrderBy.slice(),
-            e2.filters.slice(),
-            e2.limit,
-            e2.limitType,
-            e2.startAt,
-            e2.endAt
-          );
-        })(t, o2.child(i));
-        return this.getDocumentsMatchingCollectionQuery(e, _, n, r2).next(((e2) => {
-          e2.forEach(((e3, t2) => {
-            s = s.insert(e3, t2);
-          }));
-        }));
-      })).next((() => s))));
-    }
-    getDocumentsMatchingCollectionQuery(e, t, n, r2) {
-      let i;
-      return this.documentOverlayCache.getOverlaysForCollection(e, t.path, n.largestBatchId).next(((s) => (i = s, this.remoteDocumentCache.getDocumentsMatchingQuery(e, t, n, i, r2)))).next(((e2) => {
-        i.forEach(((t2, n3) => {
-          const r3 = n3.getKey();
-          null === e2.get(r3) && (e2 = e2.insert(r3, MutableDocument.newInvalidDocument(r3)));
-        }));
-        let n2 = documentMap();
-        return e2.forEach(((e3, r3) => {
-          const s = i.get(e3);
-          void 0 !== s && __PRIVATE_mutationApplyToLocalView(s.mutation, r3, FieldMask.empty(), Timestamp.now()),
-__PRIVATE_queryMatches(t, r3) && (n2 = n2.insert(e3, r3));
-        })), n2;
-      }));
-    }
-  }
-  class __PRIVATE_MemoryBundleCache {
-    constructor(e) {
-      this.serializer = e, this.Nr = new Map(), this.Br = new Map();
-    }
-    getBundleMetadata(e, t) {
-      return PersistencePromise.resolve(this.Nr.get(t));
-    }
-    saveBundleMetadata(e, t) {
-      return this.Nr.set(
-        t.id,
-(function __PRIVATE_fromBundleMetadata(e2) {
-          return {
-            id: e2.id,
-            version: e2.version,
-            createTime: __PRIVATE_fromVersion(e2.createTime)
-          };
-        })(t)
-      ), PersistencePromise.resolve();
-    }
-    getNamedQuery(e, t) {
-      return PersistencePromise.resolve(this.Br.get(t));
-    }
-    saveNamedQuery(e, t) {
-      return this.Br.set(t.name, (function __PRIVATE_fromProtoNamedQuery(e2) {
-        return {
-          name: e2.name,
-          query: __PRIVATE_fromBundledQuery(e2.bundledQuery),
-          readTime: __PRIVATE_fromVersion(e2.readTime)
-        };
-      })(t)), PersistencePromise.resolve();
-    }
-  }
-  class __PRIVATE_MemoryDocumentOverlayCache {
-    constructor() {
-      this.overlays = new SortedMap(DocumentKey.comparator), this.Lr = new Map();
-    }
-    getOverlay(e, t) {
-      return PersistencePromise.resolve(this.overlays.get(t));
-    }
-    getOverlays(e, t) {
-      const n = __PRIVATE_newOverlayMap();
-      return PersistencePromise.forEach(t, ((t2) => this.getOverlay(e, t2).next(((e2) => {
-        null !== e2 && n.set(t2, e2);
-      })))).next((() => n));
-    }
-    saveOverlays(e, t, n) {
-      return n.forEach(((n2, r2) => {
-        this.St(e, t, r2);
-      })), PersistencePromise.resolve();
-    }
-    removeOverlaysForBatchId(e, t, n) {
-      const r2 = this.Lr.get(n);
-      return void 0 !== r2 && (r2.forEach(((e2) => this.overlays = this.overlays.remove(e2))), this.Lr.delete(n)), PersistencePromise.resolve();
-    }
-    getOverlaysForCollection(e, t, n) {
-      const r2 = __PRIVATE_newOverlayMap(), i = t.length + 1, s = new DocumentKey(t.child("")), o = this.overlays.getIteratorFrom(s);
-      for (; o.hasNext(); ) {
-        const e2 = o.getNext().value, s2 = e2.getKey();
-        if (!t.isPrefixOf(s2.path)) break;
-        s2.path.length === i && (e2.largestBatchId > n && r2.set(e2.getKey(), e2));
-      }
-      return PersistencePromise.resolve(r2);
-    }
-    getOverlaysForCollectionGroup(e, t, n, r2) {
-      let i = new SortedMap(((e2, t2) => e2 - t2));
-      const s = this.overlays.getIterator();
-      for (; s.hasNext(); ) {
-        const e2 = s.getNext().value;
-        if (e2.getKey().getCollectionGroup() === t && e2.largestBatchId > n) {
-          let t2 = i.get(e2.largestBatchId);
-          null === t2 && (t2 = __PRIVATE_newOverlayMap(), i = i.insert(e2.largestBatchId, t2)), t2.set(e2.getKey(), e2);
-        }
-      }
-      const o = __PRIVATE_newOverlayMap(), _ = i.getIterator();
-      for (; _.hasNext(); ) {
-        if (_.getNext().value.forEach(((e2, t2) => o.set(e2, t2))), o.size() >= r2) break;
-      }
-      return PersistencePromise.resolve(o);
-    }
-    St(e, t, n) {
-      const r2 = this.overlays.get(n.key);
-      if (null !== r2) {
-        const e2 = this.Lr.get(r2.largestBatchId).delete(n.key);
-        this.Lr.set(r2.largestBatchId, e2);
-      }
-      this.overlays = this.overlays.insert(n.key, new Overlay(t, n));
-      let i = this.Lr.get(t);
-      void 0 === i && (i = __PRIVATE_documentKeySet(), this.Lr.set(t, i)), this.Lr.set(t, i.add(n.key));
-    }
-  }
-  class __PRIVATE_MemoryGlobalsCache {
-    constructor() {
-      this.sessionToken = ByteString.EMPTY_BYTE_STRING;
-    }
-    getSessionToken(e) {
-      return PersistencePromise.resolve(this.sessionToken);
-    }
-    setSessionToken(e, t) {
-      return this.sessionToken = t, PersistencePromise.resolve();
-    }
-  }
-  class __PRIVATE_ReferenceSet {
-    constructor() {
-      this.kr = new SortedSet(__PRIVATE_DocReference.Kr),
-this.qr = new SortedSet(__PRIVATE_DocReference.Ur);
-    }
-isEmpty() {
-      return this.kr.isEmpty();
-    }
-addReference(e, t) {
-      const n = new __PRIVATE_DocReference(e, t);
-      this.kr = this.kr.add(n), this.qr = this.qr.add(n);
-    }
-$r(e, t) {
-      e.forEach(((e2) => this.addReference(e2, t)));
-    }
-removeReference(e, t) {
-      this.Wr(new __PRIVATE_DocReference(e, t));
-    }
-    Qr(e, t) {
-      e.forEach(((e2) => this.removeReference(e2, t)));
-    }
-Gr(e) {
-      const t = new DocumentKey(new ResourcePath([])), n = new __PRIVATE_DocReference(t, e), r2 = new __PRIVATE_DocReference(t, e + 1), i = [];
-      return this.qr.forEachInRange([n, r2], ((e2) => {
-        this.Wr(e2), i.push(e2.key);
-      })), i;
-    }
-    zr() {
-      this.kr.forEach(((e) => this.Wr(e)));
-    }
-    Wr(e) {
-      this.kr = this.kr.delete(e), this.qr = this.qr.delete(e);
-    }
-    jr(e) {
-      const t = new DocumentKey(new ResourcePath([])), n = new __PRIVATE_DocReference(t, e), r2 = new __PRIVATE_DocReference(t, e + 1);
-      let i = __PRIVATE_documentKeySet();
-      return this.qr.forEachInRange([n, r2], ((e2) => {
-        i = i.add(e2.key);
-      })), i;
-    }
-    containsKey(e) {
-      const t = new __PRIVATE_DocReference(e, 0), n = this.kr.firstAfterOrEqual(t);
-      return null !== n && e.isEqual(n.key);
-    }
-  }
-  class __PRIVATE_DocReference {
-    constructor(e, t) {
-      this.key = e, this.Jr = t;
-    }
-static Kr(e, t) {
-      return DocumentKey.comparator(e.key, t.key) || __PRIVATE_primitiveComparator(e.Jr, t.Jr);
-    }
-static Ur(e, t) {
-      return __PRIVATE_primitiveComparator(e.Jr, t.Jr) || DocumentKey.comparator(e.key, t.key);
-    }
-  }
-  class __PRIVATE_MemoryMutationQueue {
-    constructor(e, t) {
-      this.indexManager = e, this.referenceDelegate = t,
-this.mutationQueue = [],
-this.Yn = 1,
-this.Hr = new SortedSet(__PRIVATE_DocReference.Kr);
-    }
-    checkEmpty(e) {
-      return PersistencePromise.resolve(0 === this.mutationQueue.length);
-    }
-    addMutationBatch(e, t, n, r2) {
-      const i = this.Yn;
-      this.Yn++, this.mutationQueue.length > 0 && this.mutationQueue[this.mutationQueue.length - 1];
-      const s = new MutationBatch(i, t, n, r2);
-      this.mutationQueue.push(s);
-      for (const t2 of r2) this.Hr = this.Hr.add(new __PRIVATE_DocReference(t2.key, i)), this.indexManager.addToCollectionParentIndex(e, t2.key.path.popLast());
-      return PersistencePromise.resolve(s);
-    }
-    lookupMutationBatch(e, t) {
-      return PersistencePromise.resolve(this.Zr(t));
-    }
-    getNextMutationBatchAfterBatchId(e, t) {
-      const n = t + 1, r2 = this.Xr(n), i = r2 < 0 ? 0 : r2;
-      return PersistencePromise.resolve(this.mutationQueue.length > i ? this.mutationQueue[i] : null);
-    }
-    getHighestUnacknowledgedBatchId() {
-      return PersistencePromise.resolve(0 === this.mutationQueue.length ? q : this.Yn - 1);
-    }
-    getAllMutationBatches(e) {
-      return PersistencePromise.resolve(this.mutationQueue.slice());
-    }
-    getAllMutationBatchesAffectingDocumentKey(e, t) {
-      const n = new __PRIVATE_DocReference(t, 0), r2 = new __PRIVATE_DocReference(t, Number.POSITIVE_INFINITY), i = [];
-      return this.Hr.forEachInRange([n, r2], ((e2) => {
-        const t2 = this.Zr(e2.Jr);
-        i.push(t2);
-      })), PersistencePromise.resolve(i);
-    }
-    getAllMutationBatchesAffectingDocumentKeys(e, t) {
-      let n = new SortedSet(__PRIVATE_primitiveComparator);
-      return t.forEach(((e2) => {
-        const t2 = new __PRIVATE_DocReference(e2, 0), r2 = new __PRIVATE_DocReference(e2, Number.POSITIVE_INFINITY);
-        this.Hr.forEachInRange([t2, r2], ((e3) => {
-          n = n.add(e3.Jr);
-        }));
-      })), PersistencePromise.resolve(this.Yr(n));
-    }
-    getAllMutationBatchesAffectingQuery(e, t) {
-      const n = t.path, r2 = n.length + 1;
-      let i = n;
-      DocumentKey.isDocumentKey(i) || (i = i.child(""));
-      const s = new __PRIVATE_DocReference(new DocumentKey(i), 0);
-      let o = new SortedSet(__PRIVATE_primitiveComparator);
-      return this.Hr.forEachWhile(((e2) => {
-        const t2 = e2.key.path;
-        return !!n.isPrefixOf(t2) &&
-
-
-
-
-(t2.length === r2 && (o = o.add(e2.Jr)), true);
-      }), s), PersistencePromise.resolve(this.Yr(o));
-    }
-    Yr(e) {
-      const t = [];
-      return e.forEach(((e2) => {
-        const n = this.Zr(e2);
-        null !== n && t.push(n);
-      })), t;
-    }
-    removeMutationBatch(e, t) {
-      __PRIVATE_hardAssert(0 === this.ei(t.batchId, "removed"), 55003), this.mutationQueue.shift();
-      let n = this.Hr;
-      return PersistencePromise.forEach(t.mutations, ((r2) => {
-        const i = new __PRIVATE_DocReference(r2.key, t.batchId);
-        return n = n.delete(i), this.referenceDelegate.markPotentiallyOrphaned(e, r2.key);
-      })).next((() => {
-        this.Hr = n;
-      }));
-    }
-    nr(e) {
-    }
-    containsKey(e, t) {
-      const n = new __PRIVATE_DocReference(t, 0), r2 = this.Hr.firstAfterOrEqual(n);
-      return PersistencePromise.resolve(t.isEqual(r2 && r2.key));
-    }
-    performConsistencyCheck(e) {
-      return this.mutationQueue.length, PersistencePromise.resolve();
-    }
-ei(e, t) {
-      return this.Xr(e);
-    }
-Xr(e) {
-      if (0 === this.mutationQueue.length)
-        return 0;
-      return e - this.mutationQueue[0].batchId;
-    }
-Zr(e) {
-      const t = this.Xr(e);
-      if (t < 0 || t >= this.mutationQueue.length) return null;
-      return this.mutationQueue[t];
-    }
-  }
-  class __PRIVATE_MemoryRemoteDocumentCacheImpl {
-constructor(e) {
-      this.ti = e,
-this.docs = (function __PRIVATE_documentEntryMap() {
-        return new SortedMap(DocumentKey.comparator);
-      })(),
-this.size = 0;
-    }
-    setIndexManager(e) {
-      this.indexManager = e;
-    }
-addEntry(e, t) {
-      const n = t.key, r2 = this.docs.get(n), i = r2 ? r2.size : 0, s = this.ti(t);
-      return this.docs = this.docs.insert(n, {
-        document: t.mutableCopy(),
-        size: s
-      }), this.size += s - i, this.indexManager.addToCollectionParentIndex(e, n.path.popLast());
-    }
-removeEntry(e) {
-      const t = this.docs.get(e);
-      t && (this.docs = this.docs.remove(e), this.size -= t.size);
-    }
-    getEntry(e, t) {
-      const n = this.docs.get(t);
-      return PersistencePromise.resolve(n ? n.document.mutableCopy() : MutableDocument.newInvalidDocument(t));
-    }
-    getEntries(e, t) {
-      let n = __PRIVATE_mutableDocumentMap();
-      return t.forEach(((e2) => {
-        const t2 = this.docs.get(e2);
-        n = n.insert(e2, t2 ? t2.document.mutableCopy() : MutableDocument.newInvalidDocument(e2));
-      })), PersistencePromise.resolve(n);
-    }
-    getDocumentsMatchingQuery(e, t, n, r2) {
-      let i = __PRIVATE_mutableDocumentMap();
-      const s = t.path, o = new DocumentKey(s.child("__id-9223372036854775808__")), _ = this.docs.getIteratorFrom(o);
-      for (; _.hasNext(); ) {
-        const { key: e2, value: { document: o2 } } = _.getNext();
-        if (!s.isPrefixOf(e2.path)) break;
-        e2.path.length > s.length + 1 || (__PRIVATE_indexOffsetComparator(__PRIVATE_newIndexOffsetFromDocument(o2), n) <= 0 || (r2.has(o2.key) || __PRIVATE_queryMatches(t, o2)) && (i = i.insert(o2.key, o2.mutableCopy())));
-      }
-      return PersistencePromise.resolve(i);
-    }
-    getAllFromCollectionGroup(e, t, n, r2) {
-      fail(9500);
-    }
-    ni(e, t) {
-      return PersistencePromise.forEach(this.docs, ((e2) => t(e2)));
-    }
-    newChangeBuffer(e) {
-      return new __PRIVATE_MemoryRemoteDocumentChangeBuffer(this);
-    }
-    getSize(e) {
-      return PersistencePromise.resolve(this.size);
-    }
-  }
-  class __PRIVATE_MemoryRemoteDocumentChangeBuffer extends RemoteDocumentChangeBuffer {
-    constructor(e) {
-      super(), this.Mr = e;
-    }
-    applyChanges(e) {
-      const t = [];
-      return this.changes.forEach(((n, r2) => {
-        r2.isValidDocument() ? t.push(this.Mr.addEntry(e, r2)) : this.Mr.removeEntry(n);
-      })), PersistencePromise.waitFor(t);
-    }
-    getFromCache(e, t) {
-      return this.Mr.getEntry(e, t);
-    }
-    getAllFromCache(e, t) {
-      return this.Mr.getEntries(e, t);
-    }
-  }
-  class __PRIVATE_MemoryTargetCache {
-    constructor(e) {
-      this.persistence = e,
-this.ri = new ObjectMap(((e2) => __PRIVATE_canonifyTarget(e2)), __PRIVATE_targetEquals),
-this.lastRemoteSnapshotVersion = SnapshotVersion.min(),
-this.highestTargetId = 0,
-this.ii = 0,
-this.si = new __PRIVATE_ReferenceSet(), this.targetCount = 0, this.oi = __PRIVATE_TargetIdGenerator._r();
-    }
-    forEachTarget(e, t) {
-      return this.ri.forEach(((e2, n) => t(n))), PersistencePromise.resolve();
-    }
-    getLastRemoteSnapshotVersion(e) {
-      return PersistencePromise.resolve(this.lastRemoteSnapshotVersion);
-    }
-    getHighestSequenceNumber(e) {
-      return PersistencePromise.resolve(this.ii);
-    }
-    allocateTargetId(e) {
-      return this.highestTargetId = this.oi.next(), PersistencePromise.resolve(this.highestTargetId);
-    }
-    setTargetsMetadata(e, t, n) {
-      return n && (this.lastRemoteSnapshotVersion = n), t > this.ii && (this.ii = t), PersistencePromise.resolve();
-    }
-    lr(e) {
-      this.ri.set(e.target, e);
-      const t = e.targetId;
-      t > this.highestTargetId && (this.oi = new __PRIVATE_TargetIdGenerator(t), this.highestTargetId = t), e.sequenceNumber > this.ii && (this.ii = e.sequenceNumber);
-    }
-    addTargetData(e, t) {
-      return this.lr(t), this.targetCount += 1, PersistencePromise.resolve();
-    }
-    updateTargetData(e, t) {
-      return this.lr(t), PersistencePromise.resolve();
-    }
-    removeTargetData(e, t) {
-      return this.ri.delete(t.target), this.si.Gr(t.targetId), this.targetCount -= 1, PersistencePromise.resolve();
-    }
-    removeTargets(e, t, n) {
-      let r2 = 0;
-      const i = [];
-      return this.ri.forEach(((s, o) => {
-        o.sequenceNumber <= t && null === n.get(o.targetId) && (this.ri.delete(s), i.push(this.removeMatchingKeysForTargetId(e, o.targetId)), r2++);
-      })), PersistencePromise.waitFor(i).next((() => r2));
-    }
-    getTargetCount(e) {
-      return PersistencePromise.resolve(this.targetCount);
-    }
-    getTargetData(e, t) {
-      const n = this.ri.get(t) || null;
-      return PersistencePromise.resolve(n);
-    }
-    addMatchingKeys(e, t, n) {
-      return this.si.$r(t, n), PersistencePromise.resolve();
-    }
-    removeMatchingKeys(e, t, n) {
-      this.si.Qr(t, n);
-      const r2 = this.persistence.referenceDelegate, i = [];
-      return r2 && t.forEach(((t2) => {
-        i.push(r2.markPotentiallyOrphaned(e, t2));
-      })), PersistencePromise.waitFor(i);
-    }
-    removeMatchingKeysForTargetId(e, t) {
-      return this.si.Gr(t), PersistencePromise.resolve();
-    }
-    getMatchingKeysForTargetId(e, t) {
-      const n = this.si.jr(t);
-      return PersistencePromise.resolve(n);
-    }
-    containsKey(e, t) {
-      return PersistencePromise.resolve(this.si.containsKey(t));
-    }
-  }
-  class __PRIVATE_MemoryPersistence {
-constructor(e, t) {
-      this._i = {}, this.overlays = {}, this.ai = new __PRIVATE_ListenSequence(0), this.ui = false, this.ui = true, this.ci = new __PRIVATE_MemoryGlobalsCache(), this.referenceDelegate = e(this), this.li = new __PRIVATE_MemoryTargetCache(this);
-      this.indexManager = new __PRIVATE_MemoryIndexManager(), this.remoteDocumentCache = (function __PRIVATE_newMemoryRemoteDocumentCache(e2) {
-        return new __PRIVATE_MemoryRemoteDocumentCacheImpl(e2);
-      })(((e2) => this.referenceDelegate.hi(e2))), this.serializer = new __PRIVATE_LocalSerializer(t), this.Pi = new __PRIVATE_MemoryBundleCache(this.serializer);
-    }
-    start() {
-      return Promise.resolve();
-    }
-    shutdown() {
-      return this.ui = false, Promise.resolve();
-    }
-    get started() {
-      return this.ui;
-    }
-    setDatabaseDeletedListener() {
-    }
-    setNetworkEnabled() {
-    }
-    getIndexManager(e) {
-      return this.indexManager;
-    }
-    getDocumentOverlayCache(e) {
-      let t = this.overlays[e.toKey()];
-      return t || (t = new __PRIVATE_MemoryDocumentOverlayCache(), this.overlays[e.toKey()] = t), t;
-    }
-    getMutationQueue(e, t) {
-      let n = this._i[e.toKey()];
-      return n || (n = new __PRIVATE_MemoryMutationQueue(t, this.referenceDelegate), this._i[e.toKey()] = n), n;
-    }
-    getGlobalsCache() {
-      return this.ci;
-    }
-    getTargetCache() {
-      return this.li;
-    }
-    getRemoteDocumentCache() {
-      return this.remoteDocumentCache;
-    }
-    getBundleCache() {
-      return this.Pi;
-    }
-    runTransaction(e, t, n) {
-      __PRIVATE_logDebug("MemoryPersistence", "Starting transaction:", e);
-      const r2 = new __PRIVATE_MemoryTransaction(this.ai.next());
-      return this.referenceDelegate.Ti(), n(r2).next(((e2) => this.referenceDelegate.Ii(r2).next((() => e2)))).toPromise().then(((e2) => (r2.raiseOnCommittedEvent(), e2)));
-    }
-    Ei(e, t) {
-      return PersistencePromise.or(Object.values(this._i).map(((n) => () => n.containsKey(e, t))));
-    }
-  }
-  class __PRIVATE_MemoryTransaction extends PersistenceTransaction {
-    constructor(e) {
-      super(), this.currentSequenceNumber = e;
-    }
-  }
-  class __PRIVATE_MemoryEagerDelegate {
-    constructor(e) {
-      this.persistence = e,
-this.Ri = new __PRIVATE_ReferenceSet(),
-this.Ai = null;
-    }
-    static Vi(e) {
-      return new __PRIVATE_MemoryEagerDelegate(e);
-    }
-    get di() {
-      if (this.Ai) return this.Ai;
-      throw fail(60996);
-    }
-    addReference(e, t, n) {
-      return this.Ri.addReference(n, t), this.di.delete(n.toString()), PersistencePromise.resolve();
-    }
-    removeReference(e, t, n) {
-      return this.Ri.removeReference(n, t), this.di.add(n.toString()), PersistencePromise.resolve();
-    }
-    markPotentiallyOrphaned(e, t) {
-      return this.di.add(t.toString()), PersistencePromise.resolve();
-    }
-    removeTarget(e, t) {
-      this.Ri.Gr(t.targetId).forEach(((e2) => this.di.add(e2.toString())));
-      const n = this.persistence.getTargetCache();
-      return n.getMatchingKeysForTargetId(e, t.targetId).next(((e2) => {
-        e2.forEach(((e3) => this.di.add(e3.toString())));
-      })).next((() => n.removeTargetData(e, t)));
-    }
-    Ti() {
-      this.Ai = new Set();
-    }
-    Ii(e) {
-      const t = this.persistence.getRemoteDocumentCache().newChangeBuffer();
-      return PersistencePromise.forEach(this.di, ((n) => {
-        const r2 = DocumentKey.fromPath(n);
-        return this.mi(e, r2).next(((e2) => {
-          e2 || t.removeEntry(r2, SnapshotVersion.min());
-        }));
-      })).next((() => (this.Ai = null, t.apply(e))));
-    }
-    updateLimboDocument(e, t) {
-      return this.mi(e, t).next(((e2) => {
-        e2 ? this.di.delete(t.toString()) : this.di.add(t.toString());
-      }));
-    }
-    hi(e) {
-      return 0;
-    }
-    mi(e, t) {
-      return PersistencePromise.or([() => PersistencePromise.resolve(this.Ri.containsKey(t)), () => this.persistence.getTargetCache().containsKey(e, t), () => this.persistence.Ei(e, t)]);
-    }
-  }
-  class __PRIVATE_MemoryLruDelegate {
-    constructor(e, t) {
-      this.persistence = e, this.fi = new ObjectMap(((e2) => __PRIVATE_encodeResourcePath(e2.path)), ((e2, t2) => e2.isEqual(t2))), this.garbageCollector = __PRIVATE_newLruGarbageCollector(this, t);
-    }
-    static Vi(e, t) {
-      return new __PRIVATE_MemoryLruDelegate(e, t);
-    }
-
-Ti() {
-    }
-    Ii(e) {
-      return PersistencePromise.resolve();
-    }
-    forEachTarget(e, t) {
-      return this.persistence.getTargetCache().forEachTarget(e, t);
-    }
-    dr(e) {
-      const t = this.pr(e);
-      return this.persistence.getTargetCache().getTargetCount(e).next(((e2) => t.next(((t2) => e2 + t2))));
-    }
-    pr(e) {
-      let t = 0;
-      return this.mr(e, ((e2) => {
-        t++;
-      })).next((() => t));
-    }
-    mr(e, t) {
-      return PersistencePromise.forEach(this.fi, ((n, r2) => this.wr(e, n, r2).next(((e2) => e2 ? PersistencePromise.resolve() : t(r2)))));
-    }
-    removeTargets(e, t, n) {
-      return this.persistence.getTargetCache().removeTargets(e, t, n);
-    }
-    removeOrphanedDocuments(e, t) {
-      let n = 0;
-      const r2 = this.persistence.getRemoteDocumentCache(), i = r2.newChangeBuffer();
-      return r2.ni(e, ((r3) => this.wr(e, r3, t).next(((e2) => {
-        e2 || (n++, i.removeEntry(r3, SnapshotVersion.min()));
-      })))).next((() => i.apply(e))).next((() => n));
-    }
-    markPotentiallyOrphaned(e, t) {
-      return this.fi.set(t, e.currentSequenceNumber), PersistencePromise.resolve();
-    }
-    removeTarget(e, t) {
-      const n = t.withSequenceNumber(e.currentSequenceNumber);
-      return this.persistence.getTargetCache().updateTargetData(e, n);
-    }
-    addReference(e, t, n) {
-      return this.fi.set(n, e.currentSequenceNumber), PersistencePromise.resolve();
-    }
-    removeReference(e, t, n) {
-      return this.fi.set(n, e.currentSequenceNumber), PersistencePromise.resolve();
-    }
-    updateLimboDocument(e, t) {
-      return this.fi.set(t, e.currentSequenceNumber), PersistencePromise.resolve();
-    }
-    hi(e) {
-      let t = e.key.toString().length;
-      return e.isFoundDocument() && (t += __PRIVATE_estimateByteSize(e.data.value)), t;
-    }
-    wr(e, t, n) {
-      return PersistencePromise.or([() => this.persistence.Ei(e, t), () => this.persistence.getTargetCache().containsKey(e, t), () => {
-        const e2 = this.fi.get(t);
-        return PersistencePromise.resolve(void 0 !== e2 && e2 > n);
-      }]);
-    }
-    getCacheSize(e) {
-      return this.persistence.getRemoteDocumentCache().getSize(e);
-    }
-  }
-  class __PRIVATE_LocalViewChanges {
-    constructor(e, t, n, r2) {
-      this.targetId = e, this.fromCache = t, this.Ts = n, this.Is = r2;
-    }
-    static Es(e, t) {
-      let n = __PRIVATE_documentKeySet(), r2 = __PRIVATE_documentKeySet();
-      for (const e2 of t.docChanges) switch (e2.type) {
-        case 0:
-          n = n.add(e2.doc.key);
-          break;
-        case 1:
-          r2 = r2.add(e2.doc.key);
-      }
-      return new __PRIVATE_LocalViewChanges(e, t.fromCache, n, r2);
-    }
-  }
-  class QueryContext {
-    constructor() {
-      this._documentReadCount = 0;
-    }
-    get documentReadCount() {
-      return this._documentReadCount;
-    }
-    incrementDocumentReadCount(e) {
-      this._documentReadCount += e;
-    }
-  }
-  class __PRIVATE_QueryEngine {
-    constructor() {
-      this.Rs = false, this.As = false,
-this.Vs = 100, this.ds =
-(function __PRIVATE_getDefaultRelativeIndexReadCostPerDocument() {
-        return isSafari() ? 8 : __PRIVATE_getAndroidVersion(getUA()) > 0 ? 6 : 4;
-      })();
-    }
-initialize(e, t) {
-      this.fs = e, this.indexManager = t, this.Rs = true;
-    }
-getDocumentsMatchingQuery(e, t, n, r2) {
-      const i = {
-        result: null
-      };
-      return this.gs(e, t).next(((e2) => {
-        i.result = e2;
-      })).next((() => {
-        if (!i.result) return this.ps(e, t, r2, n).next(((e2) => {
-          i.result = e2;
-        }));
-      })).next((() => {
-        if (i.result) return;
-        const n2 = new QueryContext();
-        return this.ys(e, t, n2).next(((r3) => {
-          if (i.result = r3, this.As) return this.ws(e, t, n2, r3.size);
-        }));
-      })).next((() => i.result));
-    }
-    ws(e, t, n, r2) {
-      return n.documentReadCount < this.Vs ? (__PRIVATE_getLogLevel() <= LogLevel.DEBUG && __PRIVATE_logDebug("QueryEngine", "SDK will not create cache indexes for query:", __PRIVATE_stringifyQuery(t), "since it only creates cache indexes for collection contains", "more than or equal to", this.Vs, "documents"), PersistencePromise.resolve()) : (__PRIVATE_getLogLevel() <= LogLevel.DEBUG && __PRIVATE_logDebug("QueryEngine", "Query:", __PRIVATE_stringifyQuery(t), "scans", n.documentReadCount, "local documents and returns", r2, "documents as results."), n.documentReadCount > this.ds * r2 ? (__PRIVATE_getLogLevel() <= LogLevel.DEBUG && __PRIVATE_logDebug("QueryEngine", "The SDK decides to create cache indexes for query:", __PRIVATE_stringifyQuery(t), "as using cache indexes may help improve performance."), this.indexManager.createTargetIndexes(e, __PRIVATE_queryToTarget(t))) : PersistencePromise.resolve());
-    }
-gs(e, t) {
-      if (__PRIVATE_queryMatchesAllDocuments(t))
-        return PersistencePromise.resolve(null);
-      let n = __PRIVATE_queryToTarget(t);
-      return this.indexManager.getIndexType(e, n).next(((r2) => 0 === r2 ? null : (null !== t.limit && 1 === r2 &&
-
-
-
-
-
-
-(t = __PRIVATE_queryWithLimit(
-        t,
-        null,
-        "F"
-), n = __PRIVATE_queryToTarget(t)), this.indexManager.getDocumentsMatchingTarget(e, n).next(((r3) => {
-        const i = __PRIVATE_documentKeySet(...r3);
-        return this.fs.getDocuments(e, i).next(((r4) => this.indexManager.getMinOffset(e, n).next(((n2) => {
-          const s = this.Ss(t, r4);
-          return this.bs(t, s, i, n2.readTime) ? this.gs(e, __PRIVATE_queryWithLimit(
-            t,
-            null,
-            "F"
-)) : this.Ds(e, s, t, n2);
-        }))));
-      })))));
-    }
-ps(e, t, n, r2) {
-      return __PRIVATE_queryMatchesAllDocuments(t) || r2.isEqual(SnapshotVersion.min()) ? PersistencePromise.resolve(null) : this.fs.getDocuments(e, n).next(((i) => {
-        const s = this.Ss(t, i);
-        return this.bs(t, s, n, r2) ? PersistencePromise.resolve(null) : (__PRIVATE_getLogLevel() <= LogLevel.DEBUG && __PRIVATE_logDebug("QueryEngine", "Re-using previous result from %s to execute query: %s", r2.toString(), __PRIVATE_stringifyQuery(t)), this.Ds(e, s, t, __PRIVATE_newIndexOffsetSuccessorFromReadTime(r2, N)).next(((e2) => e2)));
-      }));
-    }
-Ss(e, t) {
-      let n = new SortedSet(__PRIVATE_newQueryComparator(e));
-      return t.forEach(((t2, r2) => {
-        __PRIVATE_queryMatches(e, r2) && (n = n.add(r2));
-      })), n;
-    }
-bs(e, t, n, r2) {
-      if (null === e.limit)
-        return false;
-      if (n.size !== t.size)
-        return true;
-      const i = "F" === e.limitType ? t.last() : t.first();
-      return !!i && (i.hasPendingWrites || i.version.compareTo(r2) > 0);
-    }
-    ys(e, t, n) {
-      return __PRIVATE_getLogLevel() <= LogLevel.DEBUG && __PRIVATE_logDebug("QueryEngine", "Using full collection scan to execute query:", __PRIVATE_stringifyQuery(t)), this.fs.getDocumentsMatchingQuery(e, t, IndexOffset.min(), n);
-    }
-Ds(e, t, n, r2) {
-      return this.fs.getDocumentsMatchingQuery(e, n, r2).next(((e2) => (
-(t.forEach(((t2) => {
-          e2 = e2.insert(t2.key, t2);
-        })), e2)
-      )));
-    }
-  }
-  const Nt = "LocalStore";
-  class __PRIVATE_LocalStoreImpl {
-    constructor(e, t, n, r2) {
-      this.persistence = e, this.Cs = t, this.serializer = r2,
-this.vs = new SortedMap(__PRIVATE_primitiveComparator),
-
-this.Fs = new ObjectMap(((e2) => __PRIVATE_canonifyTarget(e2)), __PRIVATE_targetEquals),
-this.Ms = new Map(), this.xs = e.getRemoteDocumentCache(), this.li = e.getTargetCache(), this.Pi = e.getBundleCache(), this.Os(n);
-    }
-    Os(e) {
-      this.documentOverlayCache = this.persistence.getDocumentOverlayCache(e), this.indexManager = this.persistence.getIndexManager(e), this.mutationQueue = this.persistence.getMutationQueue(e, this.indexManager), this.localDocuments = new LocalDocumentsView(this.xs, this.mutationQueue, this.documentOverlayCache, this.indexManager), this.xs.setIndexManager(this.indexManager), this.Cs.initialize(this.localDocuments, this.indexManager);
-    }
-    collectGarbage(e) {
-      return this.persistence.runTransaction("Collect garbage", "readwrite-primary", ((t) => e.collect(t, this.vs)));
-    }
-  }
-  function __PRIVATE_newLocalStore(e, t, n, r2) {
-    return new __PRIVATE_LocalStoreImpl(e, t, n, r2);
-  }
-  async function __PRIVATE_localStoreHandleUserChange(e, t) {
-    const n = __PRIVATE_debugCast(e);
-    return await n.persistence.runTransaction("Handle user change", "readonly", ((e2) => {
-      let r2;
-      return n.mutationQueue.getAllMutationBatches(e2).next(((i) => (r2 = i, n.Os(t), n.mutationQueue.getAllMutationBatches(e2)))).next(((t2) => {
-        const i = [], s = [];
-        let o = __PRIVATE_documentKeySet();
-        for (const e3 of r2) {
-          i.push(e3.batchId);
-          for (const t3 of e3.mutations) o = o.add(t3.key);
-        }
-        for (const e3 of t2) {
-          s.push(e3.batchId);
-          for (const t3 of e3.mutations) o = o.add(t3.key);
-        }
-        return n.localDocuments.getDocuments(e2, o).next(((e3) => ({
-          Ns: e3,
-          removedBatchIds: i,
-          addedBatchIds: s
-        })));
-      }));
-    }));
-  }
-  function __PRIVATE_localStoreAcknowledgeBatch(e, t) {
-    const n = __PRIVATE_debugCast(e);
-    return n.persistence.runTransaction("Acknowledge batch", "readwrite-primary", ((e2) => {
-      const r2 = t.batch.keys(), i = n.xs.newChangeBuffer({
-        trackRemovals: true
-      });
-      return (function __PRIVATE_applyWriteToRemoteDocuments(e3, t2, n2, r3) {
-        const i2 = n2.batch, s = i2.keys();
-        let o = PersistencePromise.resolve();
-        return s.forEach(((e4) => {
-          o = o.next((() => r3.getEntry(t2, e4))).next(((t3) => {
-            const s2 = n2.docVersions.get(e4);
-            __PRIVATE_hardAssert(null !== s2, 48541), t3.version.compareTo(s2) < 0 && (i2.applyToRemoteDocument(t3, n2), t3.isValidDocument() &&
-
-
-(t3.setReadTime(n2.commitVersion), r3.addEntry(t3)));
-          }));
-        })), o.next((() => e3.mutationQueue.removeMutationBatch(t2, i2)));
-      })(n, e2, t, i).next((() => i.apply(e2))).next((() => n.mutationQueue.performConsistencyCheck(e2))).next((() => n.documentOverlayCache.removeOverlaysForBatchId(e2, r2, t.batch.batchId))).next((() => n.localDocuments.recalculateAndSaveOverlaysForDocumentKeys(e2, (function __PRIVATE_getKeysWithTransformResults(e3) {
-        let t2 = __PRIVATE_documentKeySet();
-        for (let n2 = 0; n2 < e3.mutationResults.length; ++n2) {
-          e3.mutationResults[n2].transformResults.length > 0 && (t2 = t2.add(e3.batch.mutations[n2].key));
-        }
-        return t2;
-      })(t)))).next((() => n.localDocuments.getDocuments(e2, r2)));
-    }));
-  }
-  function __PRIVATE_localStoreGetLastRemoteSnapshotVersion(e) {
-    const t = __PRIVATE_debugCast(e);
-    return t.persistence.runTransaction("Get last remote snapshot version", "readonly", ((e2) => t.li.getLastRemoteSnapshotVersion(e2)));
-  }
-  function __PRIVATE_localStoreGetNextMutationBatch(e, t) {
-    const n = __PRIVATE_debugCast(e);
-    return n.persistence.runTransaction("Get next mutation batch", "readonly", ((e2) => (void 0 === t && (t = q), n.mutationQueue.getNextMutationBatchAfterBatchId(e2, t))));
-  }
-  class __PRIVATE_LocalClientState {
-    constructor() {
-      this.activeTargetIds = __PRIVATE_targetIdSet();
-    }
-    Qs(e) {
-      this.activeTargetIds = this.activeTargetIds.add(e);
-    }
-    Gs(e) {
-      this.activeTargetIds = this.activeTargetIds.delete(e);
-    }
-Ws() {
-      const e = {
-        activeTargetIds: this.activeTargetIds.toArray(),
-        updateTimeMs: Date.now()
-      };
-      return JSON.stringify(e);
-    }
-  }
-  class __PRIVATE_MemorySharedClientState {
-    constructor() {
-      this.vo = new __PRIVATE_LocalClientState(), this.Fo = {}, this.onlineStateHandler = null, this.sequenceNumberHandler = null;
-    }
-    addPendingMutation(e) {
-    }
-    updateMutationState(e, t, n) {
-    }
-    addLocalQueryTarget(e, t = true) {
-      return t && this.vo.Qs(e), this.Fo[e] || "not-current";
-    }
-    updateQueryState(e, t, n) {
-      this.Fo[e] = t;
-    }
-    removeLocalQueryTarget(e) {
-      this.vo.Gs(e);
-    }
-    isLocalQueryTarget(e) {
-      return this.vo.activeTargetIds.has(e);
-    }
-    clearQueryState(e) {
-      delete this.Fo[e];
-    }
-    getAllActiveQueryTargets() {
-      return this.vo.activeTargetIds;
-    }
-    isActiveQueryTarget(e) {
-      return this.vo.activeTargetIds.has(e);
-    }
-    start() {
-      return this.vo = new __PRIVATE_LocalClientState(), Promise.resolve();
-    }
-    handleUserChange(e, t, n) {
-    }
-    setOnlineState(e) {
-    }
-    shutdown() {
-    }
-    writeSequenceNumber(e) {
-    }
-    notifyBundleLoaded(e) {
-    }
-  }
-  class __PRIVATE_NoopConnectivityMonitor {
-    Mo(e) {
-    }
-    shutdown() {
-    }
-  }
-  const Ut$1 = "ConnectivityMonitor";
-  class __PRIVATE_BrowserConnectivityMonitor {
-    constructor() {
-      this.xo = () => this.Oo(), this.No = () => this.Bo(), this.Lo = [], this.ko();
-    }
-    Mo(e) {
-      this.Lo.push(e);
-    }
-    shutdown() {
-      window.removeEventListener("online", this.xo), window.removeEventListener("offline", this.No);
-    }
-    ko() {
-      window.addEventListener("online", this.xo), window.addEventListener("offline", this.No);
-    }
-    Oo() {
-      __PRIVATE_logDebug(Ut$1, "Network connectivity changed: AVAILABLE");
-      for (const e of this.Lo) e(
-        0
-);
-    }
-    Bo() {
-      __PRIVATE_logDebug(Ut$1, "Network connectivity changed: UNAVAILABLE");
-      for (const e of this.Lo) e(
-        1
-);
-    }
-
-
-static v() {
-      return "undefined" != typeof window && void 0 !== window.addEventListener && void 0 !== window.removeEventListener;
-    }
-  }
-  let $t = null;
-  function __PRIVATE_generateUniqueDebugId() {
-    return null === $t ? $t = (function __PRIVATE_generateInitialUniqueDebugId() {
-      return 268435456 + Math.round(2147483648 * Math.random());
-    })() : $t++, "0x" + $t.toString(16);
-  }
-  const Wt = "RestConnection", Qt = {
-    BatchGetDocuments: "batchGet",
-    Commit: "commit",
-    RunQuery: "runQuery",
-    RunAggregationQuery: "runAggregationQuery",
-    ExecutePipeline: "executePipeline"
-  };
-  class __PRIVATE_RestConnection {
-    get Ko() {
-      return false;
-    }
-    constructor(e) {
-      this.databaseInfo = e, this.databaseId = e.databaseId;
-      const t = e.ssl ? "https" : "http", n = encodeURIComponent(this.databaseId.projectId), r2 = encodeURIComponent(this.databaseId.database);
-      this.qo = t + "://" + e.host, this.Uo = `projects/${n}/databases/${r2}`, this.$o = this.databaseId.database === it ? `project_id=${n}` : `project_id=${n}&database_id=${r2}`;
-    }
-    Wo(e, t, n, r2, i) {
-      const s = __PRIVATE_generateUniqueDebugId(), o = this.Qo(e, t.toUriEncodedString());
-      __PRIVATE_logDebug(Wt, `Sending RPC '${e}' ${s}:`, o, n);
-      const _ = {
-        "google-cloud-resource-prefix": this.Uo,
-        "x-goog-request-params": this.$o
-      };
-      this.Go(_, r2, i);
-      const { host: a } = new URL(o), c = isCloudWorkstation(a);
-      return this.zo(e, o, _, n, c).then(((t2) => (__PRIVATE_logDebug(Wt, `Received RPC '${e}' ${s}: `, t2), t2)), ((t2) => {
-        throw __PRIVATE_logWarn(Wt, `RPC '${e}' ${s} failed with error: `, t2, "url: ", o, "request:", n), t2;
-      }));
-    }
-    jo(e, t, n, r2, i, s) {
-      return this.Wo(e, t, n, r2, i);
-    }
-Go(e, t, n) {
-      e["X-Goog-Api-Client"] =
-
-(function __PRIVATE_getGoogApiClientValue() {
-        return "gl-js/ fire/" + b;
-      })(),
-
-
-
-e["Content-Type"] = "text/plain", this.databaseInfo.appId && (e["X-Firebase-GMPID"] = this.databaseInfo.appId), t && t.headers.forEach(((t2, n2) => e[n2] = t2)), n && n.headers.forEach(((t2, n2) => e[n2] = t2));
-    }
-    Qo(e, t) {
-      const n = Qt[e];
-      let r2 = `${this.qo}/v1/${t}:${n}`;
-      return this.databaseInfo.apiKey && (r2 = `${r2}?key=${encodeURIComponent(this.databaseInfo.apiKey)}`), r2;
-    }
-terminate() {
-    }
-  }
-  class __PRIVATE_StreamBridge {
-    constructor(e) {
-      this.Jo = e.Jo, this.Ho = e.Ho;
-    }
-    Zo(e) {
-      this.Xo = e;
-    }
-    Yo(e) {
-      this.e_ = e;
-    }
-    t_(e) {
-      this.n_ = e;
-    }
-    onMessage(e) {
-      this.r_ = e;
-    }
-    close() {
-      this.Ho();
-    }
-    send(e) {
-      this.Jo(e);
-    }
-    i_() {
-      this.Xo();
-    }
-    s_() {
-      this.e_();
-    }
-    o_(e) {
-      this.n_(e);
-    }
-    __(e) {
-      this.r_(e);
-    }
-  }
-  const Gt = "WebChannelConnection", __PRIVATE_unguardedEventListen = (e, t, n) => {
-    e.listen(t, ((e2) => {
-      try {
-        n(e2);
-      } catch (e3) {
-        setTimeout((() => {
-          throw e3;
-        }), 0);
-      }
-    }));
-  };
-  class __PRIVATE_WebChannelConnection extends __PRIVATE_RestConnection {
-    constructor(e) {
-      super(e),
-this.a_ = [], this.forceLongPolling = e.forceLongPolling, this.autoDetectLongPolling = e.autoDetectLongPolling, this.useFetchStreams = e.useFetchStreams, this.longPollingOptions = e.longPollingOptions;
-    }
-static u_() {
-      if (!__PRIVATE_WebChannelConnection.c_) {
-        const e = getStatEventTarget();
-        __PRIVATE_unguardedEventListen(e, Event$1.STAT_EVENT, ((e2) => {
-          e2.stat === Stat.PROXY ? __PRIVATE_logDebug(Gt, "STAT_EVENT: detected buffering proxy") : e2.stat === Stat.NOPROXY && __PRIVATE_logDebug(Gt, "STAT_EVENT: detected no buffering proxy");
-        })), __PRIVATE_WebChannelConnection.c_ = true;
-      }
-    }
-    zo(e, t, n, r2, i) {
-      const s = __PRIVATE_generateUniqueDebugId();
-      return new Promise(((i2, o) => {
-        const _ = new XhrIo();
-        _.setWithCredentials(true), _.listenOnce(EventType.COMPLETE, (() => {
-          try {
-            switch (_.getLastErrorCode()) {
-              case ErrorCode.NO_ERROR:
-                const t2 = _.getResponseJson();
-                __PRIVATE_logDebug(Gt, `XHR for RPC '${e}' ${s} received:`, JSON.stringify(t2)), i2(t2);
-                break;
-              case ErrorCode.TIMEOUT:
-                __PRIVATE_logDebug(Gt, `RPC '${e}' ${s} timed out`), o(new FirestoreError(D.DEADLINE_EXCEEDED, "Request time out"));
-                break;
-              case ErrorCode.HTTP_ERROR:
-                const n2 = _.getStatus();
-                if (__PRIVATE_logDebug(Gt, `RPC '${e}' ${s} failed with status:`, n2, "response text:", _.getResponseText()), n2 > 0) {
-                  let e2 = _.getResponseJson();
-                  Array.isArray(e2) && (e2 = e2[0]);
-                  const t3 = e2?.error;
-                  if (t3 && t3.status && t3.message) {
-                    const e3 = (function __PRIVATE_mapCodeFromHttpResponseErrorStatus(e4) {
-                      const t4 = e4.toLowerCase().replace(/_/g, "-");
-                      return Object.values(D).indexOf(t4) >= 0 ? t4 : D.UNKNOWN;
-                    })(t3.status);
-                    o(new FirestoreError(e3, t3.message));
-                  } else o(new FirestoreError(D.UNKNOWN, "Server responded with status " + _.getStatus()));
-                } else
-                  o(new FirestoreError(D.UNAVAILABLE, "Connection failed."));
-                break;
-              default:
-                fail(9055, {
-                  l_: e,
-                  streamId: s,
-                  h_: _.getLastErrorCode(),
-                  P_: _.getLastError()
-                });
-            }
-          } finally {
-            __PRIVATE_logDebug(Gt, `RPC '${e}' ${s} completed.`);
-          }
-        }));
-        const a = JSON.stringify(r2);
-        __PRIVATE_logDebug(Gt, `RPC '${e}' ${s} sending request:`, r2), _.send(t, "POST", a, n, 15);
-      }));
-    }
-    T_(e, t, n) {
-      const r2 = __PRIVATE_generateUniqueDebugId(), i = [this.qo, "/", "google.firestore.v1.Firestore", "/", e, "/channel"], s = this.createWebChannelTransport(), o = {
-
-httpSessionIdParam: "gsessionid",
-        initMessageHeaders: {},
-        messageUrlParams: {
-
-database: `projects/${this.databaseId.projectId}/databases/${this.databaseId.database}`
-        },
-        sendRawJson: true,
-        supportsCrossDomainXhr: true,
-        internalChannelParams: {
-
-
-
-
-
-forwardChannelRequestTimeoutMs: 6e5
-        },
-        forceLongPolling: this.forceLongPolling,
-        detectBufferingProxy: this.autoDetectLongPolling
-      }, _ = this.longPollingOptions.timeoutSeconds;
-      void 0 !== _ && (o.longPollingTimeout = Math.round(1e3 * _)), this.useFetchStreams && (o.useFetchStreams = true), this.Go(o.initMessageHeaders, t, n),
-
-
-
-
-
-
-
-
-o.encodeInitMessageHeaders = true;
-      const a = i.join("");
-      __PRIVATE_logDebug(Gt, `Creating RPC '${e}' stream ${r2}: ${a}`, o);
-      const u = s.createWebChannel(a, o);
-      this.I_(u);
-      let c = false, l = false;
-      const h = new __PRIVATE_StreamBridge({
-        Jo: (t2) => {
-          l ? __PRIVATE_logDebug(Gt, `Not sending because RPC '${e}' stream ${r2} is closed:`, t2) : (c || (__PRIVATE_logDebug(Gt, `Opening RPC '${e}' stream ${r2} transport.`), u.open(), c = true), __PRIVATE_logDebug(Gt, `RPC '${e}' stream ${r2} sending:`, t2), u.send(t2));
-        },
-        Ho: () => u.close()
-      });
-      return __PRIVATE_unguardedEventListen(u, WebChannel.EventType.OPEN, (() => {
-        l || (__PRIVATE_logDebug(Gt, `RPC '${e}' stream ${r2} transport opened.`), h.i_());
-      })), __PRIVATE_unguardedEventListen(u, WebChannel.EventType.CLOSE, (() => {
-        l || (l = true, __PRIVATE_logDebug(Gt, `RPC '${e}' stream ${r2} transport closed`), h.o_(), this.E_(u));
-      })), __PRIVATE_unguardedEventListen(u, WebChannel.EventType.ERROR, ((t2) => {
-        l || (l = true, __PRIVATE_logWarn(Gt, `RPC '${e}' stream ${r2} transport errored. Name:`, t2.name, "Message:", t2.message), h.o_(new FirestoreError(D.UNAVAILABLE, "The operation could not be completed")));
-      })), __PRIVATE_unguardedEventListen(u, WebChannel.EventType.MESSAGE, ((t2) => {
-        if (!l) {
-          const n2 = t2.data[0];
-          __PRIVATE_hardAssert(!!n2, 16349);
-          const i2 = n2, s2 = i2?.error || i2[0]?.error;
-          if (s2) {
-            __PRIVATE_logDebug(Gt, `RPC '${e}' stream ${r2} received error:`, s2);
-            const t3 = s2.status;
-            let n3 = (
-(function __PRIVATE_mapCodeFromRpcStatus(e2) {
-                const t4 = Rt[e2];
-                if (void 0 !== t4) return __PRIVATE_mapCodeFromRpcCode(t4);
-              })(t3)
-            ), i3 = s2.message;
-            "NOT_FOUND" === t3 && i3.includes("database") && i3.includes("does not exist") && i3.includes(this.databaseId.database) && __PRIVATE_logWarn(`Database '${this.databaseId.database}' not found. Please check your project configuration.`), void 0 === n3 && (n3 = D.INTERNAL, i3 = "Unknown error status: " + t3 + " with message " + s2.message),
-l = true, h.o_(new FirestoreError(n3, i3)), u.close();
-          } else __PRIVATE_logDebug(Gt, `RPC '${e}' stream ${r2} received:`, n2), h.__(n2);
-        }
-      })),
-__PRIVATE_WebChannelConnection.u_(), setTimeout((() => {
-        h.s_();
-      }), 0), h;
-    }
-terminate() {
-      this.a_.forEach(((e) => e.close())), this.a_ = [];
-    }
-I_(e) {
-      this.a_.push(e);
-    }
-E_(e) {
-      this.a_ = this.a_.filter(((t) => t === e));
-    }
-Go(e, t, n) {
-      super.Go(e, t, n),
-this.databaseInfo.apiKey && (e["x-goog-api-key"] = this.databaseInfo.apiKey);
-    }
-createWebChannelTransport() {
-      return createWebChannelTransport();
-    }
-  }
-  function __PRIVATE_newConnection(e) {
-    return new __PRIVATE_WebChannelConnection(e);
-  }
-  function getDocument() {
-    return "undefined" != typeof document ? document : null;
-  }
-  function __PRIVATE_newSerializer(e) {
-    return new JsonProtoSerializer(
-      e,
-true
-    );
-  }
-  __PRIVATE_WebChannelConnection.c_ = false;
-  class __PRIVATE_ExponentialBackoff {
-    constructor(e, t, n = 1e3, r2 = 1.5, i = 6e4) {
-      this.Ci = e, this.timerId = t, this.R_ = n, this.A_ = r2, this.V_ = i, this.d_ = 0, this.m_ = null,
-this.f_ = Date.now(), this.reset();
-    }
-reset() {
-      this.d_ = 0;
-    }
-g_() {
-      this.d_ = this.V_;
-    }
-p_(e) {
-      this.cancel();
-      const t = Math.floor(this.d_ + this.y_()), n = Math.max(0, Date.now() - this.f_), r2 = Math.max(0, t - n);
-      r2 > 0 && __PRIVATE_logDebug("ExponentialBackoff", `Backing off for ${r2} ms (base delay: ${this.d_} ms, delay with jitter: ${t} ms, last attempt: ${n} ms ago)`), this.m_ = this.Ci.enqueueAfterDelay(this.timerId, r2, (() => (this.f_ = Date.now(), e()))),
-
-this.d_ *= this.A_, this.d_ < this.R_ && (this.d_ = this.R_), this.d_ > this.V_ && (this.d_ = this.V_);
-    }
-    w_() {
-      null !== this.m_ && (this.m_.skipDelay(), this.m_ = null);
-    }
-    cancel() {
-      null !== this.m_ && (this.m_.cancel(), this.m_ = null);
-    }
-y_() {
-      return (Math.random() - 0.5) * this.d_;
-    }
-  }
-  const zt = "PersistentStream";
-  class __PRIVATE_PersistentStream {
-    constructor(e, t, n, r2, i, s, o, _) {
-      this.Ci = e, this.S_ = n, this.b_ = r2, this.connection = i, this.authCredentialsProvider = s, this.appCheckCredentialsProvider = o, this.listener = _, this.state = 0,
-this.D_ = 0, this.C_ = null, this.v_ = null, this.stream = null,
-this.F_ = 0, this.M_ = new __PRIVATE_ExponentialBackoff(e, t);
-    }
-x_() {
-      return 1 === this.state || 5 === this.state || this.O_();
-    }
-O_() {
-      return 2 === this.state || 3 === this.state;
-    }
-start() {
-      this.F_ = 0, 4 !== this.state ? this.auth() : this.N_();
-    }
-async stop() {
-      this.x_() && await this.close(
-        0
-);
-    }
-B_() {
-      this.state = 0, this.M_.reset();
-    }
-L_() {
-      this.O_() && null === this.C_ && (this.C_ = this.Ci.enqueueAfterDelay(this.S_, 6e4, (() => this.k_())));
-    }
-K_(e) {
-      this.q_(), this.stream.send(e);
-    }
-async k_() {
-      if (this.O_())
-        return this.close(
-          0
-);
-    }
-q_() {
-      this.C_ && (this.C_.cancel(), this.C_ = null);
-    }
-U_() {
-      this.v_ && (this.v_.cancel(), this.v_ = null);
-    }
-async close(e, t) {
-      this.q_(), this.U_(), this.M_.cancel(),
-
-this.D_++, 4 !== e ? (
-this.M_.reset()
-      ) : t && t.code === D.RESOURCE_EXHAUSTED ? (
-(__PRIVATE_logError(t.toString()), __PRIVATE_logError("Using maximum backoff delay to prevent overloading the backend."), this.M_.g_())
-      ) : t && t.code === D.UNAUTHENTICATED && 3 !== this.state &&
-
-
-
-
-
-(this.authCredentialsProvider.invalidateToken(), this.appCheckCredentialsProvider.invalidateToken()),
-null !== this.stream && (this.W_(), this.stream.close(), this.stream = null),
-
-this.state = e,
-await this.listener.t_(t);
-    }
-W_() {
-    }
-    auth() {
-      this.state = 1;
-      const e = this.Q_(this.D_), t = this.D_;
-      Promise.all([this.authCredentialsProvider.getToken(), this.appCheckCredentialsProvider.getToken()]).then((([e2, n]) => {
-        this.D_ === t &&
-
-
-this.G_(e2, n);
-      }), ((t2) => {
-        e((() => {
-          const e2 = new FirestoreError(D.UNKNOWN, "Fetching auth token failed: " + t2.message);
-          return this.z_(e2);
-        }));
-      }));
-    }
-    G_(e, t) {
-      const n = this.Q_(this.D_);
-      this.stream = this.j_(e, t), this.stream.Zo((() => {
-        n((() => this.listener.Zo()));
-      })), this.stream.Yo((() => {
-        n((() => (this.state = 2, this.v_ = this.Ci.enqueueAfterDelay(this.b_, 1e4, (() => (this.O_() && (this.state = 3), Promise.resolve()))), this.listener.Yo())));
-      })), this.stream.t_(((e2) => {
-        n((() => this.z_(e2)));
-      })), this.stream.onMessage(((e2) => {
-        n((() => 1 == ++this.F_ ? this.J_(e2) : this.onNext(e2)));
-      }));
-    }
-    N_() {
-      this.state = 5, this.M_.p_((async () => {
-        this.state = 0, this.start();
-      }));
-    }
-z_(e) {
-      return __PRIVATE_logDebug(zt, `close with error: ${e}`), this.stream = null, this.close(4, e);
-    }
-Q_(e) {
-      return (t) => {
-        this.Ci.enqueueAndForget((() => this.D_ === e ? t() : (__PRIVATE_logDebug(zt, "stream callback skipped by getCloseGuardedDispatcher."), Promise.resolve())));
-      };
-    }
-  }
-  class __PRIVATE_PersistentWriteStream extends __PRIVATE_PersistentStream {
-    constructor(e, t, n, r2, i, s) {
-      super(e, "write_stream_connection_backoff", "write_stream_idle", "health_check_timeout", t, n, r2, s), this.serializer = i;
-    }
-get Y_() {
-      return this.F_ > 0;
-    }
-start() {
-      this.lastStreamToken = void 0, super.start();
-    }
-    W_() {
-      this.Y_ && this.ea([]);
-    }
-    j_(e, t) {
-      return this.connection.T_("Write", e, t);
-    }
-    J_(e) {
-      return __PRIVATE_hardAssert(!!e.streamToken, 31322), this.lastStreamToken = e.streamToken,
-__PRIVATE_hardAssert(!e.writeResults || 0 === e.writeResults.length, 55816), this.listener.ta();
-    }
-    onNext(e) {
-      __PRIVATE_hardAssert(!!e.streamToken, 12678), this.lastStreamToken = e.streamToken,
-
-
-this.M_.reset();
-      const t = __PRIVATE_fromWriteResults(e.writeResults, e.commitTime), n = __PRIVATE_fromVersion(e.commitTime);
-      return this.listener.na(n, t);
-    }
-ra() {
-      const e = {};
-      e.database = __PRIVATE_getEncodedDatabaseId(this.serializer), this.K_(e);
-    }
-ea(e) {
-      const t = {
-        streamToken: this.lastStreamToken,
-        writes: e.map(((e2) => toMutation(this.serializer, e2)))
-      };
-      this.K_(t);
-    }
-  }
-  class Datastore {
-  }
-  class __PRIVATE_DatastoreImpl extends Datastore {
-    constructor(e, t, n, r2) {
-      super(), this.authCredentials = e, this.appCheckCredentials = t, this.connection = n, this.serializer = r2, this.ia = false;
-    }
-    sa() {
-      if (this.ia) throw new FirestoreError(D.FAILED_PRECONDITION, "The client has already been terminated.");
-    }
-Wo(e, t, n, r2) {
-      return this.sa(), Promise.all([this.authCredentials.getToken(), this.appCheckCredentials.getToken()]).then((([i, s]) => this.connection.Wo(e, __PRIVATE_toResourcePath(t, n), r2, i, s))).catch(((e2) => {
-        throw "FirebaseError" === e2.name ? (e2.code === D.UNAUTHENTICATED && (this.authCredentials.invalidateToken(), this.appCheckCredentials.invalidateToken()), e2) : new FirestoreError(D.UNKNOWN, e2.toString());
-      }));
-    }
-jo(e, t, n, r2, i) {
-      return this.sa(), Promise.all([this.authCredentials.getToken(), this.appCheckCredentials.getToken()]).then((([s, o]) => this.connection.jo(e, __PRIVATE_toResourcePath(t, n), r2, s, o, i))).catch(((e2) => {
-        throw "FirebaseError" === e2.name ? (e2.code === D.UNAUTHENTICATED && (this.authCredentials.invalidateToken(), this.appCheckCredentials.invalidateToken()), e2) : new FirestoreError(D.UNKNOWN, e2.toString());
-      }));
-    }
-    terminate() {
-      this.ia = true, this.connection.terminate();
-    }
-  }
-  function __PRIVATE_newDatastore(e, t, n, r2) {
-    return new __PRIVATE_DatastoreImpl(e, t, n, r2);
-  }
-  class __PRIVATE_OnlineStateTracker {
-    constructor(e, t) {
-      this.asyncQueue = e, this.onlineStateHandler = t,
-this.state = "Unknown",
-this.oa = 0,
-this._a = null,
-this.aa = true;
-    }
-ua() {
-      0 === this.oa && (this.ca(
-        "Unknown"
-), this._a = this.asyncQueue.enqueueAfterDelay("online_state_timeout", 1e4, (() => (this._a = null, this.la("Backend didn't respond within 10 seconds."), this.ca(
-        "Offline"
-), Promise.resolve()))));
-    }
-ha(e) {
-      "Online" === this.state ? this.ca(
-        "Unknown"
-) : (this.oa++, this.oa >= 1 && (this.Pa(), this.la(`Connection failed 1 times. Most recent error: ${e.toString()}`), this.ca(
-        "Offline"
-)));
-    }
-set(e) {
-      this.Pa(), this.oa = 0, "Online" === e &&
-
-(this.aa = false), this.ca(e);
-    }
-    ca(e) {
-      e !== this.state && (this.state = e, this.onlineStateHandler(e));
-    }
-    la(e) {
-      const t = `Could not reach Cloud Firestore backend. ${e}
-This typically indicates that your device does not have a healthy Internet connection at the moment. The client will operate in offline mode until it is able to successfully connect to the backend.`;
-      this.aa ? (__PRIVATE_logError(t), this.aa = false) : __PRIVATE_logDebug("OnlineStateTracker", t);
-    }
-    Pa() {
-      null !== this._a && (this._a.cancel(), this._a = null);
-    }
-  }
-  const jt = "RemoteStore";
-  class __PRIVATE_RemoteStoreImpl {
-    constructor(e, t, n, r2, i) {
-      this.localStore = e, this.datastore = t, this.asyncQueue = n, this.remoteSyncer = {},
-this.Ta = [],
-this.Ia = new Map(), this.Ea = new Map(), this.Ra = new Map(), this.Aa = new __PRIVATE_TargetIdGenerator(1e3), this.Va = new __PRIVATE_TargetIdGenerator(1001),
-this.da = new Set(),
-this.ma = [], this.fa = i, this.fa.Mo(((e2) => {
-        n.enqueueAndForget((async () => {
-          __PRIVATE_canUseNetwork(this) && (__PRIVATE_logDebug(jt, "Restarting streams for network reachability change."), await (async function __PRIVATE_restartNetwork(e3) {
-            const t2 = __PRIVATE_debugCast(e3);
-            t2.da.add(
-              4
-), await __PRIVATE_disableNetworkInternal(t2), t2.ga.set(
-              "Unknown"
-), t2.da.delete(
-              4
-), await __PRIVATE_enableNetworkInternal(t2);
-          })(this));
-        }));
-      })), this.ga = new __PRIVATE_OnlineStateTracker(n, r2);
-    }
-  }
-  async function __PRIVATE_enableNetworkInternal(e) {
-    if (__PRIVATE_canUseNetwork(e)) for (const t of e.ma) await t(
-true
-    );
-  }
-  async function __PRIVATE_disableNetworkInternal(e) {
-    for (const t of e.ma) await t(
-false
-    );
-  }
-  function __PRIVATE_canUseNetwork(e) {
-    return 0 === __PRIVATE_debugCast(e).da.size;
-  }
-  async function __PRIVATE_disableNetworkUntilRecovery(e, t, n) {
-    if (!__PRIVATE_isIndexedDbTransactionError(t)) throw t;
-    e.da.add(
-      1
-),
-await __PRIVATE_disableNetworkInternal(e), e.ga.set(
-      "Offline"
-), n ||
-
-
-(n = () => __PRIVATE_localStoreGetLastRemoteSnapshotVersion(e.localStore)),
-e.asyncQueue.enqueueRetryable((async () => {
-      __PRIVATE_logDebug(jt, "Retrying IndexedDB access"), await n(), e.da.delete(
-        1
-), await __PRIVATE_enableNetworkInternal(e);
-    }));
-  }
-  function __PRIVATE_executeWithRecovery(e, t) {
-    return t().catch(((n) => __PRIVATE_disableNetworkUntilRecovery(e, n, t)));
-  }
-  async function __PRIVATE_fillWritePipeline(e) {
-    const t = __PRIVATE_debugCast(e), n = __PRIVATE_ensureWriteStream(t);
-    let r2 = t.Ta.length > 0 ? t.Ta[t.Ta.length - 1].batchId : q;
-    for (; __PRIVATE_canAddToWritePipeline(t); ) try {
-      const e2 = await __PRIVATE_localStoreGetNextMutationBatch(t.localStore, r2);
-      if (null === e2) {
-        0 === t.Ta.length && n.L_();
-        break;
-      }
-      r2 = e2.batchId, __PRIVATE_addToWritePipeline(t, e2);
-    } catch (e2) {
-      await __PRIVATE_disableNetworkUntilRecovery(t, e2);
-    }
-    __PRIVATE_shouldStartWriteStream(t) && __PRIVATE_startWriteStream(t);
-  }
-  function __PRIVATE_canAddToWritePipeline(e) {
-    return __PRIVATE_canUseNetwork(e) && e.Ta.length < 10;
-  }
-  function __PRIVATE_addToWritePipeline(e, t) {
-    e.Ta.push(t);
-    const n = __PRIVATE_ensureWriteStream(e);
-    n.O_() && n.Y_ && n.ea(t.mutations);
-  }
-  function __PRIVATE_shouldStartWriteStream(e) {
-    return __PRIVATE_canUseNetwork(e) && !__PRIVATE_ensureWriteStream(e).x_() && e.Ta.length > 0;
-  }
-  function __PRIVATE_startWriteStream(e) {
-    __PRIVATE_ensureWriteStream(e).start();
-  }
-  async function __PRIVATE_onWriteStreamOpen(e) {
-    __PRIVATE_ensureWriteStream(e).ra();
-  }
-  async function __PRIVATE_onWriteHandshakeComplete(e) {
-    const t = __PRIVATE_ensureWriteStream(e);
-    for (const n of e.Ta) t.ea(n.mutations);
-  }
-  async function __PRIVATE_onMutationResult(e, t, n) {
-    const r2 = e.Ta.shift(), i = MutationBatchResult.from(r2, t, n);
-    await __PRIVATE_executeWithRecovery(e, (() => e.remoteSyncer.applySuccessfulWrite(i))),
-
-await __PRIVATE_fillWritePipeline(e);
-  }
-  async function __PRIVATE_onWriteStreamClose(e, t) {
-    t && __PRIVATE_ensureWriteStream(e).Y_ &&
-await (async function __PRIVATE_handleWriteError(e2, t2) {
-      if ((function __PRIVATE_isPermanentWriteError(e3) {
-        return __PRIVATE_isPermanentError(e3) && e3 !== D.ABORTED;
-      })(t2.code)) {
-        const n = e2.Ta.shift();
-        __PRIVATE_ensureWriteStream(e2).B_(), await __PRIVATE_executeWithRecovery(e2, (() => e2.remoteSyncer.rejectFailedWrite(n.batchId, t2))),
-
-await __PRIVATE_fillWritePipeline(e2);
-      }
-    })(e, t),
-
-__PRIVATE_shouldStartWriteStream(e) && __PRIVATE_startWriteStream(e);
-  }
-  async function __PRIVATE_remoteStoreHandleCredentialChange(e, t) {
-    const n = __PRIVATE_debugCast(e);
-    n.asyncQueue.verifyOperationInProgress(), __PRIVATE_logDebug(jt, "RemoteStore received new credentials");
-    const r2 = __PRIVATE_canUseNetwork(n);
-    n.da.add(
-      3
-), await __PRIVATE_disableNetworkInternal(n), r2 &&
-n.ga.set(
-      "Unknown"
-), await n.remoteSyncer.handleCredentialChange(t), n.da.delete(
-      3
-), await __PRIVATE_enableNetworkInternal(n);
-  }
-  async function __PRIVATE_remoteStoreApplyPrimaryState(e, t) {
-    const n = __PRIVATE_debugCast(e);
-    t ? (n.da.delete(
-      2
-), await __PRIVATE_enableNetworkInternal(n)) : t || (n.da.add(
-      2
-), await __PRIVATE_disableNetworkInternal(n), n.ga.set(
-      "Unknown"
-));
-  }
-  function __PRIVATE_ensureWriteStream(e) {
-    return e.wa ||
-(e.wa = (function __PRIVATE_newPersistentWriteStream(e2, t, n) {
-      const r2 = __PRIVATE_debugCast(e2);
-      return r2.sa(), new __PRIVATE_PersistentWriteStream(t, r2.connection, r2.authCredentials, r2.appCheckCredentials, r2.serializer, n);
-    })(e.datastore, e.asyncQueue, {
-      Zo: () => Promise.resolve(),
-      Yo: __PRIVATE_onWriteStreamOpen.bind(null, e),
-      t_: __PRIVATE_onWriteStreamClose.bind(null, e),
-      ta: __PRIVATE_onWriteHandshakeComplete.bind(null, e),
-      na: __PRIVATE_onMutationResult.bind(null, e)
-    }), e.ma.push((async (t) => {
-      t ? (e.wa.B_(),
-await __PRIVATE_fillWritePipeline(e)) : (await e.wa.stop(), e.Ta.length > 0 && (__PRIVATE_logDebug(jt, `Stopping write stream with ${e.Ta.length} pending writes`), e.Ta = []));
-    }))), e.wa;
-  }
-  class DelayedOperation {
-    constructor(e, t, n, r2, i) {
-      this.asyncQueue = e, this.timerId = t, this.targetTimeMs = n, this.op = r2, this.removalCallback = i, this.deferred = new __PRIVATE_Deferred(), this.then = this.deferred.promise.then.bind(this.deferred.promise),
-
-
-this.deferred.promise.catch(((e2) => {
-      }));
-    }
-    get promise() {
-      return this.deferred.promise;
-    }
-static createAndSchedule(e, t, n, r2, i) {
-      const s = Date.now() + n, o = new DelayedOperation(e, t, s, r2, i);
-      return o.start(n), o;
-    }
-start(e) {
-      this.timerHandle = setTimeout((() => this.handleDelayElapsed()), e);
-    }
-skipDelay() {
-      return this.handleDelayElapsed();
-    }
-cancel(e) {
-      null !== this.timerHandle && (this.clearTimeout(), this.deferred.reject(new FirestoreError(D.CANCELLED, "Operation cancelled" + (e ? ": " + e : ""))));
-    }
-    handleDelayElapsed() {
-      this.asyncQueue.enqueueAndForget((() => null !== this.timerHandle ? (this.clearTimeout(), this.op().then(((e) => this.deferred.resolve(e)))) : Promise.resolve()));
-    }
-    clearTimeout() {
-      null !== this.timerHandle && (this.removalCallback(this), clearTimeout(this.timerHandle), this.timerHandle = null);
-    }
-  }
-  function __PRIVATE_wrapInUserErrorIfRecoverable(e, t) {
-    if (__PRIVATE_logError("AsyncQueue", `${t}: ${e}`), __PRIVATE_isIndexedDbTransactionError(e)) return new FirestoreError(D.UNAVAILABLE, `${t}: ${e}`);
-    throw e;
-  }
-  class __PRIVATE_EventManagerImpl {
-    constructor() {
-      this.queries = __PRIVATE_newQueriesObjectMap(), this.onlineState = "Unknown", this.xa = new Set();
-    }
-    terminate() {
-      !(function __PRIVATE_errorAllTargets(e, t) {
-        const n = __PRIVATE_debugCast(e), r2 = n.queries;
-        n.queries = __PRIVATE_newQueriesObjectMap(), r2.forEach(((e2, n2) => {
-          for (const e3 of n2.va) e3.onError(t);
-        }));
-      })(this, new FirestoreError(D.ABORTED, "Firestore shutting down"));
-    }
-  }
-  function __PRIVATE_newQueriesObjectMap() {
-    return new ObjectMap(((e) => __PRIVATE_canonifyQuery(e)), __PRIVATE_queryEquals);
-  }
-  function __PRIVATE_raiseSnapshotsInSyncEvent(e) {
-    e.xa.forEach(((e2) => {
-      e2.next();
-    }));
-  }
-  var Ht$1, Jt;
-  (Jt = Ht$1 || (Ht$1 = {})).Ba = "default",
-Jt.Cache = "cache";
-  const Zt = "SyncEngine";
-  class __PRIVATE_SyncEngineImpl {
-    constructor(e, t, n, r2, i, s) {
-      this.localStore = e, this.remoteStore = t, this.eventManager = n, this.sharedClientState = r2, this.currentUser = i, this.maxConcurrentLimboResolutions = s, this.Ru = {}, this.Au = new ObjectMap(((e2) => __PRIVATE_canonifyQuery(e2)), __PRIVATE_queryEquals), this.Vu = new Map(),
-this.du = new Set(),
-this.mu = new SortedMap(DocumentKey.comparator),
-this.fu = new Map(), this.gu = new __PRIVATE_ReferenceSet(),
-this.pu = {},
-this.yu = new Map(), this.wu = __PRIVATE_TargetIdGenerator.ar(), this.onlineState = "Unknown",
-
-
-this.Su = void 0;
-    }
-    get isPrimaryClient() {
-      return true === this.Su;
-    }
-  }
-  async function __PRIVATE_syncEngineWrite(e, t, n) {
-    const r2 = __PRIVATE_syncEngineEnsureWriteCallbacks(e);
-    try {
-      const e2 = await (function __PRIVATE_localStoreWriteLocally(e3, t2) {
-        const n2 = __PRIVATE_debugCast(e3), r3 = Timestamp.now(), i = t2.reduce(((e4, t3) => e4.add(t3.key)), __PRIVATE_documentKeySet());
-        let s, o;
-        return n2.persistence.runTransaction("Locally write mutations", "readwrite", ((e4) => {
-          let _ = __PRIVATE_mutableDocumentMap(), a = __PRIVATE_documentKeySet();
-          return n2.xs.getEntries(e4, i).next(((e5) => {
-            _ = e5, _.forEach(((e6, t3) => {
-              t3.isValidDocument() || (a = a.add(e6));
-            }));
-          })).next((() => n2.localDocuments.getOverlayedDocuments(e4, _))).next(((i2) => {
-            s = i2;
-            const o2 = [];
-            for (const e5 of t2) {
-              const t3 = __PRIVATE_mutationExtractBaseValue(e5, s.get(e5.key).overlayedDocument);
-              null != t3 &&
-
-
-o2.push(new __PRIVATE_PatchMutation(e5.key, t3, __PRIVATE_extractFieldMask(t3.value.mapValue), Precondition.exists(true)));
-            }
-            return n2.mutationQueue.addMutationBatch(e4, r3, o2, t2);
-          })).next(((t3) => {
-            o = t3;
-            const r4 = t3.applyToLocalDocumentSet(s, a);
-            return n2.documentOverlayCache.saveOverlays(e4, t3.batchId, r4);
-          }));
-        })).then((() => ({
-          batchId: o.batchId,
-          changes: __PRIVATE_convertOverlayedDocumentMapToDocumentMap(s)
-        })));
-      })(r2.localStore, t);
-      r2.sharedClientState.addPendingMutation(e2.batchId), (function __PRIVATE_addMutationCallback(e3, t2, n2) {
-        let r3 = e3.pu[e3.currentUser.toKey()];
-        r3 || (r3 = new SortedMap(__PRIVATE_primitiveComparator));
-        r3 = r3.insert(t2, n2), e3.pu[e3.currentUser.toKey()] = r3;
-      })(r2, e2.batchId, n), await __PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore(r2, e2.changes), await __PRIVATE_fillWritePipeline(r2.remoteStore);
-    } catch (e2) {
-      const t2 = __PRIVATE_wrapInUserErrorIfRecoverable(e2, "Failed to persist write");
-      n.reject(t2);
-    }
-  }
-  function __PRIVATE_syncEngineApplyOnlineStateChange(e, t, n) {
-    const r2 = __PRIVATE_debugCast(e);
-    if (r2.isPrimaryClient && 0 === n || !r2.isPrimaryClient && 1 === n) {
-      const e2 = [];
-      r2.Au.forEach(((n2, r3) => {
-        const i = r3.view.Oa(t);
-        i.snapshot && e2.push(i.snapshot);
-      })), (function __PRIVATE_eventManagerOnOnlineStateChange(e3, t2) {
-        const n2 = __PRIVATE_debugCast(e3);
-        n2.onlineState = t2;
-        let r3 = false;
-        n2.queries.forEach(((e4, n3) => {
-          for (const e5 of n3.va)
-            e5.Oa(t2) && (r3 = true);
-        })), r3 && __PRIVATE_raiseSnapshotsInSyncEvent(n2);
-      })(r2.eventManager, t), e2.length && r2.Ru.H_(e2), r2.onlineState = t, r2.isPrimaryClient && r2.sharedClientState.setOnlineState(t);
-    }
-  }
-  async function __PRIVATE_syncEngineApplySuccessfulWrite(e, t) {
-    const n = __PRIVATE_debugCast(e), r2 = t.batch.batchId;
-    try {
-      const e2 = await __PRIVATE_localStoreAcknowledgeBatch(n.localStore, t);
-      __PRIVATE_processUserCallback(
-        n,
-        r2,
-null
-      ), __PRIVATE_triggerPendingWritesCallbacks(n, r2), n.sharedClientState.updateMutationState(r2, "acknowledged"), await __PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore(n, e2);
-    } catch (e2) {
-      await __PRIVATE_ignoreIfPrimaryLeaseLoss(e2);
-    }
-  }
-  async function __PRIVATE_syncEngineRejectFailedWrite(e, t, n) {
-    const r2 = __PRIVATE_debugCast(e);
-    try {
-      const e2 = await (function __PRIVATE_localStoreRejectBatch(e3, t2) {
-        const n2 = __PRIVATE_debugCast(e3);
-        return n2.persistence.runTransaction("Reject batch", "readwrite-primary", ((e4) => {
-          let r3;
-          return n2.mutationQueue.lookupMutationBatch(e4, t2).next(((t3) => (__PRIVATE_hardAssert(null !== t3, 37113), r3 = t3.keys(), n2.mutationQueue.removeMutationBatch(e4, t3)))).next((() => n2.mutationQueue.performConsistencyCheck(e4))).next((() => n2.documentOverlayCache.removeOverlaysForBatchId(e4, r3, t2))).next((() => n2.localDocuments.recalculateAndSaveOverlaysForDocumentKeys(e4, r3))).next((() => n2.localDocuments.getDocuments(e4, r3)));
-        }));
-      })(r2.localStore, t);
-      __PRIVATE_processUserCallback(r2, t, n), __PRIVATE_triggerPendingWritesCallbacks(r2, t), r2.sharedClientState.updateMutationState(t, "rejected", n), await __PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore(r2, e2);
-    } catch (n2) {
-      await __PRIVATE_ignoreIfPrimaryLeaseLoss(n2);
-    }
-  }
-  function __PRIVATE_triggerPendingWritesCallbacks(e, t) {
-    (e.yu.get(t) || []).forEach(((e2) => {
-      e2.resolve();
-    })), e.yu.delete(t);
-  }
-  function __PRIVATE_processUserCallback(e, t, n) {
-    const r2 = __PRIVATE_debugCast(e);
-    let i = r2.pu[r2.currentUser.toKey()];
-    if (i) {
-      const e2 = i.get(t);
-      e2 && (n ? e2.reject(n) : e2.resolve(), i = i.remove(t)), r2.pu[r2.currentUser.toKey()] = i;
-    }
-  }
-  async function __PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore(e, t, n) {
-    const r2 = __PRIVATE_debugCast(e), i = [], s = [], o = [];
-    r2.Au.isEmpty() || (r2.Au.forEach(((e2, _) => {
-      o.push(r2.bu(_, t, n).then(((e3) => {
-        if ((e3 || n) && r2.isPrimaryClient) {
-          const t2 = e3 ? !e3.fromCache : n?.targetChanges.get(_.targetId)?.current;
-          r2.sharedClientState.updateQueryState(_.targetId, t2 ? "current" : "not-current");
-        }
-        if (e3) {
-          i.push(e3);
-          const t2 = __PRIVATE_LocalViewChanges.Es(_.targetId, e3);
-          s.push(t2);
-        }
-      })));
-    })), await Promise.all(o), r2.Ru.H_(i), await (async function __PRIVATE_localStoreNotifyLocalViewChanges(e2, t2) {
-      const n2 = __PRIVATE_debugCast(e2);
-      try {
-        await n2.persistence.runTransaction("notifyLocalViewChanges", "readwrite", ((e3) => PersistencePromise.forEach(t2, ((t3) => PersistencePromise.forEach(t3.Ts, ((r3) => n2.persistence.referenceDelegate.addReference(e3, t3.targetId, r3))).next((() => PersistencePromise.forEach(t3.Is, ((r3) => n2.persistence.referenceDelegate.removeReference(e3, t3.targetId, r3)))))))));
-      } catch (e3) {
-        if (!__PRIVATE_isIndexedDbTransactionError(e3)) throw e3;
-        __PRIVATE_logDebug(Nt, "Failed to update sequence numbers: " + e3);
-      }
-      for (const e3 of t2) {
-        const t3 = e3.targetId;
-        if (!e3.fromCache) {
-          const e4 = n2.vs.get(t3), r3 = e4.snapshotVersion, i2 = e4.withLastLimboFreeSnapshotVersion(r3);
-          n2.vs = n2.vs.insert(t3, i2);
-        }
-      }
-    })(r2.localStore, s));
-  }
-  async function __PRIVATE_syncEngineHandleCredentialChange(e, t) {
-    const n = __PRIVATE_debugCast(e);
-    if (!n.currentUser.isEqual(t)) {
-      __PRIVATE_logDebug(Zt, "User change. New user:", t.toKey());
-      const e2 = await __PRIVATE_localStoreHandleUserChange(n.localStore, t);
-      n.currentUser = t,
-(function __PRIVATE_rejectOutstandingPendingWritesCallbacks(e3, t2) {
-        e3.yu.forEach(((e4) => {
-          e4.forEach(((e5) => {
-            e5.reject(new FirestoreError(D.CANCELLED, t2));
-          }));
-        })), e3.yu.clear();
-      })(n, "'waitForPendingWrites' promise is rejected due to a user change."),
-n.sharedClientState.handleUserChange(t, e2.removedBatchIds, e2.addedBatchIds), await __PRIVATE_syncEngineEmitNewSnapsAndNotifyLocalStore(n, e2.Ns);
-    }
-  }
-  function __PRIVATE_syncEngineEnsureWriteCallbacks(e) {
-    const t = __PRIVATE_debugCast(e);
-    return t.remoteStore.remoteSyncer.applySuccessfulWrite = __PRIVATE_syncEngineApplySuccessfulWrite.bind(null, t), t.remoteStore.remoteSyncer.rejectFailedWrite = __PRIVATE_syncEngineRejectFailedWrite.bind(null, t), t;
-  }
-  class __PRIVATE_MemoryOfflineComponentProvider {
-    constructor() {
-      this.kind = "memory", this.synchronizeTabs = false;
-    }
-    async initialize(e) {
-      this.serializer = __PRIVATE_newSerializer(e.databaseInfo.databaseId), this.sharedClientState = this.Mu(e), this.persistence = this.xu(e), await this.persistence.start(), this.localStore = this.Ou(e), this.gcScheduler = this.Nu(e, this.localStore), this.indexBackfillerScheduler = this.Bu(e, this.localStore);
-    }
-    Nu(e, t) {
-      return null;
-    }
-    Bu(e, t) {
-      return null;
-    }
-    Ou(e) {
-      return __PRIVATE_newLocalStore(this.persistence, new __PRIVATE_QueryEngine(), e.initialUser, this.serializer);
-    }
-    xu(e) {
-      return new __PRIVATE_MemoryPersistence(__PRIVATE_MemoryEagerDelegate.Vi, this.serializer);
-    }
-    Mu(e) {
-      return new __PRIVATE_MemorySharedClientState();
-    }
-    async terminate() {
-      this.gcScheduler?.stop(), this.indexBackfillerScheduler?.stop(), this.sharedClientState.shutdown(), await this.persistence.shutdown();
-    }
-  }
-  __PRIVATE_MemoryOfflineComponentProvider.provider = {
-    build: () => new __PRIVATE_MemoryOfflineComponentProvider()
-  };
-  class __PRIVATE_LruGcMemoryOfflineComponentProvider extends __PRIVATE_MemoryOfflineComponentProvider {
-    constructor(e) {
-      super(), this.cacheSizeBytes = e;
-    }
-    Nu(e, t) {
-      __PRIVATE_hardAssert(this.persistence.referenceDelegate instanceof __PRIVATE_MemoryLruDelegate, 46915);
-      const n = this.persistence.referenceDelegate.garbageCollector;
-      return new __PRIVATE_LruScheduler(n, e.asyncQueue, t);
-    }
-    xu(e) {
-      const t = void 0 !== this.cacheSizeBytes ? LruParams.withCacheSize(this.cacheSizeBytes) : LruParams.DEFAULT;
-      return new __PRIVATE_MemoryPersistence(((e2) => __PRIVATE_MemoryLruDelegate.Vi(e2, t)), this.serializer);
-    }
-  }
-  class OnlineComponentProvider {
-    async initialize(e, t) {
-      this.localStore || (this.localStore = e.localStore, this.sharedClientState = e.sharedClientState, this.datastore = this.createDatastore(t), this.remoteStore = this.createRemoteStore(t), this.eventManager = this.createEventManager(t), this.syncEngine = this.createSyncEngine(
-        t,
-!e.synchronizeTabs
-      ), this.sharedClientState.onlineStateHandler = (e2) => __PRIVATE_syncEngineApplyOnlineStateChange(
-        this.syncEngine,
-        e2,
-        1
-), this.remoteStore.remoteSyncer.handleCredentialChange = __PRIVATE_syncEngineHandleCredentialChange.bind(null, this.syncEngine), await __PRIVATE_remoteStoreApplyPrimaryState(this.remoteStore, this.syncEngine.isPrimaryClient));
-    }
-    createEventManager(e) {
-      return (function __PRIVATE_newEventManager() {
-        return new __PRIVATE_EventManagerImpl();
-      })();
-    }
-    createDatastore(e) {
-      const t = __PRIVATE_newSerializer(e.databaseInfo.databaseId), n = __PRIVATE_newConnection(e.databaseInfo);
-      return __PRIVATE_newDatastore(e.authCredentials, e.appCheckCredentials, n, t);
-    }
-    createRemoteStore(e) {
-      return (function __PRIVATE_newRemoteStore(e2, t, n, r2, i) {
-        return new __PRIVATE_RemoteStoreImpl(e2, t, n, r2, i);
-      })(this.localStore, this.datastore, e.asyncQueue, ((e2) => __PRIVATE_syncEngineApplyOnlineStateChange(
-        this.syncEngine,
-        e2,
-        0
-)), (function __PRIVATE_newConnectivityMonitor() {
-        return __PRIVATE_BrowserConnectivityMonitor.v() ? new __PRIVATE_BrowserConnectivityMonitor() : new __PRIVATE_NoopConnectivityMonitor();
-      })());
-    }
-    createSyncEngine(e, t) {
-      return (function __PRIVATE_newSyncEngine(e2, t2, n, r2, i, s, o) {
-        const _ = new __PRIVATE_SyncEngineImpl(e2, t2, n, r2, i, s);
-        return o && (_.Su = true), _;
-      })(this.localStore, this.remoteStore, this.eventManager, this.sharedClientState, e.initialUser, e.maxConcurrentLimboResolutions, t);
-    }
-    async terminate() {
-      await (async function __PRIVATE_remoteStoreShutdown(e) {
-        const t = __PRIVATE_debugCast(e);
-        __PRIVATE_logDebug(jt, "RemoteStore shutting down."), t.da.add(
-          5
-), await __PRIVATE_disableNetworkInternal(t), t.fa.shutdown(),
-
-t.ga.set(
-          "Unknown"
-);
-      })(this.remoteStore), this.datastore?.terminate(), this.eventManager?.terminate();
-    }
-  }
-  OnlineComponentProvider.provider = {
-    build: () => new OnlineComponentProvider()
-  };
-  const Xt = "FirestoreClient";
-  class FirestoreClient {
-    constructor(e, t, n, r2, i) {
-      this.authCredentials = e, this.appCheckCredentials = t, this.asyncQueue = n, this._databaseInfo = r2, this.user = User.UNAUTHENTICATED, this.clientId = __PRIVATE_AutoId.newId(), this.authCredentialListener = () => Promise.resolve(), this.appCheckCredentialListener = () => Promise.resolve(), this._uninitializedComponentsProvider = i, this.authCredentials.start(n, (async (e2) => {
-        __PRIVATE_logDebug(Xt, "Received user=", e2.uid), await this.authCredentialListener(e2), this.user = e2;
-      })), this.appCheckCredentials.start(n, ((e2) => (__PRIVATE_logDebug(Xt, "Received new app check token=", e2), this.appCheckCredentialListener(e2, this.user))));
-    }
-    get configuration() {
-      return {
-        asyncQueue: this.asyncQueue,
-        databaseInfo: this._databaseInfo,
-        clientId: this.clientId,
-        authCredentials: this.authCredentials,
-        appCheckCredentials: this.appCheckCredentials,
-        initialUser: this.user,
-        maxConcurrentLimboResolutions: 100
-      };
-    }
-    setCredentialChangeListener(e) {
-      this.authCredentialListener = e;
-    }
-    setAppCheckTokenChangeListener(e) {
-      this.appCheckCredentialListener = e;
-    }
-    terminate() {
-      this.asyncQueue.enterRestrictedMode();
-      const e = new __PRIVATE_Deferred();
-      return this.asyncQueue.enqueueAndForgetEvenWhileRestricted((async () => {
-        try {
-          this._onlineComponents && await this._onlineComponents.terminate(), this._offlineComponents && await this._offlineComponents.terminate(),
-
-
-this.authCredentials.shutdown(), this.appCheckCredentials.shutdown(), e.resolve();
-        } catch (t) {
-          const n = __PRIVATE_wrapInUserErrorIfRecoverable(t, "Failed to shutdown persistence");
-          e.reject(n);
-        }
-      })), e.promise;
-    }
-  }
-  async function __PRIVATE_setOfflineComponentProvider(e, t) {
-    e.asyncQueue.verifyOperationInProgress(), __PRIVATE_logDebug(Xt, "Initializing OfflineComponentProvider");
-    const n = e.configuration;
-    await t.initialize(n);
-    let r2 = n.initialUser;
-    e.setCredentialChangeListener((async (e2) => {
-      r2.isEqual(e2) || (await __PRIVATE_localStoreHandleUserChange(t.localStore, e2), r2 = e2);
-    })),
-
-t.persistence.setDatabaseDeletedListener((() => e.terminate())), e._offlineComponents = t;
-  }
-  async function __PRIVATE_setOnlineComponentProvider(e, t) {
-    e.asyncQueue.verifyOperationInProgress();
-    const n = await __PRIVATE_ensureOfflineComponents(e);
-    __PRIVATE_logDebug(Xt, "Initializing OnlineComponentProvider"), await t.initialize(n, e.configuration),
-
-e.setCredentialChangeListener(((e2) => __PRIVATE_remoteStoreHandleCredentialChange(t.remoteStore, e2))), e.setAppCheckTokenChangeListener(((e2, n2) => __PRIVATE_remoteStoreHandleCredentialChange(t.remoteStore, n2))), e._onlineComponents = t;
-  }
-  async function __PRIVATE_ensureOfflineComponents(e) {
-    if (!e._offlineComponents) if (e._uninitializedComponentsProvider) {
-      __PRIVATE_logDebug(Xt, "Using user provided OfflineComponentProvider");
-      try {
-        await __PRIVATE_setOfflineComponentProvider(e, e._uninitializedComponentsProvider._offline);
-      } catch (t) {
-        const n = t;
-        if (!(function __PRIVATE_canFallbackFromIndexedDbError(e2) {
-          return "FirebaseError" === e2.name ? e2.code === D.FAILED_PRECONDITION || e2.code === D.UNIMPLEMENTED : !("undefined" != typeof DOMException && e2 instanceof DOMException) ||
-
-
-22 === e2.code || 20 === e2.code ||
-
-11 === e2.code;
-        })(n)) throw n;
-        __PRIVATE_logWarn("Error using user provided cache. Falling back to memory cache: " + n), await __PRIVATE_setOfflineComponentProvider(e, new __PRIVATE_MemoryOfflineComponentProvider());
-      }
-    } else __PRIVATE_logDebug(Xt, "Using default OfflineComponentProvider"), await __PRIVATE_setOfflineComponentProvider(e, new __PRIVATE_LruGcMemoryOfflineComponentProvider(void 0));
-    return e._offlineComponents;
-  }
-  async function __PRIVATE_ensureOnlineComponents(e) {
-    return e._onlineComponents || (e._uninitializedComponentsProvider ? (__PRIVATE_logDebug(Xt, "Using user provided OnlineComponentProvider"), await __PRIVATE_setOnlineComponentProvider(e, e._uninitializedComponentsProvider._online)) : (__PRIVATE_logDebug(Xt, "Using default OnlineComponentProvider"), await __PRIVATE_setOnlineComponentProvider(e, new OnlineComponentProvider()))), e._onlineComponents;
-  }
-  function __PRIVATE_getSyncEngine(e) {
-    return __PRIVATE_ensureOnlineComponents(e).then(((e2) => e2.syncEngine));
-  }
-  function __PRIVATE_firestoreClientWrite(e, t) {
-    const n = new __PRIVATE_Deferred();
-    return e.asyncQueue.enqueueAndForget((async () => __PRIVATE_syncEngineWrite(await __PRIVATE_getSyncEngine(e), t, n))), n.promise;
-  }
-  function __PRIVATE_cloneLongPollingOptions(e) {
-    const t = {};
-    return void 0 !== e.timeoutSeconds && (t.timeoutSeconds = e.timeoutSeconds), t;
-  }
-  const Yt = "ComponentProvider", en = new Map();
-  function __PRIVATE_makeDatabaseInfo(e, t, n, r2, i) {
-    return new DatabaseInfo(e, t, n, i.host, i.ssl, i.experimentalForceLongPolling, i.experimentalAutoDetectLongPolling, __PRIVATE_cloneLongPollingOptions(i.experimentalLongPollingOptions), i.useFetchStreams, i.isUsingEmulator, r2);
-  }
-  const tn = "firestore.googleapis.com", nn = true;
-  class FirestoreSettingsImpl {
-    constructor(e) {
-      if (void 0 === e.host) {
-        if (void 0 !== e.ssl) throw new FirestoreError(D.INVALID_ARGUMENT, "Can't provide ssl option if host option is not set");
-        this.host = tn, this.ssl = nn;
-      } else this.host = e.host, this.ssl = e.ssl ?? nn;
-      if (this.isUsingEmulator = void 0 !== e.emulatorOptions, this.credentials = e.credentials, this.ignoreUndefinedProperties = !!e.ignoreUndefinedProperties, this.localCache = e.localCache, void 0 === e.cacheSizeBytes) this.cacheSizeBytes = St;
-      else {
-        if (-1 !== e.cacheSizeBytes && e.cacheSizeBytes < Ct) throw new FirestoreError(D.INVALID_ARGUMENT, "cacheSizeBytes must be at least 1048576");
-        this.cacheSizeBytes = e.cacheSizeBytes;
-      }
-      __PRIVATE_validateIsNotUsedTogether("experimentalForceLongPolling", e.experimentalForceLongPolling, "experimentalAutoDetectLongPolling", e.experimentalAutoDetectLongPolling), this.experimentalForceLongPolling = !!e.experimentalForceLongPolling, this.experimentalForceLongPolling ? this.experimentalAutoDetectLongPolling = false : void 0 === e.experimentalAutoDetectLongPolling ? this.experimentalAutoDetectLongPolling = true : (
-
-
-this.experimentalAutoDetectLongPolling = !!e.experimentalAutoDetectLongPolling
-      ), this.experimentalLongPollingOptions = __PRIVATE_cloneLongPollingOptions(e.experimentalLongPollingOptions ?? {}), (function __PRIVATE_validateLongPollingOptions(e2) {
-        if (void 0 !== e2.timeoutSeconds) {
-          if (isNaN(e2.timeoutSeconds)) throw new FirestoreError(D.INVALID_ARGUMENT, `invalid long polling timeout: ${e2.timeoutSeconds} (must not be NaN)`);
-          if (e2.timeoutSeconds < 5) throw new FirestoreError(D.INVALID_ARGUMENT, `invalid long polling timeout: ${e2.timeoutSeconds} (minimum allowed value is 5)`);
-          if (e2.timeoutSeconds > 30) throw new FirestoreError(D.INVALID_ARGUMENT, `invalid long polling timeout: ${e2.timeoutSeconds} (maximum allowed value is 30)`);
-        }
-      })(this.experimentalLongPollingOptions), this.useFetchStreams = !!e.useFetchStreams;
-    }
-    isEqual(e) {
-      return this.host === e.host && this.ssl === e.ssl && this.credentials === e.credentials && this.cacheSizeBytes === e.cacheSizeBytes && this.experimentalForceLongPolling === e.experimentalForceLongPolling && this.experimentalAutoDetectLongPolling === e.experimentalAutoDetectLongPolling && (function __PRIVATE_longPollingOptionsEqual(e2, t) {
-        return e2.timeoutSeconds === t.timeoutSeconds;
-      })(this.experimentalLongPollingOptions, e.experimentalLongPollingOptions) && this.ignoreUndefinedProperties === e.ignoreUndefinedProperties && this.useFetchStreams === e.useFetchStreams;
-    }
-  }
-  class Firestore$1 {
-constructor(e, t, n, r2) {
-      this._authCredentials = e, this._appCheckCredentials = t, this._databaseId = n, this._app = r2,
-this.type = "firestore-lite", this._persistenceKey = "(lite)", this._settings = new FirestoreSettingsImpl({}), this._settingsFrozen = false, this._emulatorOptions = {},
-
-
-
-this._terminateTask = "notTerminated";
-    }
-get app() {
-      if (!this._app) throw new FirestoreError(D.FAILED_PRECONDITION, "Firestore was not initialized using the Firebase SDK. 'app' is not available");
-      return this._app;
-    }
-    get _initialized() {
-      return this._settingsFrozen;
-    }
-    get _terminated() {
-      return "notTerminated" !== this._terminateTask;
-    }
-    _setSettings(e) {
-      if (this._settingsFrozen) throw new FirestoreError(D.FAILED_PRECONDITION, "Firestore has already been started and its settings can no longer be changed. You can only modify settings before calling any other methods on a Firestore object.");
-      this._settings = new FirestoreSettingsImpl(e), this._emulatorOptions = e.emulatorOptions || {}, void 0 !== e.credentials && (this._authCredentials = (function __PRIVATE_makeAuthCredentialsProvider(e2) {
-        if (!e2) return new __PRIVATE_EmptyAuthCredentialsProvider();
-        switch (e2.type) {
-          case "firstParty":
-            return new __PRIVATE_FirstPartyAuthCredentialsProvider(e2.sessionIndex || "0", e2.iamToken || null, e2.authTokenFactory || null);
-          case "provider":
-            return e2.client;
-          default:
-            throw new FirestoreError(D.INVALID_ARGUMENT, "makeAuthCredentialsProvider failed due to invalid credential type");
-        }
-      })(e.credentials));
-    }
-    _getSettings() {
-      return this._settings;
-    }
-    _getEmulatorOptions() {
-      return this._emulatorOptions;
-    }
-    _freezeSettings() {
-      return this._settingsFrozen = true, this._settings;
-    }
-    _delete() {
-      return "notTerminated" === this._terminateTask && (this._terminateTask = this._terminate()), this._terminateTask;
-    }
-    async _restart() {
-      "notTerminated" === this._terminateTask ? await this._terminate() : this._terminateTask = "notTerminated";
-    }
-toJSON() {
-      return {
-        app: this._app,
-        databaseId: this._databaseId,
-        settings: this._settings
-      };
-    }
-_terminate() {
-      return (function __PRIVATE_removeComponents(e) {
-        const t = en.get(e);
-        t && (__PRIVATE_logDebug(Yt, "Removing Datastore"), en.delete(e), t.terminate());
-      })(this), Promise.resolve();
-    }
-  }
-  function connectFirestoreEmulator(e, t, n, r2 = {}) {
-    e = __PRIVATE_cast(e, Firestore$1);
-    const i = isCloudWorkstation(t), s = e._getSettings(), o = {
-      ...s,
-      emulatorOptions: e._getEmulatorOptions()
-    }, _ = `${t}:${n}`;
-    i && pingServer(`https://${_}`), s.host !== tn && s.host !== _ && __PRIVATE_logWarn("Host has been set in both settings() and connectFirestoreEmulator(), emulator host will be used.");
-    const a = {
-      ...s,
-      host: _,
-      ssl: i,
-      emulatorOptions: r2
-    };
-    if (!deepEqual$1(a, o) && (e._setSettings(a), r2.mockUserToken)) {
-      let t2, n2;
-      if ("string" == typeof r2.mockUserToken) t2 = r2.mockUserToken, n2 = User.MOCK_USER;
-      else {
-        t2 = createMockUserToken(r2.mockUserToken, e._app?.options.projectId);
-        const i2 = r2.mockUserToken.sub || r2.mockUserToken.user_id;
-        if (!i2) throw new FirestoreError(D.INVALID_ARGUMENT, "mockUserToken must contain 'sub' or 'user_id' field!");
-        n2 = new User(i2);
-      }
-      e._authCredentials = new __PRIVATE_EmulatorAuthCredentialsProvider(new __PRIVATE_OAuthToken(t2, n2));
-    }
-  }
-  class Query {
-
-constructor(e, t, n) {
-      this.converter = t, this._query = n,
-this.type = "query", this.firestore = e;
-    }
-    withConverter(e) {
-      return new Query(this.firestore, e, this._query);
-    }
-  }
-  class DocumentReference {
-constructor(e, t, n) {
-      this.converter = t, this._key = n,
-this.type = "document", this.firestore = e;
-    }
-    get _path() {
-      return this._key.path;
-    }
-get id() {
-      return this._key.path.lastSegment();
-    }
-get path() {
-      return this._key.path.canonicalString();
-    }
-get parent() {
-      return new CollectionReference(this.firestore, this.converter, this._key.path.popLast());
-    }
-    withConverter(e) {
-      return new DocumentReference(this.firestore, e, this._key);
-    }
-toJSON() {
-      return {
-        type: DocumentReference._jsonSchemaVersion,
-        referencePath: this._key.toString()
-      };
-    }
-    static fromJSON(e, t, n) {
-      if (__PRIVATE_validateJSON(t, DocumentReference._jsonSchema)) return new DocumentReference(e, n || null, new DocumentKey(ResourcePath.fromString(t.referencePath)));
-    }
-  }
-  DocumentReference._jsonSchemaVersion = "firestore/documentReference/1.0", DocumentReference._jsonSchema = {
-    type: property("string", DocumentReference._jsonSchemaVersion),
-    referencePath: property("string")
-  };
-  class CollectionReference extends Query {
-constructor(e, t, n) {
-      super(e, t, __PRIVATE_newQueryForPath(n)), this._path = n,
-this.type = "collection";
-    }
-get id() {
-      return this._query.path.lastSegment();
-    }
-get path() {
-      return this._query.path.canonicalString();
-    }
-get parent() {
-      const e = this._path.popLast();
-      return e.isEmpty() ? null : new DocumentReference(
-        this.firestore,
-null,
-        new DocumentKey(e)
-      );
-    }
-    withConverter(e) {
-      return new CollectionReference(this.firestore, e, this._path);
-    }
-  }
-  function collection(e, t, ...n) {
-    if (e = getModularInstance(e), __PRIVATE_validateNonEmptyArgument("collection", "path", t), e instanceof Firestore$1) {
-      const r2 = ResourcePath.fromString(t, ...n);
-      return __PRIVATE_validateCollectionPath(r2), new CollectionReference(
-        e,
-null,
-        r2
-      );
-    }
-    {
-      if (!(e instanceof DocumentReference || e instanceof CollectionReference)) throw new FirestoreError(D.INVALID_ARGUMENT, "Expected first argument to collection() to be a CollectionReference, a DocumentReference or FirebaseFirestore");
-      const r2 = e._path.child(ResourcePath.fromString(t, ...n));
-      return __PRIVATE_validateCollectionPath(r2), new CollectionReference(
-        e.firestore,
-null,
-        r2
-      );
-    }
-  }
-  function doc(e, t, ...n) {
-    if (e = getModularInstance(e),
-
-1 === arguments.length && (t = __PRIVATE_AutoId.newId()), __PRIVATE_validateNonEmptyArgument("doc", "path", t), e instanceof Firestore$1) {
-      const r2 = ResourcePath.fromString(t, ...n);
-      return __PRIVATE_validateDocumentPath(r2), new DocumentReference(
-        e,
-null,
-        new DocumentKey(r2)
-      );
-    }
-    {
-      if (!(e instanceof DocumentReference || e instanceof CollectionReference)) throw new FirestoreError(D.INVALID_ARGUMENT, "Expected first argument to doc() to be a CollectionReference, a DocumentReference or FirebaseFirestore");
-      const r2 = e._path.child(ResourcePath.fromString(t, ...n));
-      return __PRIVATE_validateDocumentPath(r2), new DocumentReference(e.firestore, e instanceof CollectionReference ? e.converter : null, new DocumentKey(r2));
-    }
-  }
-  const rn = "AsyncQueue";
-  class __PRIVATE_AsyncQueueImpl {
-    constructor(e = Promise.resolve()) {
-      this.rc = [],
-
-this.sc = false,
-
-this.oc = [],
-this._c = null,
-
-this.ac = false,
-this.uc = false,
-this.cc = [],
-this.M_ = new __PRIVATE_ExponentialBackoff(
-        this,
-        "async_queue_retry"
-),
-
-
-this.lc = () => {
-        const e2 = getDocument();
-        e2 && __PRIVATE_logDebug(rn, "Visibility state changed to " + e2.visibilityState), this.M_.w_();
-      }, this.hc = e;
-      const t = getDocument();
-      t && "function" == typeof t.addEventListener && t.addEventListener("visibilitychange", this.lc);
-    }
-    get isShuttingDown() {
-      return this.sc;
-    }
-enqueueAndForget(e) {
-      this.enqueue(e);
-    }
-    enqueueAndForgetEvenWhileRestricted(e) {
-      this.Pc(),
-this.Tc(e);
-    }
-    enterRestrictedMode(e) {
-      if (!this.sc) {
-        this.sc = true, this.uc = e || false;
-        const t = getDocument();
-        t && "function" == typeof t.removeEventListener && t.removeEventListener("visibilitychange", this.lc);
-      }
-    }
-    enqueue(e) {
-      if (this.Pc(), this.sc)
-        return new Promise((() => {
-        }));
-      const t = new __PRIVATE_Deferred();
-      return this.Tc((() => this.sc && this.uc ? Promise.resolve() : (e().then(t.resolve, t.reject), t.promise))).then((() => t.promise));
-    }
-    enqueueRetryable(e) {
-      this.enqueueAndForget((() => (this.rc.push(e), this.Ic())));
-    }
-async Ic() {
-      if (0 !== this.rc.length) {
-        try {
-          await this.rc[0](), this.rc.shift(), this.M_.reset();
-        } catch (e) {
-          if (!__PRIVATE_isIndexedDbTransactionError(e)) throw e;
-          __PRIVATE_logDebug(rn, "Operation failed with retryable error: " + e);
-        }
-        this.rc.length > 0 &&
-
-
-
-
-
-
-
-
-
-this.M_.p_((() => this.Ic()));
-      }
-    }
-    Tc(e) {
-      const t = this.hc.then((() => (this.ac = true, e().catch(((e2) => {
-        this._c = e2, this.ac = false;
-        throw __PRIVATE_logError("INTERNAL UNHANDLED ERROR: ", __PRIVATE_getMessageOrStack(e2)), e2;
-      })).then(((e2) => (this.ac = false, e2))))));
-      return this.hc = t, t;
-    }
-    enqueueAfterDelay(e, t, n) {
-      this.Pc(),
-this.cc.indexOf(e) > -1 && (t = 0);
-      const r2 = DelayedOperation.createAndSchedule(this, e, t, n, ((e2) => this.Ec(e2)));
-      return this.oc.push(r2), r2;
-    }
-    Pc() {
-      this._c && fail(47125, {
-        Rc: __PRIVATE_getMessageOrStack(this._c)
-      });
-    }
-    verifyOperationInProgress() {
-    }
-async Ac() {
-      let e;
-      do {
-        e = this.hc, await e;
-      } while (e !== this.hc);
-    }
-Vc(e) {
-      for (const t of this.oc) if (t.timerId === e) return true;
-      return false;
-    }
-dc(e) {
-      return this.Ac().then((() => {
-        this.oc.sort(((e2, t) => e2.targetTimeMs - t.targetTimeMs));
-        for (const t of this.oc) if (t.skipDelay(), "all" !== e && t.timerId === e) break;
-        return this.Ac();
-      }));
-    }
-mc(e) {
-      this.cc.push(e);
-    }
-Ec(e) {
-      const t = this.oc.indexOf(e);
-      this.oc.splice(t, 1);
-    }
-  }
-  function __PRIVATE_getMessageOrStack(e) {
-    let t = e.message || "";
-    return e.stack && (t = e.stack.includes(e.message) ? e.stack : e.message + "\n" + e.stack), t;
-  }
-  class Firestore extends Firestore$1 {
-constructor(e, t, n, r2) {
-      super(e, t, n, r2),
-this.type = "firestore", this._queue = new __PRIVATE_AsyncQueueImpl(), this._persistenceKey = r2?.name || "[DEFAULT]";
-    }
-    async _terminate() {
-      if (this._firestoreClient) {
-        const e = this._firestoreClient.terminate();
-        this._queue = new __PRIVATE_AsyncQueueImpl(e), this._firestoreClient = void 0, await e;
-      }
-    }
-  }
-  function getFirestore(e, n) {
-    const r2 = "object" == typeof e ? e : getApp(), i = "string" == typeof e ? e : it, s = _getProvider(r2, "firestore").getImmediate({
-      identifier: i
-    });
-    if (!s._initialized) {
-      const e2 = getDefaultEmulatorHostnameAndPort("firestore");
-      e2 && connectFirestoreEmulator(s, ...e2);
-    }
-    return s;
-  }
-  function ensureFirestoreConfigured(e) {
-    if (e._terminated) throw new FirestoreError(D.FAILED_PRECONDITION, "The client has already been terminated.");
-    return e._firestoreClient || __PRIVATE_configureFirestore(e), e._firestoreClient;
-  }
-  function __PRIVATE_configureFirestore(e) {
-    const t = e._freezeSettings(), n = __PRIVATE_makeDatabaseInfo(e._databaseId, e._app?.options.appId || "", e._persistenceKey, e._app?.options.apiKey, t);
-    e._componentsProvider || t.localCache?._offlineComponentProvider && t.localCache?._onlineComponentProvider && (e._componentsProvider = {
-      _offline: t.localCache._offlineComponentProvider,
-      _online: t.localCache._onlineComponentProvider
-    }), e._firestoreClient = new FirestoreClient(e._authCredentials, e._appCheckCredentials, e._queue, n, e._componentsProvider && (function __PRIVATE_buildComponentProvider(e2) {
-      const t2 = e2?._online.build();
-      return {
-        _offline: e2?._offline.build(t2),
-        _online: t2
-      };
-    })(e._componentsProvider));
-  }
-  class Bytes {
-constructor(e) {
-      this._byteString = e;
-    }
-static fromBase64String(e) {
-      try {
-        return new Bytes(ByteString.fromBase64String(e));
-      } catch (e2) {
-        throw new FirestoreError(D.INVALID_ARGUMENT, "Failed to construct data from Base64 string: " + e2);
-      }
-    }
-static fromUint8Array(e) {
-      return new Bytes(ByteString.fromUint8Array(e));
-    }
-toBase64() {
-      return this._byteString.toBase64();
-    }
-toUint8Array() {
-      return this._byteString.toUint8Array();
-    }
-toString() {
-      return "Bytes(base64: " + this.toBase64() + ")";
-    }
-isEqual(e) {
-      return this._byteString.isEqual(e._byteString);
-    }
-toJSON() {
-      return {
-        type: Bytes._jsonSchemaVersion,
-        bytes: this.toBase64()
-      };
-    }
-static fromJSON(e) {
-      if (__PRIVATE_validateJSON(e, Bytes._jsonSchema)) return Bytes.fromBase64String(e.bytes);
-    }
-  }
-  Bytes._jsonSchemaVersion = "firestore/bytes/1.0", Bytes._jsonSchema = {
-    type: property("string", Bytes._jsonSchemaVersion),
-    bytes: property("string")
-  };
-  class FieldPath {
-constructor(...e) {
-      for (let t = 0; t < e.length; ++t) if (0 === e[t].length) throw new FirestoreError(D.INVALID_ARGUMENT, "Invalid field name at argument $(i + 1). Field names must not be empty.");
-      this._internalPath = new FieldPath$1(e);
-    }
-isEqual(e) {
-      return this._internalPath.isEqual(e._internalPath);
-    }
-  }
-  class FieldValue {
-constructor(e) {
-      this._methodName = e;
-    }
-  }
-  class GeoPoint {
-constructor(e, t) {
-      if (!isFinite(e) || e < -90 || e > 90) throw new FirestoreError(D.INVALID_ARGUMENT, "Latitude must be a number between -90 and 90, but was: " + e);
-      if (!isFinite(t) || t < -180 || t > 180) throw new FirestoreError(D.INVALID_ARGUMENT, "Longitude must be a number between -180 and 180, but was: " + t);
-      this._lat = e, this._long = t;
-    }
-get latitude() {
-      return this._lat;
-    }
-get longitude() {
-      return this._long;
-    }
-isEqual(e) {
-      return this._lat === e._lat && this._long === e._long;
-    }
-_compareTo(e) {
-      return __PRIVATE_primitiveComparator(this._lat, e._lat) || __PRIVATE_primitiveComparator(this._long, e._long);
-    }
-toJSON() {
-      return {
-        latitude: this._lat,
-        longitude: this._long,
-        type: GeoPoint._jsonSchemaVersion
-      };
-    }
-static fromJSON(e) {
-      if (__PRIVATE_validateJSON(e, GeoPoint._jsonSchema)) return new GeoPoint(e.latitude, e.longitude);
-    }
-  }
-  GeoPoint._jsonSchemaVersion = "firestore/geoPoint/1.0", GeoPoint._jsonSchema = {
-    type: property("string", GeoPoint._jsonSchemaVersion),
-    latitude: property("number"),
-    longitude: property("number")
-  };
-  class VectorValue {
-constructor(e) {
-      this._values = (e || []).map(((e2) => e2));
-    }
-toArray() {
-      return this._values.map(((e) => e));
-    }
-isEqual(e) {
-      return (function __PRIVATE_isPrimitiveArrayEqual(e2, t) {
-        if (e2.length !== t.length) return false;
-        for (let n = 0; n < e2.length; ++n) if (e2[n] !== t[n]) return false;
-        return true;
-      })(this._values, e._values);
-    }
-toJSON() {
-      return {
-        type: VectorValue._jsonSchemaVersion,
-        vectorValues: this._values
-      };
-    }
-static fromJSON(e) {
-      if (__PRIVATE_validateJSON(e, VectorValue._jsonSchema)) {
-        if (Array.isArray(e.vectorValues) && e.vectorValues.every(((e2) => "number" == typeof e2))) return new VectorValue(e.vectorValues);
-        throw new FirestoreError(D.INVALID_ARGUMENT, "Expected 'vectorValues' field to be a number array");
-      }
-    }
-  }
-  VectorValue._jsonSchemaVersion = "firestore/vectorValue/1.0", VectorValue._jsonSchema = {
-    type: property("string", VectorValue._jsonSchemaVersion),
-    vectorValues: property("object")
-  };
-  const on = /^__.*__$/;
-  class ParsedSetData {
-    constructor(e, t, n) {
-      this.data = e, this.fieldMask = t, this.fieldTransforms = n;
-    }
-    toMutation(e, t) {
-      return null !== this.fieldMask ? new __PRIVATE_PatchMutation(e, this.data, this.fieldMask, t, this.fieldTransforms) : new __PRIVATE_SetMutation(e, this.data, t, this.fieldTransforms);
-    }
-  }
-  class ParsedUpdateData {
-    constructor(e, t, n) {
-      this.data = e, this.fieldMask = t, this.fieldTransforms = n;
-    }
-    toMutation(e, t) {
-      return new __PRIVATE_PatchMutation(e, this.data, this.fieldMask, t, this.fieldTransforms);
-    }
-  }
-  function __PRIVATE_isWrite(e) {
-    switch (e) {
-      case 0:
-case 2:
-case 1:
-        return true;
-      case 3:
-      case 4:
-        return false;
-      default:
-        throw fail(40011, {
-          dataSource: e
-        });
-    }
-  }
-  class __PRIVATE_ParseContextImpl {
-constructor(e, t, n, r2, i, s) {
-      this.settings = e, this.databaseId = t, this.serializer = n, this.ignoreUndefinedProperties = r2,
-
-void 0 === i && this.fc(), this.fieldTransforms = i || [], this.fieldMask = s || [];
-    }
-    get path() {
-      return this.settings.path;
-    }
-    get dataSource() {
-      return this.settings.dataSource;
-    }
-i(e) {
-      return new __PRIVATE_ParseContextImpl({
-        ...this.settings,
-        ...e
-      }, this.databaseId, this.serializer, this.ignoreUndefinedProperties, this.fieldTransforms, this.fieldMask);
-    }
-    yc(e) {
-      const t = this.path?.child(e), n = this.i({
-        path: t,
-        arrayElement: false
-      });
-      return n.wc(e), n;
-    }
-    Sc(e) {
-      const t = this.path?.child(e), n = this.i({
-        path: t,
-        arrayElement: false
-      });
-      return n.fc(), n;
-    }
-    bc(e) {
-      return this.i({
-        path: void 0,
-        arrayElement: true
-      });
-    }
-    Dc(e) {
-      return __PRIVATE_createError(e, this.settings.methodName, this.settings.hasConverter || false, this.path, this.settings.targetDoc);
-    }
-contains(e) {
-      return void 0 !== this.fieldMask.find(((t) => e.isPrefixOf(t))) || void 0 !== this.fieldTransforms.find(((t) => e.isPrefixOf(t.field)));
-    }
-    fc() {
-      if (this.path) for (let e = 0; e < this.path.length; e++) this.wc(this.path.get(e));
-    }
-    wc(e) {
-      if (0 === e.length) throw this.Dc("Document fields must not be empty");
-      if (__PRIVATE_isWrite(this.dataSource) && on.test(e)) throw this.Dc('Document fields cannot begin and end with "__"');
-    }
-  }
-  class __PRIVATE_UserDataReader {
-    constructor(e, t, n) {
-      this.databaseId = e, this.ignoreUndefinedProperties = t, this.serializer = n || __PRIVATE_newSerializer(e);
-    }
-V(e, t, n, r2 = false) {
-      return new __PRIVATE_ParseContextImpl({
-        dataSource: e,
-        methodName: t,
-        targetDoc: n,
-        path: FieldPath$1.emptyPath(),
-        arrayElement: false,
-        hasConverter: r2
-      }, this.databaseId, this.serializer, this.ignoreUndefinedProperties);
-    }
-  }
-  function __PRIVATE_newUserDataReader(e) {
-    const t = e._freezeSettings(), n = __PRIVATE_newSerializer(e._databaseId);
-    return new __PRIVATE_UserDataReader(e._databaseId, !!t.ignoreUndefinedProperties, n);
-  }
-  function __PRIVATE_parseSetData(e, t, n, r2, i, s = {}) {
-    const o = e.V(s.merge || s.mergeFields ? 2 : 0, t, n, i);
-    __PRIVATE_validatePlainObject("Data must be an object, but it was:", o, r2);
-    const _ = __PRIVATE_parseObject(r2, o);
-    let a, u;
-    if (s.merge) a = new FieldMask(o.fieldMask), u = o.fieldTransforms;
-    else if (s.mergeFields) {
-      const e2 = [];
-      for (const r3 of s.mergeFields) {
-        const i2 = __PRIVATE_fieldPathFromArgument(t, r3, n);
-        if (!o.contains(i2)) throw new FirestoreError(D.INVALID_ARGUMENT, `Field '${i2}' is specified in your field mask but missing from your input data.`);
-        __PRIVATE_fieldMaskContains(e2, i2) || e2.push(i2);
-      }
-      a = new FieldMask(e2), u = o.fieldTransforms.filter(((e3) => a.covers(e3.field)));
-    } else a = null, u = o.fieldTransforms;
-    return new ParsedSetData(new ObjectValue(_), a, u);
-  }
-  class __PRIVATE_DeleteFieldValueImpl extends FieldValue {
-    _toFieldTransform(e) {
-      if (2 !== e.dataSource) throw 1 === e.dataSource ? e.Dc(`${this._methodName}() can only appear at the top level of your update data`) : e.Dc(`${this._methodName}() cannot be used with set() unless you pass {merge:true}`);
-      return e.fieldMask.push(e.path), null;
-    }
-    isEqual(e) {
-      return e instanceof __PRIVATE_DeleteFieldValueImpl;
-    }
-  }
-  class __PRIVATE_ServerTimestampFieldValueImpl extends FieldValue {
-    _toFieldTransform(e) {
-      return new FieldTransform(e.path, new __PRIVATE_ServerTimestampTransform());
-    }
-    isEqual(e) {
-      return e instanceof __PRIVATE_ServerTimestampFieldValueImpl;
-    }
-  }
-  function __PRIVATE_parseUpdateData(e, t, n, r2) {
-    const i = e.V(1, t, n);
-    __PRIVATE_validatePlainObject("Data must be an object, but it was:", i, r2);
-    const s = [], o = ObjectValue.empty();
-    forEach(r2, ((e2, r3) => {
-      const _2 = __PRIVATE_fieldPathFromDotSeparatedString(t, e2, n);
-      r3 = getModularInstance(r3);
-      const a = i.Sc(_2);
-      if (r3 instanceof __PRIVATE_DeleteFieldValueImpl)
-        s.push(_2);
-      else {
-        const e3 = __PRIVATE_parseData(r3, a);
-        null != e3 && (s.push(_2), o.set(_2, e3));
-      }
-    }));
-    const _ = new FieldMask(s);
-    return new ParsedUpdateData(o, _, i.fieldTransforms);
-  }
-  function __PRIVATE_parseUpdateVarargs(e, t, n, r2, i, s) {
-    const o = e.V(1, t, n), _ = [__PRIVATE_fieldPathFromArgument(t, r2, n)], a = [i];
-    if (s.length % 2 != 0) throw new FirestoreError(D.INVALID_ARGUMENT, `Function ${t}() needs to be called with an even number of arguments that alternate between field names and values.`);
-    for (let e2 = 0; e2 < s.length; e2 += 2) _.push(__PRIVATE_fieldPathFromArgument(t, s[e2])), a.push(s[e2 + 1]);
-    const u = [], c = ObjectValue.empty();
-    for (let e2 = _.length - 1; e2 >= 0; --e2) if (!__PRIVATE_fieldMaskContains(u, _[e2])) {
-      const t2 = _[e2];
-      let n2 = a[e2];
-      n2 = getModularInstance(n2);
-      const r3 = o.Sc(t2);
-      if (n2 instanceof __PRIVATE_DeleteFieldValueImpl)
-        u.push(t2);
-      else {
-        const e3 = __PRIVATE_parseData(n2, r3);
-        null != e3 && (u.push(t2), c.set(t2, e3));
-      }
-    }
-    const l = new FieldMask(u);
-    return new ParsedUpdateData(c, l, o.fieldTransforms);
-  }
-  function __PRIVATE_parseData(e, t) {
-    if (__PRIVATE_looksLikeJsonObject(
-
-e = getModularInstance(e)
-    )) return __PRIVATE_validatePlainObject("Unsupported field value:", t, e), __PRIVATE_parseObject(e, t);
-    if (e instanceof FieldValue)
-      return (function __PRIVATE_parseSentinelFieldValue(e2, t2) {
-        if (!__PRIVATE_isWrite(t2.dataSource)) throw t2.Dc(`${e2._methodName}() can only be used with update() and set()`);
-        if (!t2.path) throw t2.Dc(`${e2._methodName}() is not currently supported inside arrays`);
-        const n = e2._toFieldTransform(t2);
-        n && t2.fieldTransforms.push(n);
-      })(e, t), null;
-    if (void 0 === e && t.ignoreUndefinedProperties)
-      return null;
-    if (
-
-t.path && t.fieldMask.push(t.path), e instanceof Array
-    ) {
-      if (t.settings.arrayElement && 4 !== t.dataSource) throw t.Dc("Nested arrays are not supported");
-      return (function __PRIVATE_parseArray(e2, t2) {
-        const n = [];
-        let r2 = 0;
-        for (const i of e2) {
-          let e3 = __PRIVATE_parseData(i, t2.bc(r2));
-          null == e3 &&
-
-(e3 = {
-            nullValue: "NULL_VALUE"
-          }), n.push(e3), r2++;
-        }
-        return {
-          arrayValue: {
-            values: n
-          }
-        };
-      })(e, t);
-    }
-    return (function __PRIVATE_parseScalarValue(e2, t2) {
-      if (null === (e2 = getModularInstance(e2))) return {
-        nullValue: "NULL_VALUE"
-      };
-      if ("number" == typeof e2) return toNumber(t2.serializer, e2);
-      if ("boolean" == typeof e2) return {
-        booleanValue: e2
-      };
-      if ("string" == typeof e2) return {
-        stringValue: e2
-      };
-      if (e2 instanceof Date) {
-        const n = Timestamp.fromDate(e2);
-        return {
-          timestampValue: toTimestamp(t2.serializer, n)
-        };
-      }
-      if (e2 instanceof Timestamp) {
-        const n = new Timestamp(e2.seconds, 1e3 * Math.floor(e2.nanoseconds / 1e3));
-        return {
-          timestampValue: toTimestamp(t2.serializer, n)
-        };
-      }
-      if (e2 instanceof GeoPoint) return {
-        geoPointValue: {
-          latitude: e2.latitude,
-          longitude: e2.longitude
-        }
-      };
-      if (e2 instanceof Bytes) return {
-        bytesValue: __PRIVATE_toBytes(t2.serializer, e2._byteString)
-      };
-      if (e2 instanceof DocumentReference) {
-        const n = t2.databaseId, r2 = e2.firestore._databaseId;
-        if (!r2.isEqual(n)) throw t2.Dc(`Document reference is for database ${r2.projectId}/${r2.database} but should be for database ${n.projectId}/${n.database}`);
-        return {
-          referenceValue: __PRIVATE_toResourceName(e2.firestore._databaseId || t2.databaseId, e2._key.path)
-        };
-      }
-      if (e2 instanceof VectorValue)
-        return (function __PRIVATE_parseVectorValue(e3, t3) {
-          const n = e3 instanceof VectorValue ? e3.toArray() : e3, r2 = {
-            fields: {
-              [st]: {
-                stringValue: at
-              },
-              [ut]: {
-                arrayValue: {
-                  values: n.map(((e4) => {
-                    if ("number" != typeof e4) throw t3.Dc("VectorValues must only contain numeric values.");
-                    return __PRIVATE_toDouble(t3.serializer, e4);
-                  }))
-                }
-              }
-            }
-          };
-          return {
-            mapValue: r2
-          };
-        })(e2, t2);
-      if (__PRIVATE_isProtoValueSerializable(e2)) return e2._toProto(t2.serializer);
-      throw t2.Dc(`Unsupported field value: ${__PRIVATE_valueDescription(e2)}`);
-    })(e, t);
-  }
-  function __PRIVATE_parseObject(e, t) {
-    const n = {};
-    return isEmpty(e) ? (
-
-t.path && t.path.length > 0 && t.fieldMask.push(t.path)
-    ) : forEach(e, ((e2, r2) => {
-      const i = __PRIVATE_parseData(r2, t.yc(e2));
-      null != i && (n[e2] = i);
-    })), {
-      mapValue: {
-        fields: n
-      }
-    };
-  }
-  function __PRIVATE_looksLikeJsonObject(e) {
-    return !("object" != typeof e || null === e || e instanceof Array || e instanceof Date || e instanceof Timestamp || e instanceof GeoPoint || e instanceof Bytes || e instanceof DocumentReference || e instanceof FieldValue || e instanceof VectorValue || __PRIVATE_isProtoValueSerializable(e));
-  }
-  function __PRIVATE_validatePlainObject(e, t, n) {
-    if (!__PRIVATE_looksLikeJsonObject(n) || !__PRIVATE_isPlainObject(n)) {
-      const r2 = __PRIVATE_valueDescription(n);
-      throw "an object" === r2 ? t.Dc(e + " a custom object") : t.Dc(e + " " + r2);
-    }
-  }
-  function __PRIVATE_fieldPathFromArgument(e, t, n) {
-    if (
-
-(t = getModularInstance(t)) instanceof FieldPath
-    ) return t._internalPath;
-    if ("string" == typeof t) return __PRIVATE_fieldPathFromDotSeparatedString(e, t);
-    throw __PRIVATE_createError(
-      "Field path arguments must be of type string or ",
-      e,
-false,
-void 0,
-      n
-    );
-  }
-  const _n = new RegExp("[~\\*/\\[\\]]");
-  function __PRIVATE_fieldPathFromDotSeparatedString(e, t, n) {
-    if (t.search(_n) >= 0) throw __PRIVATE_createError(
-      `Invalid field path (${t}). Paths must not contain '~', '*', '/', '[', or ']'`,
-      e,
-false,
-void 0,
-      n
-    );
-    try {
-      return new FieldPath(...t.split("."))._internalPath;
-    } catch (r2) {
-      throw __PRIVATE_createError(
-        `Invalid field path (${t}). Paths must not be empty, begin with '.', end with '.', or contain '..'`,
-        e,
-false,
-void 0,
-        n
-      );
-    }
-  }
-  function __PRIVATE_createError(e, t, n, r2, i) {
-    const s = r2 && !r2.isEmpty(), o = void 0 !== i;
-    let _ = `Function ${t}() called with invalid data`;
-    n && (_ += " (via `toFirestore()`)"), _ += ". ";
-    let a = "";
-    return (s || o) && (a += " (found", s && (a += ` in field ${r2}`), o && (a += ` in document ${i}`), a += ")"), new FirestoreError(D.INVALID_ARGUMENT, _ + e + a);
-  }
-  function __PRIVATE_fieldMaskContains(e, t) {
-    return e.some(((e2) => e2.isEqual(t)));
-  }
-  function serverTimestamp() {
-    return new __PRIVATE_ServerTimestampFieldValueImpl("serverTimestamp");
-  }
-  const Ut = "@firebase/firestore", Ht = "4.14.1";
-  class DocumentSnapshot$1 {
-
-
-
-
-constructor(t, e, n, r2, s) {
-      this._firestore = t, this._userDataWriter = e, this._key = n, this._document = r2, this._converter = s;
-    }
-get id() {
-      return this._key.path.lastSegment();
-    }
-get ref() {
-      return new DocumentReference(this._firestore, this._converter, this._key);
-    }
-exists() {
-      return null !== this._document;
-    }
-data() {
-      if (this._document) {
-        if (this._converter) {
-          const t = new QueryDocumentSnapshot$1(
-            this._firestore,
-            this._userDataWriter,
-            this._key,
-            this._document,
-null
-          );
-          return this._converter.fromFirestore(t);
-        }
-        return this._userDataWriter.convertValue(this._document.data.value);
-      }
-    }
-_fieldsProto() {
-      return this._document?.data.clone().value.mapValue.fields ?? void 0;
-    }
-
-
-get(t) {
-      if (this._document) {
-        const e = this._document.data.field(__PRIVATE_fieldPathFromArgument("DocumentSnapshot.get", t));
-        if (null !== e) return this._userDataWriter.convertValue(e);
-      }
-    }
-  }
-  class QueryDocumentSnapshot$1 extends DocumentSnapshot$1 {
-data() {
-      return super.data();
-    }
-  }
-  function __PRIVATE_applyFirestoreDataConverter(t, e, n) {
-    let r2;
-    return r2 = t ? n && (n.merge || n.mergeFields) ? t.toFirestore(e, n) : t.toFirestore(e) : e, r2;
-  }
-  class SnapshotMetadata {
-constructor(t, e) {
-      this.hasPendingWrites = t, this.fromCache = e;
-    }
-isEqual(t) {
-      return this.hasPendingWrites === t.hasPendingWrites && this.fromCache === t.fromCache;
-    }
-  }
-  class DocumentSnapshot extends DocumentSnapshot$1 {
-constructor(t, e, n, r2, s, a) {
-      super(t, e, n, r2, a), this._firestore = t, this._firestoreImpl = t, this.metadata = s;
-    }
-exists() {
-      return super.exists();
-    }
-data(t = {}) {
-      if (this._document) {
-        if (this._converter) {
-          const e = new QueryDocumentSnapshot(
-            this._firestore,
-            this._userDataWriter,
-            this._key,
-            this._document,
-            this.metadata,
-null
-          );
-          return this._converter.fromFirestore(e, t);
-        }
-        return this._userDataWriter.convertValue(this._document.data.value, t.serverTimestamps);
-      }
-    }
-
-
-get(t, e = {}) {
-      if (this._document) {
-        const n = this._document.data.field(__PRIVATE_fieldPathFromArgument("DocumentSnapshot.get", t));
-        if (null !== n) return this._userDataWriter.convertValue(n, e.serverTimestamps);
-      }
-    }
-toJSON() {
-      if (this.metadata.hasPendingWrites) throw new FirestoreError(D.FAILED_PRECONDITION, "DocumentSnapshot.toJSON() attempted to serialize a document with pending writes. Await waitForPendingWrites() before invoking toJSON().");
-      const t = this._document, e = {};
-      if (e.type = DocumentSnapshot._jsonSchemaVersion, e.bundle = "", e.bundleSource = "DocumentSnapshot", e.bundleName = this._key.toString(), !t || !t.isValidDocument() || !t.isFoundDocument()) return e;
-      this._userDataWriter.convertObjectMap(t.data.value.mapValue.fields, "previous");
-      return e.bundle = (this._firestore, this.ref.path, "NOT SUPPORTED"), e;
-    }
-  }
-  DocumentSnapshot._jsonSchemaVersion = "firestore/documentSnapshot/1.0", DocumentSnapshot._jsonSchema = {
-    type: property("string", DocumentSnapshot._jsonSchemaVersion),
-    bundleSource: property("string", "DocumentSnapshot"),
-    bundleName: property("string"),
-    bundle: property("string")
-  };
-  class QueryDocumentSnapshot extends DocumentSnapshot {
-data(t = {}) {
-      return super.data(t);
-    }
-  }
-  class QuerySnapshot {
-constructor(t, e, n, r2) {
-      this._firestore = t, this._userDataWriter = e, this._snapshot = r2, this.metadata = new SnapshotMetadata(r2.hasPendingWrites, r2.fromCache), this.query = n;
-    }
-get docs() {
-      const t = [];
-      return this.forEach(((e) => t.push(e))), t;
-    }
-get size() {
-      return this._snapshot.docs.size;
-    }
-get empty() {
-      return 0 === this.size;
-    }
-forEach(t, e) {
-      this._snapshot.docs.forEach(((n) => {
-        t.call(e, new QueryDocumentSnapshot(this._firestore, this._userDataWriter, n.key, n, new SnapshotMetadata(this._snapshot.mutatedKeys.has(n.key), this._snapshot.fromCache), this.query.converter));
-      }));
-    }
-docChanges(t = {}) {
-      const e = !!t.includeMetadataChanges;
-      if (e && this._snapshot.excludesMetadataChanges) throw new FirestoreError(D.INVALID_ARGUMENT, "To include metadata changes with your document changes, you must also pass { includeMetadataChanges:true } to onSnapshot().");
-      return this._cachedChanges && this._cachedChangesIncludeMetadataChanges === e || (this._cachedChanges =
-(function __PRIVATE_changesFromSnapshot(t2, e2) {
-        if (t2._snapshot.oldDocs.isEmpty()) {
-          let e3 = 0;
-          return t2._snapshot.docChanges.map(((n) => {
-            const r2 = new QueryDocumentSnapshot(t2._firestore, t2._userDataWriter, n.doc.key, n.doc, new SnapshotMetadata(t2._snapshot.mutatedKeys.has(n.doc.key), t2._snapshot.fromCache), t2.query.converter);
-            return n.doc, {
-              type: "added",
-              doc: r2,
-              oldIndex: -1,
-              newIndex: e3++
-            };
-          }));
-        }
-        {
-          let n = t2._snapshot.oldDocs;
-          return t2._snapshot.docChanges.filter(((t3) => e2 || 3 !== t3.type)).map(((e3) => {
-            const r2 = new QueryDocumentSnapshot(t2._firestore, t2._userDataWriter, e3.doc.key, e3.doc, new SnapshotMetadata(t2._snapshot.mutatedKeys.has(e3.doc.key), t2._snapshot.fromCache), t2.query.converter);
-            let s = -1, a = -1;
-            return 0 !== e3.type && (s = n.indexOf(e3.doc.key), n = n.delete(e3.doc.key)), 1 !== e3.type && (n = n.add(e3.doc), a = n.indexOf(e3.doc.key)), {
-              type: __PRIVATE_resultChangeType(e3.type),
-              doc: r2,
-              oldIndex: s,
-              newIndex: a
-            };
-          }));
-        }
-      })(this, e), this._cachedChangesIncludeMetadataChanges = e), this._cachedChanges;
-    }
-toJSON() {
-      if (this.metadata.hasPendingWrites) throw new FirestoreError(D.FAILED_PRECONDITION, "QuerySnapshot.toJSON() attempted to serialize a document with pending writes. Await waitForPendingWrites() before invoking toJSON().");
-      const t = {};
-      t.type = QuerySnapshot._jsonSchemaVersion, t.bundleSource = "QuerySnapshot", t.bundleName = __PRIVATE_AutoId.newId(), this._firestore._databaseId.database, this._firestore._databaseId.projectId;
-      const e = [], n = [], r2 = [];
-      return this.docs.forEach(((t2) => {
-        null !== t2._document && (e.push(t2._document), n.push(this._userDataWriter.convertObjectMap(t2._document.data.value.mapValue.fields, "previous")), r2.push(t2.ref.path));
-      })), t.bundle = (this._firestore, this.query._query, t.bundleName, "NOT SUPPORTED"), t;
-    }
-  }
-  function __PRIVATE_resultChangeType(t) {
-    switch (t) {
-      case 0:
-        return "added";
-      case 2:
-      case 3:
-        return "modified";
-      case 1:
-        return "removed";
-      default:
-        return fail(61501, {
-          type: t
-        });
-    }
-  }
-  QuerySnapshot._jsonSchemaVersion = "firestore/querySnapshot/1.0", QuerySnapshot._jsonSchema = {
-    type: property("string", QuerySnapshot._jsonSchemaVersion),
-    bundleSource: property("string", "QuerySnapshot"),
-    bundleName: property("string"),
-    bundle: property("string")
-  };
-  class WriteBatch {
-constructor(t, e) {
-      this._firestore = t, this._commitHandler = e, this._mutations = [], this._committed = false, this._dataReader = __PRIVATE_newUserDataReader(t);
-    }
-    set(t, e, n) {
-      this._verifyNotCommitted();
-      const r2 = __PRIVATE_validateReference(t, this._firestore), s = __PRIVATE_applyFirestoreDataConverter(r2.converter, e, n), a = __PRIVATE_parseSetData(this._dataReader, "WriteBatch.set", r2._key, s, null !== r2.converter, n);
-      return this._mutations.push(a.toMutation(r2._key, Precondition.none())), this;
-    }
-    update(t, e, n, ...r2) {
-      this._verifyNotCommitted();
-      const s = __PRIVATE_validateReference(t, this._firestore);
-      let a;
-      return a = "string" == typeof (e = getModularInstance(e)) || e instanceof FieldPath ? __PRIVATE_parseUpdateVarargs(this._dataReader, "WriteBatch.update", s._key, e, n, r2) : __PRIVATE_parseUpdateData(this._dataReader, "WriteBatch.update", s._key, e), this._mutations.push(a.toMutation(s._key, Precondition.exists(true))), this;
-    }
-delete(t) {
-      this._verifyNotCommitted();
-      const e = __PRIVATE_validateReference(t, this._firestore);
-      return this._mutations = this._mutations.concat(new __PRIVATE_DeleteMutation(e._key, Precondition.none())), this;
-    }
-commit() {
-      return this._verifyNotCommitted(), this._committed = true, this._mutations.length > 0 ? this._commitHandler(this._mutations) : Promise.resolve();
-    }
-    _verifyNotCommitted() {
-      if (this._committed) throw new FirestoreError(D.FAILED_PRECONDITION, "A write batch can no longer be used after commit() has been called.");
-    }
-  }
-  function __PRIVATE_validateReference(t, e) {
-    if ((t = getModularInstance(t)).firestore !== e) throw new FirestoreError(D.INVALID_ARGUMENT, "Provided document reference is from a different Firestore instance.");
-    return t;
-  }
-  function executeWrite(t, e) {
-    const n = ensureFirestoreConfigured(t);
-    return __PRIVATE_firestoreClientWrite(n, e);
-  }
-  function writeBatch(t) {
-    return t = __PRIVATE_cast(t, Firestore), ensureFirestoreConfigured(t), new WriteBatch(t, ((e) => executeWrite(t, e)));
-  }
-  !(function __PRIVATE_registerFirestore(h, d = true) {
-    __PRIVATE_setSDKVersion(SDK_VERSION), _registerComponent(new Component("firestore", ((t, { instanceIdentifier: e, options: n }) => {
-      const r2 = t.getProvider("app").getImmediate(), s = new Firestore(new __PRIVATE_FirebaseAuthCredentialsProvider(t.getProvider("auth-internal")), new __PRIVATE_FirebaseAppCheckTokenProvider(r2, t.getProvider("app-check-internal")), __PRIVATE_databaseIdFromApp(r2, e), r2);
-      return n = {
-        useFetchStreams: d,
-        ...n
-      }, s._setSettings(n), s;
-    }), "PUBLIC").setMultipleInstances(true)), registerVersion(Ut, Ht, h),
-registerVersion(Ut, Ht, "esm2020");
-  })();
-  var name = "firebase";
-  var version = "12.13.0";
-  registerVersion(name, version, "app");
-  const firebaseConfig = {
-    apiKey: "AIzaSyAr4-fcnf0Qvpujm3j_L8pdY9M8VI9HB4g",
-    authDomain: "namaytyping.firebaseapp.com",
-    projectId: "namaytyping",
-    storageBucket: "namaytyping.firebasestorage.app",
-    messagingSenderId: "75847555112",
-    appId: "1:75847555112:web:65d775a59593d938eb3d1d",
-    measurementId: "G-Q9DW7CJHM4"
-  };
-  const app = getApps()[0] ?? initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const typedCollection = (db2, path, converter) => collection(db2, path).withConverter(converter);
-  const typedDoc = (db2, path, converter) => doc(db2, path).withConverter(converter);
-  const resultConverter = {
-    toFirestore: ({ id: _id, ...data }) => data,
-    fromFirestore: (snapshot, options) => {
-      const data = snapshot.data(options);
-      return { id: snapshot.id, ...data };
-    }
-  };
-  const userResultConverter = {
-    toFirestore: (data) => data,
-    fromFirestore: (snapshot, options) => snapshot.data(options)
-  };
-  const livePaths = {
-    lives: () => "lives",
-    live: (liveId) => `${livePaths.lives()}/${liveId}`,
-    results: (liveId) => `${livePaths.live(liveId)}/results`,
-    result: (liveId, resultId) => `${livePaths.results(liveId)}/${resultId}`,
-    resultUsers: (liveId, resultId) => `${livePaths.result(liveId, resultId)}/users`,
-    resultUser: (liveId, resultId, userId) => `${livePaths.resultUsers(liveId, resultId)}/${userId}`
-  };
-  const liveRefs = {
-    results: (db2, liveId) => typedCollection(db2, livePaths.results(liveId), resultConverter),
-    result: (db2, liveId, resultId) => typedDoc(db2, livePaths.result(liveId, resultId), resultConverter),
-    resultUsers: (db2, liveId, resultId) => typedCollection(db2, livePaths.resultUsers(liveId, resultId), userResultConverter),
-    resultUser: (db2, liveId, resultId, userId) => typedDoc(db2, livePaths.resultUser(liveId, resultId, userId), userResultConverter)
-  };
-  const ttlHours = 12;
-  const createExpireAt = () => Timestamp.fromMillis(Date.now() + ttlHours * 60 * 60 * 1e3);
-  const createResultWithUser = async (liveId, input) => {
-    const resultRef = doc(collection(db, livePaths.results(liveId)));
-    const expireAt = createExpireAt();
-    const batch = writeBatch(db);
-    const { userResults, ...resultInput } = input;
-    batch.set(resultRef, {
-      ...resultInput,
-      createdAt: serverTimestamp(),
-      expireAt
-    });
-    for (const userResult of userResults) {
-      batch.set(
-        liveRefs.resultUser(db, liveId, resultRef.id, userResult.userId),
-        { ...userResult, expireAt }
-      );
-    }
-    await batch.commit();
-  };
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   var _monkeyWindow = (() => window)();
@@ -22941,9 +12525,9 @@ registerVersion(Ut, Ht, "esm2020");
     let lowBits = 0;
     let highBits = 0;
     for (let shift2 = 0; shift2 < 28; shift2 += 7) {
-      let b2 = this.buf[this.pos++];
-      lowBits |= (b2 & 127) << shift2;
-      if ((b2 & 128) == 0) {
+      let b = this.buf[this.pos++];
+      lowBits |= (b & 127) << shift2;
+      if ((b & 128) == 0) {
         this.assertBounds();
         return [lowBits, highBits];
       }
@@ -22956,9 +12540,9 @@ registerVersion(Ut, Ht, "esm2020");
       return [lowBits, highBits];
     }
     for (let shift2 = 3; shift2 <= 31; shift2 += 7) {
-      let b2 = this.buf[this.pos++];
-      highBits |= (b2 & 127) << shift2;
-      if ((b2 & 128) == 0) {
+      let b = this.buf[this.pos++];
+      highBits |= (b & 127) << shift2;
+      if ((b & 128) == 0) {
         this.assertBounds();
         return [lowBits, highBits];
       }
@@ -23055,35 +12639,35 @@ registerVersion(Ut, Ht, "esm2020");
     }
   }
   function varint32read() {
-    let b2 = this.buf[this.pos++];
-    let result = b2 & 127;
-    if ((b2 & 128) == 0) {
+    let b = this.buf[this.pos++];
+    let result = b & 127;
+    if ((b & 128) == 0) {
       this.assertBounds();
       return result;
     }
-    b2 = this.buf[this.pos++];
-    result |= (b2 & 127) << 7;
-    if ((b2 & 128) == 0) {
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 7;
+    if ((b & 128) == 0) {
       this.assertBounds();
       return result;
     }
-    b2 = this.buf[this.pos++];
-    result |= (b2 & 127) << 14;
-    if ((b2 & 128) == 0) {
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 14;
+    if ((b & 128) == 0) {
       this.assertBounds();
       return result;
     }
-    b2 = this.buf[this.pos++];
-    result |= (b2 & 127) << 21;
-    if ((b2 & 128) == 0) {
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 21;
+    if ((b & 128) == 0) {
       this.assertBounds();
       return result;
     }
-    b2 = this.buf[this.pos++];
-    result |= (b2 & 15) << 28;
-    for (let readBytes = 5; (b2 & 128) !== 0 && readBytes < 10; readBytes++)
-      b2 = this.buf[this.pos++];
-    if ((b2 & 128) != 0)
+    b = this.buf[this.pos++];
+    result |= (b & 15) << 28;
+    for (let readBytes = 5; (b & 128) !== 0 && readBytes < 10; readBytes++)
+      b = this.buf[this.pos++];
+    if ((b & 128) != 0)
       throw new Error("invalid varint");
     this.assertBounds();
     return result >>> 0;
@@ -23233,22 +12817,22 @@ registerVersion(Ut, Ht, "esm2020");
     return oneof.fields.find((f) => f.localName === c);
   }
   function unsafeIsSet(target, field) {
-    const name2 = field.localName;
+    const name = field.localName;
     if (field.oneof) {
-      return target[field.oneof.localName].case === name2;
+      return target[field.oneof.localName].case === name;
     }
     if (field.presence != IMPLICIT$2) {
-      return target[name2] !== void 0 && Object.prototype.hasOwnProperty.call(target, name2);
+      return target[name] !== void 0 && Object.prototype.hasOwnProperty.call(target, name);
     }
     switch (field.fieldKind) {
       case "list":
-        return target[name2].length > 0;
+        return target[name].length > 0;
       case "map":
-        return Object.keys(target[name2]).length > 0;
+        return Object.keys(target[name]).length > 0;
       case "scalar":
-        return !isScalarZeroValue(field.scalar, target[name2]);
+        return !isScalarZeroValue(field.scalar, target[name]);
       case "enum":
-        return target[name2] !== field.enum.values[0].number;
+        return target[name] !== field.enum.values[0].number;
     }
     throw new Error("message field with implicit presence");
   }
@@ -23276,27 +12860,27 @@ registerVersion(Ut, Ht, "esm2020");
     }
   }
   function unsafeClear(target, field) {
-    const name2 = field.localName;
+    const name = field.localName;
     if (field.oneof) {
       const oneofLocalName = field.oneof.localName;
-      if (target[oneofLocalName].case === name2) {
+      if (target[oneofLocalName].case === name) {
         target[oneofLocalName] = { case: void 0 };
       }
     } else if (field.presence != IMPLICIT$2) {
-      delete target[name2];
+      delete target[name];
     } else {
       switch (field.fieldKind) {
         case "map":
-          target[name2] = {};
+          target[name] = {};
           break;
         case "list":
-          target[name2] = [];
+          target[name] = [];
           break;
         case "enum":
-          target[name2] = field.enum.values[0].number;
+          target[name] = field.enum.values[0].number;
           break;
         case "scalar":
-          target[name2] = scalarZeroValue(field.scalar, field.longAsString);
+          target[name] = scalarZeroValue(field.scalar, field.longAsString);
           break;
       }
     }
@@ -23309,8 +12893,8 @@ registerVersion(Ut, Ht, "esm2020");
     if (isObject(arg) && unsafeLocal in arg && "add" in arg && "field" in arg && typeof arg.field == "function") {
       if (field !== void 0) {
         const a = field;
-        const b2 = arg.field();
-        return a.listKind == b2.listKind && a.scalar === b2.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b2.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b2.enum) === null || _d === void 0 ? void 0 : _d.typeName);
+        const b = arg.field();
+        return a.listKind == b.listKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
       }
       return true;
     }
@@ -23320,8 +12904,8 @@ registerVersion(Ut, Ht, "esm2020");
     var _a, _b, _c, _d;
     if (isObject(arg) && unsafeLocal in arg && "has" in arg && "field" in arg && typeof arg.field == "function") {
       if (field !== void 0) {
-        const a = field, b2 = arg.field();
-        return a.mapKey === b2.mapKey && a.mapKind == b2.mapKind && a.scalar === b2.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b2.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b2.enum) === null || _d === void 0 ? void 0 : _d.typeName);
+        const a = field, b = arg.field();
+        return a.mapKey === b.mapKey && a.mapKind == b.mapKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
       }
       return true;
     }
@@ -23337,8 +12921,8 @@ registerVersion(Ut, Ht, "esm2020");
     const f = messageDesc2.fields[0];
     return isWrapperTypeName(messageDesc2.typeName) && f !== void 0 && f.fieldKind == "scalar" && f.name == "value" && f.number == 1;
   }
-  function isWrapperTypeName(name2) {
-    return name2.startsWith("google.protobuf.") && [
+  function isWrapperTypeName(name) {
+    return name.startsWith("google.protobuf.") && [
       "DoubleValue",
       "FloatValue",
       "Int64Value",
@@ -23348,7 +12932,7 @@ registerVersion(Ut, Ht, "esm2020");
       "BoolValue",
       "StringValue",
       "BytesValue"
-    ].includes(name2.substring(16));
+    ].includes(name.substring(16));
   }
   const EDITION_PROTO3$1 = 999;
   const EDITION_PROTO2$1 = 998;
@@ -23448,9 +13032,9 @@ registerVersion(Ut, Ht, "esm2020");
     return field.fieldKind == "scalar" ? scalarZeroValue(field.scalar, field.longAsString) : field.enum.values[0].number;
   }
   class FieldError extends Error {
-    constructor(fieldOrOneof, message, name2 = "FieldValueInvalidError") {
+    constructor(fieldOrOneof, message, name = "FieldValueInvalidError") {
       super(message);
-      this.name = name2;
+      this.name = name;
       this.field = () => fieldOrOneof;
     }
   }
@@ -23658,7 +13242,7 @@ string(strict) {
       if (field.enum.open) {
         return Number.isInteger(value);
       }
-      return field.enum.values.some((v2) => v2.number === value);
+      return field.enum.values.some((v) => v.number === value);
     }
     return isReflectMessage(value, field.message);
   }
@@ -23838,7 +13422,7 @@ string(strict) {
       if (cached) {
         return cached;
       }
-      const sortedFields = this.desc.fields.concat().sort((a, b2) => a.number - b2.number);
+      const sortedFields = this.desc.fields.concat().sort((a, b) => a.number - b.number);
       messageSortedFields.set(this.desc, sortedFields);
       return sortedFields;
     }
@@ -24197,16 +13781,16 @@ map = new ReflectMapImpl(field, value, this.check)
       fields: {}
     };
     if (isObject(json)) {
-      for (const [k, v2] of Object.entries(json)) {
-        struct.fields[k] = wktValueToReflect(v2);
+      for (const [k, v] of Object.entries(json)) {
+        struct.fields[k] = wktValueToReflect(v);
       }
     }
     return struct;
   }
   function wktStructToLocal(val) {
     const json = {};
-    for (const [k, v2] of Object.entries(val.fields)) {
-      json[k] = wktValueToLocal(v2);
+    for (const [k, v] of Object.entries(val.fields)) {
+      json[k] = wktValueToLocal(v);
     }
     return json;
   }
@@ -24273,10 +13857,10 @@ map = new ReflectMapImpl(field, value, this.check)
       es -= 2;
     else if (base64Str[base64Str.length - 1] == "=")
       es -= 1;
-    let bytes = new Uint8Array(es), bytePos = 0, groupPos = 0, b2, p = 0;
+    let bytes = new Uint8Array(es), bytePos = 0, groupPos = 0, b, p = 0;
     for (let i = 0; i < base64Str.length; i++) {
-      b2 = table[base64Str.charCodeAt(i)];
-      if (b2 === void 0) {
+      b = table[base64Str.charCodeAt(i)];
+      if (b === void 0) {
         switch (base64Str[i]) {
 case "=":
             groupPos = 0;
@@ -24291,21 +13875,21 @@ default:
       }
       switch (groupPos) {
         case 0:
-          p = b2;
+          p = b;
           groupPos = 1;
           break;
         case 1:
-          bytes[bytePos++] = p << 2 | (b2 & 48) >> 4;
-          p = b2;
+          bytes[bytePos++] = p << 2 | (b & 48) >> 4;
+          p = b;
           groupPos = 2;
           break;
         case 2:
-          bytes[bytePos++] = (p & 15) << 4 | (b2 & 60) >> 2;
-          p = b2;
+          bytes[bytePos++] = (p & 15) << 4 | (b & 60) >> 2;
+          p = b;
           groupPos = 3;
           break;
         case 3:
-          bytes[bytePos++] = (p & 3) << 6 | b2;
+          bytes[bytePos++] = (p & 3) << 6 | b;
           groupPos = 0;
           break;
       }
@@ -24336,7 +13920,7 @@ default:
   }
   function protoCamelCase(snakeCase) {
     let capNext = false;
-    const b2 = [];
+    const b = [];
     for (let i = 0; i < snakeCase.length; i++) {
       let c = snakeCase.charAt(i);
       switch (c) {
@@ -24353,7 +13937,7 @@ default:
         case "7":
         case "8":
         case "9":
-          b2.push(c);
+          b.push(c);
           capNext = false;
           break;
         default:
@@ -24361,11 +13945,11 @@ default:
             capNext = false;
             c = c.toUpperCase();
           }
-          b2.push(c);
+          b.push(c);
           break;
       }
     }
-    return b2.join("");
+    return b.join("");
   }
   const reservedObjectProperties = new Set([
 "constructor",
@@ -24373,8 +13957,8 @@ default:
     "toJSON",
     "valueOf"
   ]);
-  function safeObjectProperty(name2) {
-    return reservedObjectProperties.has(name2) ? name2 + "$" : name2;
+  function safeObjectProperty(name) {
+    return reservedObjectProperties.has(name) ? name + "$" : name;
   }
   function restoreJsonNames(message) {
     for (const f of message.field) {
@@ -24385,7 +13969,7 @@ default:
     message.nestedType.forEach(restoreJsonNames);
   }
   function parseTextFormatEnumValue(descEnum, value) {
-    const enumValue = descEnum.values.find((v2) => v2.name === value);
+    const enumValue = descEnum.values.find((v) => v.name === value);
     if (!enumValue) {
       throw new Error(`cannot parse ${descEnum} default value: ${value}`);
     }
@@ -24432,7 +14016,7 @@ default:
     }
   }
   function unescapeBytesDefaultValue(str) {
-    const b2 = [];
+    const b = [];
     const input = {
       tail: str,
       c: "",
@@ -24459,25 +14043,25 @@ default:
           if (input.next()) {
             switch (input.c) {
               case "\\":
-                b2.push(input.c.charCodeAt(0));
+                b.push(input.c.charCodeAt(0));
                 break;
               case "b":
-                b2.push(8);
+                b.push(8);
                 break;
               case "f":
-                b2.push(12);
+                b.push(12);
                 break;
               case "n":
-                b2.push(10);
+                b.push(10);
                 break;
               case "r":
-                b2.push(13);
+                b.push(13);
                 break;
               case "t":
-                b2.push(9);
+                b.push(9);
                 break;
               case "v":
-                b2.push(11);
+                b.push(11);
                 break;
               case "0":
               case "1":
@@ -24496,7 +14080,7 @@ default:
                 if (Number.isNaN(n)) {
                   return false;
                 }
-                b2.push(n);
+                b.push(n);
                 break;
               }
               case "x": {
@@ -24509,7 +14093,7 @@ default:
                 if (Number.isNaN(n)) {
                   return false;
                 }
-                b2.push(n);
+                b.push(n);
                 break;
               }
               case "u": {
@@ -24525,7 +14109,7 @@ default:
                 const chunk = new Uint8Array(4);
                 const view = new DataView(chunk.buffer);
                 view.setInt32(0, n, true);
-                b2.push(chunk[0], chunk[1], chunk[2], chunk[3]);
+                b.push(chunk[0], chunk[1], chunk[2], chunk[3]);
                 break;
               }
               case "U": {
@@ -24539,17 +14123,17 @@ default:
                 const view = new DataView(chunk.buffer);
                 view.setInt32(0, tc.lo, true);
                 view.setInt32(4, tc.hi, true);
-                b2.push(chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5], chunk[6], chunk[7]);
+                b.push(chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5], chunk[6], chunk[7]);
                 break;
               }
             }
           }
           break;
         default:
-          b2.push(input.c.charCodeAt(0));
+          b.push(input.c.charCodeAt(0));
       }
     }
-    return new Uint8Array(b2);
+    return new Uint8Array(b);
   }
   function* nestedTypes(desc) {
     switch (desc.kind) {
@@ -24866,18 +14450,18 @@ defaultSymbolVisibility: 2
     desc.open = isEnumOpen(desc);
     reg.add(desc);
     for (const p of proto.value) {
-      const name2 = p.name;
+      const name = p.name;
       desc.values.push(
 desc.value[p.number] = {
           kind: "enum_value",
           proto: p,
           deprecated: (_d = (_c = p.options) === null || _c === void 0 ? void 0 : _c.deprecated) !== null && _d !== void 0 ? _d : false,
           parent: desc,
-          name: name2,
-          localName: safeObjectProperty(sharedPrefix == void 0 ? name2 : name2.substring(sharedPrefix.length)),
+          name,
+          localName: safeObjectProperty(sharedPrefix == void 0 ? name : name.substring(sharedPrefix.length)),
           number: p.number,
           toString() {
-            return `enum value ${desc.typeName}.${name2}`;
+            return `enum value ${desc.typeName}.${name}`;
           }
         }
       );
@@ -24957,20 +14541,20 @@ desc.value[p.number] = {
     const output = reg.getMessage(trimLeadingDot(proto.outputType));
     assert(input, `invalid MethodDescriptorProto: input_type ${proto.inputType} not found`);
     assert(output, `invalid MethodDescriptorProto: output_type ${proto.inputType} not found`);
-    const name2 = proto.name;
+    const name = proto.name;
     return {
       kind: "rpc",
       proto,
       deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
       parent,
-      name: name2,
-      localName: safeObjectProperty(name2.length ? safeObjectProperty(name2[0].toLowerCase() + name2.substring(1)) : name2),
+      name,
+      localName: safeObjectProperty(name.length ? safeObjectProperty(name[0].toLowerCase() + name.substring(1)) : name),
       methodKind,
       input,
       output,
       idempotency: (_d = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.idempotencyLevel) !== null && _d !== void 0 ? _d : IDEMPOTENCY_UNKNOWN,
       toString() {
-        return `rpc ${parent.typeName}.${name2}`;
+        return `rpc ${parent.typeName}.${name}`;
       }
     };
   }
@@ -25242,26 +14826,26 @@ desc.value[p.number] = {
       parent
     });
   }
-  function resolveFeature(name2, ref) {
+  function resolveFeature(name, ref) {
     var _a, _b;
     const featureSet = (_a = ref.proto.options) === null || _a === void 0 ? void 0 : _a.features;
     if (featureSet) {
-      const val = featureSet[name2];
+      const val = featureSet[name];
       if (val != 0) {
         return val;
       }
     }
     if ("kind" in ref) {
       if (ref.kind == "message") {
-        return resolveFeature(name2, (_b = ref.parent) !== null && _b !== void 0 ? _b : ref.file);
+        return resolveFeature(name, (_b = ref.parent) !== null && _b !== void 0 ? _b : ref.file);
       }
       const editionDefaults = featureDefaults[ref.edition];
       if (!editionDefaults) {
         throw new Error(`feature default for edition ${ref.edition} not found`);
       }
-      return editionDefaults[name2];
+      return editionDefaults[name];
     }
-    return resolveFeature(name2, ref.parent);
+    return resolveFeature(name, ref.parent);
   }
   function assert(condition, msg) {
     if (!condition) {
@@ -25549,7 +15133,7 @@ desc.value[p.number] = {
         if (field.enum.open) {
           message.set(field, val);
         } else {
-          const ok = field.enum.values.some((v2) => v2.number === val);
+          const ok = field.enum.values.some((v) => v.number === val);
           if (ok) {
             message.set(field, val);
           } else if (options.readUnknownFields) {
@@ -25836,8 +15420,8 @@ desc.value[p.number] = {
   })(ChunkedMessage_Signal || (ChunkedMessage_Signal = {}));
   const PackedSegmentSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 1);
   const ChunkedEntrySchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 2);
-  function timestampLargeA(a, b2) {
-    return a.seconds < b2.seconds || a.seconds === b2.seconds && a.nanos < b2.nanos;
+  function timestampLargeA(a, b) {
+    return a.seconds < b.seconds || a.seconds === b.seconds && a.nanos < b.nanos;
   }
   function isAbortError(error, signal) {
     return signal?.aborted === true && error instanceof Error && error.name === "AbortError";
@@ -26035,8 +15619,8 @@ uri:${uri} status:${res.status}`);
     }
   }
   const NicoliveMessageServer = {
-fetchEntry: (entryUri, at2, signal, transport) => {
-      return ResponseIteratorSet.fetch(`${entryUri}?at=${at2}`, ChunkedEntrySchema, signal, transport);
+fetchEntry: (entryUri, at, signal, transport) => {
+      return ResponseIteratorSet.fetch(`${entryUri}?at=${at}`, ChunkedEntrySchema, signal, transport);
     },
 fetchMessage: (messageUri, signal, transport) => {
       return ResponseIteratorSet.fetch(messageUri, ChunkedMessageSchema, signal, transport);
@@ -26140,8 +15724,8 @@ serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
   }
   async function parseNicolivePageData(res) {
     try {
-      let postBroadcasterComment2 = function(text, name2, isPermanent, color) {
-        return NicoliveUtility.postBroadcasterComment(liveId, broadcasterCommentToken, text, name2, isPermanent, color);
+      let postBroadcasterComment2 = function(text, name, isPermanent, color) {
+        return NicoliveUtility.postBroadcasterComment(liveId, broadcasterCommentToken, text, name, isPermanent, color);
       }, deleteBroadcasterComment2 = function() {
         return NicoliveUtility.deleteBroadcasterComment(liveId, broadcasterCommentToken);
       };
@@ -26418,16 +16002,16 @@ connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
     return parsedUrl.toString();
   }
   const NicoliveUtility = {
-postBroadcasterComment: async (liveId, broadcasterCommentToken, text, name2 = "", isPermanent = false, color) => {
+postBroadcasterComment: async (liveId, broadcasterCommentToken, text, name = "", isPermanent = false, color) => {
       text = encodeURIComponent(text);
-      name2 = encodeURIComponent(name2);
+      name = encodeURIComponent(name);
       await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
         "headers": {
           "accept": "application/json",
           "content-type": "application/x-www-form-urlencoded",
           "x-public-api-token": broadcasterCommentToken
         },
-        "body": `text=${text}&name=${name2}&isPermanent=${isPermanent}&command=${color}`,
+        "body": `text=${text}&name=${name}&isPermanent=${isPermanent}&command=${color}`,
         "method": "PUT",
         "credentials": "include"
       });
@@ -27159,8 +16743,8 @@ postPasswordAuth: (liveId, password) => {
   const getGroupIdForArbitraryProperty = (className) => className.slice(1, -1).indexOf(":") === -1 ? void 0 : (() => {
     const content = className.slice(1, -1);
     const colonIndex = content.indexOf(":");
-    const property2 = content.slice(0, colonIndex);
-    return property2 ? ARBITRARY_PROPERTY_PREFIX + property2 : void 0;
+    const property = content.slice(0, colonIndex);
+    return property ? ARBITRARY_PROPERTY_PREFIX + property : void 0;
   })();
   const createClassMap = (config) => {
     const {
@@ -29005,7 +18589,7 @@ stroke: [{
     }
   );
   const createLucideIcon = (iconName, iconNode) => {
-    const Component2 = reactExports.forwardRef(
+    const Component = reactExports.forwardRef(
       ({ className, ...props }, ref) => reactExports.createElement(Icon$1, {
         ref,
         iconNode,
@@ -29017,8 +18601,8 @@ stroke: [{
         ...props
       })
     );
-    Component2.displayName = toPascalCase(iconName);
-    return Component2;
+    Component.displayName = toPascalCase(iconName);
+    return Component;
   };
   const __iconNode$2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
   const Check = createLucideIcon("check", __iconNode$2);
@@ -29209,13 +18793,13 @@ position: "absolute",
       const BaseContext = reactExports.createContext(defaultContext);
       const index2 = defaultContexts.length;
       defaultContexts = [...defaultContexts, defaultContext];
-      const Provider2 = (props) => {
+      const Provider = (props) => {
         const { scope, children, ...context } = props;
         const Context = scope?.[scopeName]?.[index2] || BaseContext;
         const value = reactExports.useMemo(() => context, Object.values(context));
         return jsxRuntimeExports.jsx(Context.Provider, { value, children });
       };
-      Provider2.displayName = rootComponentName + "Provider";
+      Provider.displayName = rootComponentName + "Provider";
       function useContext2(consumerName, scope) {
         const Context = scope?.[scopeName]?.[index2] || BaseContext;
         const context = reactExports.useContext(Context);
@@ -29223,7 +18807,7 @@ position: "absolute",
         if (defaultContext !== void 0) return defaultContext;
         throw new Error(`\`${consumerName}\` must be used within \`${rootComponentName}\``);
       }
-      return [Provider2, useContext2];
+      return [Provider, useContext2];
     }
     const createScope = () => {
       const scopeContexts = defaultContexts.map((defaultContext) => {
@@ -29260,8 +18844,8 @@ position: "absolute",
     createScope.scopeName = baseScope.scopeName;
     return createScope;
   }
-  function createCollection(name2) {
-    const PROVIDER_NAME = name2 + "CollectionProvider";
+  function createCollection(name) {
+    const PROVIDER_NAME = name + "CollectionProvider";
     const [createCollectionContext, createCollectionScope2] = createContextScope(PROVIDER_NAME);
     const [CollectionProviderImpl, useCollectionContext] = createCollectionContext(
       PROVIDER_NAME,
@@ -29274,7 +18858,7 @@ position: "absolute",
       return jsxRuntimeExports.jsx(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
     };
     CollectionProvider.displayName = PROVIDER_NAME;
-    const COLLECTION_SLOT_NAME = name2 + "CollectionSlot";
+    const COLLECTION_SLOT_NAME = name + "CollectionSlot";
     const CollectionSlotImpl = createSlot(COLLECTION_SLOT_NAME);
     const CollectionSlot = React.forwardRef(
       (props, forwardedRef) => {
@@ -29285,7 +18869,7 @@ position: "absolute",
       }
     );
     CollectionSlot.displayName = COLLECTION_SLOT_NAME;
-    const ITEM_SLOT_NAME = name2 + "CollectionItemSlot";
+    const ITEM_SLOT_NAME = name + "CollectionItemSlot";
     const ITEM_DATA_ATTR = "data-radix-collection-item";
     const CollectionItemSlotImpl = createSlot(ITEM_SLOT_NAME);
     const CollectionItemSlot = React.forwardRef(
@@ -29303,14 +18887,14 @@ position: "absolute",
     );
     CollectionItemSlot.displayName = ITEM_SLOT_NAME;
     function useCollection2(scope) {
-      const context = useCollectionContext(name2 + "CollectionConsumer", scope);
+      const context = useCollectionContext(name + "CollectionConsumer", scope);
       const getItems = React.useCallback(() => {
         const collectionNode = context.collectionRef.current;
         if (!collectionNode) return [];
         const orderedNodes = Array.from(collectionNode.querySelectorAll(`[${ITEM_DATA_ATTR}]`));
         const items = Array.from(context.itemMap.values());
         const orderedItems = items.sort(
-          (a, b2) => orderedNodes.indexOf(a.ref.current) - orderedNodes.indexOf(b2.ref.current)
+          (a, b) => orderedNodes.indexOf(a.ref.current) - orderedNodes.indexOf(b.ref.current)
         );
         return orderedItems;
       }, [context.collectionRef, context.itemMap]);
@@ -29619,10 +19203,10 @@ onPointerDownCapture: () => isPointerInsideReactTreeRef.current = true
     const event = new CustomEvent(CONTEXT_UPDATE);
     document.dispatchEvent(event);
   }
-  function handleAndDispatchCustomEvent(name2, handler, detail, { discrete }) {
+  function handleAndDispatchCustomEvent(name, handler, detail, { discrete }) {
     const target = detail.originalEvent.target;
-    const event = new CustomEvent(name2, { bubbles: false, cancelable: true, detail });
-    if (handler) target.addEventListener(name2, handler, { once: true });
+    const event = new CustomEvent(name, { bubbles: false, cancelable: true, detail });
+    if (handler) target.addEventListener(name, handler, { once: true });
     if (discrete) {
       dispatchDiscreteCustomEvent(target, event);
     } else {
@@ -29982,8 +19566,8 @@ facade: {
         var item = middleware(data, assigned);
         buffer.push(item);
         return function() {
-          buffer = buffer.filter(function(x2) {
-            return x2 !== item;
+          buffer = buffer.filter(function(x) {
+            return x !== item;
           });
         };
       },
@@ -29995,8 +19579,8 @@ facade: {
           cbs.forEach(cb);
         }
         buffer = {
-          push: function(x2) {
-            return cb(x2);
+          push: function(x) {
+            return cb(x);
           },
           filter: function() {
             return buffer;
@@ -30022,8 +19606,8 @@ facade: {
         };
         cycle();
         buffer = {
-          push: function(x2) {
-            pendingQueue.push(x2);
+          push: function(x) {
+            pendingQueue.push(x);
             cycle();
           },
           filter: function(filter) {
@@ -30166,8 +19750,8 @@ facade: {
     right: 0,
     gap: 0
   };
-  var parse = function(x2) {
-    return parseInt(x2 || "", 10) || 0;
+  var parse = function(x) {
+    return parseInt(x || "", 10) || 0;
   };
   var getOffset = function(gapMode) {
     var cs = window.getComputedStyle(document.body);
@@ -30352,8 +19936,8 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
   var extractRef = function(ref) {
     return ref && "current" in ref ? ref.current : ref;
   };
-  var deltaCompare = function(x2, y) {
-    return x2[0] === y[0] && x2[1] === y[1];
+  var deltaCompare = function(x, y) {
+    return x[0] === y[0] && x[1] === y[1];
   };
   var generateStyle = function(id) {
     return "\n  .block-interactivity-".concat(id, " {pointer-events: none;}\n  .allow-interactivity-").concat(id, " {pointer-events: all;}\n");
@@ -30455,8 +20039,8 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
         }
       }
     }, []);
-    var shouldCancel = reactExports.useCallback(function(name2, delta, target, should) {
-      var event = { name: name2, delta, target, should, shadowParent: getOutermostShadowParent(target) };
+    var shouldCancel = reactExports.useCallback(function(name, delta, target, should) {
+      var event = { name, delta, target, should, shadowParent: getOutermostShadowParent(target) };
       shouldPreventQueue.current.push(event);
       setTimeout(function() {
         shouldPreventQueue.current = shouldPreventQueue.current.filter(function(e) {
@@ -30542,8 +20126,8 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       }
       console.error("aria-hidden", target, "in not contained inside", parent, ". Doing nothing");
       return null;
-    }).filter(function(x2) {
-      return Boolean(x2);
+    }).filter(function(x) {
+      return Boolean(x);
     });
   };
   var applyAttributeToOthers = function(originalTarget, parentNode, markerName, controlAttribute) {
@@ -30685,9 +20269,9 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
   const max = Math.max;
   const round = Math.round;
   const floor = Math.floor;
-  const createCoords = (v2) => ({
-    x: v2,
-    y: v2
+  const createCoords = (v) => ({
+    x: v,
+    y: v
   });
   const oppositeSideMap = {
     left: "right",
@@ -30791,7 +20375,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
   }
   function rectToClientRect(rect) {
     const {
-      x: x2,
+      x,
       y,
       width,
       height
@@ -30800,10 +20384,10 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       width,
       height,
       top: y,
-      left: x2,
-      right: x2 + width,
+      left: x,
+      right: x + width,
       bottom: y + height,
-      x: x2,
+      x,
       y
     };
   }
@@ -30868,7 +20452,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       options = {};
     }
     const {
-      x: x2,
+      x,
       y,
       platform: platform2,
       rects,
@@ -30892,7 +20476,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       strategy
     }));
     const rect = elementContext === "floating" ? {
-      x: x2,
+      x,
       y,
       width: rects.floating.width,
       height: rects.floating.height
@@ -30937,7 +20521,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       strategy
     });
     let {
-      x: x2,
+      x,
       y
     } = computeCoordsFromPlacement(rects, placement, rtl);
     let statefulPlacement = placement;
@@ -30949,7 +20533,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
         continue;
       }
       const {
-        name: name2,
+        name,
         fn
       } = currentMiddleware;
       const {
@@ -30958,7 +20542,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
         data,
         reset
       } = await fn({
-        x: x2,
+        x,
         y,
         initialPlacement: placement,
         placement: statefulPlacement,
@@ -30971,10 +20555,10 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
           floating
         }
       });
-      x2 = nextX != null ? nextX : x2;
+      x = nextX != null ? nextX : x;
       y = nextY != null ? nextY : y;
-      middlewareData[name2] = {
-        ...middlewareData[name2],
+      middlewareData[name] = {
+        ...middlewareData[name],
         ...data
       };
       if (reset && resetCount < MAX_RESET_COUNT) {
@@ -30991,7 +20575,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
             }) : reset.rects;
           }
           ({
-            x: x2,
+            x,
             y
           } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
         }
@@ -30999,7 +20583,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       }
     }
     return {
-      x: x2,
+      x,
       y,
       placement: statefulPlacement,
       strategy,
@@ -31011,7 +20595,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
     options,
     async fn(state) {
       const {
-        x: x2,
+        x,
         y,
         placement,
         rects,
@@ -31028,7 +20612,7 @@ targetInLock && (endTarget.contains(target) || endTarget === target)
       }
       const paddingObject = getPaddingObject(padding);
       const coords = {
-        x: x2,
+        x,
         y
       };
       const axis = getAlignmentAxis(placement);
@@ -31141,7 +20725,7 @@ overflowsData.every((d) => getSideAxis(d.placement) === initialSideAxis ? d.over
               };
             }
           }
-          let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b2) => a.overflows[1] - b2.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+          let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
           if (!resetPlacement) {
             switch (fallbackStrategy) {
               case "bestFit": {
@@ -31154,7 +20738,7 @@ overflowsData.every((d) => getSideAxis(d.placement) === initialSideAxis ? d.over
 currentSideAxis === "y";
                   }
                   return true;
-                }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b2) => a[1] - b2[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+                }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
                 if (placement2) {
                   resetPlacement = placement2;
                 }
@@ -31286,7 +20870,7 @@ currentSideAxis === "y";
       async fn(state) {
         var _middlewareData$offse, _middlewareData$arrow;
         const {
-          x: x2,
+          x,
           y,
           placement,
           middlewareData
@@ -31296,7 +20880,7 @@ currentSideAxis === "y";
           return {};
         }
         return {
-          x: x2 + diffCoords.x,
+          x: x + diffCoords.x,
           y: y + diffCoords.y,
           data: {
             ...diffCoords,
@@ -31315,7 +20899,7 @@ currentSideAxis === "y";
       options,
       async fn(state) {
         const {
-          x: x2,
+          x,
           y,
           placement,
           platform: platform2
@@ -31326,11 +20910,11 @@ currentSideAxis === "y";
           limiter = {
             fn: (_ref) => {
               let {
-                x: x3,
+                x: x2,
                 y: y2
               } = _ref;
               return {
-                x: x3,
+                x: x2,
                 y: y2
               };
             }
@@ -31338,7 +20922,7 @@ currentSideAxis === "y";
           ...detectOverflowOptions
         } = evaluate(options, state);
         const coords = {
-          x: x2,
+          x,
           y
         };
         const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
@@ -31368,7 +20952,7 @@ currentSideAxis === "y";
         return {
           ...limitedCoords,
           data: {
-            x: limitedCoords.x - x2,
+            x: limitedCoords.x - x,
             y: limitedCoords.y - y,
             enabled: {
               [mainAxis]: checkMainAxis,
@@ -31387,7 +20971,7 @@ currentSideAxis === "y";
       options,
       fn(state) {
         const {
-          x: x2,
+          x,
           y,
           placement,
           rects,
@@ -31399,7 +20983,7 @@ currentSideAxis === "y";
           crossAxis: checkCrossAxis = true
         } = evaluate(options, state);
         const coords = {
-          x: x2,
+          x,
           y
         };
         const crossAxis = getSideAxis(placement);
@@ -31707,16 +21291,16 @@ getDocumentElement(node)
       height,
       $
     } = getCssDimensions(domElement);
-    let x2 = ($ ? round(rect.width) : rect.width) / width;
+    let x = ($ ? round(rect.width) : rect.width) / width;
     let y = ($ ? round(rect.height) : rect.height) / height;
-    if (!x2 || !Number.isFinite(x2)) {
-      x2 = 1;
+    if (!x || !Number.isFinite(x)) {
+      x = 1;
     }
     if (!y || !Number.isFinite(y)) {
       y = 1;
     }
     return {
-      x: x2,
+      x,
       y
     };
   }
@@ -31760,7 +21344,7 @@ getDocumentElement(node)
       }
     }
     const visualOffsets = shouldAddVisualOffsets(domElement, isFixedStrategy, offsetParent) ? getVisualOffsets(domElement) : createCoords(0);
-    let x2 = (clientRect.left + visualOffsets.x) / scale.x;
+    let x = (clientRect.left + visualOffsets.x) / scale.x;
     let y = (clientRect.top + visualOffsets.y) / scale.y;
     let width = clientRect.width / scale.x;
     let height = clientRect.height / scale.y;
@@ -31775,11 +21359,11 @@ getDocumentElement(node)
         const css = getComputedStyle$1(currentIFrame);
         const left = iframeRect.left + (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
         const top = iframeRect.top + (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
-        x2 *= iframeScale.x;
+        x *= iframeScale.x;
         y *= iframeScale.y;
         width *= iframeScale.x;
         height *= iframeScale.y;
-        x2 += left;
+        x += left;
         y += top;
         currentWin = getWindow(currentIFrame);
         currentIFrame = getFrameElement(currentWin);
@@ -31788,7 +21372,7 @@ getDocumentElement(node)
     return rectToClientRect({
       width,
       height,
-      x: x2,
+      x,
       y
     });
   }
@@ -31801,10 +21385,10 @@ getDocumentElement(node)
   }
   function getHTMLOffset(documentElement, scroll) {
     const htmlRect = documentElement.getBoundingClientRect();
-    const x2 = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
+    const x = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
     const y = htmlRect.top + scroll.scrollTop;
     return {
-      x: x2,
+      x,
       y
     };
   }
@@ -31856,15 +21440,15 @@ getDocumentElement(node)
     const body = element.ownerDocument.body;
     const width = max(html.scrollWidth, html.clientWidth, body.scrollWidth, body.clientWidth);
     const height = max(html.scrollHeight, html.clientHeight, body.scrollHeight, body.clientHeight);
-    let x2 = -scroll.scrollLeft + getWindowScrollBarX(element);
+    let x = -scroll.scrollLeft + getWindowScrollBarX(element);
     const y = -scroll.scrollTop;
     if (getComputedStyle$1(body).direction === "rtl") {
-      x2 += max(html.clientWidth, body.clientWidth) - width;
+      x += max(html.clientWidth, body.clientWidth) - width;
     }
     return {
       width,
       height,
-      x: x2,
+      x,
       y
     };
   }
@@ -31875,23 +21459,23 @@ getDocumentElement(node)
     const visualViewport = win.visualViewport;
     let width = html.clientWidth;
     let height = html.clientHeight;
-    let x2 = 0;
+    let x = 0;
     let y = 0;
     if (visualViewport) {
       width = visualViewport.width;
       height = visualViewport.height;
       const visualViewportBased = isWebKit();
       if (!visualViewportBased || visualViewportBased && strategy === "fixed") {
-        x2 = visualViewport.offsetLeft;
+        x = visualViewport.offsetLeft;
         y = visualViewport.offsetTop;
       }
     }
     const windowScrollbarX = getWindowScrollBarX(html);
     if (windowScrollbarX <= 0) {
-      const doc2 = html.ownerDocument;
-      const body = doc2.body;
+      const doc = html.ownerDocument;
+      const body = doc.body;
       const bodyStyles = getComputedStyle(body);
-      const bodyMarginInline = doc2.compatMode === "CSS1Compat" ? parseFloat(bodyStyles.marginLeft) + parseFloat(bodyStyles.marginRight) || 0 : 0;
+      const bodyMarginInline = doc.compatMode === "CSS1Compat" ? parseFloat(bodyStyles.marginLeft) + parseFloat(bodyStyles.marginRight) || 0 : 0;
       const clippingStableScrollbarWidth = Math.abs(html.clientWidth - body.clientWidth - bodyMarginInline);
       if (clippingStableScrollbarWidth <= SCROLLBAR_MAX) {
         width -= clippingStableScrollbarWidth;
@@ -31902,7 +21486,7 @@ getDocumentElement(node)
     return {
       width,
       height,
-      x: x2,
+      x,
       y
     };
   }
@@ -31913,12 +21497,12 @@ getDocumentElement(node)
     const scale = isHTMLElement(element) ? getScale(element) : createCoords(1);
     const width = element.clientWidth * scale.x;
     const height = element.clientHeight * scale.y;
-    const x2 = left * scale.x;
+    const x = left * scale.x;
     const y = top * scale.y;
     return {
       width,
       height,
-      x: x2,
+      x,
       y
     };
   }
@@ -32041,10 +21625,10 @@ getDocumentElement(node)
       setLeftRTLScrollbarOffset();
     }
     const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
-    const x2 = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
+    const x = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
     const y = rect.top + scroll.scrollTop - offsets.y - htmlOffset.y;
     return {
-      x: x2,
+      x,
       y,
       width: rect.width,
       height: rect.height
@@ -32119,8 +21703,8 @@ getDocumentElement(node)
     isElement,
     isRTL
   };
-  function rectsAreEqual(a, b2) {
-    return a.x === b2.x && a.y === b2.y && a.width === b2.width && a.height === b2.height;
+  function rectsAreEqual(a, b) {
+    return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
   }
   function observeMove(element, onMove) {
     let io = null;
@@ -32291,25 +21875,25 @@ root: root.ownerDocument
   var noop = function noop2() {
   };
   var index = isClient ? reactExports.useLayoutEffect : noop;
-  function deepEqual(a, b2) {
-    if (a === b2) {
+  function deepEqual(a, b) {
+    if (a === b) {
       return true;
     }
-    if (typeof a !== typeof b2) {
+    if (typeof a !== typeof b) {
       return false;
     }
-    if (typeof a === "function" && a.toString() === b2.toString()) {
+    if (typeof a === "function" && a.toString() === b.toString()) {
       return true;
     }
     let length;
     let i;
     let keys;
-    if (a && b2 && typeof a === "object") {
+    if (a && b && typeof a === "object") {
       if (Array.isArray(a)) {
         length = a.length;
-        if (length !== b2.length) return false;
+        if (length !== b.length) return false;
         for (i = length; i-- !== 0; ) {
-          if (!deepEqual(a[i], b2[i])) {
+          if (!deepEqual(a[i], b[i])) {
             return false;
           }
         }
@@ -32317,11 +21901,11 @@ root: root.ownerDocument
       }
       keys = Object.keys(a);
       length = keys.length;
-      if (length !== Object.keys(b2).length) {
+      if (length !== Object.keys(b).length) {
         return false;
       }
       for (i = length; i-- !== 0; ) {
-        if (!{}.hasOwnProperty.call(b2, keys[i])) {
+        if (!{}.hasOwnProperty.call(b, keys[i])) {
           return false;
         }
       }
@@ -32330,13 +21914,13 @@ root: root.ownerDocument
         if (key === "_owner" && a.$$typeof) {
           continue;
         }
-        if (!deepEqual(a[key], b2[key])) {
+        if (!deepEqual(a[key], b[key])) {
           return false;
         }
       }
       return true;
     }
-    return a !== a && b2 !== b2;
+    return a !== a && b !== b;
   }
   function getDPR(element) {
     if (typeof window === "undefined") {
@@ -32481,12 +22065,12 @@ isPositioned: openRef.current !== false
       if (!elements.floating) {
         return initialStyles;
       }
-      const x2 = roundByDPR(elements.floating, data.x);
+      const x = roundByDPR(elements.floating, data.x);
       const y = roundByDPR(elements.floating, data.y);
       if (transform) {
         return {
           ...initialStyles,
-          transform: "translate(" + x2 + "px, " + y + "px)",
+          transform: "translate(" + x + "px, " + y + "px)",
           ...getDPR(elements.floating) >= 1.5 && {
             willChange: "transform"
           }
@@ -32494,7 +22078,7 @@ isPositioned: openRef.current !== false
       }
       return {
         position: strategy,
-        left: x2,
+        left: x,
         top: y
       };
     }, [strategy, transform, elements.floating, data.x, data.y]);
@@ -32847,22 +22431,22 @@ display: "block"
       const noArrowAlign = { start: "0%", center: "50%", end: "100%" }[placedAlign];
       const arrowXCenter = (middlewareData.arrow?.x ?? 0) + arrowWidth / 2;
       const arrowYCenter = (middlewareData.arrow?.y ?? 0) + arrowHeight / 2;
-      let x2 = "";
+      let x = "";
       let y = "";
       if (placedSide === "bottom") {
-        x2 = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
+        x = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
         y = `${-arrowHeight}px`;
       } else if (placedSide === "top") {
-        x2 = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
+        x = isArrowHidden ? noArrowAlign : `${arrowXCenter}px`;
         y = `${rects.floating.height + arrowHeight}px`;
       } else if (placedSide === "right") {
-        x2 = `${-arrowHeight}px`;
+        x = `${-arrowHeight}px`;
         y = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
       } else if (placedSide === "left") {
-        x2 = `${rects.floating.width + arrowHeight}px`;
+        x = `${rects.floating.width + arrowHeight}px`;
         y = isArrowHidden ? noArrowAlign : `${arrowYCenter}px`;
       }
-      return { data: { x: x2, y } };
+      return { data: { x, y } };
     }
   });
   function getSideAndAlignFromPlacement(placement) {
@@ -32898,7 +22482,7 @@ display: "block"
       defaultValue,
       onValueChange,
       dir,
-      name: name2,
+      name,
       autoComplete,
       disabled,
       required,
@@ -32968,7 +22552,7 @@ jsxRuntimeExports.jsx(Collection.Provider, { scope: __scopeSelect, children: jsx
               "aria-hidden": true,
               required,
               tabIndex: -1,
-              name: name2,
+              name,
               autoComplete,
               value,
               onChange: (event) => setValue(event.target.value),
@@ -33970,7 +23554,7 @@ jsxRuntimeExports.jsx(Primitive.span, { id: itemContext.textId, ...itemTextProps
     const currentItemIndex = currentItem ? items.indexOf(currentItem) : -1;
     let wrappedItems = wrapArray(items, Math.max(currentItemIndex, 0));
     const excludeCurrentItem = normalizedSearch.length === 1;
-    if (excludeCurrentItem) wrappedItems = wrappedItems.filter((v2) => v2 !== currentItem);
+    if (excludeCurrentItem) wrappedItems = wrappedItems.filter((v) => v !== currentItem);
     const nextItem = wrappedItems.find(
       (item) => item.textValue.toLowerCase().startsWith(normalizedSearch.toLowerCase())
     );
@@ -33998,7 +23582,7 @@ jsxRuntimeExports.jsx(Primitive.span, { id: itemContext.textId, ...itemTextProps
     (props, forwardedRef) => {
       const {
         __scopeSwitch,
-        name: name2,
+        name,
         checked: checkedProp,
         defaultChecked,
         required,
@@ -34046,7 +23630,7 @@ jsxRuntimeExports.jsx(
           {
             control: button,
             bubbles: !hasConsumerStoppedPropagationRef.current,
-            name: name2,
+            name,
             value,
             checked,
             required,
@@ -34509,7 +24093,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
         message: r2.message?.runs?.map((run) => run.text ?? "").join("") ?? "",
         timestampUsec: r2.timestampUsec,
         isMember: !!r2.authorBadges?.some(
-          (b2) => b2.liveChatAuthorBadgeRenderer?.icon?.iconType === "MEMBER"
+          (b) => b.liveChatAuthorBadgeRenderer?.icon?.iconType === "MEMBER"
         )
       }));
       if (messages.length > 0) this._onChat(messages);
@@ -34715,8 +24299,8 @@ jsxRuntimeExports.jsxs(
           Select,
           {
             value: platform2,
-            onValueChange: (v2) => {
-              const p = v2;
+            onValueChange: (v) => {
+              const p = v;
               setPlatform(p);
               localStorage.setItem(STORAGE_KEY_PLATFORM, p);
               if (inputRef.current) {
@@ -34867,6 +24451,20 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
       return message.author;
     }
   }
+  const saveLiveResultEndpoint = "https://asia-northeast1-namaytyping.cloudfunctions.net/saveLiveResult";
+  const createResultWithUser = async (liveId, input) => {
+    const response = await fetch(saveLiveResultEndpoint, {
+      body: JSON.stringify({ liveId, ...input }),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST"
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.error ?? `Failed to save live result: ${response.status}`);
+    }
+  };
   const NamaTypingContainer = () => {
     return jsxRuntimeExports.jsx(
       ImeLiveChatConnector,
@@ -34919,12 +24517,12 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
       console.log(m);
       switch (m.platform) {
         case "niconico": {
-          const name2 = getNicoName(m);
-          const { isWordComment } = handleTyping(ime, { ...m, author: name2 });
+          const name = getNicoName(m);
+          const { isWordComment } = handleTyping(ime, { ...m, author: name });
           if (!isWordComment && m.message.match(/^@(.+)/)) {
             const newName = m.message.slice(1).trim().slice(0, 20);
             ime.updateUserName(m.userId, newName);
-            ime.addNotifications([`名前変更: ${name2} -> ${newName}`]);
+            ime.addNotifications([`名前変更: ${name} -> ${newName}`]);
           }
           break;
         }

@@ -1,4 +1,3 @@
-import { createResultWithUser, type ResultMap } from "@repo/firebase";
 import { unsafeWindow } from "$";
 import type { YTypingIme } from "../ytyping";
 import {
@@ -6,6 +5,7 @@ import {
 	type LiveChatDisconnectInfo,
 } from "./ime-live-chat-connerctor";
 import { getNicoName } from "./niconico";
+import { createResultWithUser } from "./save-live-result";
 
 type Platform = "youtube" | "twitch" | "niconico";
 export interface ChatMessage {
@@ -60,7 +60,7 @@ async function saveLiveResult({ liveId }: LiveChatDisconnectInfo) {
 			rating: mapInfo.difficulty.rating,
 			totalNotes: builtMap.totalNotes,
 			flatWords: builtMap.flatWords,
-			createdAt: mapInfo.createdAt as unknown as ResultMap["map"]["createdAt"],
+			createdAt: mapInfo.createdAt,
 			media: mapInfo.media,
 			info: {
 				title: mapInfo.info.title,

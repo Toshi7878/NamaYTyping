@@ -66,13 +66,11 @@ service cloud.firestore {
 
       match /results/{resultId} {
         allow read: if true;
-        allow create: if isResultCreate(request.resource.data);
-        allow update, delete: if false;
+        allow write: if false;
 
         match /users/{userId} {
           allow read: if true;
-          allow create: if isUserResultCreate(request.resource.data, userId);
-          allow update, delete: if false;
+          allow write: if false;
         }
       }
     }

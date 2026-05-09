@@ -1,0 +1,5 @@
+tsconfig.functions.json
+.log
+functions.yaml
+firebase-functions-test.out
+firebase-functions-test.err

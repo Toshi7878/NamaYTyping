@@ -4,17 +4,26 @@
 	"version": "0.0.0",
 	"type": "module",
 	"exports": {
-		".": "./src/index.ts"
+		"./live/query": "./src/live/query.ts"
+	},
+	"main": "dist/functions/index.js",
+	"engines": {
+		"node": "22"
 	},
 	"scripts": {
-		"typecheck": "tsc --noEmit"
+		"build:functions": "tsc -p tsconfig.functions.json && node scripts/generate-functions-manifest.mjs",
+		"generate:functions-manifest": "node scripts/generate-functions-manifest.mjs",
+		"typecheck": "tsc --noEmit && tsc -p tsconfig.functions.json --noEmit"
 	},
 	"dependencies": {
-		"firebase": "^12.8.0"
+		"firebase": "^12.8.0",
+		"firebase-admin": "^13.9.0",
+		"firebase-functions": "^6.4.0",
+		"valibot": "^1.4.0"
 	},
 	"devDependencies": {
 		"@repo/typescript-config": "workspace:*",
-		"typescript": "catalog:",
-		"lyrics-ime-typing-engine": "catalog:"
+		"lyrics-ime-typing-engine": "catalog:",
+		"typescript": "catalog:"
 	}
 }
