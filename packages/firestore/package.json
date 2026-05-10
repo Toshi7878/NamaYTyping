@@ -1,0 +1,21 @@
+{
+	"name": "@repo/firebase",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"exports": {
+		"./live/query": "./src/live/query.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"firebase": "^12.8.0"
+	},
+	"devDependencies": {
+		"@repo/typescript-config": "workspace:*",
+		"@repo/functions": "workspace:*",
+		"lyrics-ime-typing-engine": "catalog:",
+		"typescript": "catalog:"
+	}
+}

@@ -1,18 +1,18 @@
 {
-	"name": "@repo/firebase",
+	"name": "@repo/functions",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
 	"exports": {
-		"./live/query": "./src/live/query.ts"
+		".": "./src/index.ts"
 	},
 	"main": "dist/functions/index.js",
 	"engines": {
 		"node": "22"
 	},
 	"scripts": {
-		"build:functions": "tsc -p tsconfig.functions.json && node scripts/generate-functions-manifest.mjs",
-		"generate:functions-manifest": "node scripts/generate-functions-manifest.mjs",
+		"build:functions": "tsc -p tsconfig.functions.json",
+		"gcp-build": "npm run build:functions",
 		"typecheck": "tsc --noEmit && tsc -p tsconfig.functions.json --noEmit"
 	},
 	"dependencies": {
@@ -22,8 +22,6 @@
 		"valibot": "^1.4.0"
 	},
 	"devDependencies": {
-		"@repo/typescript-config": "workspace:*",
-		"lyrics-ime-typing-engine": "catalog:",
-		"typescript": "catalog:"
+		"typescript": "^6.0.3"
 	}
 }

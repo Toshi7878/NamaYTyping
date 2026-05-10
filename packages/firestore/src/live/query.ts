@@ -1,13 +1,13 @@
 import { orderBy, query, type Unsubscribe } from "firebase/firestore";
 import { db } from "../client";
 import { fetchCollection, subscribeCollection } from "../firestore";
-import type { ResultMap, UserResult } from "./model";
+import type { ResultMapWithResultId, UserResult } from "./model";
 import { liveRefs } from "./path";
 
 type SubscribeResultsOptions = {
 	liveId: string;
 	onError?: (error: Error) => void;
-	onNext: (results: ResultMap[]) => void;
+	onNext: (results: ResultMapWithResultId[]) => void;
 };
 
 export const subscribeResults = ({

@@ -1,7 +1,7 @@
 {
 	"functions": {
-		"source": ".",
-		"predeploy": ["pnpm build:functions"]
+		"source": "apps/functions",
+		"predeploy": ["pnpm --dir apps/functions build:functions"]
 	},
 	"firestore": {
 		"database": "(default)",
