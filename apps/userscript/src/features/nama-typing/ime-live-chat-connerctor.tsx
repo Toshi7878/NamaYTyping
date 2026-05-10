@@ -1,4 +1,3 @@
-import { subscribeNicoLiveChat } from "@mujurin/nicolive-api-ts";
 import { Input } from "@repo/ui/input";
 import {
   Select,
@@ -7,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui/select";
+import { subscribeNicoLiveChat } from "@toshi7878/nicolive-api-ts";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { subscribeTwitchLiveChat } from "@/lib/twitch-live-chat-client";
@@ -46,6 +46,9 @@ export const ImeLiveChatConnector = ({
   const [platform, setPlatform] = useState<Platform>(
     () => (localStorage.getItem(STORAGE_KEY_PLATFORM) as Platform) ?? "youtube",
   );
+  const [liveChatValue, setLiveChatValue] = useState(() =>
+    getStorageValue(platform),
+  );
   const mountEl = usePortalMount("body", { position: "beforeend" });
   const { isStarted } = useLiveChatSession(
     inputRef,
@@ -55,6 +58,10 @@ export const ImeLiveChatConnector = ({
     onChat,
     onError,
   );
+  const resultHistoryLiveId = extractLiveId(platform, liveChatValue);
+  const resultHistoryHref = resultHistoryLiveId
+    ? `https://namaytyping.vercel.app/live/${encodeURIComponent(resultHistoryLiveId)}`
+    : undefined;
 
   if (isStarted || !mountEl) return null;
 
@@ -63,40 +70,59 @@ export const ImeLiveChatConnector = ({
       <Input
         key={platform}
         ref={inputRef}
-        defaultValue={getStorageValue(platform)}
-        onChange={(e) => setStorageValue(platform, e.target.value)}
+        value={liveChatValue}
+        onChange={(e) => {
+          setLiveChatValue(e.target.value);
+          setStorageValue(platform, e.target.value);
+        }}
         onPaste={(e) => {
           const value = e.clipboardData.getData("text");
           const liveId = extractLiveId(platform, value);
           e.preventDefault();
           if (!liveId) return;
-          e.currentTarget.value = liveId;
+          setLiveChatValue(liveId);
           setStorageValue(platform, liveId);
         }}
         placeholder={getPlaceholder(platform)}
         className="w-48"
         size="sm"
       />
-      <Select
-        value={platform}
-        onValueChange={(v) => {
-          const p = v as Platform;
-          setPlatform(p);
-          localStorage.setItem(STORAGE_KEY_PLATFORM, p);
-          if (inputRef.current) {
-            inputRef.current.value = getStorageValue(p);
-          }
-        }}
-      >
-        <SelectTrigger size="sm">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="youtube">YouTube</SelectItem>
-          <SelectItem value="twitch">Twitch</SelectItem>
-          <SelectItem value="niconico">Niconico</SelectItem>
-        </SelectContent>
-      </Select>
+      <div className="flex items-center gap-2">
+        <Select
+          value={platform}
+          onValueChange={(v) => {
+            const p = v as Platform;
+            const nextValue = getStorageValue(p);
+            setPlatform(p);
+            setLiveChatValue(nextValue);
+            localStorage.setItem(STORAGE_KEY_PLATFORM, p);
+          }}
+        >
+          <SelectTrigger size="sm">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="youtube">YouTube</SelectItem>
+            <SelectItem value="twitch">Twitch</SelectItem>
+            <SelectItem value="niconico">Niconico</SelectItem>
+          </SelectContent>
+        </Select>
+        {resultHistoryHref ? (
+          <a
+            aria-label="リザルト履歴 外部URL"
+            className="inline-flex h-8 items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+            href={resultHistoryHref}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            リザルト履歴
+          </a>
+        ) : (
+          <span className="inline-flex h-8 cursor-not-allowed items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium opacity-50 shadow-xs">
+            リザルト履歴
+          </span>
+        )}
+      </div>
     </div>,
     mountEl,
   );

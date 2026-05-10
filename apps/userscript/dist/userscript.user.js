@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      2.1.7
+// @version      2.1.8
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -12493,4120 +12493,6 @@
   var _GM_xmlhttpRequest = (() => typeof GM_xmlhttpRequest != "undefined" ? GM_xmlhttpRequest : void 0)();
   var _unsafeWindow = (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   var _monkeyWindow = (() => window)();
-  function isMessage(arg, schema) {
-    const isMessage2 = arg !== null && typeof arg == "object" && "$typeName" in arg && typeof arg.$typeName == "string";
-    if (!isMessage2) {
-      return false;
-    }
-    if (schema === void 0) {
-      return true;
-    }
-    return schema.typeName === arg.$typeName;
-  }
-  var ScalarType;
-  (function(ScalarType2) {
-    ScalarType2[ScalarType2["DOUBLE"] = 1] = "DOUBLE";
-    ScalarType2[ScalarType2["FLOAT"] = 2] = "FLOAT";
-    ScalarType2[ScalarType2["INT64"] = 3] = "INT64";
-    ScalarType2[ScalarType2["UINT64"] = 4] = "UINT64";
-    ScalarType2[ScalarType2["INT32"] = 5] = "INT32";
-    ScalarType2[ScalarType2["FIXED64"] = 6] = "FIXED64";
-    ScalarType2[ScalarType2["FIXED32"] = 7] = "FIXED32";
-    ScalarType2[ScalarType2["BOOL"] = 8] = "BOOL";
-    ScalarType2[ScalarType2["STRING"] = 9] = "STRING";
-    ScalarType2[ScalarType2["BYTES"] = 12] = "BYTES";
-    ScalarType2[ScalarType2["UINT32"] = 13] = "UINT32";
-    ScalarType2[ScalarType2["SFIXED32"] = 15] = "SFIXED32";
-    ScalarType2[ScalarType2["SFIXED64"] = 16] = "SFIXED64";
-    ScalarType2[ScalarType2["SINT32"] = 17] = "SINT32";
-    ScalarType2[ScalarType2["SINT64"] = 18] = "SINT64";
-  })(ScalarType || (ScalarType = {}));
-  function varint64read() {
-    let lowBits = 0;
-    let highBits = 0;
-    for (let shift2 = 0; shift2 < 28; shift2 += 7) {
-      let b = this.buf[this.pos++];
-      lowBits |= (b & 127) << shift2;
-      if ((b & 128) == 0) {
-        this.assertBounds();
-        return [lowBits, highBits];
-      }
-    }
-    let middleByte = this.buf[this.pos++];
-    lowBits |= (middleByte & 15) << 28;
-    highBits = (middleByte & 112) >> 4;
-    if ((middleByte & 128) == 0) {
-      this.assertBounds();
-      return [lowBits, highBits];
-    }
-    for (let shift2 = 3; shift2 <= 31; shift2 += 7) {
-      let b = this.buf[this.pos++];
-      highBits |= (b & 127) << shift2;
-      if ((b & 128) == 0) {
-        this.assertBounds();
-        return [lowBits, highBits];
-      }
-    }
-    throw new Error("invalid varint");
-  }
-  const TWO_PWR_32_DBL = 4294967296;
-  function int64FromString(dec) {
-    const minus = dec[0] === "-";
-    if (minus) {
-      dec = dec.slice(1);
-    }
-    const base = 1e6;
-    let lowBits = 0;
-    let highBits = 0;
-    function add1e6digit(begin, end) {
-      const digit1e6 = Number(dec.slice(begin, end));
-      highBits *= base;
-      lowBits = lowBits * base + digit1e6;
-      if (lowBits >= TWO_PWR_32_DBL) {
-        highBits = highBits + (lowBits / TWO_PWR_32_DBL | 0);
-        lowBits = lowBits % TWO_PWR_32_DBL;
-      }
-    }
-    add1e6digit(-24, -18);
-    add1e6digit(-18, -12);
-    add1e6digit(-12, -6);
-    add1e6digit(-6);
-    return minus ? negate(lowBits, highBits) : newBits(lowBits, highBits);
-  }
-  function int64ToString(lo, hi) {
-    let bits = newBits(lo, hi);
-    const negative = bits.hi & 2147483648;
-    if (negative) {
-      bits = negate(bits.lo, bits.hi);
-    }
-    const result = uInt64ToString(bits.lo, bits.hi);
-    return negative ? "-" + result : result;
-  }
-  function uInt64ToString(lo, hi) {
-    ({ lo, hi } = toUnsigned(lo, hi));
-    if (hi <= 2097151) {
-      return String(TWO_PWR_32_DBL * hi + lo);
-    }
-    const low = lo & 16777215;
-    const mid = (lo >>> 24 | hi << 8) & 16777215;
-    const high = hi >> 16 & 65535;
-    let digitA = low + mid * 6777216 + high * 6710656;
-    let digitB = mid + high * 8147497;
-    let digitC = high * 2;
-    const base = 1e7;
-    if (digitA >= base) {
-      digitB += Math.floor(digitA / base);
-      digitA %= base;
-    }
-    if (digitB >= base) {
-      digitC += Math.floor(digitB / base);
-      digitB %= base;
-    }
-    return digitC.toString() + decimalFrom1e7WithLeadingZeros(digitB) + decimalFrom1e7WithLeadingZeros(digitA);
-  }
-  function toUnsigned(lo, hi) {
-    return { lo: lo >>> 0, hi: hi >>> 0 };
-  }
-  function newBits(lo, hi) {
-    return { lo: lo | 0, hi: hi | 0 };
-  }
-  function negate(lowBits, highBits) {
-    highBits = ~highBits;
-    if (lowBits) {
-      lowBits = ~lowBits + 1;
-    } else {
-      highBits += 1;
-    }
-    return newBits(lowBits, highBits);
-  }
-  const decimalFrom1e7WithLeadingZeros = (digit1e7) => {
-    const partial = String(digit1e7);
-    return "0000000".slice(partial.length) + partial;
-  };
-  function varint32write(value, bytes) {
-    if (value >= 0) {
-      while (value > 127) {
-        bytes.push(value & 127 | 128);
-        value = value >>> 7;
-      }
-      bytes.push(value);
-    } else {
-      for (let i = 0; i < 9; i++) {
-        bytes.push(value & 127 | 128);
-        value = value >> 7;
-      }
-      bytes.push(1);
-    }
-  }
-  function varint32read() {
-    let b = this.buf[this.pos++];
-    let result = b & 127;
-    if ((b & 128) == 0) {
-      this.assertBounds();
-      return result;
-    }
-    b = this.buf[this.pos++];
-    result |= (b & 127) << 7;
-    if ((b & 128) == 0) {
-      this.assertBounds();
-      return result;
-    }
-    b = this.buf[this.pos++];
-    result |= (b & 127) << 14;
-    if ((b & 128) == 0) {
-      this.assertBounds();
-      return result;
-    }
-    b = this.buf[this.pos++];
-    result |= (b & 127) << 21;
-    if ((b & 128) == 0) {
-      this.assertBounds();
-      return result;
-    }
-    b = this.buf[this.pos++];
-    result |= (b & 15) << 28;
-    for (let readBytes = 5; (b & 128) !== 0 && readBytes < 10; readBytes++)
-      b = this.buf[this.pos++];
-    if ((b & 128) != 0)
-      throw new Error("invalid varint");
-    this.assertBounds();
-    return result >>> 0;
-  }
-  var define_process_env_default = {};
-  const protoInt64 = makeInt64Support();
-  function makeInt64Support() {
-    const dv = new DataView(new ArrayBuffer(8));
-    const ok = typeof BigInt === "function" && typeof dv.getBigInt64 === "function" && typeof dv.getBigUint64 === "function" && typeof dv.setBigInt64 === "function" && typeof dv.setBigUint64 === "function" && (!!globalThis.Deno || typeof process != "object" || typeof define_process_env_default != "object" || define_process_env_default.BUF_BIGINT_DISABLE !== "1");
-    if (ok) {
-      const MIN = BigInt("-9223372036854775808");
-      const MAX = BigInt("9223372036854775807");
-      const UMIN = BigInt("0");
-      const UMAX = BigInt("18446744073709551615");
-      return {
-        zero: BigInt(0),
-        supported: true,
-        parse(value) {
-          const bi = typeof value == "bigint" ? value : BigInt(value);
-          if (bi > MAX || bi < MIN) {
-            throw new Error(`invalid int64: ${value}`);
-          }
-          return bi;
-        },
-        uParse(value) {
-          const bi = typeof value == "bigint" ? value : BigInt(value);
-          if (bi > UMAX || bi < UMIN) {
-            throw new Error(`invalid uint64: ${value}`);
-          }
-          return bi;
-        },
-        enc(value) {
-          dv.setBigInt64(0, this.parse(value), true);
-          return {
-            lo: dv.getInt32(0, true),
-            hi: dv.getInt32(4, true)
-          };
-        },
-        uEnc(value) {
-          dv.setBigInt64(0, this.uParse(value), true);
-          return {
-            lo: dv.getInt32(0, true),
-            hi: dv.getInt32(4, true)
-          };
-        },
-        dec(lo, hi) {
-          dv.setInt32(0, lo, true);
-          dv.setInt32(4, hi, true);
-          return dv.getBigInt64(0, true);
-        },
-        uDec(lo, hi) {
-          dv.setInt32(0, lo, true);
-          dv.setInt32(4, hi, true);
-          return dv.getBigUint64(0, true);
-        }
-      };
-    }
-    return {
-      zero: "0",
-      supported: false,
-      parse(value) {
-        if (typeof value != "string") {
-          value = value.toString();
-        }
-        assertInt64String(value);
-        return value;
-      },
-      uParse(value) {
-        if (typeof value != "string") {
-          value = value.toString();
-        }
-        assertUInt64String(value);
-        return value;
-      },
-      enc(value) {
-        if (typeof value != "string") {
-          value = value.toString();
-        }
-        assertInt64String(value);
-        return int64FromString(value);
-      },
-      uEnc(value) {
-        if (typeof value != "string") {
-          value = value.toString();
-        }
-        assertUInt64String(value);
-        return int64FromString(value);
-      },
-      dec(lo, hi) {
-        return int64ToString(lo, hi);
-      },
-      uDec(lo, hi) {
-        return uInt64ToString(lo, hi);
-      }
-    };
-  }
-  function assertInt64String(value) {
-    if (!/^-?[0-9]+$/.test(value)) {
-      throw new Error("invalid int64: " + value);
-    }
-  }
-  function assertUInt64String(value) {
-    if (!/^[0-9]+$/.test(value)) {
-      throw new Error("invalid uint64: " + value);
-    }
-  }
-  function scalarZeroValue(type, longAsString) {
-    switch (type) {
-      case ScalarType.STRING:
-        return "";
-      case ScalarType.BOOL:
-        return false;
-      case ScalarType.DOUBLE:
-      case ScalarType.FLOAT:
-        return 0;
-      case ScalarType.INT64:
-      case ScalarType.UINT64:
-      case ScalarType.SFIXED64:
-      case ScalarType.FIXED64:
-      case ScalarType.SINT64:
-        return longAsString ? "0" : protoInt64.zero;
-      case ScalarType.BYTES:
-        return new Uint8Array(0);
-      default:
-        return 0;
-    }
-  }
-  function isScalarZeroValue(type, value) {
-    switch (type) {
-      case ScalarType.BOOL:
-        return value === false;
-      case ScalarType.STRING:
-        return value === "";
-      case ScalarType.BYTES:
-        return value instanceof Uint8Array && !value.byteLength;
-      default:
-        return value == 0;
-    }
-  }
-  const IMPLICIT$2 = 2;
-  const unsafeLocal = Symbol.for("reflect unsafe local");
-  function unsafeOneofCase(target, oneof) {
-    const c = target[oneof.localName].case;
-    if (c === void 0) {
-      return c;
-    }
-    return oneof.fields.find((f) => f.localName === c);
-  }
-  function unsafeIsSet(target, field) {
-    const name = field.localName;
-    if (field.oneof) {
-      return target[field.oneof.localName].case === name;
-    }
-    if (field.presence != IMPLICIT$2) {
-      return target[name] !== void 0 && Object.prototype.hasOwnProperty.call(target, name);
-    }
-    switch (field.fieldKind) {
-      case "list":
-        return target[name].length > 0;
-      case "map":
-        return Object.keys(target[name]).length > 0;
-      case "scalar":
-        return !isScalarZeroValue(field.scalar, target[name]);
-      case "enum":
-        return target[name] !== field.enum.values[0].number;
-    }
-    throw new Error("message field with implicit presence");
-  }
-  function unsafeIsSetExplicit(target, localName) {
-    return Object.prototype.hasOwnProperty.call(target, localName) && target[localName] !== void 0;
-  }
-  function unsafeGet(target, field) {
-    if (field.oneof) {
-      const oneof = target[field.oneof.localName];
-      if (oneof.case === field.localName) {
-        return oneof.value;
-      }
-      return void 0;
-    }
-    return target[field.localName];
-  }
-  function unsafeSet(target, field, value) {
-    if (field.oneof) {
-      target[field.oneof.localName] = {
-        case: field.localName,
-        value
-      };
-    } else {
-      target[field.localName] = value;
-    }
-  }
-  function unsafeClear(target, field) {
-    const name = field.localName;
-    if (field.oneof) {
-      const oneofLocalName = field.oneof.localName;
-      if (target[oneofLocalName].case === name) {
-        target[oneofLocalName] = { case: void 0 };
-      }
-    } else if (field.presence != IMPLICIT$2) {
-      delete target[name];
-    } else {
-      switch (field.fieldKind) {
-        case "map":
-          target[name] = {};
-          break;
-        case "list":
-          target[name] = [];
-          break;
-        case "enum":
-          target[name] = field.enum.values[0].number;
-          break;
-        case "scalar":
-          target[name] = scalarZeroValue(field.scalar, field.longAsString);
-          break;
-      }
-    }
-  }
-  function isObject(arg) {
-    return arg !== null && typeof arg == "object" && !Array.isArray(arg);
-  }
-  function isReflectList(arg, field) {
-    var _a, _b, _c, _d;
-    if (isObject(arg) && unsafeLocal in arg && "add" in arg && "field" in arg && typeof arg.field == "function") {
-      if (field !== void 0) {
-        const a = field;
-        const b = arg.field();
-        return a.listKind == b.listKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
-      }
-      return true;
-    }
-    return false;
-  }
-  function isReflectMap(arg, field) {
-    var _a, _b, _c, _d;
-    if (isObject(arg) && unsafeLocal in arg && "has" in arg && "field" in arg && typeof arg.field == "function") {
-      if (field !== void 0) {
-        const a = field, b = arg.field();
-        return a.mapKey === b.mapKey && a.mapKind == b.mapKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
-      }
-      return true;
-    }
-    return false;
-  }
-  function isReflectMessage(arg, messageDesc2) {
-    return isObject(arg) && unsafeLocal in arg && "desc" in arg && isObject(arg.desc) && arg.desc.kind === "message" && (messageDesc2 === void 0 || arg.desc.typeName == messageDesc2.typeName);
-  }
-  function isWrapper(arg) {
-    return isWrapperTypeName(arg.$typeName);
-  }
-  function isWrapperDesc(messageDesc2) {
-    const f = messageDesc2.fields[0];
-    return isWrapperTypeName(messageDesc2.typeName) && f !== void 0 && f.fieldKind == "scalar" && f.name == "value" && f.number == 1;
-  }
-  function isWrapperTypeName(name) {
-    return name.startsWith("google.protobuf.") && [
-      "DoubleValue",
-      "FloatValue",
-      "Int64Value",
-      "UInt64Value",
-      "Int32Value",
-      "UInt32Value",
-      "BoolValue",
-      "StringValue",
-      "BytesValue"
-    ].includes(name.substring(16));
-  }
-  const EDITION_PROTO3$1 = 999;
-  const EDITION_PROTO2$1 = 998;
-  const IMPLICIT$1 = 2;
-  function create(schema, init) {
-    if (isMessage(init, schema)) {
-      return init;
-    }
-    const message = createZeroMessage(schema);
-    return message;
-  }
-  const tokenZeroMessageField = Symbol();
-  const messagePrototypes = new WeakMap();
-  function createZeroMessage(desc) {
-    let msg;
-    if (!needsPrototypeChain(desc)) {
-      msg = {
-        $typeName: desc.typeName
-      };
-      for (const member of desc.members) {
-        if (member.kind == "oneof" || member.presence == IMPLICIT$1) {
-          msg[member.localName] = createZeroField(member);
-        }
-      }
-    } else {
-      const cached = messagePrototypes.get(desc);
-      let prototype;
-      let members;
-      if (cached) {
-        ({ prototype, members } = cached);
-      } else {
-        prototype = {};
-        members = new Set();
-        for (const member of desc.members) {
-          if (member.kind == "oneof") {
-            continue;
-          }
-          if (member.fieldKind != "scalar" && member.fieldKind != "enum") {
-            continue;
-          }
-          if (member.presence == IMPLICIT$1) {
-            continue;
-          }
-          members.add(member);
-          prototype[member.localName] = createZeroField(member);
-        }
-        messagePrototypes.set(desc, { prototype, members });
-      }
-      msg = Object.create(prototype);
-      msg.$typeName = desc.typeName;
-      for (const member of desc.members) {
-        if (members.has(member)) {
-          continue;
-        }
-        if (member.kind == "field") {
-          if (member.fieldKind == "message") {
-            continue;
-          }
-          if (member.fieldKind == "scalar" || member.fieldKind == "enum") {
-            if (member.presence != IMPLICIT$1) {
-              continue;
-            }
-          }
-        }
-        msg[member.localName] = createZeroField(member);
-      }
-    }
-    return msg;
-  }
-  function needsPrototypeChain(desc) {
-    switch (desc.file.edition) {
-      case EDITION_PROTO3$1:
-        return false;
-      case EDITION_PROTO2$1:
-        return true;
-      default:
-        return desc.fields.some((f) => f.presence != IMPLICIT$1 && f.fieldKind != "message" && !f.oneof);
-    }
-  }
-  function createZeroField(field) {
-    if (field.kind == "oneof") {
-      return { case: void 0 };
-    }
-    if (field.fieldKind == "list") {
-      return [];
-    }
-    if (field.fieldKind == "map") {
-      return {};
-    }
-    if (field.fieldKind == "message") {
-      return tokenZeroMessageField;
-    }
-    const defaultValue = field.getDefaultValue();
-    if (defaultValue !== void 0) {
-      return field.fieldKind == "scalar" && field.longAsString ? defaultValue.toString() : defaultValue;
-    }
-    return field.fieldKind == "scalar" ? scalarZeroValue(field.scalar, field.longAsString) : field.enum.values[0].number;
-  }
-  class FieldError extends Error {
-    constructor(fieldOrOneof, message, name = "FieldValueInvalidError") {
-      super(message);
-      this.name = name;
-      this.field = () => fieldOrOneof;
-    }
-  }
-  const symbol = Symbol.for("@bufbuild/protobuf/text-encoding");
-  function getTextEncoding() {
-    if (globalThis[symbol] == void 0) {
-      const te = new globalThis.TextEncoder();
-      const td = new globalThis.TextDecoder();
-      let tdStrict;
-      globalThis[symbol] = {
-        encodeUtf8(text) {
-          return te.encode(text);
-        },
-        decodeUtf8(bytes, strict) {
-          if (strict) {
-            if (tdStrict === void 0) {
-              tdStrict = new globalThis.TextDecoder("utf-8", { fatal: true });
-            }
-            return tdStrict.decode(bytes);
-          }
-          return td.decode(bytes);
-        },
-        checkUtf8(text) {
-          try {
-            encodeURIComponent(text);
-            return true;
-          } catch (_) {
-            return false;
-          }
-        }
-      };
-    }
-    return globalThis[symbol];
-  }
-  var WireType;
-  (function(WireType2) {
-    WireType2[WireType2["Varint"] = 0] = "Varint";
-    WireType2[WireType2["Bit64"] = 1] = "Bit64";
-    WireType2[WireType2["LengthDelimited"] = 2] = "LengthDelimited";
-    WireType2[WireType2["StartGroup"] = 3] = "StartGroup";
-    WireType2[WireType2["EndGroup"] = 4] = "EndGroup";
-    WireType2[WireType2["Bit32"] = 5] = "Bit32";
-  })(WireType || (WireType = {}));
-  const FLOAT32_MAX = 34028234663852886e22;
-  const FLOAT32_MIN = -34028234663852886e22;
-  const UINT32_MAX = 4294967295;
-  const INT32_MAX = 2147483647;
-  const INT32_MIN = -2147483648;
-  class BinaryReader {
-    constructor(buf, decodeUtf8 = getTextEncoding().decodeUtf8) {
-      this.decodeUtf8 = decodeUtf8;
-      this.varint64 = varint64read;
-      this.uint32 = varint32read;
-      this.buf = buf;
-      this.len = buf.length;
-      this.pos = 0;
-      this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
-    }
-tag() {
-      const start = this.pos;
-      const tag = this.uint32();
-      const bytesRead = this.pos - start;
-      if (bytesRead > 5 || bytesRead == 5 && this.buf[this.pos - 1] > 15) {
-        throw new Error("illegal tag: varint overflows uint32");
-      }
-      const fieldNo = tag >>> 3;
-      const wireType = tag & 7;
-      if (fieldNo <= 0 || wireType > 5) {
-        throw new Error("illegal tag: field no " + fieldNo + " wire type " + wireType);
-      }
-      return [fieldNo, wireType];
-    }
-skip(wireType, fieldNo) {
-      let start = this.pos;
-      switch (wireType) {
-        case WireType.Varint:
-          while (this.buf[this.pos++] & 128) {
-          }
-          break;
-case WireType.Bit64:
-          this.pos += 4;
-        case WireType.Bit32:
-          this.pos += 4;
-          break;
-        case WireType.LengthDelimited:
-          let len = this.uint32();
-          this.pos += len;
-          break;
-        case WireType.StartGroup:
-          for (; ; ) {
-            const [fn, wt] = this.tag();
-            if (wt === WireType.EndGroup) {
-              if (fieldNo !== void 0 && fn !== fieldNo) {
-                throw new Error("invalid end group tag");
-              }
-              break;
-            }
-            this.skip(wt, fn);
-          }
-          break;
-        default:
-          throw new Error("cant skip wire type " + wireType);
-      }
-      this.assertBounds();
-      return this.buf.subarray(start, this.pos);
-    }
-assertBounds() {
-      if (this.pos > this.len)
-        throw new RangeError("premature EOF");
-    }
-int32() {
-      return this.uint32() | 0;
-    }
-sint32() {
-      let zze = this.uint32();
-      return zze >>> 1 ^ -(zze & 1);
-    }
-int64() {
-      return protoInt64.dec(...this.varint64());
-    }
-uint64() {
-      return protoInt64.uDec(...this.varint64());
-    }
-sint64() {
-      let [lo, hi] = this.varint64();
-      let s = -(lo & 1);
-      lo = (lo >>> 1 | (hi & 1) << 31) ^ s;
-      hi = hi >>> 1 ^ s;
-      return protoInt64.dec(lo, hi);
-    }
-bool() {
-      let [lo, hi] = this.varint64();
-      return lo !== 0 || hi !== 0;
-    }
-fixed32() {
-      return this.view.getUint32((this.pos += 4) - 4, true);
-    }
-sfixed32() {
-      return this.view.getInt32((this.pos += 4) - 4, true);
-    }
-fixed64() {
-      return protoInt64.uDec(this.sfixed32(), this.sfixed32());
-    }
-sfixed64() {
-      return protoInt64.dec(this.sfixed32(), this.sfixed32());
-    }
-float() {
-      return this.view.getFloat32((this.pos += 4) - 4, true);
-    }
-double() {
-      return this.view.getFloat64((this.pos += 8) - 8, true);
-    }
-bytes() {
-      let len = this.uint32(), start = this.pos;
-      this.pos += len;
-      this.assertBounds();
-      return this.buf.subarray(start, start + len);
-    }
-string(strict) {
-      return this.decodeUtf8(this.bytes(), strict);
-    }
-  }
-  function checkField(field, value) {
-    const check = field.fieldKind == "list" ? isReflectList(value, field) : field.fieldKind == "map" ? isReflectMap(value, field) : checkSingular(field, value);
-    if (check === true) {
-      return void 0;
-    }
-    let reason;
-    switch (field.fieldKind) {
-      case "list":
-        reason = `expected ${formatReflectList(field)}, got ${formatVal(value)}`;
-        break;
-      case "map":
-        reason = `expected ${formatReflectMap(field)}, got ${formatVal(value)}`;
-        break;
-      default: {
-        reason = reasonSingular(field, value, check);
-      }
-    }
-    return new FieldError(field, reason);
-  }
-  function checkListItem(field, index2, value) {
-    const check = checkSingular(field, value);
-    if (check !== true) {
-      return new FieldError(field, `list item #${index2 + 1}: ${reasonSingular(field, value, check)}`);
-    }
-    return void 0;
-  }
-  function checkMapEntry(field, key, value) {
-    const checkKey = checkScalarValue(key, field.mapKey);
-    if (checkKey !== true) {
-      return new FieldError(field, `invalid map key: ${reasonSingular({ scalar: field.mapKey }, key, checkKey)}`);
-    }
-    const checkVal = checkSingular(field, value);
-    if (checkVal !== true) {
-      return new FieldError(field, `map entry ${formatVal(key)}: ${reasonSingular(field, value, checkVal)}`);
-    }
-    return void 0;
-  }
-  function checkSingular(field, value) {
-    if (field.scalar !== void 0) {
-      return checkScalarValue(value, field.scalar);
-    }
-    if (field.enum !== void 0) {
-      if (field.enum.open) {
-        return Number.isInteger(value);
-      }
-      return field.enum.values.some((v) => v.number === value);
-    }
-    return isReflectMessage(value, field.message);
-  }
-  function checkScalarValue(value, scalar) {
-    switch (scalar) {
-      case ScalarType.DOUBLE:
-        return typeof value == "number";
-      case ScalarType.FLOAT:
-        if (typeof value != "number") {
-          return false;
-        }
-        if (Number.isNaN(value) || !Number.isFinite(value)) {
-          return true;
-        }
-        if (value > FLOAT32_MAX || value < FLOAT32_MIN) {
-          return `${value.toFixed()} out of range`;
-        }
-        return true;
-      case ScalarType.INT32:
-      case ScalarType.SFIXED32:
-      case ScalarType.SINT32:
-        if (typeof value !== "number" || !Number.isInteger(value)) {
-          return false;
-        }
-        if (value > INT32_MAX || value < INT32_MIN) {
-          return `${value.toFixed()} out of range`;
-        }
-        return true;
-      case ScalarType.FIXED32:
-      case ScalarType.UINT32:
-        if (typeof value !== "number" || !Number.isInteger(value)) {
-          return false;
-        }
-        if (value > UINT32_MAX || value < 0) {
-          return `${value.toFixed()} out of range`;
-        }
-        return true;
-      case ScalarType.BOOL:
-        return typeof value == "boolean";
-      case ScalarType.STRING:
-        if (typeof value != "string") {
-          return false;
-        }
-        return getTextEncoding().checkUtf8(value) || "invalid UTF8";
-      case ScalarType.BYTES:
-        return value instanceof Uint8Array;
-      case ScalarType.INT64:
-      case ScalarType.SFIXED64:
-      case ScalarType.SINT64:
-        if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
-          try {
-            protoInt64.parse(value);
-            return true;
-          } catch (_) {
-            return `${value} out of range`;
-          }
-        }
-        return false;
-      case ScalarType.FIXED64:
-      case ScalarType.UINT64:
-        if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
-          try {
-            protoInt64.uParse(value);
-            return true;
-          } catch (_) {
-            return `${value} out of range`;
-          }
-        }
-        return false;
-    }
-  }
-  function reasonSingular(field, val, details) {
-    details = typeof details == "string" ? `: ${details}` : `, got ${formatVal(val)}`;
-    if (field.scalar !== void 0) {
-      return `expected ${scalarTypeDescription(field.scalar)}` + details;
-    }
-    if (field.enum !== void 0) {
-      return `expected ${field.enum.toString()}` + details;
-    }
-    return `expected ${formatReflectMessage(field.message)}` + details;
-  }
-  function formatVal(val) {
-    switch (typeof val) {
-      case "object":
-        if (val === null) {
-          return "null";
-        }
-        if (val instanceof Uint8Array) {
-          return `Uint8Array(${val.length})`;
-        }
-        if (Array.isArray(val)) {
-          return `Array(${val.length})`;
-        }
-        if (isReflectList(val)) {
-          return formatReflectList(val.field());
-        }
-        if (isReflectMap(val)) {
-          return formatReflectMap(val.field());
-        }
-        if (isReflectMessage(val)) {
-          return formatReflectMessage(val.desc);
-        }
-        if (isMessage(val)) {
-          return `message ${val.$typeName}`;
-        }
-        return "object";
-      case "string":
-        return val.length > 30 ? "string" : `"${val.split('"').join('\\"')}"`;
-      case "boolean":
-        return String(val);
-      case "number":
-        return String(val);
-      case "bigint":
-        return String(val) + "n";
-      default:
-        return typeof val;
-    }
-  }
-  function formatReflectMessage(desc) {
-    return `ReflectMessage (${desc.typeName})`;
-  }
-  function formatReflectList(field) {
-    switch (field.listKind) {
-      case "message":
-        return `ReflectList (${field.message.toString()})`;
-      case "enum":
-        return `ReflectList (${field.enum.toString()})`;
-      case "scalar":
-        return `ReflectList (${ScalarType[field.scalar]})`;
-    }
-  }
-  function formatReflectMap(field) {
-    switch (field.mapKind) {
-      case "message":
-        return `ReflectMap (${ScalarType[field.mapKey]}, ${field.message.toString()})`;
-      case "enum":
-        return `ReflectMap (${ScalarType[field.mapKey]}, ${field.enum.toString()})`;
-      case "scalar":
-        return `ReflectMap (${ScalarType[field.mapKey]}, ${ScalarType[field.scalar]})`;
-    }
-  }
-  function scalarTypeDescription(scalar) {
-    switch (scalar) {
-      case ScalarType.STRING:
-        return "string";
-      case ScalarType.BOOL:
-        return "boolean";
-      case ScalarType.INT64:
-      case ScalarType.SINT64:
-      case ScalarType.SFIXED64:
-        return "bigint (int64)";
-      case ScalarType.UINT64:
-      case ScalarType.FIXED64:
-        return "bigint (uint64)";
-      case ScalarType.BYTES:
-        return "Uint8Array";
-      case ScalarType.DOUBLE:
-        return "number (float64)";
-      case ScalarType.FLOAT:
-        return "number (float32)";
-      case ScalarType.FIXED32:
-      case ScalarType.UINT32:
-        return "number (uint32)";
-      case ScalarType.INT32:
-      case ScalarType.SFIXED32:
-      case ScalarType.SINT32:
-        return "number (int32)";
-    }
-  }
-  function reflect(messageDesc2, message, check = true) {
-    return new ReflectMessageImpl(messageDesc2, message, check);
-  }
-  const messageSortedFields = new WeakMap();
-  class ReflectMessageImpl {
-    get sortedFields() {
-      const cached = messageSortedFields.get(this.desc);
-      if (cached) {
-        return cached;
-      }
-      const sortedFields = this.desc.fields.concat().sort((a, b) => a.number - b.number);
-      messageSortedFields.set(this.desc, sortedFields);
-      return sortedFields;
-    }
-    constructor(messageDesc2, message, check = true) {
-      this.lists = new Map();
-      this.maps = new Map();
-      this.check = check;
-      this.desc = messageDesc2;
-      this.message = this[unsafeLocal] = message !== null && message !== void 0 ? message : create(messageDesc2);
-      this.fields = messageDesc2.fields;
-      this.oneofs = messageDesc2.oneofs;
-      this.members = messageDesc2.members;
-    }
-    findNumber(number) {
-      if (!this._fieldsByNumber) {
-        this._fieldsByNumber = new Map(this.desc.fields.map((f) => [f.number, f]));
-      }
-      return this._fieldsByNumber.get(number);
-    }
-    oneofCase(oneof) {
-      assertOwn(this.message, oneof);
-      return unsafeOneofCase(this.message, oneof);
-    }
-    isSet(field) {
-      assertOwn(this.message, field);
-      return unsafeIsSet(this.message, field);
-    }
-    clear(field) {
-      assertOwn(this.message, field);
-      unsafeClear(this.message, field);
-    }
-    get(field) {
-      assertOwn(this.message, field);
-      const value = unsafeGet(this.message, field);
-      switch (field.fieldKind) {
-        case "list":
-          let list = this.lists.get(field);
-          if (!list || list[unsafeLocal] !== value) {
-            this.lists.set(
-              field,
-list = new ReflectListImpl(field, value, this.check)
-            );
-          }
-          return list;
-        case "map":
-          let map = this.maps.get(field);
-          if (!map || map[unsafeLocal] !== value) {
-            this.maps.set(
-              field,
-map = new ReflectMapImpl(field, value, this.check)
-            );
-          }
-          return map;
-        case "message":
-          return messageToReflect(field, value, this.check);
-        case "scalar":
-          return value === void 0 ? scalarZeroValue(field.scalar, false) : longToReflect(field, value);
-        case "enum":
-          return value !== null && value !== void 0 ? value : field.enum.values[0].number;
-      }
-    }
-    set(field, value) {
-      assertOwn(this.message, field);
-      if (this.check) {
-        const err = checkField(field, value);
-        if (err) {
-          throw err;
-        }
-      }
-      let local;
-      if (field.fieldKind == "message") {
-        local = messageToLocal(field, value);
-      } else if (isReflectMap(value) || isReflectList(value)) {
-        local = value[unsafeLocal];
-      } else {
-        local = longToLocal(field, value);
-      }
-      unsafeSet(this.message, field, local);
-    }
-    getUnknown() {
-      return this.message.$unknown;
-    }
-    setUnknown(value) {
-      this.message.$unknown = value;
-    }
-  }
-  function assertOwn(owner, member) {
-    if (member.parent.typeName !== owner.$typeName) {
-      throw new FieldError(member, `cannot use ${member.toString()} with message ${owner.$typeName}`, "ForeignFieldError");
-    }
-  }
-  class ReflectListImpl {
-    field() {
-      return this._field;
-    }
-    get size() {
-      return this._arr.length;
-    }
-    constructor(field, unsafeInput, check) {
-      this._field = field;
-      this._arr = this[unsafeLocal] = unsafeInput;
-      this.check = check;
-    }
-    get(index2) {
-      const item = this._arr[index2];
-      return item === void 0 ? void 0 : listItemToReflect(this._field, item, this.check);
-    }
-    set(index2, item) {
-      if (index2 < 0 || index2 >= this._arr.length) {
-        throw new FieldError(this._field, `list item #${index2 + 1}: out of range`);
-      }
-      if (this.check) {
-        const err = checkListItem(this._field, index2, item);
-        if (err) {
-          throw err;
-        }
-      }
-      this._arr[index2] = listItemToLocal(this._field, item);
-    }
-    add(item) {
-      if (this.check) {
-        const err = checkListItem(this._field, this._arr.length, item);
-        if (err) {
-          throw err;
-        }
-      }
-      this._arr.push(listItemToLocal(this._field, item));
-      return void 0;
-    }
-    clear() {
-      this._arr.splice(0, this._arr.length);
-    }
-    [Symbol.iterator]() {
-      return this.values();
-    }
-    keys() {
-      return this._arr.keys();
-    }
-    *values() {
-      for (const item of this._arr) {
-        yield listItemToReflect(this._field, item, this.check);
-      }
-    }
-    *entries() {
-      for (let i = 0; i < this._arr.length; i++) {
-        yield [i, listItemToReflect(this._field, this._arr[i], this.check)];
-      }
-    }
-  }
-  class ReflectMapImpl {
-    constructor(field, unsafeInput, check = true) {
-      this.obj = this[unsafeLocal] = unsafeInput !== null && unsafeInput !== void 0 ? unsafeInput : {};
-      this.check = check;
-      this._field = field;
-    }
-    field() {
-      return this._field;
-    }
-    set(key, value) {
-      if (this.check) {
-        const err = checkMapEntry(this._field, key, value);
-        if (err) {
-          throw err;
-        }
-      }
-      this.obj[mapKeyToLocal(key)] = mapValueToLocal(this._field, value);
-      return this;
-    }
-    delete(key) {
-      const k = mapKeyToLocal(key);
-      const has = Object.prototype.hasOwnProperty.call(this.obj, k);
-      if (has) {
-        delete this.obj[k];
-      }
-      return has;
-    }
-    clear() {
-      for (const key of Object.keys(this.obj)) {
-        delete this.obj[key];
-      }
-    }
-    get(key) {
-      let val = this.obj[mapKeyToLocal(key)];
-      if (val !== void 0) {
-        val = mapValueToReflect(this._field, val, this.check);
-      }
-      return val;
-    }
-    has(key) {
-      return Object.prototype.hasOwnProperty.call(this.obj, mapKeyToLocal(key));
-    }
-    *keys() {
-      for (const objKey of Object.keys(this.obj)) {
-        yield mapKeyToReflect(objKey, this._field.mapKey);
-      }
-    }
-    *entries() {
-      for (const objEntry of Object.entries(this.obj)) {
-        yield [
-          mapKeyToReflect(objEntry[0], this._field.mapKey),
-          mapValueToReflect(this._field, objEntry[1], this.check)
-        ];
-      }
-    }
-    [Symbol.iterator]() {
-      return this.entries();
-    }
-    get size() {
-      return Object.keys(this.obj).length;
-    }
-    *values() {
-      for (const val of Object.values(this.obj)) {
-        yield mapValueToReflect(this._field, val, this.check);
-      }
-    }
-    forEach(callbackfn, thisArg) {
-      for (const mapEntry of this.entries()) {
-        callbackfn.call(thisArg, mapEntry[1], mapEntry[0], this);
-      }
-    }
-  }
-  function messageToLocal(field, value) {
-    if (!isReflectMessage(value)) {
-      return value;
-    }
-    if (isWrapper(value.message) && !field.oneof && field.fieldKind == "message") {
-      return value.message.value;
-    }
-    if (value.desc.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value") {
-      return wktStructToLocal(value.message);
-    }
-    return value.message;
-  }
-  function messageToReflect(field, value, check) {
-    if (value !== void 0) {
-      if (isWrapperDesc(field.message) && !field.oneof && field.fieldKind == "message") {
-        value = {
-          $typeName: field.message.typeName,
-          value: longToReflect(field.message.fields[0], value)
-        };
-      } else if (field.message.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value" && isObject(value)) {
-        value = wktStructToReflect(value);
-      }
-    }
-    return new ReflectMessageImpl(field.message, value, check);
-  }
-  function listItemToLocal(field, value) {
-    if (field.listKind == "message") {
-      return messageToLocal(field, value);
-    }
-    return longToLocal(field, value);
-  }
-  function listItemToReflect(field, value, check) {
-    if (field.listKind == "message") {
-      return messageToReflect(field, value, check);
-    }
-    return longToReflect(field, value);
-  }
-  function mapValueToLocal(field, value) {
-    if (field.mapKind == "message") {
-      return messageToLocal(field, value);
-    }
-    return longToLocal(field, value);
-  }
-  function mapValueToReflect(field, value, check) {
-    if (field.mapKind == "message") {
-      return messageToReflect(field, value, check);
-    }
-    return value;
-  }
-  function mapKeyToLocal(key) {
-    return typeof key == "string" || typeof key == "number" ? key : String(key);
-  }
-  function mapKeyToReflect(key, type) {
-    switch (type) {
-      case ScalarType.STRING:
-        return key;
-      case ScalarType.INT32:
-      case ScalarType.FIXED32:
-      case ScalarType.UINT32:
-      case ScalarType.SFIXED32:
-      case ScalarType.SINT32: {
-        const n = Number.parseInt(key);
-        if (Number.isFinite(n)) {
-          return n;
-        }
-        break;
-      }
-      case ScalarType.BOOL:
-        switch (key) {
-          case "true":
-            return true;
-          case "false":
-            return false;
-        }
-        break;
-      case ScalarType.UINT64:
-      case ScalarType.FIXED64:
-        try {
-          return protoInt64.uParse(key);
-        } catch (_a) {
-        }
-        break;
-      default:
-        try {
-          return protoInt64.parse(key);
-        } catch (_b) {
-        }
-        break;
-    }
-    return key;
-  }
-  function longToReflect(field, value) {
-    switch (field.scalar) {
-      case ScalarType.INT64:
-      case ScalarType.SFIXED64:
-      case ScalarType.SINT64:
-        if ("longAsString" in field && field.longAsString && typeof value == "string") {
-          value = protoInt64.parse(value);
-        }
-        break;
-      case ScalarType.FIXED64:
-      case ScalarType.UINT64:
-        if ("longAsString" in field && field.longAsString && typeof value == "string") {
-          value = protoInt64.uParse(value);
-        }
-        break;
-    }
-    return value;
-  }
-  function longToLocal(field, value) {
-    switch (field.scalar) {
-      case ScalarType.INT64:
-      case ScalarType.SFIXED64:
-      case ScalarType.SINT64:
-        if ("longAsString" in field && field.longAsString) {
-          value = String(value);
-        } else if (typeof value == "string" || typeof value == "number") {
-          value = protoInt64.parse(value);
-        }
-        break;
-      case ScalarType.FIXED64:
-      case ScalarType.UINT64:
-        if ("longAsString" in field && field.longAsString) {
-          value = String(value);
-        } else if (typeof value == "string" || typeof value == "number") {
-          value = protoInt64.uParse(value);
-        }
-        break;
-    }
-    return value;
-  }
-  function wktStructToReflect(json) {
-    const struct = {
-      $typeName: "google.protobuf.Struct",
-      fields: {}
-    };
-    if (isObject(json)) {
-      for (const [k, v] of Object.entries(json)) {
-        struct.fields[k] = wktValueToReflect(v);
-      }
-    }
-    return struct;
-  }
-  function wktStructToLocal(val) {
-    const json = {};
-    for (const [k, v] of Object.entries(val.fields)) {
-      json[k] = wktValueToLocal(v);
-    }
-    return json;
-  }
-  function wktValueToLocal(val) {
-    switch (val.kind.case) {
-      case "structValue":
-        return wktStructToLocal(val.kind.value);
-      case "listValue":
-        return val.kind.value.values.map(wktValueToLocal);
-      case "nullValue":
-      case void 0:
-        return null;
-      default:
-        return val.kind.value;
-    }
-  }
-  function wktValueToReflect(json) {
-    const value = {
-      $typeName: "google.protobuf.Value",
-      kind: { case: void 0 }
-    };
-    switch (typeof json) {
-      case "number":
-        value.kind = { case: "numberValue", value: json };
-        break;
-      case "string":
-        value.kind = { case: "stringValue", value: json };
-        break;
-      case "boolean":
-        value.kind = { case: "boolValue", value: json };
-        break;
-      case "object":
-        if (json === null) {
-          const nullValue = 0;
-          value.kind = { case: "nullValue", value: nullValue };
-        } else if (Array.isArray(json)) {
-          const listValue = {
-            $typeName: "google.protobuf.ListValue",
-            values: []
-          };
-          if (Array.isArray(json)) {
-            for (const e of json) {
-              listValue.values.push(wktValueToReflect(e));
-            }
-          }
-          value.kind = {
-            case: "listValue",
-            value: listValue
-          };
-        } else {
-          value.kind = {
-            case: "structValue",
-            value: wktStructToReflect(json)
-          };
-        }
-        break;
-    }
-    return value;
-  }
-  function base64Decode(base64Str) {
-    const table = getDecodeTable();
-    let es = base64Str.length * 3 / 4;
-    if (base64Str[base64Str.length - 2] == "=")
-      es -= 2;
-    else if (base64Str[base64Str.length - 1] == "=")
-      es -= 1;
-    let bytes = new Uint8Array(es), bytePos = 0, groupPos = 0, b, p = 0;
-    for (let i = 0; i < base64Str.length; i++) {
-      b = table[base64Str.charCodeAt(i)];
-      if (b === void 0) {
-        switch (base64Str[i]) {
-case "=":
-            groupPos = 0;
-case "\n":
-          case "\r":
-          case "	":
-          case " ":
-            continue;
-default:
-            throw Error("invalid base64 string");
-        }
-      }
-      switch (groupPos) {
-        case 0:
-          p = b;
-          groupPos = 1;
-          break;
-        case 1:
-          bytes[bytePos++] = p << 2 | (b & 48) >> 4;
-          p = b;
-          groupPos = 2;
-          break;
-        case 2:
-          bytes[bytePos++] = (p & 15) << 4 | (b & 60) >> 2;
-          p = b;
-          groupPos = 3;
-          break;
-        case 3:
-          bytes[bytePos++] = (p & 3) << 6 | b;
-          groupPos = 0;
-          break;
-      }
-    }
-    if (groupPos == 1)
-      throw Error("invalid base64 string");
-    return bytes.subarray(0, bytePos);
-  }
-  let encodeTableStd;
-  let decodeTable;
-  function getEncodeTable(encoding) {
-    if (!encodeTableStd) {
-      encodeTableStd = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
-      encodeTableStd.slice(0, -2).concat("-", "_");
-    }
-    return encodeTableStd;
-  }
-  function getDecodeTable() {
-    if (!decodeTable) {
-      decodeTable = [];
-      const encodeTable = getEncodeTable();
-      for (let i = 0; i < encodeTable.length; i++)
-        decodeTable[encodeTable[i].charCodeAt(0)] = i;
-      decodeTable["-".charCodeAt(0)] = encodeTable.indexOf("+");
-      decodeTable["_".charCodeAt(0)] = encodeTable.indexOf("/");
-    }
-    return decodeTable;
-  }
-  function protoCamelCase(snakeCase) {
-    let capNext = false;
-    const b = [];
-    for (let i = 0; i < snakeCase.length; i++) {
-      let c = snakeCase.charAt(i);
-      switch (c) {
-        case "_":
-          capNext = true;
-          break;
-        case "0":
-        case "1":
-        case "2":
-        case "3":
-        case "4":
-        case "5":
-        case "6":
-        case "7":
-        case "8":
-        case "9":
-          b.push(c);
-          capNext = false;
-          break;
-        default:
-          if (capNext) {
-            capNext = false;
-            c = c.toUpperCase();
-          }
-          b.push(c);
-          break;
-      }
-    }
-    return b.join("");
-  }
-  const reservedObjectProperties = new Set([
-"constructor",
-    "toString",
-    "toJSON",
-    "valueOf"
-  ]);
-  function safeObjectProperty(name) {
-    return reservedObjectProperties.has(name) ? name + "$" : name;
-  }
-  function restoreJsonNames(message) {
-    for (const f of message.field) {
-      if (!unsafeIsSetExplicit(f, "jsonName")) {
-        f.jsonName = protoCamelCase(f.name);
-      }
-    }
-    message.nestedType.forEach(restoreJsonNames);
-  }
-  function parseTextFormatEnumValue(descEnum, value) {
-    const enumValue = descEnum.values.find((v) => v.name === value);
-    if (!enumValue) {
-      throw new Error(`cannot parse ${descEnum} default value: ${value}`);
-    }
-    return enumValue.number;
-  }
-  function parseTextFormatScalarValue(type, value) {
-    switch (type) {
-      case ScalarType.STRING:
-        return value;
-      case ScalarType.BYTES: {
-        const u = unescapeBytesDefaultValue(value);
-        if (u === false) {
-          throw new Error(`cannot parse ${ScalarType[type]} default value: ${value}`);
-        }
-        return u;
-      }
-      case ScalarType.INT64:
-      case ScalarType.SFIXED64:
-      case ScalarType.SINT64:
-        return protoInt64.parse(value);
-      case ScalarType.UINT64:
-      case ScalarType.FIXED64:
-        return protoInt64.uParse(value);
-      case ScalarType.DOUBLE:
-      case ScalarType.FLOAT:
-        switch (value) {
-          case "inf":
-            return Number.POSITIVE_INFINITY;
-          case "-inf":
-            return Number.NEGATIVE_INFINITY;
-          case "nan":
-            return Number.NaN;
-          default:
-            return parseFloat(value);
-        }
-      case ScalarType.BOOL:
-        return value === "true";
-      case ScalarType.INT32:
-      case ScalarType.UINT32:
-      case ScalarType.SINT32:
-      case ScalarType.FIXED32:
-      case ScalarType.SFIXED32:
-        return parseInt(value, 10);
-    }
-  }
-  function unescapeBytesDefaultValue(str) {
-    const b = [];
-    const input = {
-      tail: str,
-      c: "",
-      next() {
-        if (this.tail.length == 0) {
-          return false;
-        }
-        this.c = this.tail[0];
-        this.tail = this.tail.substring(1);
-        return true;
-      },
-      take(n) {
-        if (this.tail.length >= n) {
-          const r2 = this.tail.substring(0, n);
-          this.tail = this.tail.substring(n);
-          return r2;
-        }
-        return false;
-      }
-    };
-    while (input.next()) {
-      switch (input.c) {
-        case "\\":
-          if (input.next()) {
-            switch (input.c) {
-              case "\\":
-                b.push(input.c.charCodeAt(0));
-                break;
-              case "b":
-                b.push(8);
-                break;
-              case "f":
-                b.push(12);
-                break;
-              case "n":
-                b.push(10);
-                break;
-              case "r":
-                b.push(13);
-                break;
-              case "t":
-                b.push(9);
-                break;
-              case "v":
-                b.push(11);
-                break;
-              case "0":
-              case "1":
-              case "2":
-              case "3":
-              case "4":
-              case "5":
-              case "6":
-              case "7": {
-                const s = input.c;
-                const t = input.take(2);
-                if (t === false) {
-                  return false;
-                }
-                const n = parseInt(s + t, 8);
-                if (Number.isNaN(n)) {
-                  return false;
-                }
-                b.push(n);
-                break;
-              }
-              case "x": {
-                const s = input.c;
-                const t = input.take(2);
-                if (t === false) {
-                  return false;
-                }
-                const n = parseInt(s + t, 16);
-                if (Number.isNaN(n)) {
-                  return false;
-                }
-                b.push(n);
-                break;
-              }
-              case "u": {
-                const s = input.c;
-                const t = input.take(4);
-                if (t === false) {
-                  return false;
-                }
-                const n = parseInt(s + t, 16);
-                if (Number.isNaN(n)) {
-                  return false;
-                }
-                const chunk = new Uint8Array(4);
-                const view = new DataView(chunk.buffer);
-                view.setInt32(0, n, true);
-                b.push(chunk[0], chunk[1], chunk[2], chunk[3]);
-                break;
-              }
-              case "U": {
-                const s = input.c;
-                const t = input.take(8);
-                if (t === false) {
-                  return false;
-                }
-                const tc = protoInt64.uEnc(s + t);
-                const chunk = new Uint8Array(8);
-                const view = new DataView(chunk.buffer);
-                view.setInt32(0, tc.lo, true);
-                view.setInt32(4, tc.hi, true);
-                b.push(chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5], chunk[6], chunk[7]);
-                break;
-              }
-            }
-          }
-          break;
-        default:
-          b.push(input.c.charCodeAt(0));
-      }
-    }
-    return new Uint8Array(b);
-  }
-  function* nestedTypes(desc) {
-    switch (desc.kind) {
-      case "file":
-        for (const message of desc.messages) {
-          yield message;
-          yield* nestedTypes(message);
-        }
-        yield* desc.enums;
-        yield* desc.services;
-        yield* desc.extensions;
-        break;
-      case "message":
-        for (const message of desc.nestedMessages) {
-          yield message;
-          yield* nestedTypes(message);
-        }
-        yield* desc.nestedEnums;
-        yield* desc.nestedExtensions;
-        break;
-    }
-  }
-  function createFileRegistry(...args) {
-    const registry = createBaseRegistry();
-    if (!args.length) {
-      return registry;
-    }
-    if ("$typeName" in args[0] && args[0].$typeName == "google.protobuf.FileDescriptorSet") {
-      for (const file of args[0].file) {
-        addFile(file, registry);
-      }
-      return registry;
-    }
-    if ("$typeName" in args[0]) {
-      let recurseDeps2 = function(file) {
-        const deps = [];
-        for (const protoFileName of file.dependency) {
-          if (registry.getFile(protoFileName) != void 0) {
-            continue;
-          }
-          if (seen.has(protoFileName)) {
-            continue;
-          }
-          const dep = resolve(protoFileName);
-          if (!dep) {
-            throw new Error(`Unable to resolve ${protoFileName}, imported by ${file.name}`);
-          }
-          if ("kind" in dep) {
-            registry.addFile(dep, false, true);
-          } else {
-            seen.add(dep.name);
-            deps.push(dep);
-          }
-        }
-        return deps.concat(...deps.map(recurseDeps2));
-      };
-      const input = args[0];
-      const resolve = args[1];
-      const seen = new Set();
-      for (const file of [input, ...recurseDeps2(input)].reverse()) {
-        addFile(file, registry);
-      }
-    } else {
-      for (const fileReg of args) {
-        for (const file of fileReg.files) {
-          registry.addFile(file);
-        }
-      }
-    }
-    return registry;
-  }
-  function createBaseRegistry() {
-    const types = new Map();
-    const extendees = new Map();
-    const files = new Map();
-    return {
-      kind: "registry",
-      types,
-      extendees,
-      [Symbol.iterator]() {
-        return types.values();
-      },
-      get files() {
-        return files.values();
-      },
-      addFile(file, skipTypes, withDeps) {
-        files.set(file.proto.name, file);
-        if (!skipTypes) {
-          for (const type of nestedTypes(file)) {
-            this.add(type);
-          }
-        }
-        if (withDeps) {
-          for (const f of file.dependencies) {
-            this.addFile(f, skipTypes, withDeps);
-          }
-        }
-      },
-      add(desc) {
-        if (desc.kind == "extension") {
-          let numberToExt = extendees.get(desc.extendee.typeName);
-          if (!numberToExt) {
-            extendees.set(
-              desc.extendee.typeName,
-numberToExt = new Map()
-            );
-          }
-          numberToExt.set(desc.number, desc);
-        }
-        types.set(desc.typeName, desc);
-      },
-      get(typeName) {
-        return types.get(typeName);
-      },
-      getFile(fileName) {
-        return files.get(fileName);
-      },
-      getMessage(typeName) {
-        const t = types.get(typeName);
-        return (t === null || t === void 0 ? void 0 : t.kind) == "message" ? t : void 0;
-      },
-      getEnum(typeName) {
-        const t = types.get(typeName);
-        return (t === null || t === void 0 ? void 0 : t.kind) == "enum" ? t : void 0;
-      },
-      getExtension(typeName) {
-        const t = types.get(typeName);
-        return (t === null || t === void 0 ? void 0 : t.kind) == "extension" ? t : void 0;
-      },
-      getExtensionFor(extendee, no) {
-        var _a;
-        return (_a = extendees.get(extendee.typeName)) === null || _a === void 0 ? void 0 : _a.get(no);
-      },
-      getService(typeName) {
-        const t = types.get(typeName);
-        return (t === null || t === void 0 ? void 0 : t.kind) == "service" ? t : void 0;
-      }
-    };
-  }
-  const EDITION_PROTO2 = 998;
-  const EDITION_PROTO3 = 999;
-  const EDITION_UNSTABLE = 9999;
-  const TYPE_STRING = 9;
-  const TYPE_GROUP = 10;
-  const TYPE_MESSAGE = 11;
-  const TYPE_BYTES = 12;
-  const TYPE_ENUM = 14;
-  const LABEL_REPEATED = 3;
-  const LABEL_REQUIRED = 2;
-  const JS_STRING = 1;
-  const IDEMPOTENCY_UNKNOWN = 0;
-  const EXPLICIT = 1;
-  const IMPLICIT = 2;
-  const LEGACY_REQUIRED = 3;
-  const PACKED = 1;
-  const DELIMITED = 2;
-  const OPEN = 1;
-  const VERIFY = 2;
-  const maximumEdition = 1001;
-  const featureDefaults = {
-998: {
-      fieldPresence: 1,
-enumType: 2,
-repeatedFieldEncoding: 2,
-utf8Validation: 3,
-messageEncoding: 1,
-jsonFormat: 2,
-enforceNamingStyle: 2,
-defaultSymbolVisibility: 1
-},
-999: {
-      fieldPresence: 2,
-enumType: 1,
-repeatedFieldEncoding: 1,
-utf8Validation: 2,
-messageEncoding: 1,
-jsonFormat: 1,
-enforceNamingStyle: 2,
-defaultSymbolVisibility: 1
-},
-1e3: {
-      fieldPresence: 1,
-enumType: 1,
-repeatedFieldEncoding: 1,
-utf8Validation: 2,
-messageEncoding: 1,
-jsonFormat: 1,
-enforceNamingStyle: 2,
-defaultSymbolVisibility: 1
-},
-1001: {
-      fieldPresence: 1,
-enumType: 1,
-repeatedFieldEncoding: 1,
-utf8Validation: 2,
-messageEncoding: 1,
-jsonFormat: 1,
-enforceNamingStyle: 1,
-defaultSymbolVisibility: 2
-}
-  };
-  function addFile(proto, reg) {
-    var _a, _b;
-    const file = {
-      kind: "file",
-      proto,
-      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
-      edition: getFileEdition(proto),
-      name: proto.name.replace(/\.proto$/, ""),
-      dependencies: findFileDependencies(proto, reg),
-      enums: [],
-      messages: [],
-      extensions: [],
-      services: [],
-      toString() {
-        return `file ${proto.name}`;
-      }
-    };
-    const mapEntriesStore = new Map();
-    const mapEntries = {
-      get(typeName) {
-        return mapEntriesStore.get(typeName);
-      },
-      add(desc) {
-        var _a2;
-        assert(((_a2 = desc.proto.options) === null || _a2 === void 0 ? void 0 : _a2.mapEntry) === true);
-        mapEntriesStore.set(desc.typeName, desc);
-      }
-    };
-    for (const enumProto of proto.enumType) {
-      addEnum(enumProto, file, void 0, reg);
-    }
-    for (const messageProto of proto.messageType) {
-      addMessage(messageProto, file, void 0, reg, mapEntries);
-    }
-    for (const serviceProto of proto.service) {
-      addService(serviceProto, file, reg);
-    }
-    addExtensions(file, reg);
-    for (const mapEntry of mapEntriesStore.values()) {
-      addFields(mapEntry, reg, mapEntries);
-    }
-    for (const message of file.messages) {
-      addFields(message, reg, mapEntries);
-      addExtensions(message, reg);
-    }
-    reg.addFile(file, true);
-  }
-  function addExtensions(desc, reg) {
-    switch (desc.kind) {
-      case "file":
-        for (const proto of desc.proto.extension) {
-          const ext = newField(proto, desc, reg);
-          desc.extensions.push(ext);
-          reg.add(ext);
-        }
-        break;
-      case "message":
-        for (const proto of desc.proto.extension) {
-          const ext = newField(proto, desc, reg);
-          desc.nestedExtensions.push(ext);
-          reg.add(ext);
-        }
-        for (const message of desc.nestedMessages) {
-          addExtensions(message, reg);
-        }
-        break;
-    }
-  }
-  function addFields(message, reg, mapEntries) {
-    const allOneofs = message.proto.oneofDecl.map((proto) => newOneof(proto, message));
-    const oneofsSeen = new Set();
-    for (const proto of message.proto.field) {
-      const oneof = findOneof(proto, allOneofs);
-      const field = newField(proto, message, reg, oneof, mapEntries);
-      message.fields.push(field);
-      message.field[field.localName] = field;
-      if (oneof === void 0) {
-        message.members.push(field);
-      } else {
-        oneof.fields.push(field);
-        if (!oneofsSeen.has(oneof)) {
-          oneofsSeen.add(oneof);
-          message.members.push(oneof);
-        }
-      }
-    }
-    for (const oneof of allOneofs.filter((o) => oneofsSeen.has(o))) {
-      message.oneofs.push(oneof);
-    }
-    for (const child of message.nestedMessages) {
-      addFields(child, reg, mapEntries);
-    }
-  }
-  function addEnum(proto, file, parent, reg) {
-    var _a, _b, _c, _d, _e;
-    const sharedPrefix = findEnumSharedPrefix(proto.name, proto.value);
-    const desc = {
-      kind: "enum",
-      proto,
-      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
-      file,
-      parent,
-      open: true,
-      name: proto.name,
-      typeName: makeTypeName(proto, parent, file),
-      value: {},
-      values: [],
-      sharedPrefix,
-      toString() {
-        return `enum ${this.typeName}`;
-      }
-    };
-    desc.open = isEnumOpen(desc);
-    reg.add(desc);
-    for (const p of proto.value) {
-      const name = p.name;
-      desc.values.push(
-desc.value[p.number] = {
-          kind: "enum_value",
-          proto: p,
-          deprecated: (_d = (_c = p.options) === null || _c === void 0 ? void 0 : _c.deprecated) !== null && _d !== void 0 ? _d : false,
-          parent: desc,
-          name,
-          localName: safeObjectProperty(sharedPrefix == void 0 ? name : name.substring(sharedPrefix.length)),
-          number: p.number,
-          toString() {
-            return `enum value ${desc.typeName}.${name}`;
-          }
-        }
-      );
-    }
-    ((_e = parent === null || parent === void 0 ? void 0 : parent.nestedEnums) !== null && _e !== void 0 ? _e : file.enums).push(desc);
-  }
-  function addMessage(proto, file, parent, reg, mapEntries) {
-    var _a, _b, _c, _d;
-    const desc = {
-      kind: "message",
-      proto,
-      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
-      file,
-      parent,
-      name: proto.name,
-      typeName: makeTypeName(proto, parent, file),
-      fields: [],
-      field: {},
-      oneofs: [],
-      members: [],
-      nestedEnums: [],
-      nestedMessages: [],
-      nestedExtensions: [],
-      toString() {
-        return `message ${this.typeName}`;
-      }
-    };
-    if (((_c = proto.options) === null || _c === void 0 ? void 0 : _c.mapEntry) === true) {
-      mapEntries.add(desc);
-    } else {
-      ((_d = parent === null || parent === void 0 ? void 0 : parent.nestedMessages) !== null && _d !== void 0 ? _d : file.messages).push(desc);
-      reg.add(desc);
-    }
-    for (const enumProto of proto.enumType) {
-      addEnum(enumProto, file, desc, reg);
-    }
-    for (const messageProto of proto.nestedType) {
-      addMessage(messageProto, file, desc, reg, mapEntries);
-    }
-  }
-  function addService(proto, file, reg) {
-    var _a, _b;
-    const desc = {
-      kind: "service",
-      proto,
-      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
-      file,
-      name: proto.name,
-      typeName: makeTypeName(proto, void 0, file),
-      methods: [],
-      method: {},
-      toString() {
-        return `service ${this.typeName}`;
-      }
-    };
-    file.services.push(desc);
-    reg.add(desc);
-    for (const methodProto of proto.method) {
-      const method = newMethod(methodProto, desc, reg);
-      desc.methods.push(method);
-      desc.method[method.localName] = method;
-    }
-  }
-  function newMethod(proto, parent, reg) {
-    var _a, _b, _c, _d;
-    let methodKind;
-    if (proto.clientStreaming && proto.serverStreaming) {
-      methodKind = "bidi_streaming";
-    } else if (proto.clientStreaming) {
-      methodKind = "client_streaming";
-    } else if (proto.serverStreaming) {
-      methodKind = "server_streaming";
-    } else {
-      methodKind = "unary";
-    }
-    const input = reg.getMessage(trimLeadingDot(proto.inputType));
-    const output = reg.getMessage(trimLeadingDot(proto.outputType));
-    assert(input, `invalid MethodDescriptorProto: input_type ${proto.inputType} not found`);
-    assert(output, `invalid MethodDescriptorProto: output_type ${proto.inputType} not found`);
-    const name = proto.name;
-    return {
-      kind: "rpc",
-      proto,
-      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
-      parent,
-      name,
-      localName: safeObjectProperty(name.length ? safeObjectProperty(name[0].toLowerCase() + name.substring(1)) : name),
-      methodKind,
-      input,
-      output,
-      idempotency: (_d = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.idempotencyLevel) !== null && _d !== void 0 ? _d : IDEMPOTENCY_UNKNOWN,
-      toString() {
-        return `rpc ${parent.typeName}.${name}`;
-      }
-    };
-  }
-  function newOneof(proto, parent) {
-    return {
-      kind: "oneof",
-      proto,
-      deprecated: false,
-      parent,
-      fields: [],
-      name: proto.name,
-      localName: safeObjectProperty(protoCamelCase(proto.name)),
-      toString() {
-        return `oneof ${parent.typeName}.${this.name}`;
-      }
-    };
-  }
-  function newField(proto, parentOrFile, reg, oneof, mapEntries) {
-    var _a, _b, _c;
-    const isExtension = mapEntries === void 0;
-    const field = {
-      kind: "field",
-      proto,
-      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
-      name: proto.name,
-      number: proto.number,
-      scalar: void 0,
-      message: void 0,
-      enum: void 0,
-      presence: getFieldPresence(proto, oneof, isExtension, parentOrFile),
-      utf8Validation: isUtf8Validated(proto, parentOrFile),
-      listKind: void 0,
-      mapKind: void 0,
-      mapKey: void 0,
-      delimitedEncoding: void 0,
-      packed: void 0,
-      longAsString: false,
-      getDefaultValue: void 0
-    };
-    if (isExtension) {
-      const file = parentOrFile.kind == "file" ? parentOrFile : parentOrFile.file;
-      const parent = parentOrFile.kind == "file" ? void 0 : parentOrFile;
-      const typeName = makeTypeName(proto, parent, file);
-      field.kind = "extension";
-      field.file = file;
-      field.parent = parent;
-      field.oneof = void 0;
-      field.typeName = typeName;
-      field.jsonName = `[${typeName}]`;
-      field.toString = () => `extension ${typeName}`;
-      const extendee = reg.getMessage(trimLeadingDot(proto.extendee));
-      assert(extendee, `invalid FieldDescriptorProto: extendee ${proto.extendee} not found`);
-      field.extendee = extendee;
-    } else {
-      const parent = parentOrFile;
-      assert(parent.kind == "message");
-      field.parent = parent;
-      field.oneof = oneof;
-      field.localName = oneof ? protoCamelCase(proto.name) : safeObjectProperty(protoCamelCase(proto.name));
-      field.jsonName = proto.jsonName;
-      field.toString = () => `field ${parent.typeName}.${proto.name}`;
-    }
-    const label = proto.label;
-    const type = proto.type;
-    const jstype = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.jstype;
-    if (label === LABEL_REPEATED) {
-      const mapEntry = type == TYPE_MESSAGE ? mapEntries === null || mapEntries === void 0 ? void 0 : mapEntries.get(trimLeadingDot(proto.typeName)) : void 0;
-      if (mapEntry) {
-        field.fieldKind = "map";
-        const { key, value } = findMapEntryFields(mapEntry);
-        field.mapKey = key.scalar;
-        field.mapKind = value.fieldKind;
-        field.message = value.message;
-        field.delimitedEncoding = false;
-        field.enum = value.enum;
-        field.scalar = value.scalar;
-        return field;
-      }
-      field.fieldKind = "list";
-      switch (type) {
-        case TYPE_MESSAGE:
-        case TYPE_GROUP:
-          field.listKind = "message";
-          field.message = reg.getMessage(trimLeadingDot(proto.typeName));
-          assert(field.message);
-          field.delimitedEncoding = isDelimitedEncoding(proto, parentOrFile);
-          break;
-        case TYPE_ENUM:
-          field.listKind = "enum";
-          field.enum = reg.getEnum(trimLeadingDot(proto.typeName));
-          assert(field.enum);
-          break;
-        default:
-          field.listKind = "scalar";
-          field.scalar = type;
-          field.longAsString = jstype == JS_STRING;
-          break;
-      }
-      field.packed = isPackedField(proto, parentOrFile);
-      return field;
-    }
-    switch (type) {
-      case TYPE_MESSAGE:
-      case TYPE_GROUP:
-        field.fieldKind = "message";
-        field.message = reg.getMessage(trimLeadingDot(proto.typeName));
-        assert(field.message, `invalid FieldDescriptorProto: type_name ${proto.typeName} not found`);
-        field.delimitedEncoding = isDelimitedEncoding(proto, parentOrFile);
-        field.getDefaultValue = () => void 0;
-        break;
-      case TYPE_ENUM: {
-        const enumeration = reg.getEnum(trimLeadingDot(proto.typeName));
-        assert(enumeration !== void 0, `invalid FieldDescriptorProto: type_name ${proto.typeName} not found`);
-        field.fieldKind = "enum";
-        field.enum = reg.getEnum(trimLeadingDot(proto.typeName));
-        field.getDefaultValue = () => {
-          return unsafeIsSetExplicit(proto, "defaultValue") ? parseTextFormatEnumValue(enumeration, proto.defaultValue) : void 0;
-        };
-        break;
-      }
-      default: {
-        field.fieldKind = "scalar";
-        field.scalar = type;
-        field.longAsString = jstype == JS_STRING;
-        field.getDefaultValue = () => {
-          return unsafeIsSetExplicit(proto, "defaultValue") ? parseTextFormatScalarValue(type, proto.defaultValue) : void 0;
-        };
-        break;
-      }
-    }
-    return field;
-  }
-  function getFileEdition(proto) {
-    switch (proto.syntax) {
-      case "":
-      case "proto2":
-        return EDITION_PROTO2;
-      case "proto3":
-        return EDITION_PROTO3;
-      case "editions":
-        if (proto.edition === EDITION_UNSTABLE) {
-          return maximumEdition;
-        }
-        if (proto.edition in featureDefaults) {
-          return proto.edition;
-        }
-        throw new Error(`${proto.name}: unsupported edition`);
-      default:
-        throw new Error(`${proto.name}: unsupported syntax "${proto.syntax}"`);
-    }
-  }
-  function findFileDependencies(proto, reg) {
-    return proto.dependency.map((wantName) => {
-      const dep = reg.getFile(wantName);
-      if (!dep) {
-        throw new Error(`Cannot find ${wantName}, imported by ${proto.name}`);
-      }
-      return dep;
-    });
-  }
-  function findEnumSharedPrefix(enumName, values) {
-    const prefix = camelToSnakeCase(enumName) + "_";
-    for (const value of values) {
-      if (!value.name.toLowerCase().startsWith(prefix)) {
-        return void 0;
-      }
-      const shortName = value.name.substring(prefix.length);
-      if (shortName.length == 0) {
-        return void 0;
-      }
-      if (/^\d/.test(shortName)) {
-        return void 0;
-      }
-    }
-    return prefix;
-  }
-  function camelToSnakeCase(camel) {
-    return (camel.substring(0, 1) + camel.substring(1).replace(/[A-Z]/g, (c) => "_" + c)).toLowerCase();
-  }
-  function makeTypeName(proto, parent, file) {
-    let typeName;
-    if (parent) {
-      typeName = `${parent.typeName}.${proto.name}`;
-    } else if (file.proto.package.length > 0) {
-      typeName = `${file.proto.package}.${proto.name}`;
-    } else {
-      typeName = `${proto.name}`;
-    }
-    return typeName;
-  }
-  function trimLeadingDot(typeName) {
-    return typeName.startsWith(".") ? typeName.substring(1) : typeName;
-  }
-  function findOneof(proto, allOneofs) {
-    if (!unsafeIsSetExplicit(proto, "oneofIndex")) {
-      return void 0;
-    }
-    if (proto.proto3Optional) {
-      return void 0;
-    }
-    const oneof = allOneofs[proto.oneofIndex];
-    assert(oneof, `invalid FieldDescriptorProto: oneof #${proto.oneofIndex} for field #${proto.number} not found`);
-    return oneof;
-  }
-  function getFieldPresence(proto, oneof, isExtension, parent) {
-    if (proto.label == LABEL_REQUIRED) {
-      return LEGACY_REQUIRED;
-    }
-    if (proto.label == LABEL_REPEATED) {
-      return IMPLICIT;
-    }
-    if (!!oneof || proto.proto3Optional) {
-      return EXPLICIT;
-    }
-    if (isExtension) {
-      return EXPLICIT;
-    }
-    const resolved = resolveFeature("fieldPresence", { proto, parent });
-    if (resolved == IMPLICIT && (proto.type == TYPE_MESSAGE || proto.type == TYPE_GROUP)) {
-      return EXPLICIT;
-    }
-    return resolved;
-  }
-  function isPackedField(proto, parent) {
-    if (proto.label != LABEL_REPEATED) {
-      return false;
-    }
-    switch (proto.type) {
-      case TYPE_STRING:
-      case TYPE_BYTES:
-      case TYPE_GROUP:
-      case TYPE_MESSAGE:
-        return false;
-    }
-    const o = proto.options;
-    if (o && unsafeIsSetExplicit(o, "packed")) {
-      return o.packed;
-    }
-    return PACKED == resolveFeature("repeatedFieldEncoding", {
-      proto,
-      parent
-    });
-  }
-  function findMapEntryFields(mapEntry) {
-    const key = mapEntry.fields.find((f) => f.number === 1);
-    const value = mapEntry.fields.find((f) => f.number === 2);
-    assert(key && key.fieldKind == "scalar" && key.scalar != ScalarType.BYTES && key.scalar != ScalarType.FLOAT && key.scalar != ScalarType.DOUBLE && value && value.fieldKind != "list" && value.fieldKind != "map");
-    return { key, value };
-  }
-  function isEnumOpen(desc) {
-    var _a;
-    return OPEN == resolveFeature("enumType", {
-      proto: desc.proto,
-      parent: (_a = desc.parent) !== null && _a !== void 0 ? _a : desc.file
-    });
-  }
-  function isDelimitedEncoding(proto, parent) {
-    if (proto.type == TYPE_GROUP) {
-      return true;
-    }
-    return DELIMITED == resolveFeature("messageEncoding", {
-      proto,
-      parent
-    });
-  }
-  function isUtf8Validated(proto, parent) {
-    return VERIFY == resolveFeature("utf8Validation", {
-      proto,
-      parent
-    });
-  }
-  function resolveFeature(name, ref) {
-    var _a, _b;
-    const featureSet = (_a = ref.proto.options) === null || _a === void 0 ? void 0 : _a.features;
-    if (featureSet) {
-      const val = featureSet[name];
-      if (val != 0) {
-        return val;
-      }
-    }
-    if ("kind" in ref) {
-      if (ref.kind == "message") {
-        return resolveFeature(name, (_b = ref.parent) !== null && _b !== void 0 ? _b : ref.file);
-      }
-      const editionDefaults = featureDefaults[ref.edition];
-      if (!editionDefaults) {
-        throw new Error(`feature default for edition ${ref.edition} not found`);
-      }
-      return editionDefaults[name];
-    }
-    return resolveFeature(name, ref.parent);
-  }
-  function assert(condition, msg) {
-    if (!condition) {
-      throw new Error(msg);
-    }
-  }
-  function boot(boot2) {
-    const root = bootFileDescriptorProto(boot2);
-    root.messageType.forEach(restoreJsonNames);
-    const reg = createFileRegistry(root, () => void 0);
-    return reg.getFile(root.name);
-  }
-  function bootFileDescriptorProto(init) {
-    const proto = Object.create({
-      syntax: "",
-      edition: 0
-    });
-    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FileDescriptorProto", dependency: [], publicDependency: [], weakDependency: [], optionDependency: [], service: [], extension: [] }, init), { messageType: init.messageType.map(bootDescriptorProto), enumType: init.enumType.map(bootEnumDescriptorProto) }));
-  }
-  function bootDescriptorProto(init) {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    const proto = Object.create({
-      visibility: 0
-    });
-    return Object.assign(proto, {
-      $typeName: "google.protobuf.DescriptorProto",
-      name: init.name,
-      field: (_b = (_a = init.field) === null || _a === void 0 ? void 0 : _a.map(bootFieldDescriptorProto)) !== null && _b !== void 0 ? _b : [],
-      extension: [],
-      nestedType: (_d = (_c = init.nestedType) === null || _c === void 0 ? void 0 : _c.map(bootDescriptorProto)) !== null && _d !== void 0 ? _d : [],
-      enumType: (_f = (_e = init.enumType) === null || _e === void 0 ? void 0 : _e.map(bootEnumDescriptorProto)) !== null && _f !== void 0 ? _f : [],
-      extensionRange: (_h = (_g = init.extensionRange) === null || _g === void 0 ? void 0 : _g.map((e) => Object.assign({ $typeName: "google.protobuf.DescriptorProto.ExtensionRange" }, e))) !== null && _h !== void 0 ? _h : [],
-      oneofDecl: [],
-      reservedRange: [],
-      reservedName: []
-    });
-  }
-  function bootFieldDescriptorProto(init) {
-    const proto = Object.create({
-      label: 1,
-      typeName: "",
-      extendee: "",
-      defaultValue: "",
-      oneofIndex: 0,
-      jsonName: "",
-      proto3Optional: false
-    });
-    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, init), { options: init.options ? bootFieldOptions(init.options) : void 0 }));
-  }
-  function bootFieldOptions(init) {
-    var _a, _b, _c;
-    const proto = Object.create({
-      ctype: 0,
-      packed: false,
-      jstype: 0,
-      lazy: false,
-      unverifiedLazy: false,
-      deprecated: false,
-      weak: false,
-      debugRedact: false,
-      retention: 0
-    });
-    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FieldOptions" }, init), { targets: (_a = init.targets) !== null && _a !== void 0 ? _a : [], editionDefaults: (_c = (_b = init.editionDefaults) === null || _b === void 0 ? void 0 : _b.map((e) => Object.assign({ $typeName: "google.protobuf.FieldOptions.EditionDefault" }, e))) !== null && _c !== void 0 ? _c : [], uninterpretedOption: [] }));
-  }
-  function bootEnumDescriptorProto(init) {
-    const proto = Object.create({
-      visibility: 0
-    });
-    return Object.assign(proto, {
-      $typeName: "google.protobuf.EnumDescriptorProto",
-      name: init.name,
-      reservedName: [],
-      reservedRange: [],
-      value: init.value.map((e) => Object.assign({ $typeName: "google.protobuf.EnumValueDescriptorProto" }, e))
-    });
-  }
-  function messageDesc(file, path, ...paths) {
-    return paths.reduce((acc, cur) => acc.nestedMessages[cur], file.messages[path]);
-  }
-  const file_google_protobuf_descriptor = boot({ "name": "google/protobuf/descriptor.proto", "package": "google.protobuf", "messageType": [{ "name": "FileDescriptorSet", "field": [{ "name": "file", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.FileDescriptorProto" }], "extensionRange": [{ "start": 536e6, "end": 536000001 }] }, { "name": "FileDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "package", "number": 2, "type": 9, "label": 1 }, { "name": "dependency", "number": 3, "type": 9, "label": 3 }, { "name": "public_dependency", "number": 10, "type": 5, "label": 3 }, { "name": "weak_dependency", "number": 11, "type": 5, "label": 3 }, { "name": "option_dependency", "number": 15, "type": 9, "label": 3 }, { "name": "message_type", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto" }, { "name": "enum_type", "number": 5, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto" }, { "name": "service", "number": 6, "type": 11, "label": 3, "typeName": ".google.protobuf.ServiceDescriptorProto" }, { "name": "extension", "number": 7, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "options", "number": 8, "type": 11, "label": 1, "typeName": ".google.protobuf.FileOptions" }, { "name": "source_code_info", "number": 9, "type": 11, "label": 1, "typeName": ".google.protobuf.SourceCodeInfo" }, { "name": "syntax", "number": 12, "type": 9, "label": 1 }, { "name": "edition", "number": 14, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }] }, { "name": "DescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "field", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "extension", "number": 6, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "nested_type", "number": 3, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto" }, { "name": "enum_type", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto" }, { "name": "extension_range", "number": 5, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto.ExtensionRange" }, { "name": "oneof_decl", "number": 8, "type": 11, "label": 3, "typeName": ".google.protobuf.OneofDescriptorProto" }, { "name": "options", "number": 7, "type": 11, "label": 1, "typeName": ".google.protobuf.MessageOptions" }, { "name": "reserved_range", "number": 9, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto.ReservedRange" }, { "name": "reserved_name", "number": 10, "type": 9, "label": 3 }, { "name": "visibility", "number": 11, "type": 14, "label": 1, "typeName": ".google.protobuf.SymbolVisibility" }], "nestedType": [{ "name": "ExtensionRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.ExtensionRangeOptions" }] }, { "name": "ReservedRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }] }] }, { "name": "ExtensionRangeOptions", "field": [{ "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }, { "name": "declaration", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.ExtensionRangeOptions.Declaration", "options": { "retention": 2 } }, { "name": "features", "number": 50, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "verification", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.ExtensionRangeOptions.VerificationState", "defaultValue": "UNVERIFIED", "options": { "retention": 2 } }], "nestedType": [{ "name": "Declaration", "field": [{ "name": "number", "number": 1, "type": 5, "label": 1 }, { "name": "full_name", "number": 2, "type": 9, "label": 1 }, { "name": "type", "number": 3, "type": 9, "label": 1 }, { "name": "reserved", "number": 5, "type": 8, "label": 1 }, { "name": "repeated", "number": 6, "type": 8, "label": 1 }] }], "enumType": [{ "name": "VerificationState", "value": [{ "name": "DECLARATION", "number": 0 }, { "name": "UNVERIFIED", "number": 1 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "FieldDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "number", "number": 3, "type": 5, "label": 1 }, { "name": "label", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldDescriptorProto.Label" }, { "name": "type", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldDescriptorProto.Type" }, { "name": "type_name", "number": 6, "type": 9, "label": 1 }, { "name": "extendee", "number": 2, "type": 9, "label": 1 }, { "name": "default_value", "number": 7, "type": 9, "label": 1 }, { "name": "oneof_index", "number": 9, "type": 5, "label": 1 }, { "name": "json_name", "number": 10, "type": 9, "label": 1 }, { "name": "options", "number": 8, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions" }, { "name": "proto3_optional", "number": 17, "type": 8, "label": 1 }], "enumType": [{ "name": "Type", "value": [{ "name": "TYPE_DOUBLE", "number": 1 }, { "name": "TYPE_FLOAT", "number": 2 }, { "name": "TYPE_INT64", "number": 3 }, { "name": "TYPE_UINT64", "number": 4 }, { "name": "TYPE_INT32", "number": 5 }, { "name": "TYPE_FIXED64", "number": 6 }, { "name": "TYPE_FIXED32", "number": 7 }, { "name": "TYPE_BOOL", "number": 8 }, { "name": "TYPE_STRING", "number": 9 }, { "name": "TYPE_GROUP", "number": 10 }, { "name": "TYPE_MESSAGE", "number": 11 }, { "name": "TYPE_BYTES", "number": 12 }, { "name": "TYPE_UINT32", "number": 13 }, { "name": "TYPE_ENUM", "number": 14 }, { "name": "TYPE_SFIXED32", "number": 15 }, { "name": "TYPE_SFIXED64", "number": 16 }, { "name": "TYPE_SINT32", "number": 17 }, { "name": "TYPE_SINT64", "number": 18 }] }, { "name": "Label", "value": [{ "name": "LABEL_OPTIONAL", "number": 1 }, { "name": "LABEL_REPEATED", "number": 3 }, { "name": "LABEL_REQUIRED", "number": 2 }] }] }, { "name": "OneofDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "options", "number": 2, "type": 11, "label": 1, "typeName": ".google.protobuf.OneofOptions" }] }, { "name": "EnumDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "value", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumValueDescriptorProto" }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.EnumOptions" }, { "name": "reserved_range", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto.EnumReservedRange" }, { "name": "reserved_name", "number": 5, "type": 9, "label": 3 }, { "name": "visibility", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.SymbolVisibility" }], "nestedType": [{ "name": "EnumReservedRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }] }] }, { "name": "EnumValueDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "number", "number": 2, "type": 5, "label": 1 }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.EnumValueOptions" }] }, { "name": "ServiceDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "method", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.MethodDescriptorProto" }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.ServiceOptions" }] }, { "name": "MethodDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "input_type", "number": 2, "type": 9, "label": 1 }, { "name": "output_type", "number": 3, "type": 9, "label": 1 }, { "name": "options", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.MethodOptions" }, { "name": "client_streaming", "number": 5, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "server_streaming", "number": 6, "type": 8, "label": 1, "defaultValue": "false" }] }, { "name": "FileOptions", "field": [{ "name": "java_package", "number": 1, "type": 9, "label": 1 }, { "name": "java_outer_classname", "number": 8, "type": 9, "label": 1 }, { "name": "java_multiple_files", "number": 10, "type": 8, "label": 1, "defaultValue": "false", "options": {} }, { "name": "java_generate_equals_and_hash", "number": 20, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "java_string_check_utf8", "number": 27, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "optimize_for", "number": 9, "type": 14, "label": 1, "typeName": ".google.protobuf.FileOptions.OptimizeMode", "defaultValue": "SPEED" }, { "name": "go_package", "number": 11, "type": 9, "label": 1 }, { "name": "cc_generic_services", "number": 16, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "java_generic_services", "number": 17, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "py_generic_services", "number": 18, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 23, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "cc_enable_arenas", "number": 31, "type": 8, "label": 1, "defaultValue": "true" }, { "name": "objc_class_prefix", "number": 36, "type": 9, "label": 1 }, { "name": "csharp_namespace", "number": 37, "type": 9, "label": 1 }, { "name": "swift_prefix", "number": 39, "type": 9, "label": 1 }, { "name": "php_class_prefix", "number": 40, "type": 9, "label": 1 }, { "name": "php_namespace", "number": 41, "type": 9, "label": 1 }, { "name": "php_metadata_namespace", "number": 44, "type": 9, "label": 1 }, { "name": "ruby_package", "number": 45, "type": 9, "label": 1 }, { "name": "features", "number": 50, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "enumType": [{ "name": "OptimizeMode", "value": [{ "name": "SPEED", "number": 1 }, { "name": "CODE_SIZE", "number": 2 }, { "name": "LITE_RUNTIME", "number": 3 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "MessageOptions", "field": [{ "name": "message_set_wire_format", "number": 1, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "no_standard_descriptor_accessor", "number": 2, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "map_entry", "number": 7, "type": 8, "label": 1 }, { "name": "deprecated_legacy_json_field_conflicts", "number": 11, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "features", "number": 12, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "FieldOptions", "field": [{ "name": "ctype", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.CType", "defaultValue": "STRING" }, { "name": "packed", "number": 2, "type": 8, "label": 1 }, { "name": "jstype", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.JSType", "defaultValue": "JS_NORMAL" }, { "name": "lazy", "number": 5, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "unverified_lazy", "number": 15, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "weak", "number": 10, "type": 8, "label": 1, "defaultValue": "false", "options": { "deprecated": true } }, { "name": "debug_redact", "number": 16, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "retention", "number": 17, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.OptionRetention" }, { "name": "targets", "number": 19, "type": 14, "label": 3, "typeName": ".google.protobuf.FieldOptions.OptionTargetType" }, { "name": "edition_defaults", "number": 20, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldOptions.EditionDefault" }, { "name": "features", "number": 21, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "feature_support", "number": 22, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions.FeatureSupport" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "nestedType": [{ "name": "EditionDefault", "field": [{ "name": "edition", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "value", "number": 2, "type": 9, "label": 1 }] }, { "name": "FeatureSupport", "field": [{ "name": "edition_introduced", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "edition_deprecated", "number": 2, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "deprecation_warning", "number": 3, "type": 9, "label": 1 }, { "name": "edition_removed", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "removal_error", "number": 5, "type": 9, "label": 1 }] }], "enumType": [{ "name": "CType", "value": [{ "name": "STRING", "number": 0 }, { "name": "CORD", "number": 1 }, { "name": "STRING_PIECE", "number": 2 }] }, { "name": "JSType", "value": [{ "name": "JS_NORMAL", "number": 0 }, { "name": "JS_STRING", "number": 1 }, { "name": "JS_NUMBER", "number": 2 }] }, { "name": "OptionRetention", "value": [{ "name": "RETENTION_UNKNOWN", "number": 0 }, { "name": "RETENTION_RUNTIME", "number": 1 }, { "name": "RETENTION_SOURCE", "number": 2 }] }, { "name": "OptionTargetType", "value": [{ "name": "TARGET_TYPE_UNKNOWN", "number": 0 }, { "name": "TARGET_TYPE_FILE", "number": 1 }, { "name": "TARGET_TYPE_EXTENSION_RANGE", "number": 2 }, { "name": "TARGET_TYPE_MESSAGE", "number": 3 }, { "name": "TARGET_TYPE_FIELD", "number": 4 }, { "name": "TARGET_TYPE_ONEOF", "number": 5 }, { "name": "TARGET_TYPE_ENUM", "number": 6 }, { "name": "TARGET_TYPE_ENUM_ENTRY", "number": 7 }, { "name": "TARGET_TYPE_SERVICE", "number": 8 }, { "name": "TARGET_TYPE_METHOD", "number": 9 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "OneofOptions", "field": [{ "name": "features", "number": 1, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "EnumOptions", "field": [{ "name": "allow_alias", "number": 2, "type": 8, "label": 1 }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated_legacy_json_field_conflicts", "number": 6, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "features", "number": 7, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "EnumValueOptions", "field": [{ "name": "deprecated", "number": 1, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "features", "number": 2, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "debug_redact", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "feature_support", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions.FeatureSupport" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "ServiceOptions", "field": [{ "name": "features", "number": 34, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "deprecated", "number": 33, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "MethodOptions", "field": [{ "name": "deprecated", "number": 33, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "idempotency_level", "number": 34, "type": 14, "label": 1, "typeName": ".google.protobuf.MethodOptions.IdempotencyLevel", "defaultValue": "IDEMPOTENCY_UNKNOWN" }, { "name": "features", "number": 35, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "enumType": [{ "name": "IdempotencyLevel", "value": [{ "name": "IDEMPOTENCY_UNKNOWN", "number": 0 }, { "name": "NO_SIDE_EFFECTS", "number": 1 }, { "name": "IDEMPOTENT", "number": 2 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "UninterpretedOption", "field": [{ "name": "name", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption.NamePart" }, { "name": "identifier_value", "number": 3, "type": 9, "label": 1 }, { "name": "positive_int_value", "number": 4, "type": 4, "label": 1 }, { "name": "negative_int_value", "number": 5, "type": 3, "label": 1 }, { "name": "double_value", "number": 6, "type": 1, "label": 1 }, { "name": "string_value", "number": 7, "type": 12, "label": 1 }, { "name": "aggregate_value", "number": 8, "type": 9, "label": 1 }], "nestedType": [{ "name": "NamePart", "field": [{ "name": "name_part", "number": 1, "type": 9, "label": 2 }, { "name": "is_extension", "number": 2, "type": 8, "label": 2 }] }] }, { "name": "FeatureSet", "field": [{ "name": "field_presence", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.FieldPresence", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "EXPLICIT", "edition": 900 }, { "value": "IMPLICIT", "edition": 999 }, { "value": "EXPLICIT", "edition": 1e3 }] } }, { "name": "enum_type", "number": 2, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.EnumType", "options": { "retention": 1, "targets": [6, 1], "editionDefaults": [{ "value": "CLOSED", "edition": 900 }, { "value": "OPEN", "edition": 999 }] } }, { "name": "repeated_field_encoding", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.RepeatedFieldEncoding", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "EXPANDED", "edition": 900 }, { "value": "PACKED", "edition": 999 }] } }, { "name": "utf8_validation", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.Utf8Validation", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "NONE", "edition": 900 }, { "value": "VERIFY", "edition": 999 }] } }, { "name": "message_encoding", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.MessageEncoding", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "LENGTH_PREFIXED", "edition": 900 }] } }, { "name": "json_format", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.JsonFormat", "options": { "retention": 1, "targets": [3, 6, 1], "editionDefaults": [{ "value": "LEGACY_BEST_EFFORT", "edition": 900 }, { "value": "ALLOW", "edition": 999 }] } }, { "name": "enforce_naming_style", "number": 7, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.EnforceNamingStyle", "options": { "retention": 2, "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9], "editionDefaults": [{ "value": "STYLE_LEGACY", "edition": 900 }, { "value": "STYLE2024", "edition": 1001 }] } }, { "name": "default_symbol_visibility", "number": 8, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.VisibilityFeature.DefaultSymbolVisibility", "options": { "retention": 2, "targets": [1], "editionDefaults": [{ "value": "EXPORT_ALL", "edition": 900 }, { "value": "EXPORT_TOP_LEVEL", "edition": 1001 }] } }], "nestedType": [{ "name": "VisibilityFeature", "enumType": [{ "name": "DefaultSymbolVisibility", "value": [{ "name": "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", "number": 0 }, { "name": "EXPORT_ALL", "number": 1 }, { "name": "EXPORT_TOP_LEVEL", "number": 2 }, { "name": "LOCAL_ALL", "number": 3 }, { "name": "STRICT", "number": 4 }] }] }], "enumType": [{ "name": "FieldPresence", "value": [{ "name": "FIELD_PRESENCE_UNKNOWN", "number": 0 }, { "name": "EXPLICIT", "number": 1 }, { "name": "IMPLICIT", "number": 2 }, { "name": "LEGACY_REQUIRED", "number": 3 }] }, { "name": "EnumType", "value": [{ "name": "ENUM_TYPE_UNKNOWN", "number": 0 }, { "name": "OPEN", "number": 1 }, { "name": "CLOSED", "number": 2 }] }, { "name": "RepeatedFieldEncoding", "value": [{ "name": "REPEATED_FIELD_ENCODING_UNKNOWN", "number": 0 }, { "name": "PACKED", "number": 1 }, { "name": "EXPANDED", "number": 2 }] }, { "name": "Utf8Validation", "value": [{ "name": "UTF8_VALIDATION_UNKNOWN", "number": 0 }, { "name": "VERIFY", "number": 2 }, { "name": "NONE", "number": 3 }] }, { "name": "MessageEncoding", "value": [{ "name": "MESSAGE_ENCODING_UNKNOWN", "number": 0 }, { "name": "LENGTH_PREFIXED", "number": 1 }, { "name": "DELIMITED", "number": 2 }] }, { "name": "JsonFormat", "value": [{ "name": "JSON_FORMAT_UNKNOWN", "number": 0 }, { "name": "ALLOW", "number": 1 }, { "name": "LEGACY_BEST_EFFORT", "number": 2 }] }, { "name": "EnforceNamingStyle", "value": [{ "name": "ENFORCE_NAMING_STYLE_UNKNOWN", "number": 0 }, { "name": "STYLE2024", "number": 1 }, { "name": "STYLE_LEGACY", "number": 2 }] }], "extensionRange": [{ "start": 1e3, "end": 9995 }, { "start": 9995, "end": 1e4 }, { "start": 1e4, "end": 10001 }] }, { "name": "FeatureSetDefaults", "field": [{ "name": "defaults", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault" }, { "name": "minimum_edition", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "maximum_edition", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }], "nestedType": [{ "name": "FeatureSetEditionDefault", "field": [{ "name": "edition", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "overridable_features", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "fixed_features", "number": 5, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }] }] }, { "name": "SourceCodeInfo", "field": [{ "name": "location", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.SourceCodeInfo.Location" }], "nestedType": [{ "name": "Location", "field": [{ "name": "path", "number": 1, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "span", "number": 2, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "leading_comments", "number": 3, "type": 9, "label": 1 }, { "name": "trailing_comments", "number": 4, "type": 9, "label": 1 }, { "name": "leading_detached_comments", "number": 6, "type": 9, "label": 3 }] }], "extensionRange": [{ "start": 536e6, "end": 536000001 }] }, { "name": "GeneratedCodeInfo", "field": [{ "name": "annotation", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.GeneratedCodeInfo.Annotation" }], "nestedType": [{ "name": "Annotation", "field": [{ "name": "path", "number": 1, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "source_file", "number": 2, "type": 9, "label": 1 }, { "name": "begin", "number": 3, "type": 5, "label": 1 }, { "name": "end", "number": 4, "type": 5, "label": 1 }, { "name": "semantic", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.GeneratedCodeInfo.Annotation.Semantic" }], "enumType": [{ "name": "Semantic", "value": [{ "name": "NONE", "number": 0 }, { "name": "SET", "number": 1 }, { "name": "ALIAS", "number": 2 }] }] }] }], "enumType": [{ "name": "Edition", "value": [{ "name": "EDITION_UNKNOWN", "number": 0 }, { "name": "EDITION_LEGACY", "number": 900 }, { "name": "EDITION_PROTO2", "number": 998 }, { "name": "EDITION_PROTO3", "number": 999 }, { "name": "EDITION_2023", "number": 1e3 }, { "name": "EDITION_2024", "number": 1001 }, { "name": "EDITION_UNSTABLE", "number": 9999 }, { "name": "EDITION_1_TEST_ONLY", "number": 1 }, { "name": "EDITION_2_TEST_ONLY", "number": 2 }, { "name": "EDITION_99997_TEST_ONLY", "number": 99997 }, { "name": "EDITION_99998_TEST_ONLY", "number": 99998 }, { "name": "EDITION_99999_TEST_ONLY", "number": 99999 }, { "name": "EDITION_MAX", "number": 2147483647 }] }, { "name": "SymbolVisibility", "value": [{ "name": "VISIBILITY_UNSET", "number": 0 }, { "name": "VISIBILITY_LOCAL", "number": 1 }, { "name": "VISIBILITY_EXPORT", "number": 2 }] }] });
-  const FileDescriptorProtoSchema = messageDesc(file_google_protobuf_descriptor, 1);
-  var ExtensionRangeOptions_VerificationState;
-  (function(ExtensionRangeOptions_VerificationState2) {
-    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["DECLARATION"] = 0] = "DECLARATION";
-    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["UNVERIFIED"] = 1] = "UNVERIFIED";
-  })(ExtensionRangeOptions_VerificationState || (ExtensionRangeOptions_VerificationState = {}));
-  var FieldDescriptorProto_Type;
-  (function(FieldDescriptorProto_Type2) {
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["DOUBLE"] = 1] = "DOUBLE";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FLOAT"] = 2] = "FLOAT";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT64"] = 3] = "INT64";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT64"] = 4] = "UINT64";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT32"] = 5] = "INT32";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED64"] = 6] = "FIXED64";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED32"] = 7] = "FIXED32";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BOOL"] = 8] = "BOOL";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["STRING"] = 9] = "STRING";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["GROUP"] = 10] = "GROUP";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["MESSAGE"] = 11] = "MESSAGE";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BYTES"] = 12] = "BYTES";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT32"] = 13] = "UINT32";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["ENUM"] = 14] = "ENUM";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED32"] = 15] = "SFIXED32";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED64"] = 16] = "SFIXED64";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT32"] = 17] = "SINT32";
-    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT64"] = 18] = "SINT64";
-  })(FieldDescriptorProto_Type || (FieldDescriptorProto_Type = {}));
-  var FieldDescriptorProto_Label;
-  (function(FieldDescriptorProto_Label2) {
-    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["OPTIONAL"] = 1] = "OPTIONAL";
-    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REPEATED"] = 3] = "REPEATED";
-    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REQUIRED"] = 2] = "REQUIRED";
-  })(FieldDescriptorProto_Label || (FieldDescriptorProto_Label = {}));
-  var FileOptions_OptimizeMode;
-  (function(FileOptions_OptimizeMode2) {
-    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["SPEED"] = 1] = "SPEED";
-    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["CODE_SIZE"] = 2] = "CODE_SIZE";
-    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["LITE_RUNTIME"] = 3] = "LITE_RUNTIME";
-  })(FileOptions_OptimizeMode || (FileOptions_OptimizeMode = {}));
-  var FieldOptions_CType;
-  (function(FieldOptions_CType2) {
-    FieldOptions_CType2[FieldOptions_CType2["STRING"] = 0] = "STRING";
-    FieldOptions_CType2[FieldOptions_CType2["CORD"] = 1] = "CORD";
-    FieldOptions_CType2[FieldOptions_CType2["STRING_PIECE"] = 2] = "STRING_PIECE";
-  })(FieldOptions_CType || (FieldOptions_CType = {}));
-  var FieldOptions_JSType;
-  (function(FieldOptions_JSType2) {
-    FieldOptions_JSType2[FieldOptions_JSType2["JS_NORMAL"] = 0] = "JS_NORMAL";
-    FieldOptions_JSType2[FieldOptions_JSType2["JS_STRING"] = 1] = "JS_STRING";
-    FieldOptions_JSType2[FieldOptions_JSType2["JS_NUMBER"] = 2] = "JS_NUMBER";
-  })(FieldOptions_JSType || (FieldOptions_JSType = {}));
-  var FieldOptions_OptionRetention;
-  (function(FieldOptions_OptionRetention2) {
-    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_UNKNOWN"] = 0] = "RETENTION_UNKNOWN";
-    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_RUNTIME"] = 1] = "RETENTION_RUNTIME";
-    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_SOURCE"] = 2] = "RETENTION_SOURCE";
-  })(FieldOptions_OptionRetention || (FieldOptions_OptionRetention = {}));
-  var FieldOptions_OptionTargetType;
-  (function(FieldOptions_OptionTargetType2) {
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_UNKNOWN"] = 0] = "TARGET_TYPE_UNKNOWN";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FILE"] = 1] = "TARGET_TYPE_FILE";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_EXTENSION_RANGE"] = 2] = "TARGET_TYPE_EXTENSION_RANGE";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_MESSAGE"] = 3] = "TARGET_TYPE_MESSAGE";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FIELD"] = 4] = "TARGET_TYPE_FIELD";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ONEOF"] = 5] = "TARGET_TYPE_ONEOF";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM"] = 6] = "TARGET_TYPE_ENUM";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM_ENTRY"] = 7] = "TARGET_TYPE_ENUM_ENTRY";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_SERVICE"] = 8] = "TARGET_TYPE_SERVICE";
-    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_METHOD"] = 9] = "TARGET_TYPE_METHOD";
-  })(FieldOptions_OptionTargetType || (FieldOptions_OptionTargetType = {}));
-  var MethodOptions_IdempotencyLevel;
-  (function(MethodOptions_IdempotencyLevel2) {
-    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENCY_UNKNOWN"] = 0] = "IDEMPOTENCY_UNKNOWN";
-    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["NO_SIDE_EFFECTS"] = 1] = "NO_SIDE_EFFECTS";
-    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENT"] = 2] = "IDEMPOTENT";
-  })(MethodOptions_IdempotencyLevel || (MethodOptions_IdempotencyLevel = {}));
-  var FeatureSet_VisibilityFeature_DefaultSymbolVisibility;
-  (function(FeatureSet_VisibilityFeature_DefaultSymbolVisibility2) {
-    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["DEFAULT_SYMBOL_VISIBILITY_UNKNOWN"] = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN";
-    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["EXPORT_ALL"] = 1] = "EXPORT_ALL";
-    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["EXPORT_TOP_LEVEL"] = 2] = "EXPORT_TOP_LEVEL";
-    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["LOCAL_ALL"] = 3] = "LOCAL_ALL";
-    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["STRICT"] = 4] = "STRICT";
-  })(FeatureSet_VisibilityFeature_DefaultSymbolVisibility || (FeatureSet_VisibilityFeature_DefaultSymbolVisibility = {}));
-  var FeatureSet_FieldPresence;
-  (function(FeatureSet_FieldPresence2) {
-    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["FIELD_PRESENCE_UNKNOWN"] = 0] = "FIELD_PRESENCE_UNKNOWN";
-    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["EXPLICIT"] = 1] = "EXPLICIT";
-    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["IMPLICIT"] = 2] = "IMPLICIT";
-    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["LEGACY_REQUIRED"] = 3] = "LEGACY_REQUIRED";
-  })(FeatureSet_FieldPresence || (FeatureSet_FieldPresence = {}));
-  var FeatureSet_EnumType;
-  (function(FeatureSet_EnumType2) {
-    FeatureSet_EnumType2[FeatureSet_EnumType2["ENUM_TYPE_UNKNOWN"] = 0] = "ENUM_TYPE_UNKNOWN";
-    FeatureSet_EnumType2[FeatureSet_EnumType2["OPEN"] = 1] = "OPEN";
-    FeatureSet_EnumType2[FeatureSet_EnumType2["CLOSED"] = 2] = "CLOSED";
-  })(FeatureSet_EnumType || (FeatureSet_EnumType = {}));
-  var FeatureSet_RepeatedFieldEncoding;
-  (function(FeatureSet_RepeatedFieldEncoding2) {
-    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["REPEATED_FIELD_ENCODING_UNKNOWN"] = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN";
-    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["PACKED"] = 1] = "PACKED";
-    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["EXPANDED"] = 2] = "EXPANDED";
-  })(FeatureSet_RepeatedFieldEncoding || (FeatureSet_RepeatedFieldEncoding = {}));
-  var FeatureSet_Utf8Validation;
-  (function(FeatureSet_Utf8Validation2) {
-    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["UTF8_VALIDATION_UNKNOWN"] = 0] = "UTF8_VALIDATION_UNKNOWN";
-    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["VERIFY"] = 2] = "VERIFY";
-    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["NONE"] = 3] = "NONE";
-  })(FeatureSet_Utf8Validation || (FeatureSet_Utf8Validation = {}));
-  var FeatureSet_MessageEncoding;
-  (function(FeatureSet_MessageEncoding2) {
-    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["MESSAGE_ENCODING_UNKNOWN"] = 0] = "MESSAGE_ENCODING_UNKNOWN";
-    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["LENGTH_PREFIXED"] = 1] = "LENGTH_PREFIXED";
-    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["DELIMITED"] = 2] = "DELIMITED";
-  })(FeatureSet_MessageEncoding || (FeatureSet_MessageEncoding = {}));
-  var FeatureSet_JsonFormat;
-  (function(FeatureSet_JsonFormat2) {
-    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["JSON_FORMAT_UNKNOWN"] = 0] = "JSON_FORMAT_UNKNOWN";
-    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["ALLOW"] = 1] = "ALLOW";
-    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["LEGACY_BEST_EFFORT"] = 2] = "LEGACY_BEST_EFFORT";
-  })(FeatureSet_JsonFormat || (FeatureSet_JsonFormat = {}));
-  var FeatureSet_EnforceNamingStyle;
-  (function(FeatureSet_EnforceNamingStyle2) {
-    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["ENFORCE_NAMING_STYLE_UNKNOWN"] = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN";
-    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["STYLE2024"] = 1] = "STYLE2024";
-    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["STYLE_LEGACY"] = 2] = "STYLE_LEGACY";
-  })(FeatureSet_EnforceNamingStyle || (FeatureSet_EnforceNamingStyle = {}));
-  var GeneratedCodeInfo_Annotation_Semantic;
-  (function(GeneratedCodeInfo_Annotation_Semantic2) {
-    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["NONE"] = 0] = "NONE";
-    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["SET"] = 1] = "SET";
-    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["ALIAS"] = 2] = "ALIAS";
-  })(GeneratedCodeInfo_Annotation_Semantic || (GeneratedCodeInfo_Annotation_Semantic = {}));
-  var Edition;
-  (function(Edition2) {
-    Edition2[Edition2["EDITION_UNKNOWN"] = 0] = "EDITION_UNKNOWN";
-    Edition2[Edition2["EDITION_LEGACY"] = 900] = "EDITION_LEGACY";
-    Edition2[Edition2["EDITION_PROTO2"] = 998] = "EDITION_PROTO2";
-    Edition2[Edition2["EDITION_PROTO3"] = 999] = "EDITION_PROTO3";
-    Edition2[Edition2["EDITION_2023"] = 1e3] = "EDITION_2023";
-    Edition2[Edition2["EDITION_2024"] = 1001] = "EDITION_2024";
-    Edition2[Edition2["EDITION_UNSTABLE"] = 9999] = "EDITION_UNSTABLE";
-    Edition2[Edition2["EDITION_1_TEST_ONLY"] = 1] = "EDITION_1_TEST_ONLY";
-    Edition2[Edition2["EDITION_2_TEST_ONLY"] = 2] = "EDITION_2_TEST_ONLY";
-    Edition2[Edition2["EDITION_99997_TEST_ONLY"] = 99997] = "EDITION_99997_TEST_ONLY";
-    Edition2[Edition2["EDITION_99998_TEST_ONLY"] = 99998] = "EDITION_99998_TEST_ONLY";
-    Edition2[Edition2["EDITION_99999_TEST_ONLY"] = 99999] = "EDITION_99999_TEST_ONLY";
-    Edition2[Edition2["EDITION_MAX"] = 2147483647] = "EDITION_MAX";
-  })(Edition || (Edition = {}));
-  var SymbolVisibility;
-  (function(SymbolVisibility2) {
-    SymbolVisibility2[SymbolVisibility2["VISIBILITY_UNSET"] = 0] = "VISIBILITY_UNSET";
-    SymbolVisibility2[SymbolVisibility2["VISIBILITY_LOCAL"] = 1] = "VISIBILITY_LOCAL";
-    SymbolVisibility2[SymbolVisibility2["VISIBILITY_EXPORT"] = 2] = "VISIBILITY_EXPORT";
-  })(SymbolVisibility || (SymbolVisibility = {}));
-  const readDefaults = {
-    readUnknownFields: true
-  };
-  function makeReadOptions(options) {
-    return options ? Object.assign(Object.assign({}, readDefaults), options) : readDefaults;
-  }
-  function fromBinary(schema, bytes, options) {
-    const msg = reflect(schema, void 0, false);
-    readMessage(msg, new BinaryReader(bytes), makeReadOptions(options), false, bytes.byteLength);
-    return msg.message;
-  }
-  function readMessage(message, reader, options, delimited, lengthOrDelimitedFieldNo) {
-    var _a;
-    const end = delimited ? reader.len : reader.pos + lengthOrDelimitedFieldNo;
-    let fieldNo;
-    let wireType;
-    const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
-    while (reader.pos < end) {
-      [fieldNo, wireType] = reader.tag();
-      if (delimited && wireType == WireType.EndGroup) {
-        break;
-      }
-      const field = message.findNumber(fieldNo);
-      if (!field) {
-        const data = reader.skip(wireType, fieldNo);
-        if (options.readUnknownFields) {
-          unknownFields.push({ no: fieldNo, wireType, data });
-        }
-        continue;
-      }
-      readField(message, reader, field, wireType, options);
-    }
-    if (delimited) {
-      if (wireType != WireType.EndGroup || fieldNo !== lengthOrDelimitedFieldNo) {
-        throw new Error("invalid end group tag");
-      }
-    }
-    if (unknownFields.length > 0) {
-      message.setUnknown(unknownFields);
-    }
-  }
-  function readField(message, reader, field, wireType, options) {
-    var _a;
-    switch (field.fieldKind) {
-      case "scalar":
-        message.set(field, readScalar(reader, field.scalar, field.utf8Validation));
-        break;
-      case "enum":
-        const val = readScalar(reader, ScalarType.INT32);
-        if (field.enum.open) {
-          message.set(field, val);
-        } else {
-          const ok = field.enum.values.some((v) => v.number === val);
-          if (ok) {
-            message.set(field, val);
-          } else if (options.readUnknownFields) {
-            const bytes = [];
-            varint32write(val, bytes);
-            const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
-            unknownFields.push({
-              no: field.number,
-              wireType,
-              data: new Uint8Array(bytes)
-            });
-            message.setUnknown(unknownFields);
-          }
-        }
-        break;
-      case "message":
-        message.set(field, readMessageField(reader, options, field, message.get(field)));
-        break;
-      case "list":
-        readListField(reader, wireType, message.get(field), options);
-        break;
-      case "map":
-        readMapEntry(reader, message.get(field), options);
-        break;
-    }
-  }
-  function readMapEntry(reader, map, options) {
-    const field = map.field();
-    let key;
-    let val;
-    const len = reader.uint32();
-    const end = reader.pos + len;
-    while (reader.pos < end) {
-      const [fieldNo] = reader.tag();
-      switch (fieldNo) {
-        case 1:
-          key = readScalar(reader, field.mapKey, field.utf8Validation);
-          break;
-        case 2:
-          switch (field.mapKind) {
-            case "scalar":
-              val = readScalar(reader, field.scalar, field.utf8Validation);
-              break;
-            case "enum":
-              val = reader.int32();
-              break;
-            case "message":
-              val = readMessageField(reader, options, field);
-              break;
-          }
-          break;
-      }
-    }
-    if (key === void 0) {
-      key = scalarZeroValue(field.mapKey, false);
-    }
-    if (val === void 0) {
-      switch (field.mapKind) {
-        case "scalar":
-          val = scalarZeroValue(field.scalar, false);
-          break;
-        case "enum":
-          val = field.enum.values[0].number;
-          break;
-        case "message":
-          val = reflect(field.message, void 0, false);
-          break;
-      }
-    }
-    map.set(key, val);
-  }
-  function readListField(reader, wireType, list, options) {
-    var _a;
-    const field = list.field();
-    if (field.listKind === "message") {
-      list.add(readMessageField(reader, options, field));
-      return;
-    }
-    const scalarType = (_a = field.scalar) !== null && _a !== void 0 ? _a : ScalarType.INT32;
-    const packed = wireType == WireType.LengthDelimited && scalarType != ScalarType.STRING && scalarType != ScalarType.BYTES;
-    if (!packed) {
-      list.add(readScalar(reader, scalarType, field.utf8Validation));
-      return;
-    }
-    const e = reader.uint32() + reader.pos;
-    while (reader.pos < e) {
-      list.add(readScalar(reader, scalarType, field.utf8Validation));
-    }
-  }
-  function readMessageField(reader, options, field, mergeMessage) {
-    const delimited = field.delimitedEncoding;
-    const message = mergeMessage !== null && mergeMessage !== void 0 ? mergeMessage : reflect(field.message, void 0, false);
-    readMessage(message, reader, options, delimited, delimited ? field.number : reader.uint32());
-    return message;
-  }
-  function readScalar(reader, type, validateUtf8 = false) {
-    switch (type) {
-      case ScalarType.STRING:
-        return reader.string(validateUtf8);
-      case ScalarType.BOOL:
-        return reader.bool();
-      case ScalarType.DOUBLE:
-        return reader.double();
-      case ScalarType.FLOAT:
-        return reader.float();
-      case ScalarType.INT32:
-        return reader.int32();
-      case ScalarType.INT64:
-        return reader.int64();
-      case ScalarType.UINT64:
-        return reader.uint64();
-      case ScalarType.FIXED64:
-        return reader.fixed64();
-      case ScalarType.BYTES:
-        return reader.bytes();
-      case ScalarType.FIXED32:
-        return reader.fixed32();
-      case ScalarType.SFIXED32:
-        return reader.sfixed32();
-      case ScalarType.SFIXED64:
-        return reader.sfixed64();
-      case ScalarType.SINT64:
-        return reader.sint64();
-      case ScalarType.UINT32:
-        return reader.uint32();
-      case ScalarType.SINT32:
-        return reader.sint32();
-    }
-  }
-  function fileDesc(b64, imports) {
-    var _a;
-    const root = fromBinary(FileDescriptorProtoSchema, base64Decode(b64));
-    root.messageType.forEach(restoreJsonNames);
-    root.dependency = (_a = imports === null || imports === void 0 ? void 0 : imports.map((f) => f.proto.name)) !== null && _a !== void 0 ? _a : [];
-    const reg = createFileRegistry(root, (protoFileName) => imports === null || imports === void 0 ? void 0 : imports.find((f) => f.proto.name === protoFileName));
-    return reg.getFile(root.name);
-  }
-  const file_google_protobuf_timestamp = fileDesc("Ch9nb29nbGUvcHJvdG9idWYvdGltZXN0YW1wLnByb3RvEg9nb29nbGUucHJvdG9idWYiKwoJVGltZXN0YW1wEg8KB3NlY29uZHMYASABKAMSDQoFbmFub3MYAiABKAVChQEKE2NvbS5nb29nbGUucHJvdG9idWZCDlRpbWVzdGFtcFByb3RvUAFaMmdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL3RpbWVzdGFtcHBi+AEBogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM");
-  const file_google_protobuf_duration = fileDesc("Ch5nb29nbGUvcHJvdG9idWYvZHVyYXRpb24ucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIqCghEdXJhdGlvbhIPCgdzZWNvbmRzGAEgASgDEg0KBW5hbm9zGAIgASgFQoMBChNjb20uZ29vZ2xlLnByb3RvYnVmQg1EdXJhdGlvblByb3RvUAFaMWdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2R1cmF0aW9ucGL4AQGiAgNHUEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnByb3RvMw");
-  const file_dwango_nicolive_chat_data_atoms = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIrwJCgRDaGF0Eg8KB2NvbnRlbnQYASABKAkSDAoEdnBvcxgDIAEoBRJFCg5hY2NvdW50X3N0YXR1cxgEIAEoDjItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5BY2NvdW50U3RhdHVzEhEKBG5hbWUYAiABKAlIAIgBARIYCgtyYXdfdXNlcl9pZBgFIAEoA0gBiAEBEhsKDmhhc2hlZF91c2VyX2lkGAYgASgJSAKIAQESOgoIbW9kaWZpZXIYByABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISCgoCbm8YCCABKAUa4wYKCE1vZGlmaWVyEj4KCHBvc2l0aW9uGAEgASgOMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlBvcxI7CgRzaXplGAIgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlNpemUSSQoLbmFtZWRfY29sb3IYAyABKA4yMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXIuQ29sb3JOYW1lSAASSAoKZnVsbF9jb2xvchgEIAEoCzIyLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5GdWxsQ29sb3JIABI7CgRmb250GAUgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLkZvbnQSQQoHb3BhY2l0eRgGIAEoDjIwLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5PcGFjaXR5GiwKCUZ1bGxDb2xvchIJCgFyGAEgASgFEgkKAWcYAiABKAUSCQoBYhgDIAEoBSIiCgNQb3MSCAoEbmFrYRAAEgkKBXNoaXRhEAESBgoCdWUQAiImCgRTaXplEgoKBm1lZGl1bRAAEgkKBXNtYWxsEAESBwoDYmlnEAIi7QEKCUNvbG9yTmFtZRIJCgV3aGl0ZRAAEgcKA3JlZBABEggKBHBpbmsQAhIKCgZvcmFuZ2UQAxIKCgZ5ZWxsb3cQBBIJCgVncmVlbhAFEggKBGN5YW4QBhIICgRibHVlEAcSCgoGcHVycGxlEAgSCQoFYmxhY2sQCRIKCgZ3aGl0ZTIQChIICgRyZWQyEAsSCQoFcGluazIQDBILCgdvcmFuZ2UyEA0SCwoHeWVsbG93MhAOEgoKBmdyZWVuMhAPEgkKBWN5YW4yEBASCQoFYmx1ZTIQERILCgdwdXJwbGUyEBISCgoGYmxhY2syEBMiKgoERm9udBIKCgZkZWZvbnQQABIKCgZtaW5jaG8QARIKCgZnb3RoaWMQAiImCgdPcGFjaXR5EgoKBk5vcm1hbBAAEg8KC1RyYW5zbHVjZW50EAFCBwoFY29sb3IiKgoNQWNjb3VudFN0YXR1cxIMCghTdGFuZGFyZBAAEgsKB1ByZW1pdW0QAUIHCgVfbmFtZUIOCgxfcmF3X3VzZXJfaWRCEQoPX2hhc2hlZF91c2VyX2lkIpYBCg9PcGVyYXRvckNvbW1lbnQSDwoHY29udGVudBgBIAEoCRIRCgRuYW1lGAIgASgJSACIAQESOgoIbW9kaWZpZXIYAyABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISEQoEbGluaxgEIAEoCUgBiAEBQgcKBV9uYW1lQgcKBV9saW5rIlEKBEp1bXASDwoHY29udGVudBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJEicKBHdhaXQYBCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iUQoIUmVkaXJlY3QSCwoDdXJpGAEgASgJEg8KB21lc3NhZ2UYAiABKAkSJwoEd2FpdBgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiKAAgoSU2ltcGxlTm90aWZpY2F0aW9uEhAKBmljaGliYRgBIAEoCUgAEg8KBXF1b3RlGAIgASgJSAASEQoHZW1vdGlvbhgDIAEoCUgAEhAKBmNydWlzZRgEIAEoCUgAEhoKEHByb2dyYW1fZXh0ZW5kZWQYBSABKAlIABIUCgpyYW5raW5nX2luGAYgASgJSAASGQoPcmFua2luZ191cGRhdGVkGAggASgJSAASEQoHdmlzaXRlZBgHIAEoCUgAEh4KFHN1cHBvcnRlcl9yZWdpc3RlcmVkGAkgASgJSAASFwoNdXNlcl9sZXZlbF91cBgKIAEoCUgAQgkKB21lc3NhZ2Ui0QEKBEdpZnQSDwoHaXRlbV9pZBgBIAEoCRIfChJhZHZlcnRpc2VyX3VzZXJfaWQYAiABKANIAIgBARIXCg9hZHZlcnRpc2VyX25hbWUYAyABKAkSDQoFcG9pbnQYBCABKAMSDwoHbWVzc2FnZRgFIAEoCRIRCglpdGVtX25hbWUYBiABKAkSHgoRY29udHJpYnV0aW9uX3JhbmsYByABKAVIAYgBAUIVChNfYWR2ZXJ0aXNlcl91c2VyX2lkQhQKEl9jb250cmlidXRpb25fcmFuayKHBAoGTmljb2FkEjIKAnYwGAEgASgLMiQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjBIABIyCgJ2MRgCIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYxSAAa2QIKAlYwEjsKBmxhdGVzdBgBIAEoCzIrLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYwLkxhdGVzdBI9CgdyYW5raW5nGAIgAygLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjAuUmFua2luZxITCgt0b3RhbF9wb2ludBgDIAEoBRpNCgZMYXRlc3QSEgoKYWR2ZXJ0aXNlchgBIAEoCRINCgVwb2ludBgCIAEoBRIUCgdtZXNzYWdlGAMgASgJSACIAQFCCgoIX21lc3NhZ2UacwoHUmFua2luZxISCgphZHZlcnRpc2VyGAEgASgJEgwKBHJhbmsYAiABKAUSFAoHbWVzc2FnZRgDIAEoCUgAiAEBEhYKCXVzZXJfcmFuaxgEIAEoBUgBiAEBQgoKCF9tZXNzYWdlQgwKCl91c2VyX3JhbmsaLQoCVjESFgoOdG90YWxfYWRfcG9pbnQYASABKAUSDwoHbWVzc2FnZRgCIAEoCUIKCgh2ZXJzaW9ucyLHAgoLQ29tbWVudExvY2sSPQoGc3RhdHVzGAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5TdGF0dXMSWQoSZm9sbG93X3Jlc3RyaWN0aW9uGAIgASgLMjguZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5Gb2xsb3dSZXN0cmljdGlvbkgAiAEBGk8KEUZvbGxvd1Jlc3RyaWN0aW9uEjoKF21pbmltdW1fZm9sbG93X2R1cmF0aW9uGAEgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uIjYKBlN0YXR1cxIQCgxVbnJlc3RyaWN0ZWQQABIKCgZMb2NrZWQQARIOCgpSZXN0cmljdGVkEAJCFQoTX2ZvbGxvd19yZXN0cmljdGlvbiKAAQoLQ29tbWVudE1vZGUSPQoGbGF5b3V0GAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TW9kZS5MYXlvdXQiMgoGTGF5b3V0EgoKBk5vcm1hbBAAEgwKCFNwbGl0VG9wEAESDgoKQmFja2dyb3VuZBACIgwKCkdhbWVVcGRhdGUi5AEKClRyaWFsUGFuZWwSOgoFcGFuZWwYASABKA4yKy5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWwuUGFuZWwSRAoQdW5xdWFsaWZpZWRfdXNlchgCIAEoDjIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVHJpYWxQYW5lbC5Nb2RlIiAKBVBhbmVsEgoKBkhpZGRlbhAAEgsKB0Rpc3BsYXkQASIyCgRNb2RlEgsKB0FsbG93ZWQQABIOCgpSZXN0cmljdGVkEAESDQoJRm9yYmlkZGVuEAIibwoNUHJvZ3JhbVN0YXR1cxI9CgVzdGF0ZRgBIAEoDjIuLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1cy5TdGF0ZSIfCgVTdGF0ZRILCgdVbmtub3duEAASCQoFRW5kZWQQASLAAQoKVGFnVXBkYXRlZBI3CgR0YWdzGAEgAygLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5UYWdVcGRhdGVkLlRhZxIUCgxvd25lcl9sb2NrZWQYAiABKAgaYwoDVGFnEgwKBHRleHQYASABKAkSDgoGbG9ja2VkGAIgASgIEhAKCHJlc2VydmVkGAMgASgIEhoKDW5pY29wZWRpYV91cmkYBCABKAlIAIgBAUIQCg5fbmljb3BlZGlhX3VyaSLoAQoKU3RhdGlzdGljcxIUCgd2aWV3ZXJzGAEgASgDSACIAQESFQoIY29tbWVudHMYAiABKANIAYgBARIWCglhZF9wb2ludHMYAyABKANIAogBARIYCgtnaWZ0X3BvaW50cxgEIAEoA0gDiAEBEiMKFnRpbWVzaGlmdF9yZXNlcnZhdGlvbnMYBiABKANIBIgBAUIKCghfdmlld2Vyc0ILCglfY29tbWVudHNCDAoKX2FkX3BvaW50c0IOCgxfZ2lmdF9wb2ludHNCGQoXX3RpbWVzaGlmdF9yZXNlcnZhdGlvbnNKBAgFEAYi6AEKB01hcnF1ZWUSQAoHZGlzcGxheRgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZS5EaXNwbGF5SACIAQEajgEKB0Rpc3BsYXkSRAoQb3BlcmF0b3JfY29tbWVudBgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuT3BlcmF0b3JDb21tZW50EjAKCGR1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uSACIAQFCCwoJX2R1cmF0aW9uQgoKCF9kaXNwbGF5IoMCCgdFbnF1ZXRlEhAKCHF1ZXN0aW9uGAEgASgJEjoKB2Nob2ljZXMYAiADKAsyKS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkVucXVldGUuQ2hvaWNlEjkKBnN0YXR1cxgDIAEoDjIpLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuRW5xdWV0ZS5TdGF0dXMaQwoGQ2hvaWNlEhMKC2Rlc2NyaXB0aW9uGAEgASgJEhYKCXBlcl9taWxsZRgDIAEoBUgAiAEBQgwKCl9wZXJfbWlsbGUiKgoGU3RhdHVzEgoKBkNsb3NlZBAAEggKBFBvbGwQARIKCgZSZXN1bHQQAiJ7CglNb3ZlT3JkZXISLwoEanVtcBgBIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuSnVtcEgAEjcKCHJlZGlyZWN0GAIgASgLMiMuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5SZWRpcmVjdEgAQgQKAnRvYgZwcm90bzM", [file_google_protobuf_duration]);
-  var Chat_Modifier_Pos;
-  (function(Chat_Modifier_Pos2) {
-    Chat_Modifier_Pos2[Chat_Modifier_Pos2["naka"] = 0] = "naka";
-    Chat_Modifier_Pos2[Chat_Modifier_Pos2["shita"] = 1] = "shita";
-    Chat_Modifier_Pos2[Chat_Modifier_Pos2["ue"] = 2] = "ue";
-  })(Chat_Modifier_Pos || (Chat_Modifier_Pos = {}));
-  var Chat_Modifier_Size;
-  (function(Chat_Modifier_Size2) {
-    Chat_Modifier_Size2[Chat_Modifier_Size2["medium"] = 0] = "medium";
-    Chat_Modifier_Size2[Chat_Modifier_Size2["small"] = 1] = "small";
-    Chat_Modifier_Size2[Chat_Modifier_Size2["big"] = 2] = "big";
-  })(Chat_Modifier_Size || (Chat_Modifier_Size = {}));
-  var Chat_Modifier_ColorName;
-  (function(Chat_Modifier_ColorName2) {
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["white"] = 0] = "white";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["red"] = 1] = "red";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["pink"] = 2] = "pink";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["orange"] = 3] = "orange";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["yellow"] = 4] = "yellow";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["green"] = 5] = "green";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["cyan"] = 6] = "cyan";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["blue"] = 7] = "blue";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["purple"] = 8] = "purple";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["black"] = 9] = "black";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["white2"] = 10] = "white2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["red2"] = 11] = "red2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["pink2"] = 12] = "pink2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["orange2"] = 13] = "orange2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["yellow2"] = 14] = "yellow2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["green2"] = 15] = "green2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["cyan2"] = 16] = "cyan2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["blue2"] = 17] = "blue2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["purple2"] = 18] = "purple2";
-    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["black2"] = 19] = "black2";
-  })(Chat_Modifier_ColorName || (Chat_Modifier_ColorName = {}));
-  var Chat_Modifier_Font;
-  (function(Chat_Modifier_Font2) {
-    Chat_Modifier_Font2[Chat_Modifier_Font2["defont"] = 0] = "defont";
-    Chat_Modifier_Font2[Chat_Modifier_Font2["mincho"] = 1] = "mincho";
-    Chat_Modifier_Font2[Chat_Modifier_Font2["gothic"] = 2] = "gothic";
-  })(Chat_Modifier_Font || (Chat_Modifier_Font = {}));
-  var Chat_Modifier_Opacity;
-  (function(Chat_Modifier_Opacity2) {
-    Chat_Modifier_Opacity2[Chat_Modifier_Opacity2["Normal"] = 0] = "Normal";
-    Chat_Modifier_Opacity2[Chat_Modifier_Opacity2["Translucent"] = 1] = "Translucent";
-  })(Chat_Modifier_Opacity || (Chat_Modifier_Opacity = {}));
-  var Chat_AccountStatus;
-  (function(Chat_AccountStatus2) {
-    Chat_AccountStatus2[Chat_AccountStatus2["Standard"] = 0] = "Standard";
-    Chat_AccountStatus2[Chat_AccountStatus2["Premium"] = 1] = "Premium";
-  })(Chat_AccountStatus || (Chat_AccountStatus = {}));
-  var CommentLock_Status;
-  (function(CommentLock_Status2) {
-    CommentLock_Status2[CommentLock_Status2["Unrestricted"] = 0] = "Unrestricted";
-    CommentLock_Status2[CommentLock_Status2["Locked"] = 1] = "Locked";
-    CommentLock_Status2[CommentLock_Status2["Restricted"] = 2] = "Restricted";
-  })(CommentLock_Status || (CommentLock_Status = {}));
-  var CommentMode_Layout;
-  (function(CommentMode_Layout2) {
-    CommentMode_Layout2[CommentMode_Layout2["Normal"] = 0] = "Normal";
-    CommentMode_Layout2[CommentMode_Layout2["SplitTop"] = 1] = "SplitTop";
-    CommentMode_Layout2[CommentMode_Layout2["Background"] = 2] = "Background";
-  })(CommentMode_Layout || (CommentMode_Layout = {}));
-  var TrialPanel_Panel;
-  (function(TrialPanel_Panel2) {
-    TrialPanel_Panel2[TrialPanel_Panel2["Hidden"] = 0] = "Hidden";
-    TrialPanel_Panel2[TrialPanel_Panel2["Display"] = 1] = "Display";
-  })(TrialPanel_Panel || (TrialPanel_Panel = {}));
-  var TrialPanel_Mode;
-  (function(TrialPanel_Mode2) {
-    TrialPanel_Mode2[TrialPanel_Mode2["Allowed"] = 0] = "Allowed";
-    TrialPanel_Mode2[TrialPanel_Mode2["Restricted"] = 1] = "Restricted";
-    TrialPanel_Mode2[TrialPanel_Mode2["Forbidden"] = 2] = "Forbidden";
-  })(TrialPanel_Mode || (TrialPanel_Mode = {}));
-  var ProgramStatus_State;
-  (function(ProgramStatus_State2) {
-    ProgramStatus_State2[ProgramStatus_State2["Unknown"] = 0] = "Unknown";
-    ProgramStatus_State2[ProgramStatus_State2["Ended"] = 1] = "Ended";
-  })(ProgramStatus_State || (ProgramStatus_State = {}));
-  var Enquete_Status;
-  (function(Enquete_Status2) {
-    Enquete_Status2[Enquete_Status2["Closed"] = 0] = "Closed";
-    Enquete_Status2[Enquete_Status2["Poll"] = 1] = "Poll";
-    Enquete_Status2[Enquete_Status2["Result"] = 2] = "Result";
-  })(Enquete_Status || (Enquete_Status = {}));
-  const file_dwango_nicolive_chat_data_atoms_forwarded = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL2ZvcndhcmRlZC5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyL7AQoNRm9yd2FyZGVkQ2hhdBItCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0EhIKCm1lc3NhZ2VfaWQYAiABKAkSFgoOc291cmNlX2xpdmVfaWQYAyABKAMSSwoEbW9kZRgEIAEoDjI9LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuRm9yd2FyZGVkQ2hhdC5Gb3J3YXJkaW5nTW9kZSJCCg5Gb3J3YXJkaW5nTW9kZRILCgdVTktOT1dOEAASDwoLRlJPTV9DUlVJU0UQARISCg5DT0xMQUJfU0hBUklORxACYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms]);
-  var ForwardedChat_ForwardingMode;
-  (function(ForwardedChat_ForwardingMode2) {
-    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["UNKNOWN"] = 0] = "UNKNOWN";
-    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["FROM_CRUISE"] = 1] = "FROM_CRUISE";
-    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["COLLAB_SHARING"] = 2] = "COLLAB_SHARING";
-  })(ForwardedChat_ForwardingMode || (ForwardedChat_ForwardingMode = {}));
-  const file_dwango_nicolive_chat_data_atoms_moderator = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL21vZGVyYXRvci5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyJqChFNb2RlcmF0b3JVc2VySW5mbxIPCgd1c2VyX2lkGAEgASgDEhUKCG5pY2tuYW1lGAIgASgJSACIAQESFAoHaWNvblVybBgDIAEoCUgBiAEBQgsKCV9uaWNrbmFtZUIKCghfaWNvblVybCKLAgoQTW9kZXJhdG9yVXBkYXRlZBJXCglvcGVyYXRpb24YASABKA4yRC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVwZGF0ZWQuTW9kZXJhdG9yT3BlcmF0aW9uEkQKCG9wZXJhdG9yGAIgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVc2VySW5mbxItCgl1cGRhdGVkQXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIikKEk1vZGVyYXRvck9wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASLFBAoLU1NOR1VwZGF0ZWQSTQoJb3BlcmF0aW9uGAEgASgOMjouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZC5TU05HT3BlcmF0aW9uEg8KB3NzbmdfaWQYAiABKAMSRAoIb3BlcmF0b3IYAyABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVzZXJJbmZvEkgKBHR5cGUYBCABKA4yNS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdUeXBlSACIAQESEwoGc291cmNlGAUgASgJSAGIAQESMgoJdXBkYXRlZEF0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgCiAEBElQKDW9wZXJhdG9yX3R5cGUYByABKA4yPS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdPcGVyYXRvclR5cGUiJAoNU1NOR09wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASIrCghTU05HVHlwZRIICgRVU0VSEAASCAoEV09SRBABEgsKB0NPTU1BTkQQAiIyChBTU05HT3BlcmF0b3JUeXBlEg0KCU1PREVSQVRPUhAAEg8KC0JST0FEQ0FTVEVSEAFCBwoFX3R5cGVCCQoHX3NvdXJjZUIMCgpfdXBkYXRlZEF0IqMCChZNb2RlcmF0aW9uQW5ub3VuY2VtZW50EhQKB21lc3NhZ2UYASABKAlIAIgBARJdCg5ndWlkZWxpbmVJdGVtcxgCIAMoDjJFLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuTW9kZXJhdGlvbkFubm91bmNlbWVudC5HdWlkZWxpbmVJdGVtEi0KCXVwZGF0ZWRBdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiWQoNR3VpZGVsaW5lSXRlbRILCgdVTktOT1dOEAASCgoGU0VYVUFMEAESCAoEU1BBTRACEgsKB1NMQU5ERVIQAxIYChRQRVJTT05BTF9JTkZPUk1BVElPThAEQgoKCF9tZXNzYWdlYgZwcm90bzM", [file_google_protobuf_timestamp]);
-  var ModeratorUpdated_ModeratorOperation;
-  (function(ModeratorUpdated_ModeratorOperation2) {
-    ModeratorUpdated_ModeratorOperation2[ModeratorUpdated_ModeratorOperation2["ADD"] = 0] = "ADD";
-    ModeratorUpdated_ModeratorOperation2[ModeratorUpdated_ModeratorOperation2["DELETE"] = 1] = "DELETE";
-  })(ModeratorUpdated_ModeratorOperation || (ModeratorUpdated_ModeratorOperation = {}));
-  var SSNGUpdated_SSNGOperation;
-  (function(SSNGUpdated_SSNGOperation2) {
-    SSNGUpdated_SSNGOperation2[SSNGUpdated_SSNGOperation2["ADD"] = 0] = "ADD";
-    SSNGUpdated_SSNGOperation2[SSNGUpdated_SSNGOperation2["DELETE"] = 1] = "DELETE";
-  })(SSNGUpdated_SSNGOperation || (SSNGUpdated_SSNGOperation = {}));
-  var SSNGUpdated_SSNGType;
-  (function(SSNGUpdated_SSNGType2) {
-    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["USER"] = 0] = "USER";
-    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["WORD"] = 1] = "WORD";
-    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["COMMAND"] = 2] = "COMMAND";
-  })(SSNGUpdated_SSNGType || (SSNGUpdated_SSNGType = {}));
-  var SSNGUpdated_SSNGOperatorType;
-  (function(SSNGUpdated_SSNGOperatorType2) {
-    SSNGUpdated_SSNGOperatorType2[SSNGUpdated_SSNGOperatorType2["MODERATOR"] = 0] = "MODERATOR";
-    SSNGUpdated_SSNGOperatorType2[SSNGUpdated_SSNGOperatorType2["BROADCASTER"] = 1] = "BROADCASTER";
-  })(SSNGUpdated_SSNGOperatorType || (SSNGUpdated_SSNGOperatorType = {}));
-  var ModerationAnnouncement_GuidelineItem;
-  (function(ModerationAnnouncement_GuidelineItem2) {
-    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["UNKNOWN"] = 0] = "UNKNOWN";
-    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SEXUAL"] = 1] = "SEXUAL";
-    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SPAM"] = 2] = "SPAM";
-    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SLANDER"] = 3] = "SLANDER";
-    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["PERSONAL_INFORMATION"] = 4] = "PERSONAL_INFORMATION";
-  })(ModerationAnnouncement_GuidelineItem || (ModerationAnnouncement_GuidelineItem = {}));
-  const file_dwango_nicolive_chat_data_atoms_notifications = fileDesc("CjNkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL25vdGlmaWNhdGlvbnMucHJvdG8SH2R3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMi0QIKFFNpbXBsZU5vdGlmaWNhdGlvblYyElQKBHR5cGUYASABKA4yRi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNpbXBsZU5vdGlmaWNhdGlvblYyLk5vdGlmaWNhdGlvblR5cGUSDwoHbWVzc2FnZRgCIAEoCRIVCg1zaG93X2luX3RlbG9wGAMgASgIEhQKDHNob3dfaW5fbGlzdBgEIAEoCCKkAQoQTm90aWZpY2F0aW9uVHlwZRILCgdVTktOT1dOEAASCgoGSUNISUJBEAESCwoHRU1PVElPThACEgoKBkNSVUlTRRADEhQKEFBST0dSQU1fRVhURU5ERUQQBBIOCgpSQU5LSU5HX0lOEAUSCwoHVklTSVRFRBAGEhgKFFNVUFBPUlRFUl9SRUdJU1RFUkVEEAcSEQoNVVNFUl9MRVZFTF9VUBAIYgZwcm90bzM");
-  var SimpleNotificationV2_NotificationType;
-  (function(SimpleNotificationV2_NotificationType2) {
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["UNKNOWN"] = 0] = "UNKNOWN";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["ICHIBA"] = 1] = "ICHIBA";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["EMOTION"] = 2] = "EMOTION";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["CRUISE"] = 3] = "CRUISE";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["PROGRAM_EXTENDED"] = 4] = "PROGRAM_EXTENDED";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["RANKING_IN"] = 5] = "RANKING_IN";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["VISITED"] = 6] = "VISITED";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["SUPPORTER_REGISTERED"] = 7] = "SUPPORTER_REGISTERED";
-    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["USER_LEVEL_UP"] = 8] = "USER_LEVEL_UP";
-  })(SimpleNotificationV2_NotificationType || (SimpleNotificationV2_NotificationType = {}));
-  const file_dwango_nicolive_chat_data_message = fileDesc("Cidkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL21lc3NhZ2UucHJvdG8SGWR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEigQYKD05pY29saXZlTWVzc2FnZRIvCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0SAASTAoTc2ltcGxlX25vdGlmaWNhdGlvbhgHIAEoCzItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuU2ltcGxlTm90aWZpY2F0aW9uSAASLwoEZ2lmdBgIIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuR2lmdEgAEjMKBm5pY29hZBgJIAEoCzIhLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkSAASPAoLZ2FtZV91cGRhdGUYDSABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkdhbWVVcGRhdGVIABI8Cgt0YWdfdXBkYXRlZBgRIAEoCzIlLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVGFnVXBkYXRlZEgAEk4KEW1vZGVyYXRvcl91cGRhdGVkGBIgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVcGRhdGVkSAASRAoMc3NuZ191cGRhdGVkGBMgASgLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZEgAEjoKD292ZXJmbG93ZWRfY2hhdBgUIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdEgAEkgKDmZvcndhcmRlZF9jaGF0GBYgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Gb3J3YXJkZWRDaGF0SAASVwoWc2ltcGxlX25vdGlmaWNhdGlvbl92MhgXIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuU2ltcGxlTm90aWZpY2F0aW9uVjJIAEIGCgRkYXRhSgQIAhAHSgQIChANSgQIDhARYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_forwarded, file_dwango_nicolive_chat_data_atoms_moderator, file_dwango_nicolive_chat_data_atoms_notifications]);
-  const file_dwango_nicolive_chat_data_origin = fileDesc("CiZkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL29yaWdpbi5wcm90bxIZZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YSJzCg5OaWNvbGl2ZU9yaWdpbhI+CgRjaGF0GAEgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbi5DaGF0SAAaFwoEQ2hhdBIPCgdsaXZlX2lkGAEgASgDQggKBm9yaWdpbmIGcHJvdG8z");
-  const file_dwango_nicolive_chat_data_state = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL3N0YXRlLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIoYGCg1OaWNvbGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1ZXRlGAIgASgLMiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRlSAGIAQESPQoKbW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1lbnRfbG9jaxgFIAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29tbWVudExvY2tIBIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxfcGFuZWwYByABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWxIBogBARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVyYXRpb25fYW5ub3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQFCDQoLX3N0YXRpc3RpY3NCCgoIX2VucXVldGVCDQoLX21vdmVfb3JkZXJCCgoIX21hcnF1ZWVCDwoNX2NvbW1lbnRfbG9ja0IPCg1fY29tbWVudF9tb2RlQg4KDF90cmlhbF9wYW5lbEIRCg9fcHJvZ3JhbV9zdGF0dXNCGgoYX21vZGVyYXRpb25fYW5ub3VuY2VtZW50YgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_moderator]);
-  const file_dwango_nicolive_chat_service_edge_payload = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9zZXJ2aWNlL2VkZ2UvcGF5bG9hZC5wcm90bxIhZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlIrUDCg5DaHVua2VkTWVzc2FnZRJECgRtZXRhGAEgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLkNodW5rZWRNZXNzYWdlLk1ldGESPQoHbWVzc2FnZRgCIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2xpdmVNZXNzYWdlSAASOQoFc3RhdGUYBCABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29saXZlU3RhdGVIABJKCgZzaWduYWwYBSABKA4yOC5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2UuU2lnbmFsSAAadQoETWV0YRIKCgJpZBgBIAEoCRImCgJhdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOQoGb3JpZ2luGAMgASgLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbiIVCgZTaWduYWwSCwoHRmx1c2hlZBAAQgkKB3BheWxvYWQingIKDVBhY2tlZFNlZ21lbnQSQwoIbWVzc2FnZXMYASADKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2USQwoEbmV4dBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90GhMKBE5leHQSCwoDdXJpGAEgASgJGhwKDVN0YXRlU25hcHNob3QSCwoDdXJpGAEgASgJItYCCgxDaHVua2VkRW50cnkSRgoIYmFja3dhcmQYAiABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQmFja3dhcmRTZWdtZW50SAASRQoIcHJldmlvdXMYAyABKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuTWVzc2FnZVNlZ21lbnRIABJECgdzZWdtZW50GAEgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLk1lc3NhZ2VTZWdtZW50SAASTAoEbmV4dBgEIAEoCzI8LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5DaHVua2VkRW50cnkuUmVhZHlGb3JOZXh0SAAaGgoMUmVhZHlGb3JOZXh0EgoKAmF0GAEgASgDQgcKBWVudHJ5InIKDk1lc3NhZ2VTZWdtZW50EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBILCgN1cmkYAyABKAki1gEKD0JhY2t3YXJkU2VnbWVudBIpCgV1bnRpbBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASRgoHc2VnbWVudBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90YgZwcm90bzM", [file_google_protobuf_timestamp, file_dwango_nicolive_chat_data_message, file_dwango_nicolive_chat_data_state, file_dwango_nicolive_chat_data_origin]);
-  const ChunkedMessageSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 0);
-  var ChunkedMessage_Signal;
-  (function(ChunkedMessage_Signal2) {
-    ChunkedMessage_Signal2[ChunkedMessage_Signal2["Flushed"] = 0] = "Flushed";
-  })(ChunkedMessage_Signal || (ChunkedMessage_Signal = {}));
-  const PackedSegmentSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 1);
-  const ChunkedEntrySchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 2);
-  function timestampLargeA(a, b) {
-    return a.seconds < b.seconds || a.seconds === b.seconds && a.nanos < b.nanos;
-  }
-  function isAbortError(error, signal) {
-    return signal?.aborted === true && error instanceof Error && error.name === "AbortError";
-  }
-  function createAbortError$1() {
-    return new DOMException("操作が中止されました", "AbortError");
-  }
-  async function sleep(ms, signal) {
-    if (signal?.aborted) {
-      await sleep(0);
-      return Promise.reject(createAbortError$1());
-    }
-    const { promise, resolve, reject } = promiser();
-    const id = setTimeout(timeouted, ms);
-    signal?.addEventListener("abort", aborted);
-    return promise;
-    function timeouted() {
-      signal?.removeEventListener("abort", aborted);
-      resolve();
-    }
-    function aborted() {
-      clearInterval(id);
-      signal.removeEventListener("abort", aborted);
-      reject(createAbortError$1());
-    }
-  }
-  function promiser() {
-    let resolve = null;
-    let reject = null;
-    const promise = new Promise(((res, rej) => [resolve, reject] = [res, rej]));
-    return { promise, resolve, reject };
-  }
-  function getProps(object, props, defaultValue) {
-    for (const prop of props) {
-      if (object == null)
-        break;
-      object = object[prop];
-    }
-    if (object !== void 0)
-      return object;
-    if (defaultValue !== void 0) {
-      console.warn(`値が存在しないので代替値を使用します: ${props.join(".")}`, defaultValue);
-      return defaultValue;
-    }
-    throw new Error(`値が存在しません: ${props.join(".")}`);
-  }
-  const AsyncIteratorSet = {
-create: (options) => {
-      let resolveNext;
-      let rejectNext;
-      let state = "iterating";
-      let error;
-      const queue = [];
-      let filter = options?.filter;
-      const iterable = {
-        next() {
-          if (queue.length > 0)
-            return Promise.resolve({ value: queue.shift(), done: false });
-          if (state === "iterating")
-            return nextPromise();
-          if (state === "closed")
-            return Promise.resolve({ value: void 0, done: true });
-          throw error;
-        },
-        [Symbol.asyncIterator]() {
-          return iterable;
-        },
-        return() {
-          if (state === "iterating")
-            options?.breaked?.();
-          return Promise.resolve({ value: void 0, done: true });
-        }
-      };
-      return { iterator: iterable, enqueue, throw: throwError, close };
-      function nextPromise() {
-        return new Promise((resolve, reject) => {
-          resolveNext = resolve;
-          rejectNext = reject;
-        });
-      }
-      function enqueue(value) {
-        if (state !== "iterating")
-          return;
-        if (filter != null) {
-          let res = filter(value);
-          if (res === false)
-            return;
-          if (res === true) ;
-          else {
-            [res, filter] = res;
-            if (!res)
-              return;
-          }
-        }
-        queue.push(value);
-        if (resolveNext != null) {
-          resolveNext({ value: queue.shift(), done: false });
-          resolveNext = void 0;
-        }
-      }
-      function throwError(reason) {
-        if (state !== "iterating")
-          return;
-        finishIterating("error", reason);
-      }
-      function close() {
-        finishIterating("closed");
-      }
-      function finishIterating(newState, e) {
-        if (state !== "iterating")
-          return;
-        state = newState;
-        if (newState === "closed") {
-          if (resolveNext != null)
-            resolveNext({ value: void 0, done: true });
-        } else {
-          error = e;
-          if (rejectNext != null)
-            rejectNext(error);
-        }
-      }
-    }
-  };
-  async function connectWsAndAsyncIterable(url, receiver, closed) {
-    const ws = new WebSocket(url);
-    const iteratorSet = AsyncIteratorSet.create({ breaked: () => iteratorSet.close() });
-    const onMessage = receiver == null ? (e) => iteratorSet.enqueue(e) : (e) => iteratorSet.enqueue(receiver(e));
-    const openPromiser = promiser();
-    ws.addEventListener("open", openPromiser.resolve);
-    ws.addEventListener("message", onMessage);
-    ws.addEventListener("close", cleanupAndCloseIter);
-    await openPromiser.promise;
-    ws.removeEventListener("open", openPromiser.resolve);
-    return [ws, iteratorSet];
-    function cleanupAndCloseIter(event) {
-      ws.removeEventListener("message", onMessage);
-      ws.removeEventListener("close", cleanupAndCloseIter);
-      openPromiser.reject(`code:${event.code}  reason:${event.reason}`);
-      closed?.();
-      iteratorSet.close();
-    }
-  }
-  const ResponseIteratorSet = {
-fetch: async (uri, desc, signal, transport = defaultResponseIteratorTransport) => {
-      const res = await transport.fetch(uri, signal);
-      return {
-        response: res.response,
-        iterator: sizeDelimitedDecodeStream(desc, res.iterator),
-        closed: res.closed
-      };
-    }
-  };
-  const defaultResponseIteratorTransport = {
-    async fetch(uri, signal) {
-      const res = await fetch(uri, { signal });
-      if (res.body == null)
-        throw new Error(`fetchで問題が発生しました
-uri:${uri} status:${res.status}`);
-      const reader = res.body.getReader();
-      return {
-        response: res,
-        iterator: readableStreamToAsyncIterable(reader),
-        closed: reader.closed
-      };
-    }
-  };
-  async function* readableStreamToAsyncIterable(reader) {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done)
-        return;
-      yield value;
-    }
-  }
-  async function* sizeDelimitedDecodeStream(messageDesc2, iterable, options) {
-    function append(buffer2, chunk) {
-      const n = new Uint8Array(buffer2.byteLength + chunk.byteLength);
-      n.set(buffer2);
-      n.set(chunk, buffer2.length);
-      return n;
-    }
-    let buffer = new Uint8Array(0);
-    for await (const chunk of iterable) {
-      buffer = append(buffer, chunk);
-      while (buffer.length > 0) {
-        const reader = new BinaryReader(buffer);
-        const size2 = reader.uint32();
-        const offset2 = reader.pos;
-        if (offset2 + size2 > buffer.byteLength) {
-          break;
-        }
-        yield fromBinary(messageDesc2, buffer.subarray(offset2, offset2 + size2), options);
-        buffer = buffer.subarray(offset2 + size2);
-      }
-    }
-  }
-  const NicoliveMessageServer = {
-fetchEntry: (entryUri, at, signal, transport) => {
-      return ResponseIteratorSet.fetch(`${entryUri}?at=${at}`, ChunkedEntrySchema, signal, transport);
-    },
-fetchMessage: (messageUri, signal, transport) => {
-      return ResponseIteratorSet.fetch(messageUri, ChunkedMessageSchema, signal, transport);
-    },
-fetchBackwardMessages: async (backwardUri, delayMs, maxSegmentCount, isSnapshot, signal) => {
-      if (maxSegmentCount <= 0)
-        maxSegmentCount = Number.MAX_SAFE_INTEGER;
-      const buf = [];
-      let nextUri = backwardUri;
-      let segmentUri;
-      let snapshotUri;
-      try {
-        while (true) {
-          const res = await fetch(nextUri, { signal });
-          const body = new Uint8Array(await res.arrayBuffer());
-          const packed = fromBinary(PackedSegmentSchema, body);
-          segmentUri = packed.next?.uri;
-          snapshotUri = packed.snapshot?.uri;
-          nextUri = isSnapshot ? snapshotUri : segmentUri;
-          buf.push(packed.messages);
-          if (nextUri == null || buf.length >= maxSegmentCount)
-            break;
-          await sleep(delayMs, signal);
-        }
-      } catch (e) {
-        if (!isAbortError(e, signal))
-          throw e;
-      }
-      const messages = buf.reverse().flat();
-      return { messages, segmentUri, snapshotUri };
-    }
-  };
-  const NicoliveWsSendMessage = {
-    startWatching: (data) => ({
-      type: "startWatching",
-      data
-    }),
-    keepSeat: () => ({ type: "keepSeat" }),
-    getAkashic: (data) => ({
-      type: "getAkashic",
-      data
-    }),
-    changeStream: (data) => ({
-      type: "changeStream",
-      data
-    }),
-    answerEnquete: (data) => ({
-      type: "answerEnquete",
-      data
-    }),
-    pong: () => ({ type: "pong" }),
-    postComment: (data) => ({
-      type: "postComment",
-      data
-    }),
-    getTaxonomy: () => ({ type: "getTaxonomy" }),
-    getStreamQualities: () => ({
-      type: "getStreamQualities"
-    })
-  };
-  const NicoliveDisconectReason = {
-takeover: "TAKEOVER",
-noPermission: "NO_PERMISSION",
-endProgram: "END_PROGRAM",
-pingTimeout: "PING_TIMEOUT",
-tooManyConnections: "TOO_MANY_CONNECTIONS",
-tooManyWatchings: "TOO_MANY_WATCHINGS",
-crowded: "CROWDED",
-maintenanceIn: "MAINTENANCE_IN",
-serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
-  };
-  function getNicoliveDisconectReasonDescription(reason) {
-    if (reason == null)
-      return "終了メッセージを受信する前に切断された";
-    return NicoliveDisconectReasonDescription[reason];
-  }
-  const NicoliveDisconectReasonDescription = {
-    [NicoliveDisconectReason.takeover]: "追い出された",
-    [NicoliveDisconectReason.noPermission]: "座席を取れなかった",
-    [NicoliveDisconectReason.endProgram]: "番組が終了した",
-    [NicoliveDisconectReason.pingTimeout]: "接続生存確認に失敗した (pingTimeout)",
-    [NicoliveDisconectReason.tooManyConnections]: "同一ユーザからの接続数上限を越えている",
-    [NicoliveDisconectReason.tooManyWatchings]: "同一ユーザの視聴番組数上限を越えている",
-    [NicoliveDisconectReason.crowded]: "満席",
-    [NicoliveDisconectReason.maintenanceIn]: "メンテナンス中",
-    [NicoliveDisconectReason.serviceTemporarilyUnavailable]: "一時的なサーバエラー"
-  };
-  const NicoliveRejectReason = {
-    needLogin: "needLogin",
-    noTimeshiftProgram: "noTimeshiftProgram",
-    programNotBegun: "programNotBegun",
-    passwordAuthRequired: "passwordAuthRequired",
-    unknown: "unknown"
-  };
-  function getNicoliveId(liveIdOrUrl) {
-    const liveIdRegex = /.*((lv|ch|user\/)\d+).*/;
-    return liveIdRegex.exec(liveIdOrUrl)?.[1];
-  }
-  function checkCloseMessage(message) {
-    return message != null && message.payload.case === "state" && message.payload.value.programStatus?.state === ProgramStatus_State.Ended;
-  }
-  async function parseNicolivePageData(res) {
-    try {
-      let postBroadcasterComment2 = function(text, name, isPermanent, color) {
-        return NicoliveUtility.postBroadcasterComment(liveId, broadcasterCommentToken, text, name, isPermanent, color);
-      }, deleteBroadcasterComment2 = function() {
-        return NicoliveUtility.deleteBroadcasterComment(liveId, broadcasterCommentToken);
-      };
-      var postBroadcasterComment = postBroadcasterComment2, deleteBroadcasterComment = deleteBroadcasterComment2;
-      const dom = await res.text().then((data) => new DOMParser().parseFromString(data, "text/html"));
-      const embeddedString = dom.getElementById("embedded-data").getAttribute("data-props");
-      const embedded = JSON.parse(embeddedString);
-      const site = getProps(embedded, ["site"]);
-      const program = getProps(embedded, ["program"]);
-      const liveId = getProps(program, ["nicoliveProgramId"]);
-      const broadcasterCommentToken = getProps(site, ["relive", "csrfToken"]);
-      const websocketUrl = getProps(site, ["relive", "webSocketUrl"]);
-      return {
-        websocketUrl,
-        beginTime: getProps(program, ["beginTime"], -1),
-        endTime: getProps(program, ["endTime"], -1),
-        status: getProps(program, ["status"], "ON_AIR"),
-        nicoliveInfo: {
-          liveId,
-          title: getProps(program, ["title"]),
-          provider: parseProvider(embedded),
-          loginUser: parseLoginUser(embedded),
-          broadcasterCommentToken: getProps(site, ["relive", "csrfToken"], ""),
-rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
-        },
-        postBroadcasterComment: postBroadcasterComment2,
-        deleteBroadcasterComment: deleteBroadcasterComment2
-      };
-    } catch (e) {
-      throw new NicolivePageParseError(res.url, e);
-    }
-  }
-  class NicoliveLiveIdError extends Error {
-    liveIdOrUrl;
-    constructor(liveIdOrUrl) {
-      super(`有効な放送IDを含んでいません. ${liveIdOrUrl}`);
-      this.liveIdOrUrl = liveIdOrUrl;
-      this.name = "NicoliveLiveIdError";
-      Object.setPrototypeOf(this, new.target.prototype);
-    }
-  }
-  class NicolivePageNotFoundError extends Error {
-    response;
-    liveId;
-    constructor(response, liveId) {
-      super(`放送ページが存在しません. lv:${liveId}`);
-      this.response = response;
-      this.liveId = liveId;
-      this.name = "NicolivePageNotFoundError";
-      Object.setPrototypeOf(this, new.target.prototype);
-    }
-  }
-  class NicolivePageParseError extends Error {
-    url;
-    innerError;
-    constructor(url, innerError) {
-      super(`放送ページの解析に失敗しました. url:${url}
-内部エラー:${innerError}`);
-      this.url = url;
-      this.innerError = innerError;
-      this.name = "NicolivePageParseError";
-      Object.setPrototypeOf(this, new.target.prototype);
-    }
-  }
-  class NicoliveAccessDeniedError extends Error {
-    pageData;
-    constructor(pageData) {
-      super(`放送が非公開または視聴する権限がありません. lv:${pageData.nicoliveInfo.liveId}`);
-      this.pageData = pageData;
-      this.name = "NicoliveAccessDeniedError";
-      Object.setPrototypeOf(this, new.target.prototype);
-    }
-  }
-  class NicoliveWebSocketReconnectError extends Error {
-    data;
-reconnectTime;
-    constructor(data) {
-      super(`ウェブソケット再接続要求を受け取りました`);
-      this.data = data;
-      this.reconnectTime = Date.now() + this.data.waitTimeSec * 1e3;
-      this.name = "NicoliveWebSocketReconnectError";
-      Object.setPrototypeOf(this, new.target.prototype);
-    }
-  }
-  class NicoliveWebSocketDisconnectError extends Error {
-    reason;
-    constructor(reason) {
-      super(`ウェブソケットから切断されました. 理由:${getNicoliveDisconectReasonDescription(reason)}`);
-      this.reason = reason;
-      this.name = "NicoliveWebSocketDisconnectError";
-      Object.setPrototypeOf(this, new.target.prototype);
-    }
-static createIfError(reason) {
-      if (reason !== NicoliveDisconectReason.endProgram)
-        return new NicoliveWebSocketDisconnectError(reason);
-    }
-  }
-  function parseProvider(embedded) {
-    try {
-      const program = getProps(embedded, ["program"]);
-      const socialGroup = getProps(embedded, ["socialGroup"]);
-      const supplier = getProps(program, ["supplier"]);
-      const providerType = getProps(program, ["providerType"]);
-      if (providerType === "community") {
-        return {
-          type: "user",
-          id: getProps(supplier, ["programProviderId"]) + "",
-          name: getProps(supplier, ["name"])
-        };
-      } else if (providerType === "official") {
-        return {
-          type: "official",
-          id: getProps(socialGroup, ["id"]),
-          name: getProps(socialGroup, ["name"]),
-          companyName: getProps(socialGroup, ["companyName"])
-        };
-      } else {
-        return {
-          type: "channel",
-          id: getProps(socialGroup, ["id"]),
-          name: getProps(socialGroup, ["name"]),
-          companyName: getProps(socialGroup, ["companyName"])
-        };
-      }
-    } catch (e) {
-      console.warn("放送の情報の解析に失敗しました", e);
-      return { type: "unknown" };
-    }
-  }
-  function parseLoginUser(embedded) {
-    const user = embedded.user;
-    if (user?.isLoggedIn === void 0) {
-      console.warn("embedded.user.isLoggedIn が存在しません");
-      return void 0;
-    }
-    if (!user.isLoggedIn)
-      return void 0;
-    const creatorCreatorSupportSummary = getProps(embedded, ["creatorCreatorSupportSummary"]);
-    return {
-      id: getProps(user, ["id"]) + "",
-      name: getProps(user, ["nickname"]),
-      isPremium: getProps(user, ["accountType"]) === "premium",
-      isBroadcaster: getProps(user, ["isBroadcaster"]),
-isOperator: getProps(user, ["isOperator"]),
-      isSupportable: creatorCreatorSupportSummary?.isSupportable === true
-    };
-  }
-  function parseReasons(embedded) {
-    const reasons = [];
-    const canWatch = getProps(embedded, ["userProgramWatch", "canWatch"], true);
-    if (canWatch === true)
-      return reasons;
-    if (getProps(embedded, ["programWatch", "condition", "needLogin"], false) === true) {
-      reasons.push(NicoliveRejectReason.needLogin);
-    }
-    const timeshiftStatus = getProps(embedded, ["programTimeshift", "publication", "status"], null);
-    switch (timeshiftStatus) {
-      case "Open":
-        break;
-      case "Before":
-        reasons.push(NicoliveRejectReason.programNotBegun);
-        break;
-      default:
-        reasons.push(NicoliveRejectReason.noTimeshiftProgram);
-        break;
-    }
-    if (!getProps(embedded, ["userProgramWatch", "passwordAuth", "isAuthorized"], true)) {
-      reasons.push(NicoliveRejectReason.passwordAuthRequired);
-    }
-    if (reasons.length === 0) {
-      reasons.push(NicoliveRejectReason.unknown);
-    }
-    return reasons;
-  }
-  const NicoliveWs = {
-connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
-      const reconnect = reconnectData != null;
-      let websocketUrl = reconnectData?.websocketUrl ?? pageData.websocketUrl;
-      if (websocketUrl === "")
-        throw new NicoliveAccessDeniedError(pageData);
-      if (reconnect && reconnectData.reconnectTime != null) {
-        const waitTimeMs = reconnectData.reconnectTime - Date.now();
-        await sleep(waitTimeMs, signal);
-      }
-      let latestSchedule = reconnectData?.latestSchedule ?? {
-        begin: new Date(pageData.beginTime * 1e3),
-        end: new Date(pageData.endTime * 1e3)
-      };
-      signal.addEventListener("abort", aborted);
-      const [ws, iteratorSet] = await connectWsAndAsyncIterable(websocketUrl, onMessage, onClose);
-      sendStartWatching(ws, reconnect, nicolveStream);
-      const messageServerDataPromiser = reconnect ? void 0 : promiser();
-      const messageServerDataPromise = messageServerDataPromiser == null ? Promise.resolve(reconnectData.messageServerData) : messageServerDataPromiser.promise;
-      let _disconnectMessage;
-      return {
-        ws,
-        iterator: iteratorSet.iterator,
-        messageServerDataPromise,
-        getWebsocketUrl: () => websocketUrl,
-        getLatestSchedule: () => latestSchedule,
-        send: (message) => send(ws, message),
-        postComment: async (text, isAnonymous, options) => {
-          const data = await messageServerDataPromise;
-          NicoliveWs.postComment(ws, Math.round((Date.now() - data.vposBaseTime) / 10), text, isAnonymous, options);
-        }
-      };
-      function onMessage({ data }) {
-        const message = parseMessage(data);
-        if (message.type === "ping") {
-          sendKeepSeatAndPong(ws);
-        } else if (message.type === "schedule") {
-          latestSchedule = {
-            begin: new Date(message.data.begin),
-            end: new Date(message.data.end)
-          };
-        } else if (message.type === "messageServer") {
-          const { viewUri, vposBaseTime, hashedUserId } = message.data;
-          messageServerDataPromiser?.resolve({
-            viewUri,
-            vposBaseTime: new Date(vposBaseTime).getTime(),
-            hashedUserId
-          });
-        } else if (message.type === "reconnect") {
-          websocketUrl = replaceAudienceToken(websocketUrl, message.data.audienceToken);
-          iteratorSet.throw(new NicoliveWebSocketReconnectError(message.data));
-          ws.close();
-        } else if (message.type === "disconnect") {
-          _disconnectMessage = message.data.reason;
-        }
-        iteratorSet.enqueue(message);
-        return message;
-      }
-      function onClose() {
-        signal.removeEventListener("abort", aborted);
-        ws.close();
-        const disconnectError = NicoliveWebSocketDisconnectError.createIfError(_disconnectMessage);
-        if (disconnectError == null)
-          iteratorSet.close();
-        else
-          iteratorSet.throw(disconnectError);
-      }
-      function aborted() {
-        messageServerDataPromiser?.reject(createAbortError$1());
-        iteratorSet.throw(createAbortError$1());
-        onClose();
-      }
-    },
-    postComment: (ws, vpos, text, isAnonymous, options) => {
-      send(ws, NicoliveWsSendMessage.postComment({
-        text,
-        isAnonymous,
-        vpos,
-        ...options
-      }));
-    }
-  };
-  function parseMessage(data) {
-    return JSON.parse(data);
-  }
-  function send(ws, message) {
-    ws.send(JSON.stringify(message));
-  }
-  function sendStartWatching(ws, reconnect, stream) {
-    send(ws, NicoliveWsSendMessage.startWatching({ reconnect, stream }));
-  }
-  function sendKeepSeatAndPong(ws) {
-    send(ws, NicoliveWsSendMessage.pong());
-    send(ws, NicoliveWsSendMessage.keepSeat());
-  }
-  function replaceAudienceToken(websocketUrl, audieceToken) {
-    const parsedUrl = new URL(websocketUrl);
-    const searchParams = parsedUrl.searchParams;
-    searchParams.set("audience_token", audieceToken);
-    return parsedUrl.toString();
-  }
-  const NicoliveUtility = {
-postBroadcasterComment: async (liveId, broadcasterCommentToken, text, name = "", isPermanent = false, color) => {
-      text = encodeURIComponent(text);
-      name = encodeURIComponent(name);
-      await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
-        "headers": {
-          "accept": "application/json",
-          "content-type": "application/x-www-form-urlencoded",
-          "x-public-api-token": broadcasterCommentToken
-        },
-        "body": `text=${text}&name=${name}&isPermanent=${isPermanent}&command=${color}`,
-        "method": "PUT",
-        "credentials": "include"
-      });
-    },
-deleteBroadcasterComment: async (liveId, broadcasterCommentToken) => {
-      await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
-        "headers": {
-          "x-public-api-token": broadcasterCommentToken
-        },
-        "method": "DELETE",
-        "credentials": "include"
-      });
-    },
-fetchNicolivePageData: (liveIdOrUrl) => {
-      return AbortAndPromise.new(async (abortController) => {
-        const liveId = getNicoliveId(liveIdOrUrl);
-        if (liveId == null)
-          throw new NicoliveLiveIdError(liveIdOrUrl);
-        const res = await fetch(`https://live.nicovideo.jp/watch/${liveId}`, { signal: abortController.signal });
-        if (!res.ok)
-          throw new NicolivePageNotFoundError(res, liveId);
-        return await parseNicolivePageData(res);
-      });
-    },
-createWsServerConnector: (pageData, options) => {
-      return AbortAndPromise.new(async (abortController) => {
-        let connectSet = await createConnectSet(abortController, void 0);
-        return {
-          getPromise: () => connectSet.promise,
-          isClosed: () => connectSet.isClosed(),
-          getAbortController: () => connectSet.abortController,
-          reconnect: (abortController2, reconnectTime) => AbortAndPromise.newA(abortController2, async (abortController3) => {
-            if (!connectSet.isClosed())
-              return;
-            const reconnectData = {
-              messageServerData: await connectSet.wsData.messageServerDataPromise,
-              latestSchedule: connectSet.wsData.getLatestSchedule(),
-              websocketUrl: connectSet.wsData.getWebsocketUrl(),
-              reconnectTime
-            };
-            connectSet = await createConnectSet(abortController3, reconnectData);
-          }),
-          getIterator: () => connectSet.wsData.iterator,
-          getWsData: () => connectSet.wsData,
-          getMessageServerData: () => connectSet.wsData.messageServerDataPromise,
-          getLatestSchedule: () => connectSet.wsData.getLatestSchedule(),
-          send: (message) => connectSet.wsData.send(message),
-          postComment: (text, isAnonymous, options2) => connectSet.wsData.postComment(text, isAnonymous, options2)
-        };
-      });
-      async function createConnectSet(abortController, reconnectData) {
-        const wsData = await NicoliveWs.connectWaitOpened(pageData, abortController.signal, reconnectData, options?.streamMessage);
-        const { promise, resolve } = promiser();
-        wsData.ws.addEventListener("close", onClose);
-        return { promise, abortController, wsData, isClosed };
-        function isClosed() {
-          const readyState = wsData.ws.readyState;
-          return readyState === WebSocket.CLOSING || readyState === WebSocket.CLOSED || abortController.signal.aborted;
-        }
-        function onClose() {
-          wsData.ws.removeEventListener("close", onClose);
-          resolve();
-        }
-      }
-    },
-createMessageServerConnector: (messageServerData, options) => {
-      const entryUri = messageServerData.viewUri;
-      return AbortAndPromise.new(async (abortController) => {
-        let connectSet = await createConnectSet(abortController, options);
-        return {
-          getPromise: () => connectSet.promise,
-          isClosed: () => connectSet.entryFetcher.isClosed() && connectSet.messageFetcher.isClosed(),
-          getAbortController: () => connectSet.abortController,
-          reconnect: (abortController2) => AbortAndPromise.newA(abortController2, async (abortController3) => {
-            if (!connectSet.entryFetcher.isClosed() || !connectSet.messageFetcher.isClosed())
-              return;
-            connectSet = await createConnectSet(abortController3, {
-              at: connectSet.entryFetcher.getLastEntryAt(),
-              skipToMeta: connectSet.messageFetcher.getLastMeta(),
-              backwardUri: connectSet.messageFetcher.getBackwardUri()
-            });
-          }),
-          getIterator: () => connectSet.messageFetcher.iterator,
-          getBackwardMessages: (delayMs, maxSegmentCount, isSnapshot) => {
-            const res = connectSet.messageFetcher.getBackwardMessages(delayMs, maxSegmentCount, isSnapshot);
-            return res;
-          }
-        };
-      });
-      async function createConnectSet(abortController, options2) {
-        const entryAt = options2?.at ?? "now";
-        const transport = options2?.transport;
-        const entryFetcher = await createEntryFetcher(abortController, entryUri, entryAt, transport);
-        const backwardUri = options2?.backwardUri ?? {
-          segment: entryFetcher.backwardSegment?.segment?.uri,
-          snapshot: entryFetcher.backwardSegment?.snapshot?.uri
-        };
-        const messageFetcher = await createMessageFetcher(abortController, entryFetcher, options2?.skipToMeta, backwardUri, transport);
-        return {
-          promise: (async () => {
-            await entryFetcher.promise;
-            await messageFetcher.promise;
-          })(),
-          abortController,
-          entryFetcher,
-          messageFetcher
-        };
-      }
-    },
-postPasswordAuth: (liveId, password) => {
-      return fetch(`https://live2.nicovideo.jp/unama/api/v2/programs/${liveId}/password/permission`, {
-        headers: {
-          "content-type": "application/json",
-          "x-niconico-session": "cookie"
-        },
-        body: `{"password":"${password}"}`,
-        method: "POST"
-      });
-    }
-  };
-  const AbortAndPromise = {
-    new(func) {
-      const abortController = new AbortController();
-      return {
-        abortController,
-        promise: func(abortController)
-      };
-    },
-    newA(abortController, func) {
-      abortController ??= new AbortController();
-      return {
-        abortController,
-        promise: func(abortController)
-      };
-    }
-  };
-  async function createEntryFetcher(abortController, entryUri, entryAt, transport) {
-    const signal = abortController.signal;
-    const iteratorSet = AsyncIteratorSet.create({
-      breaked: () => iteratorSet.close()
-    });
-    const innerAbort = new AbortController();
-    const innerSignal = innerAbort.signal;
-    signal.addEventListener("abort", safeClose);
-    let lastEntryAt = entryAt;
-    let curretnEntryAt = lastEntryAt;
-    let closed = false;
-    let backwardSegment;
-    const promise = (async () => {
-      let receivedSegment = false;
-      try {
-        let fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
-        while (true) {
-          curretnEntryAt = void 0;
-          for await (const { entry: { value, case: _case } } of fetchEntry.iterator) {
-            if (_case === "next") {
-              curretnEntryAt = Number(value.at);
-              lastEntryAt = curretnEntryAt;
-            } else if (_case === "segment") {
-              receivedSegment = true;
-              iteratorSet.enqueue(value);
-            } else if (!receivedSegment) {
-              if (_case === "backward") {
-                backwardSegment = value;
-              } else if (_case === "previous") {
-                iteratorSet.enqueue(value);
-              }
-            }
-          }
-          if (curretnEntryAt == null)
-            break;
-          fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
-        }
-      } catch (e) {
-        if (!signal.aborted && !isAbortError(e, innerSignal))
-          iteratorSet.throw(e);
-      } finally {
-        closed = true;
-        signal.removeEventListener("abort", safeClose);
-        iteratorSet.close();
-      }
-    })();
-    return {
-      promise,
-      iterator: iteratorSet.iterator,
-      isClosed: () => closed,
-      safeClose,
-      getLastEntryAt: () => lastEntryAt,
-      get backwardSegment() {
-        return backwardSegment;
-      }
-    };
-    function safeClose() {
-      closed = true;
-      innerAbort.abort();
-    }
-  }
-  async function createMessageFetcher(abortController, entryFetcher, skipToMeta, backwardUri, transport) {
-    const signal = abortController.signal;
-    const iteratorSet = AsyncIteratorSet.create({
-      breaked: () => iteratorSet.close(),
-      filter: skipToMeta == null ? metaFilter : (value) => {
-        metaFilter(value);
-        if (value.meta?.id === skipToMeta.id)
-          return [false, metaFilter];
-        if (value.meta?.at != null && timestampLargeA(skipToMeta.at, value.meta.at))
-          return [true, metaFilter];
-        return false;
-      }
-    });
-    const innerAbort = new AbortController();
-    const innerSignal = innerAbort.signal;
-    signal.addEventListener("abort", safeClose);
-    let closed = false;
-    let currentBackwardUri = backwardUri;
-    let fetchingBackwardSegment = false;
-    let lastMeta;
-    const firstPromiser = promiser();
-    const promise = (async () => {
-      try {
-        const { value, done } = await entryFetcher.iterator.next();
-        if (done) {
-          firstPromiser.resolve();
-          return;
-        }
-        const { iterator } = await NicoliveMessageServer.fetchMessage(value.uri, innerSignal, transport);
-        firstPromiser.resolve();
-        for await (const message of iterator) {
-          iteratorSet.enqueue(message);
-          if (checkCloseMessage(message))
-            return;
-        }
-        for await (const segment of entryFetcher.iterator) {
-          const { iterator: iterator2 } = await NicoliveMessageServer.fetchMessage(segment.uri, innerSignal, transport);
-          for await (const message of iterator2) {
-            iteratorSet.enqueue(message);
-            if (checkCloseMessage(message))
-              return;
-          }
-        }
-      } catch (e) {
-        firstPromiser.reject(e);
-        if (!signal.aborted && !isAbortError(e, innerSignal))
-          iteratorSet.throw(e);
-      } finally {
-        closed = true;
-        entryFetcher.safeClose();
-        signal.removeEventListener("abort", safeClose);
-        iteratorSet.close();
-      }
-    })();
-    await firstPromiser.promise;
-    return {
-      promise,
-      iterator: iteratorSet.iterator,
-      isClosed: () => closed,
-      safeClose,
-      getLastMeta: () => lastMeta,
-      getBackwardMessages,
-      getBackwardUri: () => currentBackwardUri
-    };
-    function metaFilter(message) {
-      updateMeta(message);
-      return true;
-    }
-    function updateMeta(message) {
-      if (message.meta?.at != null) {
-        lastMeta = message.meta;
-        return true;
-      }
-      return false;
-    }
-    function safeClose() {
-      closed = true;
-      innerAbort.abort();
-    }
-    function getBackwardMessages(delayMs, maxSegmentCount, isSnapshot = false) {
-      if (fetchingBackwardSegment)
-        return void 0;
-      const backwardUri2 = isSnapshot ? currentBackwardUri.snapshot : currentBackwardUri.segment;
-      if (backwardUri2 == null)
-        return;
-      fetchingBackwardSegment = true;
-      const abortController2 = new AbortController();
-      const messagePromise = (async () => {
-        const backward = await NicoliveMessageServer.fetchBackwardMessages(backwardUri2, delayMs, maxSegmentCount, isSnapshot, abortController2.signal);
-        currentBackwardUri = { segment: backward.segmentUri, snapshot: backward.snapshotUri };
-        if (lastMeta == null) {
-          for (let i = backward.messages.length - 1; i >= 0; i--) {
-            const message = backward.messages[i];
-            if (updateMeta(message))
-              break;
-          }
-        }
-        if (checkCloseMessage(backward.messages.at(-1))) {
-          safeClose();
-        }
-        const hasNext = currentBackwardUri.segment != null;
-        return [backward.messages, hasNext];
-      })();
-      fetchingBackwardSegment = false;
-      return {
-        abortController: abortController2,
-        messagePromise
-      };
-    }
-  }
-  class NicoLiveChatClient {
-    options;
-    abortControllers = [];
-    stopped = false;
-    wsConnector;
-    messageConnector;
-    constructor(options) {
-      this.options = options;
-    }
-    async start() {
-      const liveId = parseLiveId(this.options.liveId);
-      if (liveId == null) {
-        this.emitError(new Error(`Invalid NicoLive liveId or URL: ${this.options.liveId}`));
-        return;
-      }
-      try {
-        const pageResponse = await fetchTextAsResponse(`https://live.nicovideo.jp/watch/${liveId}`);
-        if (this.stopped)
-          return;
-        const pageData = await parseNicolivePageData(pageResponse);
-        const wsConnectorResult = NicoliveUtility.createWsServerConnector(pageData);
-        this.abortControllers.push(wsConnectorResult.abortController);
-        this.wsConnector = await wsConnectorResult.promise;
-        if (this.stopped)
-          return;
-        const messageServerData = await this.wsConnector.getMessageServerData();
-        const messageConnectorResult = NicoliveUtility.createMessageServerConnector(messageServerData, {
-          transport: createUserscriptStreamTransport()
-        });
-        this.abortControllers.push(messageConnectorResult.abortController);
-        this.messageConnector = await messageConnectorResult.promise;
-        if (this.stopped)
-          return;
-        this.options.onConnect?.({ liveId });
-        await Promise.race([
-          this.readWebSocketMessages(),
-          this.readServerMessages()
-        ]);
-      } catch (error) {
-        if (this.stopped && isAbortLikeError(error))
-          return;
-        this.emitError(toError(error));
-      }
-    }
-    stop() {
-      this.stopped = true;
-      this.messageConnector?.getAbortController().abort();
-      this.wsConnector?.getAbortController().abort();
-      for (const abortController of this.abortControllers.splice(0)) {
-        abortController.abort();
-      }
-    }
-    emitError(error) {
-      this.options.onError?.(error);
-    }
-    async readWebSocketMessages() {
-      while (!this.stopped && this.wsConnector != null) {
-        const signal = this.wsConnector.getAbortController().signal;
-        try {
-          for await (const _message of this.wsConnector.getIterator()) {
-            if (this.stopped)
-              return;
-          }
-        } catch (error) {
-          if (this.stopped || isAbortLikeError(error, signal))
-            return;
-          if (error instanceof NicoliveWebSocketReconnectError) {
-            const reconnect = this.wsConnector.reconnect(void 0, error.reconnectTime);
-            this.abortControllers.push(reconnect.abortController);
-            await reconnect.promise;
-            continue;
-          }
-          throw error;
-        }
-        return;
-      }
-    }
-    async readServerMessages() {
-      while (!this.stopped && this.messageConnector != null) {
-        const signal = this.messageConnector.getAbortController().signal;
-        try {
-          for await (const chunkedMessage of this.messageConnector.getIterator()) {
-            if (this.stopped)
-              return;
-            const chat = toChatMessage(chunkedMessage);
-            if (chat != null)
-              this.options.onChat?.([chat]);
-          }
-        } catch (error) {
-          if (this.stopped || isAbortLikeError(error, signal))
-            return;
-          const reconnect2 = this.messageConnector.reconnect();
-          this.abortControllers.push(reconnect2.abortController);
-          await reconnect2.promise;
-          continue;
-        }
-        const reconnect = this.messageConnector.reconnect();
-        this.abortControllers.push(reconnect.abortController);
-        await reconnect.promise;
-      }
-    }
-  }
-  function subscribeNicoLiveChat(options) {
-    const client2 = new NicoLiveChatClient(options);
-    void client2.start();
-    return () => client2.stop();
-  }
-  function toChatMessage(message) {
-    if (message.payload.case !== "message")
-      return;
-    const data = message.payload.value.data;
-    if (data.case !== "chat")
-      return;
-    const chat = data.value;
-    const userId = chat.rawUserId?.toString() ?? chat.hashedUserId ?? "";
-    const author = chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "";
-    return {
-      userId,
-      author,
-      message: chat.content,
-      timestampUsec: timestampToUsecString(message.meta?.at),
-      isMember: chat.accountStatus === 1
-    };
-  }
-  function timestampToUsecString(timestamp) {
-    if (timestamp == null)
-      return `${Date.now() * 1e3}`;
-    return `${Number(timestamp.seconds) * 1e6 + Math.floor(timestamp.nanos / 1e3)}`;
-  }
-  function parseLiveId(value) {
-    return value.trim().match(/((?:lv|ch)\d+|user\/\d+)/)?.[1];
-  }
-  function createUserscriptStreamTransport() {
-    return {
-      async fetch(uri, signal) {
-        if (uri.includes("/data/segment/")) {
-          const chunk = await gmFetchArrayBuffer(uri, signal);
-          return {
-            iterator: singleChunkIterable(chunk),
-            closed: Promise.resolve()
-          };
-        }
-        const stream = await gmFetchReadableStream(uri, signal);
-        const reader = stream.getReader();
-        return {
-          iterator: readableStreamToAsyncIterable(reader),
-          closed: reader.closed
-        };
-      }
-    };
-  }
-  function gmFetchArrayBuffer(url, signal) {
-    const gm = getGmXmlhttpRequest();
-    if (gm == null) {
-      return fetch(url, { signal }).then(async (response) => new Uint8Array(await response.arrayBuffer()));
-    }
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const settleResolve = (value) => {
-        if (settled)
-          return;
-        settled = true;
-        resolve(value);
-      };
-      const settleReject = (error) => {
-        if (settled)
-          return;
-        settled = true;
-        reject(error);
-      };
-      const request = gm({
-        method: "GET",
-        url,
-        responseType: "arraybuffer",
-        fetch: true,
-        onload: (response) => {
-          if (response.response == null) {
-            settleReject(new Error(`GM_xmlhttpRequest arraybuffer response is unavailable: ${url}`));
-            return;
-          }
-          settleResolve(new Uint8Array(response.response));
-        },
-        onerror: settleReject,
-        onabort: () => settleReject(createAbortError()),
-        ontimeout: () => settleReject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
-      });
-      signal?.addEventListener("abort", () => {
-        request.abort?.();
-        settleReject(createAbortError());
-      }, { once: true });
-    });
-  }
-  async function fetchTextAsResponse(url, signal) {
-    const gm = getGmXmlhttpRequest();
-    if (gm == null)
-      return fetch(url, { signal });
-    return new Promise((resolve, reject) => {
-      gm({
-        method: "GET",
-        url,
-        responseType: "text",
-        onload: (response) => {
-          const res = new Response(response.responseText ?? "", {
-            status: response.status,
-            statusText: response.statusText
-          });
-          if (response.finalUrl != null) {
-            Object.defineProperty(res, "url", { value: response.finalUrl });
-          }
-          resolve(res);
-        },
-        onerror: reject,
-        onabort: () => reject(createAbortError()),
-        ontimeout: () => reject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
-      });
-    });
-  }
-  function gmFetchReadableStream(url, signal) {
-    const gm = getGmXmlhttpRequest();
-    if (gm == null) {
-      return fetch(url, { signal }).then((response) => {
-        if (response.body == null)
-          throw new Error(`fetch stream is unavailable: ${url}`);
-        return response.body;
-      });
-    }
-    return new Promise((resolve, reject) => {
-      let settled = false;
-      const settleResolve = (stream) => {
-        if (settled)
-          return;
-        settled = true;
-        resolve(stream);
-      };
-      const settleReject = (error) => {
-        if (settled)
-          return;
-        settled = true;
-        reject(error);
-      };
-      const request = gm({
-        method: "GET",
-        url,
-        responseType: "stream",
-        fetch: true,
-        onloadstart: (response) => {
-          const stream = response.response;
-          if (isReadableStream(stream)) {
-            settleResolve(stream);
-          }
-        },
-        onload: (response) => {
-          const stream = response.response;
-          if (isReadableStream(stream)) {
-            settleResolve(stream);
-            return;
-          }
-          settleReject(new Error("GM_xmlhttpRequest stream response is unavailable. Tampermonkey responseType:'stream' support is required."));
-        },
-        onerror: settleReject,
-        onabort: () => settleReject(createAbortError()),
-        ontimeout: () => settleReject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
-      });
-      signal?.addEventListener("abort", () => {
-        request.abort?.();
-        settleReject(createAbortError());
-      }, { once: true });
-    });
-  }
-  async function* singleChunkIterable(chunk) {
-    yield chunk;
-  }
-  function getGmXmlhttpRequest() {
-    if (typeof GM_xmlhttpRequest === "function")
-      return GM_xmlhttpRequest;
-  }
-  function isReadableStream(value) {
-    return typeof value === "object" && value != null && "getReader" in value;
-  }
-  function createAbortError() {
-    return new DOMException("Operation aborted", "AbortError");
-  }
-  function isAbortLikeError(error, signal) {
-    return error instanceof Error && error.name === "AbortError" && signal?.aborted !== false;
-  }
-  function toError(error) {
-    return error instanceof Error ? error : new Error(String(error));
-  }
   function r(e) {
     var t, f, n = "";
     if ("string" == typeof e || "number" == typeof e) n += e;
@@ -16620,46 +12506,6 @@ postPasswordAuth: (liveId, password) => {
     for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
     return n;
   }
-  const falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
-  const cx = clsx;
-  const cva = (base, config) => (props) => {
-    var _config_compoundVariants;
-    if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
-    const { variants, defaultVariants } = config;
-    const getVariantClassNames = Object.keys(variants).map((variant) => {
-      const variantProp = props === null || props === void 0 ? void 0 : props[variant];
-      const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
-      if (variantProp === null) return null;
-      const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
-      return variants[variant][variantKey];
-    });
-    const propsWithoutUndefined = props && Object.entries(props).reduce((acc, param) => {
-      let [key, value] = param;
-      if (value === void 0) {
-        return acc;
-      }
-      acc[key] = value;
-      return acc;
-    }, {});
-    const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
-      let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
-      return Object.entries(compoundVariantOptions).every((param2) => {
-        let [key, value] = param2;
-        return Array.isArray(value) ? value.includes({
-          ...defaultVariants,
-          ...propsWithoutUndefined
-        }[key]) : {
-          ...defaultVariants,
-          ...propsWithoutUndefined
-        }[key] === value;
-      }) ? [
-        ...acc,
-        cvClass,
-        cvClassName
-      ] : acc;
-    }, []);
-    return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
-  };
   const concatArrays = (array1, array2) => {
     const combinedArray = new Array(array1.length + array2.length);
     for (let i = 0; i < array1.length; i++) {
@@ -18475,6 +14321,46 @@ stroke: [{
     };
   };
   const twMerge = createTailwindMerge(getDefaultConfig);
+  const falsyToString = (value) => typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
+  const cx = clsx;
+  const cva = (base, config) => (props) => {
+    var _config_compoundVariants;
+    if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+    const { variants, defaultVariants } = config;
+    const getVariantClassNames = Object.keys(variants).map((variant) => {
+      const variantProp = props === null || props === void 0 ? void 0 : props[variant];
+      const defaultVariantProp = defaultVariants === null || defaultVariants === void 0 ? void 0 : defaultVariants[variant];
+      if (variantProp === null) return null;
+      const variantKey = falsyToString(variantProp) || falsyToString(defaultVariantProp);
+      return variants[variant][variantKey];
+    });
+    const propsWithoutUndefined = props && Object.entries(props).reduce((acc, param) => {
+      let [key, value] = param;
+      if (value === void 0) {
+        return acc;
+      }
+      acc[key] = value;
+      return acc;
+    }, {});
+    const getCompoundVariantClassNames = config === null || config === void 0 ? void 0 : (_config_compoundVariants = config.compoundVariants) === null || _config_compoundVariants === void 0 ? void 0 : _config_compoundVariants.reduce((acc, param) => {
+      let { class: cvClass, className: cvClassName, ...compoundVariantOptions } = param;
+      return Object.entries(compoundVariantOptions).every((param2) => {
+        let [key, value] = param2;
+        return Array.isArray(value) ? value.includes({
+          ...defaultVariants,
+          ...propsWithoutUndefined
+        }[key]) : {
+          ...defaultVariants,
+          ...propsWithoutUndefined
+        }[key] === value;
+      }) ? [
+        ...acc,
+        cvClass,
+        cvClassName
+      ] : acc;
+    }, []);
+    return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+  };
   function cn(...inputs) {
     return twMerge(clsx(inputs));
   }
@@ -23841,6 +19727,4120 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       }
     );
   }
+  function isMessage(arg, schema) {
+    const isMessage2 = arg !== null && typeof arg == "object" && "$typeName" in arg && typeof arg.$typeName == "string";
+    if (!isMessage2) {
+      return false;
+    }
+    if (schema === void 0) {
+      return true;
+    }
+    return schema.typeName === arg.$typeName;
+  }
+  var ScalarType;
+  (function(ScalarType2) {
+    ScalarType2[ScalarType2["DOUBLE"] = 1] = "DOUBLE";
+    ScalarType2[ScalarType2["FLOAT"] = 2] = "FLOAT";
+    ScalarType2[ScalarType2["INT64"] = 3] = "INT64";
+    ScalarType2[ScalarType2["UINT64"] = 4] = "UINT64";
+    ScalarType2[ScalarType2["INT32"] = 5] = "INT32";
+    ScalarType2[ScalarType2["FIXED64"] = 6] = "FIXED64";
+    ScalarType2[ScalarType2["FIXED32"] = 7] = "FIXED32";
+    ScalarType2[ScalarType2["BOOL"] = 8] = "BOOL";
+    ScalarType2[ScalarType2["STRING"] = 9] = "STRING";
+    ScalarType2[ScalarType2["BYTES"] = 12] = "BYTES";
+    ScalarType2[ScalarType2["UINT32"] = 13] = "UINT32";
+    ScalarType2[ScalarType2["SFIXED32"] = 15] = "SFIXED32";
+    ScalarType2[ScalarType2["SFIXED64"] = 16] = "SFIXED64";
+    ScalarType2[ScalarType2["SINT32"] = 17] = "SINT32";
+    ScalarType2[ScalarType2["SINT64"] = 18] = "SINT64";
+  })(ScalarType || (ScalarType = {}));
+  function varint64read() {
+    let lowBits = 0;
+    let highBits = 0;
+    for (let shift2 = 0; shift2 < 28; shift2 += 7) {
+      let b = this.buf[this.pos++];
+      lowBits |= (b & 127) << shift2;
+      if ((b & 128) == 0) {
+        this.assertBounds();
+        return [lowBits, highBits];
+      }
+    }
+    let middleByte = this.buf[this.pos++];
+    lowBits |= (middleByte & 15) << 28;
+    highBits = (middleByte & 112) >> 4;
+    if ((middleByte & 128) == 0) {
+      this.assertBounds();
+      return [lowBits, highBits];
+    }
+    for (let shift2 = 3; shift2 <= 31; shift2 += 7) {
+      let b = this.buf[this.pos++];
+      highBits |= (b & 127) << shift2;
+      if ((b & 128) == 0) {
+        this.assertBounds();
+        return [lowBits, highBits];
+      }
+    }
+    throw new Error("invalid varint");
+  }
+  const TWO_PWR_32_DBL = 4294967296;
+  function int64FromString(dec) {
+    const minus = dec[0] === "-";
+    if (minus) {
+      dec = dec.slice(1);
+    }
+    const base = 1e6;
+    let lowBits = 0;
+    let highBits = 0;
+    function add1e6digit(begin, end) {
+      const digit1e6 = Number(dec.slice(begin, end));
+      highBits *= base;
+      lowBits = lowBits * base + digit1e6;
+      if (lowBits >= TWO_PWR_32_DBL) {
+        highBits = highBits + (lowBits / TWO_PWR_32_DBL | 0);
+        lowBits = lowBits % TWO_PWR_32_DBL;
+      }
+    }
+    add1e6digit(-24, -18);
+    add1e6digit(-18, -12);
+    add1e6digit(-12, -6);
+    add1e6digit(-6);
+    return minus ? negate(lowBits, highBits) : newBits(lowBits, highBits);
+  }
+  function int64ToString(lo, hi) {
+    let bits = newBits(lo, hi);
+    const negative = bits.hi & 2147483648;
+    if (negative) {
+      bits = negate(bits.lo, bits.hi);
+    }
+    const result = uInt64ToString(bits.lo, bits.hi);
+    return negative ? "-" + result : result;
+  }
+  function uInt64ToString(lo, hi) {
+    ({ lo, hi } = toUnsigned(lo, hi));
+    if (hi <= 2097151) {
+      return String(TWO_PWR_32_DBL * hi + lo);
+    }
+    const low = lo & 16777215;
+    const mid = (lo >>> 24 | hi << 8) & 16777215;
+    const high = hi >> 16 & 65535;
+    let digitA = low + mid * 6777216 + high * 6710656;
+    let digitB = mid + high * 8147497;
+    let digitC = high * 2;
+    const base = 1e7;
+    if (digitA >= base) {
+      digitB += Math.floor(digitA / base);
+      digitA %= base;
+    }
+    if (digitB >= base) {
+      digitC += Math.floor(digitB / base);
+      digitB %= base;
+    }
+    return digitC.toString() + decimalFrom1e7WithLeadingZeros(digitB) + decimalFrom1e7WithLeadingZeros(digitA);
+  }
+  function toUnsigned(lo, hi) {
+    return { lo: lo >>> 0, hi: hi >>> 0 };
+  }
+  function newBits(lo, hi) {
+    return { lo: lo | 0, hi: hi | 0 };
+  }
+  function negate(lowBits, highBits) {
+    highBits = ~highBits;
+    if (lowBits) {
+      lowBits = ~lowBits + 1;
+    } else {
+      highBits += 1;
+    }
+    return newBits(lowBits, highBits);
+  }
+  const decimalFrom1e7WithLeadingZeros = (digit1e7) => {
+    const partial = String(digit1e7);
+    return "0000000".slice(partial.length) + partial;
+  };
+  function varint32write(value, bytes) {
+    if (value >= 0) {
+      while (value > 127) {
+        bytes.push(value & 127 | 128);
+        value = value >>> 7;
+      }
+      bytes.push(value);
+    } else {
+      for (let i = 0; i < 9; i++) {
+        bytes.push(value & 127 | 128);
+        value = value >> 7;
+      }
+      bytes.push(1);
+    }
+  }
+  function varint32read() {
+    let b = this.buf[this.pos++];
+    let result = b & 127;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 7;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 14;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 127) << 21;
+    if ((b & 128) == 0) {
+      this.assertBounds();
+      return result;
+    }
+    b = this.buf[this.pos++];
+    result |= (b & 15) << 28;
+    for (let readBytes = 5; (b & 128) !== 0 && readBytes < 10; readBytes++)
+      b = this.buf[this.pos++];
+    if ((b & 128) != 0)
+      throw new Error("invalid varint");
+    this.assertBounds();
+    return result >>> 0;
+  }
+  var define_process_env_default = {};
+  const protoInt64 = makeInt64Support();
+  function makeInt64Support() {
+    const dv = new DataView(new ArrayBuffer(8));
+    const ok = typeof BigInt === "function" && typeof dv.getBigInt64 === "function" && typeof dv.getBigUint64 === "function" && typeof dv.setBigInt64 === "function" && typeof dv.setBigUint64 === "function" && (!!globalThis.Deno || typeof process != "object" || typeof define_process_env_default != "object" || define_process_env_default.BUF_BIGINT_DISABLE !== "1");
+    if (ok) {
+      const MIN = BigInt("-9223372036854775808");
+      const MAX = BigInt("9223372036854775807");
+      const UMIN = BigInt("0");
+      const UMAX = BigInt("18446744073709551615");
+      return {
+        zero: BigInt(0),
+        supported: true,
+        parse(value) {
+          const bi = typeof value == "bigint" ? value : BigInt(value);
+          if (bi > MAX || bi < MIN) {
+            throw new Error(`invalid int64: ${value}`);
+          }
+          return bi;
+        },
+        uParse(value) {
+          const bi = typeof value == "bigint" ? value : BigInt(value);
+          if (bi > UMAX || bi < UMIN) {
+            throw new Error(`invalid uint64: ${value}`);
+          }
+          return bi;
+        },
+        enc(value) {
+          dv.setBigInt64(0, this.parse(value), true);
+          return {
+            lo: dv.getInt32(0, true),
+            hi: dv.getInt32(4, true)
+          };
+        },
+        uEnc(value) {
+          dv.setBigInt64(0, this.uParse(value), true);
+          return {
+            lo: dv.getInt32(0, true),
+            hi: dv.getInt32(4, true)
+          };
+        },
+        dec(lo, hi) {
+          dv.setInt32(0, lo, true);
+          dv.setInt32(4, hi, true);
+          return dv.getBigInt64(0, true);
+        },
+        uDec(lo, hi) {
+          dv.setInt32(0, lo, true);
+          dv.setInt32(4, hi, true);
+          return dv.getBigUint64(0, true);
+        }
+      };
+    }
+    return {
+      zero: "0",
+      supported: false,
+      parse(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertInt64String(value);
+        return value;
+      },
+      uParse(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertUInt64String(value);
+        return value;
+      },
+      enc(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertInt64String(value);
+        return int64FromString(value);
+      },
+      uEnc(value) {
+        if (typeof value != "string") {
+          value = value.toString();
+        }
+        assertUInt64String(value);
+        return int64FromString(value);
+      },
+      dec(lo, hi) {
+        return int64ToString(lo, hi);
+      },
+      uDec(lo, hi) {
+        return uInt64ToString(lo, hi);
+      }
+    };
+  }
+  function assertInt64String(value) {
+    if (!/^-?[0-9]+$/.test(value)) {
+      throw new Error("invalid int64: " + value);
+    }
+  }
+  function assertUInt64String(value) {
+    if (!/^[0-9]+$/.test(value)) {
+      throw new Error("invalid uint64: " + value);
+    }
+  }
+  function scalarZeroValue(type, longAsString) {
+    switch (type) {
+      case ScalarType.STRING:
+        return "";
+      case ScalarType.BOOL:
+        return false;
+      case ScalarType.DOUBLE:
+      case ScalarType.FLOAT:
+        return 0;
+      case ScalarType.INT64:
+      case ScalarType.UINT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.FIXED64:
+      case ScalarType.SINT64:
+        return longAsString ? "0" : protoInt64.zero;
+      case ScalarType.BYTES:
+        return new Uint8Array(0);
+      default:
+        return 0;
+    }
+  }
+  function isScalarZeroValue(type, value) {
+    switch (type) {
+      case ScalarType.BOOL:
+        return value === false;
+      case ScalarType.STRING:
+        return value === "";
+      case ScalarType.BYTES:
+        return value instanceof Uint8Array && !value.byteLength;
+      default:
+        return value == 0;
+    }
+  }
+  const IMPLICIT$2 = 2;
+  const unsafeLocal = Symbol.for("reflect unsafe local");
+  function unsafeOneofCase(target, oneof) {
+    const c = target[oneof.localName].case;
+    if (c === void 0) {
+      return c;
+    }
+    return oneof.fields.find((f) => f.localName === c);
+  }
+  function unsafeIsSet(target, field) {
+    const name = field.localName;
+    if (field.oneof) {
+      return target[field.oneof.localName].case === name;
+    }
+    if (field.presence != IMPLICIT$2) {
+      return target[name] !== void 0 && Object.prototype.hasOwnProperty.call(target, name);
+    }
+    switch (field.fieldKind) {
+      case "list":
+        return target[name].length > 0;
+      case "map":
+        return Object.keys(target[name]).length > 0;
+      case "scalar":
+        return !isScalarZeroValue(field.scalar, target[name]);
+      case "enum":
+        return target[name] !== field.enum.values[0].number;
+    }
+    throw new Error("message field with implicit presence");
+  }
+  function unsafeIsSetExplicit(target, localName) {
+    return Object.prototype.hasOwnProperty.call(target, localName) && target[localName] !== void 0;
+  }
+  function unsafeGet(target, field) {
+    if (field.oneof) {
+      const oneof = target[field.oneof.localName];
+      if (oneof.case === field.localName) {
+        return oneof.value;
+      }
+      return void 0;
+    }
+    return target[field.localName];
+  }
+  function unsafeSet(target, field, value) {
+    if (field.oneof) {
+      target[field.oneof.localName] = {
+        case: field.localName,
+        value
+      };
+    } else {
+      target[field.localName] = value;
+    }
+  }
+  function unsafeClear(target, field) {
+    const name = field.localName;
+    if (field.oneof) {
+      const oneofLocalName = field.oneof.localName;
+      if (target[oneofLocalName].case === name) {
+        target[oneofLocalName] = { case: void 0 };
+      }
+    } else if (field.presence != IMPLICIT$2) {
+      delete target[name];
+    } else {
+      switch (field.fieldKind) {
+        case "map":
+          target[name] = {};
+          break;
+        case "list":
+          target[name] = [];
+          break;
+        case "enum":
+          target[name] = field.enum.values[0].number;
+          break;
+        case "scalar":
+          target[name] = scalarZeroValue(field.scalar, field.longAsString);
+          break;
+      }
+    }
+  }
+  function isObject(arg) {
+    return arg !== null && typeof arg == "object" && !Array.isArray(arg);
+  }
+  function isReflectList(arg, field) {
+    var _a, _b, _c, _d;
+    if (isObject(arg) && unsafeLocal in arg && "add" in arg && "field" in arg && typeof arg.field == "function") {
+      if (field !== void 0) {
+        const a = field;
+        const b = arg.field();
+        return a.listKind == b.listKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
+      }
+      return true;
+    }
+    return false;
+  }
+  function isReflectMap(arg, field) {
+    var _a, _b, _c, _d;
+    if (isObject(arg) && unsafeLocal in arg && "has" in arg && "field" in arg && typeof arg.field == "function") {
+      if (field !== void 0) {
+        const a = field, b = arg.field();
+        return a.mapKey === b.mapKey && a.mapKind == b.mapKind && a.scalar === b.scalar && ((_a = a.message) === null || _a === void 0 ? void 0 : _a.typeName) === ((_b = b.message) === null || _b === void 0 ? void 0 : _b.typeName) && ((_c = a.enum) === null || _c === void 0 ? void 0 : _c.typeName) === ((_d = b.enum) === null || _d === void 0 ? void 0 : _d.typeName);
+      }
+      return true;
+    }
+    return false;
+  }
+  function isReflectMessage(arg, messageDesc2) {
+    return isObject(arg) && unsafeLocal in arg && "desc" in arg && isObject(arg.desc) && arg.desc.kind === "message" && (messageDesc2 === void 0 || arg.desc.typeName == messageDesc2.typeName);
+  }
+  function isWrapper(arg) {
+    return isWrapperTypeName(arg.$typeName);
+  }
+  function isWrapperDesc(messageDesc2) {
+    const f = messageDesc2.fields[0];
+    return isWrapperTypeName(messageDesc2.typeName) && f !== void 0 && f.fieldKind == "scalar" && f.name == "value" && f.number == 1;
+  }
+  function isWrapperTypeName(name) {
+    return name.startsWith("google.protobuf.") && [
+      "DoubleValue",
+      "FloatValue",
+      "Int64Value",
+      "UInt64Value",
+      "Int32Value",
+      "UInt32Value",
+      "BoolValue",
+      "StringValue",
+      "BytesValue"
+    ].includes(name.substring(16));
+  }
+  const EDITION_PROTO3$1 = 999;
+  const EDITION_PROTO2$1 = 998;
+  const IMPLICIT$1 = 2;
+  function create(schema, init) {
+    if (isMessage(init, schema)) {
+      return init;
+    }
+    const message = createZeroMessage(schema);
+    return message;
+  }
+  const tokenZeroMessageField = Symbol();
+  const messagePrototypes = new WeakMap();
+  function createZeroMessage(desc) {
+    let msg;
+    if (!needsPrototypeChain(desc)) {
+      msg = {
+        $typeName: desc.typeName
+      };
+      for (const member of desc.members) {
+        if (member.kind == "oneof" || member.presence == IMPLICIT$1) {
+          msg[member.localName] = createZeroField(member);
+        }
+      }
+    } else {
+      const cached = messagePrototypes.get(desc);
+      let prototype;
+      let members;
+      if (cached) {
+        ({ prototype, members } = cached);
+      } else {
+        prototype = {};
+        members = new Set();
+        for (const member of desc.members) {
+          if (member.kind == "oneof") {
+            continue;
+          }
+          if (member.fieldKind != "scalar" && member.fieldKind != "enum") {
+            continue;
+          }
+          if (member.presence == IMPLICIT$1) {
+            continue;
+          }
+          members.add(member);
+          prototype[member.localName] = createZeroField(member);
+        }
+        messagePrototypes.set(desc, { prototype, members });
+      }
+      msg = Object.create(prototype);
+      msg.$typeName = desc.typeName;
+      for (const member of desc.members) {
+        if (members.has(member)) {
+          continue;
+        }
+        if (member.kind == "field") {
+          if (member.fieldKind == "message") {
+            continue;
+          }
+          if (member.fieldKind == "scalar" || member.fieldKind == "enum") {
+            if (member.presence != IMPLICIT$1) {
+              continue;
+            }
+          }
+        }
+        msg[member.localName] = createZeroField(member);
+      }
+    }
+    return msg;
+  }
+  function needsPrototypeChain(desc) {
+    switch (desc.file.edition) {
+      case EDITION_PROTO3$1:
+        return false;
+      case EDITION_PROTO2$1:
+        return true;
+      default:
+        return desc.fields.some((f) => f.presence != IMPLICIT$1 && f.fieldKind != "message" && !f.oneof);
+    }
+  }
+  function createZeroField(field) {
+    if (field.kind == "oneof") {
+      return { case: void 0 };
+    }
+    if (field.fieldKind == "list") {
+      return [];
+    }
+    if (field.fieldKind == "map") {
+      return {};
+    }
+    if (field.fieldKind == "message") {
+      return tokenZeroMessageField;
+    }
+    const defaultValue = field.getDefaultValue();
+    if (defaultValue !== void 0) {
+      return field.fieldKind == "scalar" && field.longAsString ? defaultValue.toString() : defaultValue;
+    }
+    return field.fieldKind == "scalar" ? scalarZeroValue(field.scalar, field.longAsString) : field.enum.values[0].number;
+  }
+  class FieldError extends Error {
+    constructor(fieldOrOneof, message, name = "FieldValueInvalidError") {
+      super(message);
+      this.name = name;
+      this.field = () => fieldOrOneof;
+    }
+  }
+  const symbol = Symbol.for("@bufbuild/protobuf/text-encoding");
+  function getTextEncoding() {
+    if (globalThis[symbol] == void 0) {
+      const te = new globalThis.TextEncoder();
+      const td = new globalThis.TextDecoder();
+      let tdStrict;
+      globalThis[symbol] = {
+        encodeUtf8(text) {
+          return te.encode(text);
+        },
+        decodeUtf8(bytes, strict) {
+          if (strict) {
+            if (tdStrict === void 0) {
+              tdStrict = new globalThis.TextDecoder("utf-8", { fatal: true });
+            }
+            return tdStrict.decode(bytes);
+          }
+          return td.decode(bytes);
+        },
+        checkUtf8(text) {
+          try {
+            encodeURIComponent(text);
+            return true;
+          } catch (_) {
+            return false;
+          }
+        }
+      };
+    }
+    return globalThis[symbol];
+  }
+  var WireType;
+  (function(WireType2) {
+    WireType2[WireType2["Varint"] = 0] = "Varint";
+    WireType2[WireType2["Bit64"] = 1] = "Bit64";
+    WireType2[WireType2["LengthDelimited"] = 2] = "LengthDelimited";
+    WireType2[WireType2["StartGroup"] = 3] = "StartGroup";
+    WireType2[WireType2["EndGroup"] = 4] = "EndGroup";
+    WireType2[WireType2["Bit32"] = 5] = "Bit32";
+  })(WireType || (WireType = {}));
+  const FLOAT32_MAX = 34028234663852886e22;
+  const FLOAT32_MIN = -34028234663852886e22;
+  const UINT32_MAX = 4294967295;
+  const INT32_MAX = 2147483647;
+  const INT32_MIN = -2147483648;
+  class BinaryReader {
+    constructor(buf, decodeUtf8 = getTextEncoding().decodeUtf8) {
+      this.decodeUtf8 = decodeUtf8;
+      this.varint64 = varint64read;
+      this.uint32 = varint32read;
+      this.buf = buf;
+      this.len = buf.length;
+      this.pos = 0;
+      this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+    }
+tag() {
+      const start = this.pos;
+      const tag = this.uint32();
+      const bytesRead = this.pos - start;
+      if (bytesRead > 5 || bytesRead == 5 && this.buf[this.pos - 1] > 15) {
+        throw new Error("illegal tag: varint overflows uint32");
+      }
+      const fieldNo = tag >>> 3;
+      const wireType = tag & 7;
+      if (fieldNo <= 0 || wireType > 5) {
+        throw new Error("illegal tag: field no " + fieldNo + " wire type " + wireType);
+      }
+      return [fieldNo, wireType];
+    }
+skip(wireType, fieldNo) {
+      let start = this.pos;
+      switch (wireType) {
+        case WireType.Varint:
+          while (this.buf[this.pos++] & 128) {
+          }
+          break;
+case WireType.Bit64:
+          this.pos += 4;
+        case WireType.Bit32:
+          this.pos += 4;
+          break;
+        case WireType.LengthDelimited:
+          let len = this.uint32();
+          this.pos += len;
+          break;
+        case WireType.StartGroup:
+          for (; ; ) {
+            const [fn, wt] = this.tag();
+            if (wt === WireType.EndGroup) {
+              if (fieldNo !== void 0 && fn !== fieldNo) {
+                throw new Error("invalid end group tag");
+              }
+              break;
+            }
+            this.skip(wt, fn);
+          }
+          break;
+        default:
+          throw new Error("cant skip wire type " + wireType);
+      }
+      this.assertBounds();
+      return this.buf.subarray(start, this.pos);
+    }
+assertBounds() {
+      if (this.pos > this.len)
+        throw new RangeError("premature EOF");
+    }
+int32() {
+      return this.uint32() | 0;
+    }
+sint32() {
+      let zze = this.uint32();
+      return zze >>> 1 ^ -(zze & 1);
+    }
+int64() {
+      return protoInt64.dec(...this.varint64());
+    }
+uint64() {
+      return protoInt64.uDec(...this.varint64());
+    }
+sint64() {
+      let [lo, hi] = this.varint64();
+      let s = -(lo & 1);
+      lo = (lo >>> 1 | (hi & 1) << 31) ^ s;
+      hi = hi >>> 1 ^ s;
+      return protoInt64.dec(lo, hi);
+    }
+bool() {
+      let [lo, hi] = this.varint64();
+      return lo !== 0 || hi !== 0;
+    }
+fixed32() {
+      return this.view.getUint32((this.pos += 4) - 4, true);
+    }
+sfixed32() {
+      return this.view.getInt32((this.pos += 4) - 4, true);
+    }
+fixed64() {
+      return protoInt64.uDec(this.sfixed32(), this.sfixed32());
+    }
+sfixed64() {
+      return protoInt64.dec(this.sfixed32(), this.sfixed32());
+    }
+float() {
+      return this.view.getFloat32((this.pos += 4) - 4, true);
+    }
+double() {
+      return this.view.getFloat64((this.pos += 8) - 8, true);
+    }
+bytes() {
+      let len = this.uint32(), start = this.pos;
+      this.pos += len;
+      this.assertBounds();
+      return this.buf.subarray(start, start + len);
+    }
+string(strict) {
+      return this.decodeUtf8(this.bytes(), strict);
+    }
+  }
+  function checkField(field, value) {
+    const check = field.fieldKind == "list" ? isReflectList(value, field) : field.fieldKind == "map" ? isReflectMap(value, field) : checkSingular(field, value);
+    if (check === true) {
+      return void 0;
+    }
+    let reason;
+    switch (field.fieldKind) {
+      case "list":
+        reason = `expected ${formatReflectList(field)}, got ${formatVal(value)}`;
+        break;
+      case "map":
+        reason = `expected ${formatReflectMap(field)}, got ${formatVal(value)}`;
+        break;
+      default: {
+        reason = reasonSingular(field, value, check);
+      }
+    }
+    return new FieldError(field, reason);
+  }
+  function checkListItem(field, index2, value) {
+    const check = checkSingular(field, value);
+    if (check !== true) {
+      return new FieldError(field, `list item #${index2 + 1}: ${reasonSingular(field, value, check)}`);
+    }
+    return void 0;
+  }
+  function checkMapEntry(field, key, value) {
+    const checkKey = checkScalarValue(key, field.mapKey);
+    if (checkKey !== true) {
+      return new FieldError(field, `invalid map key: ${reasonSingular({ scalar: field.mapKey }, key, checkKey)}`);
+    }
+    const checkVal = checkSingular(field, value);
+    if (checkVal !== true) {
+      return new FieldError(field, `map entry ${formatVal(key)}: ${reasonSingular(field, value, checkVal)}`);
+    }
+    return void 0;
+  }
+  function checkSingular(field, value) {
+    if (field.scalar !== void 0) {
+      return checkScalarValue(value, field.scalar);
+    }
+    if (field.enum !== void 0) {
+      if (field.enum.open) {
+        return Number.isInteger(value);
+      }
+      return field.enum.values.some((v) => v.number === value);
+    }
+    return isReflectMessage(value, field.message);
+  }
+  function checkScalarValue(value, scalar) {
+    switch (scalar) {
+      case ScalarType.DOUBLE:
+        return typeof value == "number";
+      case ScalarType.FLOAT:
+        if (typeof value != "number") {
+          return false;
+        }
+        if (Number.isNaN(value) || !Number.isFinite(value)) {
+          return true;
+        }
+        if (value > FLOAT32_MAX || value < FLOAT32_MIN) {
+          return `${value.toFixed()} out of range`;
+        }
+        return true;
+      case ScalarType.INT32:
+      case ScalarType.SFIXED32:
+      case ScalarType.SINT32:
+        if (typeof value !== "number" || !Number.isInteger(value)) {
+          return false;
+        }
+        if (value > INT32_MAX || value < INT32_MIN) {
+          return `${value.toFixed()} out of range`;
+        }
+        return true;
+      case ScalarType.FIXED32:
+      case ScalarType.UINT32:
+        if (typeof value !== "number" || !Number.isInteger(value)) {
+          return false;
+        }
+        if (value > UINT32_MAX || value < 0) {
+          return `${value.toFixed()} out of range`;
+        }
+        return true;
+      case ScalarType.BOOL:
+        return typeof value == "boolean";
+      case ScalarType.STRING:
+        if (typeof value != "string") {
+          return false;
+        }
+        return getTextEncoding().checkUtf8(value) || "invalid UTF8";
+      case ScalarType.BYTES:
+        return value instanceof Uint8Array;
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
+          try {
+            protoInt64.parse(value);
+            return true;
+          } catch (_) {
+            return `${value} out of range`;
+          }
+        }
+        return false;
+      case ScalarType.FIXED64:
+      case ScalarType.UINT64:
+        if (typeof value == "bigint" || typeof value == "number" || typeof value == "string" && value.length > 0) {
+          try {
+            protoInt64.uParse(value);
+            return true;
+          } catch (_) {
+            return `${value} out of range`;
+          }
+        }
+        return false;
+    }
+  }
+  function reasonSingular(field, val, details) {
+    details = typeof details == "string" ? `: ${details}` : `, got ${formatVal(val)}`;
+    if (field.scalar !== void 0) {
+      return `expected ${scalarTypeDescription(field.scalar)}` + details;
+    }
+    if (field.enum !== void 0) {
+      return `expected ${field.enum.toString()}` + details;
+    }
+    return `expected ${formatReflectMessage(field.message)}` + details;
+  }
+  function formatVal(val) {
+    switch (typeof val) {
+      case "object":
+        if (val === null) {
+          return "null";
+        }
+        if (val instanceof Uint8Array) {
+          return `Uint8Array(${val.length})`;
+        }
+        if (Array.isArray(val)) {
+          return `Array(${val.length})`;
+        }
+        if (isReflectList(val)) {
+          return formatReflectList(val.field());
+        }
+        if (isReflectMap(val)) {
+          return formatReflectMap(val.field());
+        }
+        if (isReflectMessage(val)) {
+          return formatReflectMessage(val.desc);
+        }
+        if (isMessage(val)) {
+          return `message ${val.$typeName}`;
+        }
+        return "object";
+      case "string":
+        return val.length > 30 ? "string" : `"${val.split('"').join('\\"')}"`;
+      case "boolean":
+        return String(val);
+      case "number":
+        return String(val);
+      case "bigint":
+        return String(val) + "n";
+      default:
+        return typeof val;
+    }
+  }
+  function formatReflectMessage(desc) {
+    return `ReflectMessage (${desc.typeName})`;
+  }
+  function formatReflectList(field) {
+    switch (field.listKind) {
+      case "message":
+        return `ReflectList (${field.message.toString()})`;
+      case "enum":
+        return `ReflectList (${field.enum.toString()})`;
+      case "scalar":
+        return `ReflectList (${ScalarType[field.scalar]})`;
+    }
+  }
+  function formatReflectMap(field) {
+    switch (field.mapKind) {
+      case "message":
+        return `ReflectMap (${ScalarType[field.mapKey]}, ${field.message.toString()})`;
+      case "enum":
+        return `ReflectMap (${ScalarType[field.mapKey]}, ${field.enum.toString()})`;
+      case "scalar":
+        return `ReflectMap (${ScalarType[field.mapKey]}, ${ScalarType[field.scalar]})`;
+    }
+  }
+  function scalarTypeDescription(scalar) {
+    switch (scalar) {
+      case ScalarType.STRING:
+        return "string";
+      case ScalarType.BOOL:
+        return "boolean";
+      case ScalarType.INT64:
+      case ScalarType.SINT64:
+      case ScalarType.SFIXED64:
+        return "bigint (int64)";
+      case ScalarType.UINT64:
+      case ScalarType.FIXED64:
+        return "bigint (uint64)";
+      case ScalarType.BYTES:
+        return "Uint8Array";
+      case ScalarType.DOUBLE:
+        return "number (float64)";
+      case ScalarType.FLOAT:
+        return "number (float32)";
+      case ScalarType.FIXED32:
+      case ScalarType.UINT32:
+        return "number (uint32)";
+      case ScalarType.INT32:
+      case ScalarType.SFIXED32:
+      case ScalarType.SINT32:
+        return "number (int32)";
+    }
+  }
+  function reflect(messageDesc2, message, check = true) {
+    return new ReflectMessageImpl(messageDesc2, message, check);
+  }
+  const messageSortedFields = new WeakMap();
+  class ReflectMessageImpl {
+    get sortedFields() {
+      const cached = messageSortedFields.get(this.desc);
+      if (cached) {
+        return cached;
+      }
+      const sortedFields = this.desc.fields.concat().sort((a, b) => a.number - b.number);
+      messageSortedFields.set(this.desc, sortedFields);
+      return sortedFields;
+    }
+    constructor(messageDesc2, message, check = true) {
+      this.lists = new Map();
+      this.maps = new Map();
+      this.check = check;
+      this.desc = messageDesc2;
+      this.message = this[unsafeLocal] = message !== null && message !== void 0 ? message : create(messageDesc2);
+      this.fields = messageDesc2.fields;
+      this.oneofs = messageDesc2.oneofs;
+      this.members = messageDesc2.members;
+    }
+    findNumber(number) {
+      if (!this._fieldsByNumber) {
+        this._fieldsByNumber = new Map(this.desc.fields.map((f) => [f.number, f]));
+      }
+      return this._fieldsByNumber.get(number);
+    }
+    oneofCase(oneof) {
+      assertOwn(this.message, oneof);
+      return unsafeOneofCase(this.message, oneof);
+    }
+    isSet(field) {
+      assertOwn(this.message, field);
+      return unsafeIsSet(this.message, field);
+    }
+    clear(field) {
+      assertOwn(this.message, field);
+      unsafeClear(this.message, field);
+    }
+    get(field) {
+      assertOwn(this.message, field);
+      const value = unsafeGet(this.message, field);
+      switch (field.fieldKind) {
+        case "list":
+          let list = this.lists.get(field);
+          if (!list || list[unsafeLocal] !== value) {
+            this.lists.set(
+              field,
+list = new ReflectListImpl(field, value, this.check)
+            );
+          }
+          return list;
+        case "map":
+          let map = this.maps.get(field);
+          if (!map || map[unsafeLocal] !== value) {
+            this.maps.set(
+              field,
+map = new ReflectMapImpl(field, value, this.check)
+            );
+          }
+          return map;
+        case "message":
+          return messageToReflect(field, value, this.check);
+        case "scalar":
+          return value === void 0 ? scalarZeroValue(field.scalar, false) : longToReflect(field, value);
+        case "enum":
+          return value !== null && value !== void 0 ? value : field.enum.values[0].number;
+      }
+    }
+    set(field, value) {
+      assertOwn(this.message, field);
+      if (this.check) {
+        const err = checkField(field, value);
+        if (err) {
+          throw err;
+        }
+      }
+      let local;
+      if (field.fieldKind == "message") {
+        local = messageToLocal(field, value);
+      } else if (isReflectMap(value) || isReflectList(value)) {
+        local = value[unsafeLocal];
+      } else {
+        local = longToLocal(field, value);
+      }
+      unsafeSet(this.message, field, local);
+    }
+    getUnknown() {
+      return this.message.$unknown;
+    }
+    setUnknown(value) {
+      this.message.$unknown = value;
+    }
+  }
+  function assertOwn(owner, member) {
+    if (member.parent.typeName !== owner.$typeName) {
+      throw new FieldError(member, `cannot use ${member.toString()} with message ${owner.$typeName}`, "ForeignFieldError");
+    }
+  }
+  class ReflectListImpl {
+    field() {
+      return this._field;
+    }
+    get size() {
+      return this._arr.length;
+    }
+    constructor(field, unsafeInput, check) {
+      this._field = field;
+      this._arr = this[unsafeLocal] = unsafeInput;
+      this.check = check;
+    }
+    get(index2) {
+      const item = this._arr[index2];
+      return item === void 0 ? void 0 : listItemToReflect(this._field, item, this.check);
+    }
+    set(index2, item) {
+      if (index2 < 0 || index2 >= this._arr.length) {
+        throw new FieldError(this._field, `list item #${index2 + 1}: out of range`);
+      }
+      if (this.check) {
+        const err = checkListItem(this._field, index2, item);
+        if (err) {
+          throw err;
+        }
+      }
+      this._arr[index2] = listItemToLocal(this._field, item);
+    }
+    add(item) {
+      if (this.check) {
+        const err = checkListItem(this._field, this._arr.length, item);
+        if (err) {
+          throw err;
+        }
+      }
+      this._arr.push(listItemToLocal(this._field, item));
+      return void 0;
+    }
+    clear() {
+      this._arr.splice(0, this._arr.length);
+    }
+    [Symbol.iterator]() {
+      return this.values();
+    }
+    keys() {
+      return this._arr.keys();
+    }
+    *values() {
+      for (const item of this._arr) {
+        yield listItemToReflect(this._field, item, this.check);
+      }
+    }
+    *entries() {
+      for (let i = 0; i < this._arr.length; i++) {
+        yield [i, listItemToReflect(this._field, this._arr[i], this.check)];
+      }
+    }
+  }
+  class ReflectMapImpl {
+    constructor(field, unsafeInput, check = true) {
+      this.obj = this[unsafeLocal] = unsafeInput !== null && unsafeInput !== void 0 ? unsafeInput : {};
+      this.check = check;
+      this._field = field;
+    }
+    field() {
+      return this._field;
+    }
+    set(key, value) {
+      if (this.check) {
+        const err = checkMapEntry(this._field, key, value);
+        if (err) {
+          throw err;
+        }
+      }
+      this.obj[mapKeyToLocal(key)] = mapValueToLocal(this._field, value);
+      return this;
+    }
+    delete(key) {
+      const k = mapKeyToLocal(key);
+      const has = Object.prototype.hasOwnProperty.call(this.obj, k);
+      if (has) {
+        delete this.obj[k];
+      }
+      return has;
+    }
+    clear() {
+      for (const key of Object.keys(this.obj)) {
+        delete this.obj[key];
+      }
+    }
+    get(key) {
+      let val = this.obj[mapKeyToLocal(key)];
+      if (val !== void 0) {
+        val = mapValueToReflect(this._field, val, this.check);
+      }
+      return val;
+    }
+    has(key) {
+      return Object.prototype.hasOwnProperty.call(this.obj, mapKeyToLocal(key));
+    }
+    *keys() {
+      for (const objKey of Object.keys(this.obj)) {
+        yield mapKeyToReflect(objKey, this._field.mapKey);
+      }
+    }
+    *entries() {
+      for (const objEntry of Object.entries(this.obj)) {
+        yield [
+          mapKeyToReflect(objEntry[0], this._field.mapKey),
+          mapValueToReflect(this._field, objEntry[1], this.check)
+        ];
+      }
+    }
+    [Symbol.iterator]() {
+      return this.entries();
+    }
+    get size() {
+      return Object.keys(this.obj).length;
+    }
+    *values() {
+      for (const val of Object.values(this.obj)) {
+        yield mapValueToReflect(this._field, val, this.check);
+      }
+    }
+    forEach(callbackfn, thisArg) {
+      for (const mapEntry of this.entries()) {
+        callbackfn.call(thisArg, mapEntry[1], mapEntry[0], this);
+      }
+    }
+  }
+  function messageToLocal(field, value) {
+    if (!isReflectMessage(value)) {
+      return value;
+    }
+    if (isWrapper(value.message) && !field.oneof && field.fieldKind == "message") {
+      return value.message.value;
+    }
+    if (value.desc.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value") {
+      return wktStructToLocal(value.message);
+    }
+    return value.message;
+  }
+  function messageToReflect(field, value, check) {
+    if (value !== void 0) {
+      if (isWrapperDesc(field.message) && !field.oneof && field.fieldKind == "message") {
+        value = {
+          $typeName: field.message.typeName,
+          value: longToReflect(field.message.fields[0], value)
+        };
+      } else if (field.message.typeName == "google.protobuf.Struct" && field.parent.typeName != "google.protobuf.Value" && isObject(value)) {
+        value = wktStructToReflect(value);
+      }
+    }
+    return new ReflectMessageImpl(field.message, value, check);
+  }
+  function listItemToLocal(field, value) {
+    if (field.listKind == "message") {
+      return messageToLocal(field, value);
+    }
+    return longToLocal(field, value);
+  }
+  function listItemToReflect(field, value, check) {
+    if (field.listKind == "message") {
+      return messageToReflect(field, value, check);
+    }
+    return longToReflect(field, value);
+  }
+  function mapValueToLocal(field, value) {
+    if (field.mapKind == "message") {
+      return messageToLocal(field, value);
+    }
+    return longToLocal(field, value);
+  }
+  function mapValueToReflect(field, value, check) {
+    if (field.mapKind == "message") {
+      return messageToReflect(field, value, check);
+    }
+    return value;
+  }
+  function mapKeyToLocal(key) {
+    return typeof key == "string" || typeof key == "number" ? key : String(key);
+  }
+  function mapKeyToReflect(key, type) {
+    switch (type) {
+      case ScalarType.STRING:
+        return key;
+      case ScalarType.INT32:
+      case ScalarType.FIXED32:
+      case ScalarType.UINT32:
+      case ScalarType.SFIXED32:
+      case ScalarType.SINT32: {
+        const n = Number.parseInt(key);
+        if (Number.isFinite(n)) {
+          return n;
+        }
+        break;
+      }
+      case ScalarType.BOOL:
+        switch (key) {
+          case "true":
+            return true;
+          case "false":
+            return false;
+        }
+        break;
+      case ScalarType.UINT64:
+      case ScalarType.FIXED64:
+        try {
+          return protoInt64.uParse(key);
+        } catch (_a) {
+        }
+        break;
+      default:
+        try {
+          return protoInt64.parse(key);
+        } catch (_b) {
+        }
+        break;
+    }
+    return key;
+  }
+  function longToReflect(field, value) {
+    switch (field.scalar) {
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        if ("longAsString" in field && field.longAsString && typeof value == "string") {
+          value = protoInt64.parse(value);
+        }
+        break;
+      case ScalarType.FIXED64:
+      case ScalarType.UINT64:
+        if ("longAsString" in field && field.longAsString && typeof value == "string") {
+          value = protoInt64.uParse(value);
+        }
+        break;
+    }
+    return value;
+  }
+  function longToLocal(field, value) {
+    switch (field.scalar) {
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        if ("longAsString" in field && field.longAsString) {
+          value = String(value);
+        } else if (typeof value == "string" || typeof value == "number") {
+          value = protoInt64.parse(value);
+        }
+        break;
+      case ScalarType.FIXED64:
+      case ScalarType.UINT64:
+        if ("longAsString" in field && field.longAsString) {
+          value = String(value);
+        } else if (typeof value == "string" || typeof value == "number") {
+          value = protoInt64.uParse(value);
+        }
+        break;
+    }
+    return value;
+  }
+  function wktStructToReflect(json) {
+    const struct = {
+      $typeName: "google.protobuf.Struct",
+      fields: {}
+    };
+    if (isObject(json)) {
+      for (const [k, v] of Object.entries(json)) {
+        struct.fields[k] = wktValueToReflect(v);
+      }
+    }
+    return struct;
+  }
+  function wktStructToLocal(val) {
+    const json = {};
+    for (const [k, v] of Object.entries(val.fields)) {
+      json[k] = wktValueToLocal(v);
+    }
+    return json;
+  }
+  function wktValueToLocal(val) {
+    switch (val.kind.case) {
+      case "structValue":
+        return wktStructToLocal(val.kind.value);
+      case "listValue":
+        return val.kind.value.values.map(wktValueToLocal);
+      case "nullValue":
+      case void 0:
+        return null;
+      default:
+        return val.kind.value;
+    }
+  }
+  function wktValueToReflect(json) {
+    const value = {
+      $typeName: "google.protobuf.Value",
+      kind: { case: void 0 }
+    };
+    switch (typeof json) {
+      case "number":
+        value.kind = { case: "numberValue", value: json };
+        break;
+      case "string":
+        value.kind = { case: "stringValue", value: json };
+        break;
+      case "boolean":
+        value.kind = { case: "boolValue", value: json };
+        break;
+      case "object":
+        if (json === null) {
+          const nullValue = 0;
+          value.kind = { case: "nullValue", value: nullValue };
+        } else if (Array.isArray(json)) {
+          const listValue = {
+            $typeName: "google.protobuf.ListValue",
+            values: []
+          };
+          if (Array.isArray(json)) {
+            for (const e of json) {
+              listValue.values.push(wktValueToReflect(e));
+            }
+          }
+          value.kind = {
+            case: "listValue",
+            value: listValue
+          };
+        } else {
+          value.kind = {
+            case: "structValue",
+            value: wktStructToReflect(json)
+          };
+        }
+        break;
+    }
+    return value;
+  }
+  function base64Decode(base64Str) {
+    const table = getDecodeTable();
+    let es = base64Str.length * 3 / 4;
+    if (base64Str[base64Str.length - 2] == "=")
+      es -= 2;
+    else if (base64Str[base64Str.length - 1] == "=")
+      es -= 1;
+    let bytes = new Uint8Array(es), bytePos = 0, groupPos = 0, b, p = 0;
+    for (let i = 0; i < base64Str.length; i++) {
+      b = table[base64Str.charCodeAt(i)];
+      if (b === void 0) {
+        switch (base64Str[i]) {
+case "=":
+            groupPos = 0;
+case "\n":
+          case "\r":
+          case "	":
+          case " ":
+            continue;
+default:
+            throw Error("invalid base64 string");
+        }
+      }
+      switch (groupPos) {
+        case 0:
+          p = b;
+          groupPos = 1;
+          break;
+        case 1:
+          bytes[bytePos++] = p << 2 | (b & 48) >> 4;
+          p = b;
+          groupPos = 2;
+          break;
+        case 2:
+          bytes[bytePos++] = (p & 15) << 4 | (b & 60) >> 2;
+          p = b;
+          groupPos = 3;
+          break;
+        case 3:
+          bytes[bytePos++] = (p & 3) << 6 | b;
+          groupPos = 0;
+          break;
+      }
+    }
+    if (groupPos == 1)
+      throw Error("invalid base64 string");
+    return bytes.subarray(0, bytePos);
+  }
+  let encodeTableStd;
+  let decodeTable;
+  function getEncodeTable(encoding) {
+    if (!encodeTableStd) {
+      encodeTableStd = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
+      encodeTableStd.slice(0, -2).concat("-", "_");
+    }
+    return encodeTableStd;
+  }
+  function getDecodeTable() {
+    if (!decodeTable) {
+      decodeTable = [];
+      const encodeTable = getEncodeTable();
+      for (let i = 0; i < encodeTable.length; i++)
+        decodeTable[encodeTable[i].charCodeAt(0)] = i;
+      decodeTable["-".charCodeAt(0)] = encodeTable.indexOf("+");
+      decodeTable["_".charCodeAt(0)] = encodeTable.indexOf("/");
+    }
+    return decodeTable;
+  }
+  function protoCamelCase(snakeCase) {
+    let capNext = false;
+    const b = [];
+    for (let i = 0; i < snakeCase.length; i++) {
+      let c = snakeCase.charAt(i);
+      switch (c) {
+        case "_":
+          capNext = true;
+          break;
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9":
+          b.push(c);
+          capNext = false;
+          break;
+        default:
+          if (capNext) {
+            capNext = false;
+            c = c.toUpperCase();
+          }
+          b.push(c);
+          break;
+      }
+    }
+    return b.join("");
+  }
+  const reservedObjectProperties = new Set([
+"constructor",
+    "toString",
+    "toJSON",
+    "valueOf"
+  ]);
+  function safeObjectProperty(name) {
+    return reservedObjectProperties.has(name) ? name + "$" : name;
+  }
+  function restoreJsonNames(message) {
+    for (const f of message.field) {
+      if (!unsafeIsSetExplicit(f, "jsonName")) {
+        f.jsonName = protoCamelCase(f.name);
+      }
+    }
+    message.nestedType.forEach(restoreJsonNames);
+  }
+  function parseTextFormatEnumValue(descEnum, value) {
+    const enumValue = descEnum.values.find((v) => v.name === value);
+    if (!enumValue) {
+      throw new Error(`cannot parse ${descEnum} default value: ${value}`);
+    }
+    return enumValue.number;
+  }
+  function parseTextFormatScalarValue(type, value) {
+    switch (type) {
+      case ScalarType.STRING:
+        return value;
+      case ScalarType.BYTES: {
+        const u = unescapeBytesDefaultValue(value);
+        if (u === false) {
+          throw new Error(`cannot parse ${ScalarType[type]} default value: ${value}`);
+        }
+        return u;
+      }
+      case ScalarType.INT64:
+      case ScalarType.SFIXED64:
+      case ScalarType.SINT64:
+        return protoInt64.parse(value);
+      case ScalarType.UINT64:
+      case ScalarType.FIXED64:
+        return protoInt64.uParse(value);
+      case ScalarType.DOUBLE:
+      case ScalarType.FLOAT:
+        switch (value) {
+          case "inf":
+            return Number.POSITIVE_INFINITY;
+          case "-inf":
+            return Number.NEGATIVE_INFINITY;
+          case "nan":
+            return Number.NaN;
+          default:
+            return parseFloat(value);
+        }
+      case ScalarType.BOOL:
+        return value === "true";
+      case ScalarType.INT32:
+      case ScalarType.UINT32:
+      case ScalarType.SINT32:
+      case ScalarType.FIXED32:
+      case ScalarType.SFIXED32:
+        return parseInt(value, 10);
+    }
+  }
+  function unescapeBytesDefaultValue(str) {
+    const b = [];
+    const input = {
+      tail: str,
+      c: "",
+      next() {
+        if (this.tail.length == 0) {
+          return false;
+        }
+        this.c = this.tail[0];
+        this.tail = this.tail.substring(1);
+        return true;
+      },
+      take(n) {
+        if (this.tail.length >= n) {
+          const r2 = this.tail.substring(0, n);
+          this.tail = this.tail.substring(n);
+          return r2;
+        }
+        return false;
+      }
+    };
+    while (input.next()) {
+      switch (input.c) {
+        case "\\":
+          if (input.next()) {
+            switch (input.c) {
+              case "\\":
+                b.push(input.c.charCodeAt(0));
+                break;
+              case "b":
+                b.push(8);
+                break;
+              case "f":
+                b.push(12);
+                break;
+              case "n":
+                b.push(10);
+                break;
+              case "r":
+                b.push(13);
+                break;
+              case "t":
+                b.push(9);
+                break;
+              case "v":
+                b.push(11);
+                break;
+              case "0":
+              case "1":
+              case "2":
+              case "3":
+              case "4":
+              case "5":
+              case "6":
+              case "7": {
+                const s = input.c;
+                const t = input.take(2);
+                if (t === false) {
+                  return false;
+                }
+                const n = parseInt(s + t, 8);
+                if (Number.isNaN(n)) {
+                  return false;
+                }
+                b.push(n);
+                break;
+              }
+              case "x": {
+                const s = input.c;
+                const t = input.take(2);
+                if (t === false) {
+                  return false;
+                }
+                const n = parseInt(s + t, 16);
+                if (Number.isNaN(n)) {
+                  return false;
+                }
+                b.push(n);
+                break;
+              }
+              case "u": {
+                const s = input.c;
+                const t = input.take(4);
+                if (t === false) {
+                  return false;
+                }
+                const n = parseInt(s + t, 16);
+                if (Number.isNaN(n)) {
+                  return false;
+                }
+                const chunk = new Uint8Array(4);
+                const view = new DataView(chunk.buffer);
+                view.setInt32(0, n, true);
+                b.push(chunk[0], chunk[1], chunk[2], chunk[3]);
+                break;
+              }
+              case "U": {
+                const s = input.c;
+                const t = input.take(8);
+                if (t === false) {
+                  return false;
+                }
+                const tc = protoInt64.uEnc(s + t);
+                const chunk = new Uint8Array(8);
+                const view = new DataView(chunk.buffer);
+                view.setInt32(0, tc.lo, true);
+                view.setInt32(4, tc.hi, true);
+                b.push(chunk[0], chunk[1], chunk[2], chunk[3], chunk[4], chunk[5], chunk[6], chunk[7]);
+                break;
+              }
+            }
+          }
+          break;
+        default:
+          b.push(input.c.charCodeAt(0));
+      }
+    }
+    return new Uint8Array(b);
+  }
+  function* nestedTypes(desc) {
+    switch (desc.kind) {
+      case "file":
+        for (const message of desc.messages) {
+          yield message;
+          yield* nestedTypes(message);
+        }
+        yield* desc.enums;
+        yield* desc.services;
+        yield* desc.extensions;
+        break;
+      case "message":
+        for (const message of desc.nestedMessages) {
+          yield message;
+          yield* nestedTypes(message);
+        }
+        yield* desc.nestedEnums;
+        yield* desc.nestedExtensions;
+        break;
+    }
+  }
+  function createFileRegistry(...args) {
+    const registry = createBaseRegistry();
+    if (!args.length) {
+      return registry;
+    }
+    if ("$typeName" in args[0] && args[0].$typeName == "google.protobuf.FileDescriptorSet") {
+      for (const file of args[0].file) {
+        addFile(file, registry);
+      }
+      return registry;
+    }
+    if ("$typeName" in args[0]) {
+      let recurseDeps2 = function(file) {
+        const deps = [];
+        for (const protoFileName of file.dependency) {
+          if (registry.getFile(protoFileName) != void 0) {
+            continue;
+          }
+          if (seen.has(protoFileName)) {
+            continue;
+          }
+          const dep = resolve(protoFileName);
+          if (!dep) {
+            throw new Error(`Unable to resolve ${protoFileName}, imported by ${file.name}`);
+          }
+          if ("kind" in dep) {
+            registry.addFile(dep, false, true);
+          } else {
+            seen.add(dep.name);
+            deps.push(dep);
+          }
+        }
+        return deps.concat(...deps.map(recurseDeps2));
+      };
+      const input = args[0];
+      const resolve = args[1];
+      const seen = new Set();
+      for (const file of [input, ...recurseDeps2(input)].reverse()) {
+        addFile(file, registry);
+      }
+    } else {
+      for (const fileReg of args) {
+        for (const file of fileReg.files) {
+          registry.addFile(file);
+        }
+      }
+    }
+    return registry;
+  }
+  function createBaseRegistry() {
+    const types = new Map();
+    const extendees = new Map();
+    const files = new Map();
+    return {
+      kind: "registry",
+      types,
+      extendees,
+      [Symbol.iterator]() {
+        return types.values();
+      },
+      get files() {
+        return files.values();
+      },
+      addFile(file, skipTypes, withDeps) {
+        files.set(file.proto.name, file);
+        if (!skipTypes) {
+          for (const type of nestedTypes(file)) {
+            this.add(type);
+          }
+        }
+        if (withDeps) {
+          for (const f of file.dependencies) {
+            this.addFile(f, skipTypes, withDeps);
+          }
+        }
+      },
+      add(desc) {
+        if (desc.kind == "extension") {
+          let numberToExt = extendees.get(desc.extendee.typeName);
+          if (!numberToExt) {
+            extendees.set(
+              desc.extendee.typeName,
+numberToExt = new Map()
+            );
+          }
+          numberToExt.set(desc.number, desc);
+        }
+        types.set(desc.typeName, desc);
+      },
+      get(typeName) {
+        return types.get(typeName);
+      },
+      getFile(fileName) {
+        return files.get(fileName);
+      },
+      getMessage(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "message" ? t : void 0;
+      },
+      getEnum(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "enum" ? t : void 0;
+      },
+      getExtension(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "extension" ? t : void 0;
+      },
+      getExtensionFor(extendee, no) {
+        var _a;
+        return (_a = extendees.get(extendee.typeName)) === null || _a === void 0 ? void 0 : _a.get(no);
+      },
+      getService(typeName) {
+        const t = types.get(typeName);
+        return (t === null || t === void 0 ? void 0 : t.kind) == "service" ? t : void 0;
+      }
+    };
+  }
+  const EDITION_PROTO2 = 998;
+  const EDITION_PROTO3 = 999;
+  const EDITION_UNSTABLE = 9999;
+  const TYPE_STRING = 9;
+  const TYPE_GROUP = 10;
+  const TYPE_MESSAGE = 11;
+  const TYPE_BYTES = 12;
+  const TYPE_ENUM = 14;
+  const LABEL_REPEATED = 3;
+  const LABEL_REQUIRED = 2;
+  const JS_STRING = 1;
+  const IDEMPOTENCY_UNKNOWN = 0;
+  const EXPLICIT = 1;
+  const IMPLICIT = 2;
+  const LEGACY_REQUIRED = 3;
+  const PACKED = 1;
+  const DELIMITED = 2;
+  const OPEN = 1;
+  const VERIFY = 2;
+  const maximumEdition = 1001;
+  const featureDefaults = {
+998: {
+      fieldPresence: 1,
+enumType: 2,
+repeatedFieldEncoding: 2,
+utf8Validation: 3,
+messageEncoding: 1,
+jsonFormat: 2,
+enforceNamingStyle: 2,
+defaultSymbolVisibility: 1
+},
+999: {
+      fieldPresence: 2,
+enumType: 1,
+repeatedFieldEncoding: 1,
+utf8Validation: 2,
+messageEncoding: 1,
+jsonFormat: 1,
+enforceNamingStyle: 2,
+defaultSymbolVisibility: 1
+},
+1e3: {
+      fieldPresence: 1,
+enumType: 1,
+repeatedFieldEncoding: 1,
+utf8Validation: 2,
+messageEncoding: 1,
+jsonFormat: 1,
+enforceNamingStyle: 2,
+defaultSymbolVisibility: 1
+},
+1001: {
+      fieldPresence: 1,
+enumType: 1,
+repeatedFieldEncoding: 1,
+utf8Validation: 2,
+messageEncoding: 1,
+jsonFormat: 1,
+enforceNamingStyle: 1,
+defaultSymbolVisibility: 2
+}
+  };
+  function addFile(proto, reg) {
+    var _a, _b;
+    const file = {
+      kind: "file",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      edition: getFileEdition(proto),
+      name: proto.name.replace(/\.proto$/, ""),
+      dependencies: findFileDependencies(proto, reg),
+      enums: [],
+      messages: [],
+      extensions: [],
+      services: [],
+      toString() {
+        return `file ${proto.name}`;
+      }
+    };
+    const mapEntriesStore = new Map();
+    const mapEntries = {
+      get(typeName) {
+        return mapEntriesStore.get(typeName);
+      },
+      add(desc) {
+        var _a2;
+        assert(((_a2 = desc.proto.options) === null || _a2 === void 0 ? void 0 : _a2.mapEntry) === true);
+        mapEntriesStore.set(desc.typeName, desc);
+      }
+    };
+    for (const enumProto of proto.enumType) {
+      addEnum(enumProto, file, void 0, reg);
+    }
+    for (const messageProto of proto.messageType) {
+      addMessage(messageProto, file, void 0, reg, mapEntries);
+    }
+    for (const serviceProto of proto.service) {
+      addService(serviceProto, file, reg);
+    }
+    addExtensions(file, reg);
+    for (const mapEntry of mapEntriesStore.values()) {
+      addFields(mapEntry, reg, mapEntries);
+    }
+    for (const message of file.messages) {
+      addFields(message, reg, mapEntries);
+      addExtensions(message, reg);
+    }
+    reg.addFile(file, true);
+  }
+  function addExtensions(desc, reg) {
+    switch (desc.kind) {
+      case "file":
+        for (const proto of desc.proto.extension) {
+          const ext = newField(proto, desc, reg);
+          desc.extensions.push(ext);
+          reg.add(ext);
+        }
+        break;
+      case "message":
+        for (const proto of desc.proto.extension) {
+          const ext = newField(proto, desc, reg);
+          desc.nestedExtensions.push(ext);
+          reg.add(ext);
+        }
+        for (const message of desc.nestedMessages) {
+          addExtensions(message, reg);
+        }
+        break;
+    }
+  }
+  function addFields(message, reg, mapEntries) {
+    const allOneofs = message.proto.oneofDecl.map((proto) => newOneof(proto, message));
+    const oneofsSeen = new Set();
+    for (const proto of message.proto.field) {
+      const oneof = findOneof(proto, allOneofs);
+      const field = newField(proto, message, reg, oneof, mapEntries);
+      message.fields.push(field);
+      message.field[field.localName] = field;
+      if (oneof === void 0) {
+        message.members.push(field);
+      } else {
+        oneof.fields.push(field);
+        if (!oneofsSeen.has(oneof)) {
+          oneofsSeen.add(oneof);
+          message.members.push(oneof);
+        }
+      }
+    }
+    for (const oneof of allOneofs.filter((o) => oneofsSeen.has(o))) {
+      message.oneofs.push(oneof);
+    }
+    for (const child of message.nestedMessages) {
+      addFields(child, reg, mapEntries);
+    }
+  }
+  function addEnum(proto, file, parent, reg) {
+    var _a, _b, _c, _d, _e;
+    const sharedPrefix = findEnumSharedPrefix(proto.name, proto.value);
+    const desc = {
+      kind: "enum",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      file,
+      parent,
+      open: true,
+      name: proto.name,
+      typeName: makeTypeName(proto, parent, file),
+      value: {},
+      values: [],
+      sharedPrefix,
+      toString() {
+        return `enum ${this.typeName}`;
+      }
+    };
+    desc.open = isEnumOpen(desc);
+    reg.add(desc);
+    for (const p of proto.value) {
+      const name = p.name;
+      desc.values.push(
+desc.value[p.number] = {
+          kind: "enum_value",
+          proto: p,
+          deprecated: (_d = (_c = p.options) === null || _c === void 0 ? void 0 : _c.deprecated) !== null && _d !== void 0 ? _d : false,
+          parent: desc,
+          name,
+          localName: safeObjectProperty(sharedPrefix == void 0 ? name : name.substring(sharedPrefix.length)),
+          number: p.number,
+          toString() {
+            return `enum value ${desc.typeName}.${name}`;
+          }
+        }
+      );
+    }
+    ((_e = parent === null || parent === void 0 ? void 0 : parent.nestedEnums) !== null && _e !== void 0 ? _e : file.enums).push(desc);
+  }
+  function addMessage(proto, file, parent, reg, mapEntries) {
+    var _a, _b, _c, _d;
+    const desc = {
+      kind: "message",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      file,
+      parent,
+      name: proto.name,
+      typeName: makeTypeName(proto, parent, file),
+      fields: [],
+      field: {},
+      oneofs: [],
+      members: [],
+      nestedEnums: [],
+      nestedMessages: [],
+      nestedExtensions: [],
+      toString() {
+        return `message ${this.typeName}`;
+      }
+    };
+    if (((_c = proto.options) === null || _c === void 0 ? void 0 : _c.mapEntry) === true) {
+      mapEntries.add(desc);
+    } else {
+      ((_d = parent === null || parent === void 0 ? void 0 : parent.nestedMessages) !== null && _d !== void 0 ? _d : file.messages).push(desc);
+      reg.add(desc);
+    }
+    for (const enumProto of proto.enumType) {
+      addEnum(enumProto, file, desc, reg);
+    }
+    for (const messageProto of proto.nestedType) {
+      addMessage(messageProto, file, desc, reg, mapEntries);
+    }
+  }
+  function addService(proto, file, reg) {
+    var _a, _b;
+    const desc = {
+      kind: "service",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      file,
+      name: proto.name,
+      typeName: makeTypeName(proto, void 0, file),
+      methods: [],
+      method: {},
+      toString() {
+        return `service ${this.typeName}`;
+      }
+    };
+    file.services.push(desc);
+    reg.add(desc);
+    for (const methodProto of proto.method) {
+      const method = newMethod(methodProto, desc, reg);
+      desc.methods.push(method);
+      desc.method[method.localName] = method;
+    }
+  }
+  function newMethod(proto, parent, reg) {
+    var _a, _b, _c, _d;
+    let methodKind;
+    if (proto.clientStreaming && proto.serverStreaming) {
+      methodKind = "bidi_streaming";
+    } else if (proto.clientStreaming) {
+      methodKind = "client_streaming";
+    } else if (proto.serverStreaming) {
+      methodKind = "server_streaming";
+    } else {
+      methodKind = "unary";
+    }
+    const input = reg.getMessage(trimLeadingDot(proto.inputType));
+    const output = reg.getMessage(trimLeadingDot(proto.outputType));
+    assert(input, `invalid MethodDescriptorProto: input_type ${proto.inputType} not found`);
+    assert(output, `invalid MethodDescriptorProto: output_type ${proto.inputType} not found`);
+    const name = proto.name;
+    return {
+      kind: "rpc",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      parent,
+      name,
+      localName: safeObjectProperty(name.length ? safeObjectProperty(name[0].toLowerCase() + name.substring(1)) : name),
+      methodKind,
+      input,
+      output,
+      idempotency: (_d = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.idempotencyLevel) !== null && _d !== void 0 ? _d : IDEMPOTENCY_UNKNOWN,
+      toString() {
+        return `rpc ${parent.typeName}.${name}`;
+      }
+    };
+  }
+  function newOneof(proto, parent) {
+    return {
+      kind: "oneof",
+      proto,
+      deprecated: false,
+      parent,
+      fields: [],
+      name: proto.name,
+      localName: safeObjectProperty(protoCamelCase(proto.name)),
+      toString() {
+        return `oneof ${parent.typeName}.${this.name}`;
+      }
+    };
+  }
+  function newField(proto, parentOrFile, reg, oneof, mapEntries) {
+    var _a, _b, _c;
+    const isExtension = mapEntries === void 0;
+    const field = {
+      kind: "field",
+      proto,
+      deprecated: (_b = (_a = proto.options) === null || _a === void 0 ? void 0 : _a.deprecated) !== null && _b !== void 0 ? _b : false,
+      name: proto.name,
+      number: proto.number,
+      scalar: void 0,
+      message: void 0,
+      enum: void 0,
+      presence: getFieldPresence(proto, oneof, isExtension, parentOrFile),
+      utf8Validation: isUtf8Validated(proto, parentOrFile),
+      listKind: void 0,
+      mapKind: void 0,
+      mapKey: void 0,
+      delimitedEncoding: void 0,
+      packed: void 0,
+      longAsString: false,
+      getDefaultValue: void 0
+    };
+    if (isExtension) {
+      const file = parentOrFile.kind == "file" ? parentOrFile : parentOrFile.file;
+      const parent = parentOrFile.kind == "file" ? void 0 : parentOrFile;
+      const typeName = makeTypeName(proto, parent, file);
+      field.kind = "extension";
+      field.file = file;
+      field.parent = parent;
+      field.oneof = void 0;
+      field.typeName = typeName;
+      field.jsonName = `[${typeName}]`;
+      field.toString = () => `extension ${typeName}`;
+      const extendee = reg.getMessage(trimLeadingDot(proto.extendee));
+      assert(extendee, `invalid FieldDescriptorProto: extendee ${proto.extendee} not found`);
+      field.extendee = extendee;
+    } else {
+      const parent = parentOrFile;
+      assert(parent.kind == "message");
+      field.parent = parent;
+      field.oneof = oneof;
+      field.localName = oneof ? protoCamelCase(proto.name) : safeObjectProperty(protoCamelCase(proto.name));
+      field.jsonName = proto.jsonName;
+      field.toString = () => `field ${parent.typeName}.${proto.name}`;
+    }
+    const label = proto.label;
+    const type = proto.type;
+    const jstype = (_c = proto.options) === null || _c === void 0 ? void 0 : _c.jstype;
+    if (label === LABEL_REPEATED) {
+      const mapEntry = type == TYPE_MESSAGE ? mapEntries === null || mapEntries === void 0 ? void 0 : mapEntries.get(trimLeadingDot(proto.typeName)) : void 0;
+      if (mapEntry) {
+        field.fieldKind = "map";
+        const { key, value } = findMapEntryFields(mapEntry);
+        field.mapKey = key.scalar;
+        field.mapKind = value.fieldKind;
+        field.message = value.message;
+        field.delimitedEncoding = false;
+        field.enum = value.enum;
+        field.scalar = value.scalar;
+        return field;
+      }
+      field.fieldKind = "list";
+      switch (type) {
+        case TYPE_MESSAGE:
+        case TYPE_GROUP:
+          field.listKind = "message";
+          field.message = reg.getMessage(trimLeadingDot(proto.typeName));
+          assert(field.message);
+          field.delimitedEncoding = isDelimitedEncoding(proto, parentOrFile);
+          break;
+        case TYPE_ENUM:
+          field.listKind = "enum";
+          field.enum = reg.getEnum(trimLeadingDot(proto.typeName));
+          assert(field.enum);
+          break;
+        default:
+          field.listKind = "scalar";
+          field.scalar = type;
+          field.longAsString = jstype == JS_STRING;
+          break;
+      }
+      field.packed = isPackedField(proto, parentOrFile);
+      return field;
+    }
+    switch (type) {
+      case TYPE_MESSAGE:
+      case TYPE_GROUP:
+        field.fieldKind = "message";
+        field.message = reg.getMessage(trimLeadingDot(proto.typeName));
+        assert(field.message, `invalid FieldDescriptorProto: type_name ${proto.typeName} not found`);
+        field.delimitedEncoding = isDelimitedEncoding(proto, parentOrFile);
+        field.getDefaultValue = () => void 0;
+        break;
+      case TYPE_ENUM: {
+        const enumeration = reg.getEnum(trimLeadingDot(proto.typeName));
+        assert(enumeration !== void 0, `invalid FieldDescriptorProto: type_name ${proto.typeName} not found`);
+        field.fieldKind = "enum";
+        field.enum = reg.getEnum(trimLeadingDot(proto.typeName));
+        field.getDefaultValue = () => {
+          return unsafeIsSetExplicit(proto, "defaultValue") ? parseTextFormatEnumValue(enumeration, proto.defaultValue) : void 0;
+        };
+        break;
+      }
+      default: {
+        field.fieldKind = "scalar";
+        field.scalar = type;
+        field.longAsString = jstype == JS_STRING;
+        field.getDefaultValue = () => {
+          return unsafeIsSetExplicit(proto, "defaultValue") ? parseTextFormatScalarValue(type, proto.defaultValue) : void 0;
+        };
+        break;
+      }
+    }
+    return field;
+  }
+  function getFileEdition(proto) {
+    switch (proto.syntax) {
+      case "":
+      case "proto2":
+        return EDITION_PROTO2;
+      case "proto3":
+        return EDITION_PROTO3;
+      case "editions":
+        if (proto.edition === EDITION_UNSTABLE) {
+          return maximumEdition;
+        }
+        if (proto.edition in featureDefaults) {
+          return proto.edition;
+        }
+        throw new Error(`${proto.name}: unsupported edition`);
+      default:
+        throw new Error(`${proto.name}: unsupported syntax "${proto.syntax}"`);
+    }
+  }
+  function findFileDependencies(proto, reg) {
+    return proto.dependency.map((wantName) => {
+      const dep = reg.getFile(wantName);
+      if (!dep) {
+        throw new Error(`Cannot find ${wantName}, imported by ${proto.name}`);
+      }
+      return dep;
+    });
+  }
+  function findEnumSharedPrefix(enumName, values) {
+    const prefix = camelToSnakeCase(enumName) + "_";
+    for (const value of values) {
+      if (!value.name.toLowerCase().startsWith(prefix)) {
+        return void 0;
+      }
+      const shortName = value.name.substring(prefix.length);
+      if (shortName.length == 0) {
+        return void 0;
+      }
+      if (/^\d/.test(shortName)) {
+        return void 0;
+      }
+    }
+    return prefix;
+  }
+  function camelToSnakeCase(camel) {
+    return (camel.substring(0, 1) + camel.substring(1).replace(/[A-Z]/g, (c) => "_" + c)).toLowerCase();
+  }
+  function makeTypeName(proto, parent, file) {
+    let typeName;
+    if (parent) {
+      typeName = `${parent.typeName}.${proto.name}`;
+    } else if (file.proto.package.length > 0) {
+      typeName = `${file.proto.package}.${proto.name}`;
+    } else {
+      typeName = `${proto.name}`;
+    }
+    return typeName;
+  }
+  function trimLeadingDot(typeName) {
+    return typeName.startsWith(".") ? typeName.substring(1) : typeName;
+  }
+  function findOneof(proto, allOneofs) {
+    if (!unsafeIsSetExplicit(proto, "oneofIndex")) {
+      return void 0;
+    }
+    if (proto.proto3Optional) {
+      return void 0;
+    }
+    const oneof = allOneofs[proto.oneofIndex];
+    assert(oneof, `invalid FieldDescriptorProto: oneof #${proto.oneofIndex} for field #${proto.number} not found`);
+    return oneof;
+  }
+  function getFieldPresence(proto, oneof, isExtension, parent) {
+    if (proto.label == LABEL_REQUIRED) {
+      return LEGACY_REQUIRED;
+    }
+    if (proto.label == LABEL_REPEATED) {
+      return IMPLICIT;
+    }
+    if (!!oneof || proto.proto3Optional) {
+      return EXPLICIT;
+    }
+    if (isExtension) {
+      return EXPLICIT;
+    }
+    const resolved = resolveFeature("fieldPresence", { proto, parent });
+    if (resolved == IMPLICIT && (proto.type == TYPE_MESSAGE || proto.type == TYPE_GROUP)) {
+      return EXPLICIT;
+    }
+    return resolved;
+  }
+  function isPackedField(proto, parent) {
+    if (proto.label != LABEL_REPEATED) {
+      return false;
+    }
+    switch (proto.type) {
+      case TYPE_STRING:
+      case TYPE_BYTES:
+      case TYPE_GROUP:
+      case TYPE_MESSAGE:
+        return false;
+    }
+    const o = proto.options;
+    if (o && unsafeIsSetExplicit(o, "packed")) {
+      return o.packed;
+    }
+    return PACKED == resolveFeature("repeatedFieldEncoding", {
+      proto,
+      parent
+    });
+  }
+  function findMapEntryFields(mapEntry) {
+    const key = mapEntry.fields.find((f) => f.number === 1);
+    const value = mapEntry.fields.find((f) => f.number === 2);
+    assert(key && key.fieldKind == "scalar" && key.scalar != ScalarType.BYTES && key.scalar != ScalarType.FLOAT && key.scalar != ScalarType.DOUBLE && value && value.fieldKind != "list" && value.fieldKind != "map");
+    return { key, value };
+  }
+  function isEnumOpen(desc) {
+    var _a;
+    return OPEN == resolveFeature("enumType", {
+      proto: desc.proto,
+      parent: (_a = desc.parent) !== null && _a !== void 0 ? _a : desc.file
+    });
+  }
+  function isDelimitedEncoding(proto, parent) {
+    if (proto.type == TYPE_GROUP) {
+      return true;
+    }
+    return DELIMITED == resolveFeature("messageEncoding", {
+      proto,
+      parent
+    });
+  }
+  function isUtf8Validated(proto, parent) {
+    return VERIFY == resolveFeature("utf8Validation", {
+      proto,
+      parent
+    });
+  }
+  function resolveFeature(name, ref) {
+    var _a, _b;
+    const featureSet = (_a = ref.proto.options) === null || _a === void 0 ? void 0 : _a.features;
+    if (featureSet) {
+      const val = featureSet[name];
+      if (val != 0) {
+        return val;
+      }
+    }
+    if ("kind" in ref) {
+      if (ref.kind == "message") {
+        return resolveFeature(name, (_b = ref.parent) !== null && _b !== void 0 ? _b : ref.file);
+      }
+      const editionDefaults = featureDefaults[ref.edition];
+      if (!editionDefaults) {
+        throw new Error(`feature default for edition ${ref.edition} not found`);
+      }
+      return editionDefaults[name];
+    }
+    return resolveFeature(name, ref.parent);
+  }
+  function assert(condition, msg) {
+    if (!condition) {
+      throw new Error(msg);
+    }
+  }
+  function boot(boot2) {
+    const root = bootFileDescriptorProto(boot2);
+    root.messageType.forEach(restoreJsonNames);
+    const reg = createFileRegistry(root, () => void 0);
+    return reg.getFile(root.name);
+  }
+  function bootFileDescriptorProto(init) {
+    const proto = Object.create({
+      syntax: "",
+      edition: 0
+    });
+    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FileDescriptorProto", dependency: [], publicDependency: [], weakDependency: [], optionDependency: [], service: [], extension: [] }, init), { messageType: init.messageType.map(bootDescriptorProto), enumType: init.enumType.map(bootEnumDescriptorProto) }));
+  }
+  function bootDescriptorProto(init) {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    const proto = Object.create({
+      visibility: 0
+    });
+    return Object.assign(proto, {
+      $typeName: "google.protobuf.DescriptorProto",
+      name: init.name,
+      field: (_b = (_a = init.field) === null || _a === void 0 ? void 0 : _a.map(bootFieldDescriptorProto)) !== null && _b !== void 0 ? _b : [],
+      extension: [],
+      nestedType: (_d = (_c = init.nestedType) === null || _c === void 0 ? void 0 : _c.map(bootDescriptorProto)) !== null && _d !== void 0 ? _d : [],
+      enumType: (_f = (_e = init.enumType) === null || _e === void 0 ? void 0 : _e.map(bootEnumDescriptorProto)) !== null && _f !== void 0 ? _f : [],
+      extensionRange: (_h = (_g = init.extensionRange) === null || _g === void 0 ? void 0 : _g.map((e) => Object.assign({ $typeName: "google.protobuf.DescriptorProto.ExtensionRange" }, e))) !== null && _h !== void 0 ? _h : [],
+      oneofDecl: [],
+      reservedRange: [],
+      reservedName: []
+    });
+  }
+  function bootFieldDescriptorProto(init) {
+    const proto = Object.create({
+      label: 1,
+      typeName: "",
+      extendee: "",
+      defaultValue: "",
+      oneofIndex: 0,
+      jsonName: "",
+      proto3Optional: false
+    });
+    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FieldDescriptorProto" }, init), { options: init.options ? bootFieldOptions(init.options) : void 0 }));
+  }
+  function bootFieldOptions(init) {
+    var _a, _b, _c;
+    const proto = Object.create({
+      ctype: 0,
+      packed: false,
+      jstype: 0,
+      lazy: false,
+      unverifiedLazy: false,
+      deprecated: false,
+      weak: false,
+      debugRedact: false,
+      retention: 0
+    });
+    return Object.assign(proto, Object.assign(Object.assign({ $typeName: "google.protobuf.FieldOptions" }, init), { targets: (_a = init.targets) !== null && _a !== void 0 ? _a : [], editionDefaults: (_c = (_b = init.editionDefaults) === null || _b === void 0 ? void 0 : _b.map((e) => Object.assign({ $typeName: "google.protobuf.FieldOptions.EditionDefault" }, e))) !== null && _c !== void 0 ? _c : [], uninterpretedOption: [] }));
+  }
+  function bootEnumDescriptorProto(init) {
+    const proto = Object.create({
+      visibility: 0
+    });
+    return Object.assign(proto, {
+      $typeName: "google.protobuf.EnumDescriptorProto",
+      name: init.name,
+      reservedName: [],
+      reservedRange: [],
+      value: init.value.map((e) => Object.assign({ $typeName: "google.protobuf.EnumValueDescriptorProto" }, e))
+    });
+  }
+  function messageDesc(file, path, ...paths) {
+    return paths.reduce((acc, cur) => acc.nestedMessages[cur], file.messages[path]);
+  }
+  const file_google_protobuf_descriptor = boot({ "name": "google/protobuf/descriptor.proto", "package": "google.protobuf", "messageType": [{ "name": "FileDescriptorSet", "field": [{ "name": "file", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.FileDescriptorProto" }], "extensionRange": [{ "start": 536e6, "end": 536000001 }] }, { "name": "FileDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "package", "number": 2, "type": 9, "label": 1 }, { "name": "dependency", "number": 3, "type": 9, "label": 3 }, { "name": "public_dependency", "number": 10, "type": 5, "label": 3 }, { "name": "weak_dependency", "number": 11, "type": 5, "label": 3 }, { "name": "option_dependency", "number": 15, "type": 9, "label": 3 }, { "name": "message_type", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto" }, { "name": "enum_type", "number": 5, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto" }, { "name": "service", "number": 6, "type": 11, "label": 3, "typeName": ".google.protobuf.ServiceDescriptorProto" }, { "name": "extension", "number": 7, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "options", "number": 8, "type": 11, "label": 1, "typeName": ".google.protobuf.FileOptions" }, { "name": "source_code_info", "number": 9, "type": 11, "label": 1, "typeName": ".google.protobuf.SourceCodeInfo" }, { "name": "syntax", "number": 12, "type": 9, "label": 1 }, { "name": "edition", "number": 14, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }] }, { "name": "DescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "field", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "extension", "number": 6, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldDescriptorProto" }, { "name": "nested_type", "number": 3, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto" }, { "name": "enum_type", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto" }, { "name": "extension_range", "number": 5, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto.ExtensionRange" }, { "name": "oneof_decl", "number": 8, "type": 11, "label": 3, "typeName": ".google.protobuf.OneofDescriptorProto" }, { "name": "options", "number": 7, "type": 11, "label": 1, "typeName": ".google.protobuf.MessageOptions" }, { "name": "reserved_range", "number": 9, "type": 11, "label": 3, "typeName": ".google.protobuf.DescriptorProto.ReservedRange" }, { "name": "reserved_name", "number": 10, "type": 9, "label": 3 }, { "name": "visibility", "number": 11, "type": 14, "label": 1, "typeName": ".google.protobuf.SymbolVisibility" }], "nestedType": [{ "name": "ExtensionRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.ExtensionRangeOptions" }] }, { "name": "ReservedRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }] }] }, { "name": "ExtensionRangeOptions", "field": [{ "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }, { "name": "declaration", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.ExtensionRangeOptions.Declaration", "options": { "retention": 2 } }, { "name": "features", "number": 50, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "verification", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.ExtensionRangeOptions.VerificationState", "defaultValue": "UNVERIFIED", "options": { "retention": 2 } }], "nestedType": [{ "name": "Declaration", "field": [{ "name": "number", "number": 1, "type": 5, "label": 1 }, { "name": "full_name", "number": 2, "type": 9, "label": 1 }, { "name": "type", "number": 3, "type": 9, "label": 1 }, { "name": "reserved", "number": 5, "type": 8, "label": 1 }, { "name": "repeated", "number": 6, "type": 8, "label": 1 }] }], "enumType": [{ "name": "VerificationState", "value": [{ "name": "DECLARATION", "number": 0 }, { "name": "UNVERIFIED", "number": 1 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "FieldDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "number", "number": 3, "type": 5, "label": 1 }, { "name": "label", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldDescriptorProto.Label" }, { "name": "type", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldDescriptorProto.Type" }, { "name": "type_name", "number": 6, "type": 9, "label": 1 }, { "name": "extendee", "number": 2, "type": 9, "label": 1 }, { "name": "default_value", "number": 7, "type": 9, "label": 1 }, { "name": "oneof_index", "number": 9, "type": 5, "label": 1 }, { "name": "json_name", "number": 10, "type": 9, "label": 1 }, { "name": "options", "number": 8, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions" }, { "name": "proto3_optional", "number": 17, "type": 8, "label": 1 }], "enumType": [{ "name": "Type", "value": [{ "name": "TYPE_DOUBLE", "number": 1 }, { "name": "TYPE_FLOAT", "number": 2 }, { "name": "TYPE_INT64", "number": 3 }, { "name": "TYPE_UINT64", "number": 4 }, { "name": "TYPE_INT32", "number": 5 }, { "name": "TYPE_FIXED64", "number": 6 }, { "name": "TYPE_FIXED32", "number": 7 }, { "name": "TYPE_BOOL", "number": 8 }, { "name": "TYPE_STRING", "number": 9 }, { "name": "TYPE_GROUP", "number": 10 }, { "name": "TYPE_MESSAGE", "number": 11 }, { "name": "TYPE_BYTES", "number": 12 }, { "name": "TYPE_UINT32", "number": 13 }, { "name": "TYPE_ENUM", "number": 14 }, { "name": "TYPE_SFIXED32", "number": 15 }, { "name": "TYPE_SFIXED64", "number": 16 }, { "name": "TYPE_SINT32", "number": 17 }, { "name": "TYPE_SINT64", "number": 18 }] }, { "name": "Label", "value": [{ "name": "LABEL_OPTIONAL", "number": 1 }, { "name": "LABEL_REPEATED", "number": 3 }, { "name": "LABEL_REQUIRED", "number": 2 }] }] }, { "name": "OneofDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "options", "number": 2, "type": 11, "label": 1, "typeName": ".google.protobuf.OneofOptions" }] }, { "name": "EnumDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "value", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumValueDescriptorProto" }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.EnumOptions" }, { "name": "reserved_range", "number": 4, "type": 11, "label": 3, "typeName": ".google.protobuf.EnumDescriptorProto.EnumReservedRange" }, { "name": "reserved_name", "number": 5, "type": 9, "label": 3 }, { "name": "visibility", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.SymbolVisibility" }], "nestedType": [{ "name": "EnumReservedRange", "field": [{ "name": "start", "number": 1, "type": 5, "label": 1 }, { "name": "end", "number": 2, "type": 5, "label": 1 }] }] }, { "name": "EnumValueDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "number", "number": 2, "type": 5, "label": 1 }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.EnumValueOptions" }] }, { "name": "ServiceDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "method", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.MethodDescriptorProto" }, { "name": "options", "number": 3, "type": 11, "label": 1, "typeName": ".google.protobuf.ServiceOptions" }] }, { "name": "MethodDescriptorProto", "field": [{ "name": "name", "number": 1, "type": 9, "label": 1 }, { "name": "input_type", "number": 2, "type": 9, "label": 1 }, { "name": "output_type", "number": 3, "type": 9, "label": 1 }, { "name": "options", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.MethodOptions" }, { "name": "client_streaming", "number": 5, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "server_streaming", "number": 6, "type": 8, "label": 1, "defaultValue": "false" }] }, { "name": "FileOptions", "field": [{ "name": "java_package", "number": 1, "type": 9, "label": 1 }, { "name": "java_outer_classname", "number": 8, "type": 9, "label": 1 }, { "name": "java_multiple_files", "number": 10, "type": 8, "label": 1, "defaultValue": "false", "options": {} }, { "name": "java_generate_equals_and_hash", "number": 20, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "java_string_check_utf8", "number": 27, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "optimize_for", "number": 9, "type": 14, "label": 1, "typeName": ".google.protobuf.FileOptions.OptimizeMode", "defaultValue": "SPEED" }, { "name": "go_package", "number": 11, "type": 9, "label": 1 }, { "name": "cc_generic_services", "number": 16, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "java_generic_services", "number": 17, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "py_generic_services", "number": 18, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 23, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "cc_enable_arenas", "number": 31, "type": 8, "label": 1, "defaultValue": "true" }, { "name": "objc_class_prefix", "number": 36, "type": 9, "label": 1 }, { "name": "csharp_namespace", "number": 37, "type": 9, "label": 1 }, { "name": "swift_prefix", "number": 39, "type": 9, "label": 1 }, { "name": "php_class_prefix", "number": 40, "type": 9, "label": 1 }, { "name": "php_namespace", "number": 41, "type": 9, "label": 1 }, { "name": "php_metadata_namespace", "number": 44, "type": 9, "label": 1 }, { "name": "ruby_package", "number": 45, "type": 9, "label": 1 }, { "name": "features", "number": 50, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "enumType": [{ "name": "OptimizeMode", "value": [{ "name": "SPEED", "number": 1 }, { "name": "CODE_SIZE", "number": 2 }, { "name": "LITE_RUNTIME", "number": 3 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "MessageOptions", "field": [{ "name": "message_set_wire_format", "number": 1, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "no_standard_descriptor_accessor", "number": 2, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "map_entry", "number": 7, "type": 8, "label": 1 }, { "name": "deprecated_legacy_json_field_conflicts", "number": 11, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "features", "number": 12, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "FieldOptions", "field": [{ "name": "ctype", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.CType", "defaultValue": "STRING" }, { "name": "packed", "number": 2, "type": 8, "label": 1 }, { "name": "jstype", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.JSType", "defaultValue": "JS_NORMAL" }, { "name": "lazy", "number": 5, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "unverified_lazy", "number": 15, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "weak", "number": 10, "type": 8, "label": 1, "defaultValue": "false", "options": { "deprecated": true } }, { "name": "debug_redact", "number": 16, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "retention", "number": 17, "type": 14, "label": 1, "typeName": ".google.protobuf.FieldOptions.OptionRetention" }, { "name": "targets", "number": 19, "type": 14, "label": 3, "typeName": ".google.protobuf.FieldOptions.OptionTargetType" }, { "name": "edition_defaults", "number": 20, "type": 11, "label": 3, "typeName": ".google.protobuf.FieldOptions.EditionDefault" }, { "name": "features", "number": 21, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "feature_support", "number": 22, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions.FeatureSupport" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "nestedType": [{ "name": "EditionDefault", "field": [{ "name": "edition", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "value", "number": 2, "type": 9, "label": 1 }] }, { "name": "FeatureSupport", "field": [{ "name": "edition_introduced", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "edition_deprecated", "number": 2, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "deprecation_warning", "number": 3, "type": 9, "label": 1 }, { "name": "edition_removed", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "removal_error", "number": 5, "type": 9, "label": 1 }] }], "enumType": [{ "name": "CType", "value": [{ "name": "STRING", "number": 0 }, { "name": "CORD", "number": 1 }, { "name": "STRING_PIECE", "number": 2 }] }, { "name": "JSType", "value": [{ "name": "JS_NORMAL", "number": 0 }, { "name": "JS_STRING", "number": 1 }, { "name": "JS_NUMBER", "number": 2 }] }, { "name": "OptionRetention", "value": [{ "name": "RETENTION_UNKNOWN", "number": 0 }, { "name": "RETENTION_RUNTIME", "number": 1 }, { "name": "RETENTION_SOURCE", "number": 2 }] }, { "name": "OptionTargetType", "value": [{ "name": "TARGET_TYPE_UNKNOWN", "number": 0 }, { "name": "TARGET_TYPE_FILE", "number": 1 }, { "name": "TARGET_TYPE_EXTENSION_RANGE", "number": 2 }, { "name": "TARGET_TYPE_MESSAGE", "number": 3 }, { "name": "TARGET_TYPE_FIELD", "number": 4 }, { "name": "TARGET_TYPE_ONEOF", "number": 5 }, { "name": "TARGET_TYPE_ENUM", "number": 6 }, { "name": "TARGET_TYPE_ENUM_ENTRY", "number": 7 }, { "name": "TARGET_TYPE_SERVICE", "number": 8 }, { "name": "TARGET_TYPE_METHOD", "number": 9 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "OneofOptions", "field": [{ "name": "features", "number": 1, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "EnumOptions", "field": [{ "name": "allow_alias", "number": 2, "type": 8, "label": 1 }, { "name": "deprecated", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "deprecated_legacy_json_field_conflicts", "number": 6, "type": 8, "label": 1, "options": { "deprecated": true } }, { "name": "features", "number": 7, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "EnumValueOptions", "field": [{ "name": "deprecated", "number": 1, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "features", "number": 2, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "debug_redact", "number": 3, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "feature_support", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.FieldOptions.FeatureSupport" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "ServiceOptions", "field": [{ "name": "features", "number": 34, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "deprecated", "number": 33, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "MethodOptions", "field": [{ "name": "deprecated", "number": 33, "type": 8, "label": 1, "defaultValue": "false" }, { "name": "idempotency_level", "number": 34, "type": 14, "label": 1, "typeName": ".google.protobuf.MethodOptions.IdempotencyLevel", "defaultValue": "IDEMPOTENCY_UNKNOWN" }, { "name": "features", "number": 35, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "uninterpreted_option", "number": 999, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption" }], "enumType": [{ "name": "IdempotencyLevel", "value": [{ "name": "IDEMPOTENCY_UNKNOWN", "number": 0 }, { "name": "NO_SIDE_EFFECTS", "number": 1 }, { "name": "IDEMPOTENT", "number": 2 }] }], "extensionRange": [{ "start": 1e3, "end": 536870912 }] }, { "name": "UninterpretedOption", "field": [{ "name": "name", "number": 2, "type": 11, "label": 3, "typeName": ".google.protobuf.UninterpretedOption.NamePart" }, { "name": "identifier_value", "number": 3, "type": 9, "label": 1 }, { "name": "positive_int_value", "number": 4, "type": 4, "label": 1 }, { "name": "negative_int_value", "number": 5, "type": 3, "label": 1 }, { "name": "double_value", "number": 6, "type": 1, "label": 1 }, { "name": "string_value", "number": 7, "type": 12, "label": 1 }, { "name": "aggregate_value", "number": 8, "type": 9, "label": 1 }], "nestedType": [{ "name": "NamePart", "field": [{ "name": "name_part", "number": 1, "type": 9, "label": 2 }, { "name": "is_extension", "number": 2, "type": 8, "label": 2 }] }] }, { "name": "FeatureSet", "field": [{ "name": "field_presence", "number": 1, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.FieldPresence", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "EXPLICIT", "edition": 900 }, { "value": "IMPLICIT", "edition": 999 }, { "value": "EXPLICIT", "edition": 1e3 }] } }, { "name": "enum_type", "number": 2, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.EnumType", "options": { "retention": 1, "targets": [6, 1], "editionDefaults": [{ "value": "CLOSED", "edition": 900 }, { "value": "OPEN", "edition": 999 }] } }, { "name": "repeated_field_encoding", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.RepeatedFieldEncoding", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "EXPANDED", "edition": 900 }, { "value": "PACKED", "edition": 999 }] } }, { "name": "utf8_validation", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.Utf8Validation", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "NONE", "edition": 900 }, { "value": "VERIFY", "edition": 999 }] } }, { "name": "message_encoding", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.MessageEncoding", "options": { "retention": 1, "targets": [4, 1], "editionDefaults": [{ "value": "LENGTH_PREFIXED", "edition": 900 }] } }, { "name": "json_format", "number": 6, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.JsonFormat", "options": { "retention": 1, "targets": [3, 6, 1], "editionDefaults": [{ "value": "LEGACY_BEST_EFFORT", "edition": 900 }, { "value": "ALLOW", "edition": 999 }] } }, { "name": "enforce_naming_style", "number": 7, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.EnforceNamingStyle", "options": { "retention": 2, "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9], "editionDefaults": [{ "value": "STYLE_LEGACY", "edition": 900 }, { "value": "STYLE2024", "edition": 1001 }] } }, { "name": "default_symbol_visibility", "number": 8, "type": 14, "label": 1, "typeName": ".google.protobuf.FeatureSet.VisibilityFeature.DefaultSymbolVisibility", "options": { "retention": 2, "targets": [1], "editionDefaults": [{ "value": "EXPORT_ALL", "edition": 900 }, { "value": "EXPORT_TOP_LEVEL", "edition": 1001 }] } }], "nestedType": [{ "name": "VisibilityFeature", "enumType": [{ "name": "DefaultSymbolVisibility", "value": [{ "name": "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN", "number": 0 }, { "name": "EXPORT_ALL", "number": 1 }, { "name": "EXPORT_TOP_LEVEL", "number": 2 }, { "name": "LOCAL_ALL", "number": 3 }, { "name": "STRICT", "number": 4 }] }] }], "enumType": [{ "name": "FieldPresence", "value": [{ "name": "FIELD_PRESENCE_UNKNOWN", "number": 0 }, { "name": "EXPLICIT", "number": 1 }, { "name": "IMPLICIT", "number": 2 }, { "name": "LEGACY_REQUIRED", "number": 3 }] }, { "name": "EnumType", "value": [{ "name": "ENUM_TYPE_UNKNOWN", "number": 0 }, { "name": "OPEN", "number": 1 }, { "name": "CLOSED", "number": 2 }] }, { "name": "RepeatedFieldEncoding", "value": [{ "name": "REPEATED_FIELD_ENCODING_UNKNOWN", "number": 0 }, { "name": "PACKED", "number": 1 }, { "name": "EXPANDED", "number": 2 }] }, { "name": "Utf8Validation", "value": [{ "name": "UTF8_VALIDATION_UNKNOWN", "number": 0 }, { "name": "VERIFY", "number": 2 }, { "name": "NONE", "number": 3 }] }, { "name": "MessageEncoding", "value": [{ "name": "MESSAGE_ENCODING_UNKNOWN", "number": 0 }, { "name": "LENGTH_PREFIXED", "number": 1 }, { "name": "DELIMITED", "number": 2 }] }, { "name": "JsonFormat", "value": [{ "name": "JSON_FORMAT_UNKNOWN", "number": 0 }, { "name": "ALLOW", "number": 1 }, { "name": "LEGACY_BEST_EFFORT", "number": 2 }] }, { "name": "EnforceNamingStyle", "value": [{ "name": "ENFORCE_NAMING_STYLE_UNKNOWN", "number": 0 }, { "name": "STYLE2024", "number": 1 }, { "name": "STYLE_LEGACY", "number": 2 }] }], "extensionRange": [{ "start": 1e3, "end": 9995 }, { "start": 9995, "end": 1e4 }, { "start": 1e4, "end": 10001 }] }, { "name": "FeatureSetDefaults", "field": [{ "name": "defaults", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.FeatureSetDefaults.FeatureSetEditionDefault" }, { "name": "minimum_edition", "number": 4, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "maximum_edition", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }], "nestedType": [{ "name": "FeatureSetEditionDefault", "field": [{ "name": "edition", "number": 3, "type": 14, "label": 1, "typeName": ".google.protobuf.Edition" }, { "name": "overridable_features", "number": 4, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }, { "name": "fixed_features", "number": 5, "type": 11, "label": 1, "typeName": ".google.protobuf.FeatureSet" }] }] }, { "name": "SourceCodeInfo", "field": [{ "name": "location", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.SourceCodeInfo.Location" }], "nestedType": [{ "name": "Location", "field": [{ "name": "path", "number": 1, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "span", "number": 2, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "leading_comments", "number": 3, "type": 9, "label": 1 }, { "name": "trailing_comments", "number": 4, "type": 9, "label": 1 }, { "name": "leading_detached_comments", "number": 6, "type": 9, "label": 3 }] }], "extensionRange": [{ "start": 536e6, "end": 536000001 }] }, { "name": "GeneratedCodeInfo", "field": [{ "name": "annotation", "number": 1, "type": 11, "label": 3, "typeName": ".google.protobuf.GeneratedCodeInfo.Annotation" }], "nestedType": [{ "name": "Annotation", "field": [{ "name": "path", "number": 1, "type": 5, "label": 3, "options": { "packed": true } }, { "name": "source_file", "number": 2, "type": 9, "label": 1 }, { "name": "begin", "number": 3, "type": 5, "label": 1 }, { "name": "end", "number": 4, "type": 5, "label": 1 }, { "name": "semantic", "number": 5, "type": 14, "label": 1, "typeName": ".google.protobuf.GeneratedCodeInfo.Annotation.Semantic" }], "enumType": [{ "name": "Semantic", "value": [{ "name": "NONE", "number": 0 }, { "name": "SET", "number": 1 }, { "name": "ALIAS", "number": 2 }] }] }] }], "enumType": [{ "name": "Edition", "value": [{ "name": "EDITION_UNKNOWN", "number": 0 }, { "name": "EDITION_LEGACY", "number": 900 }, { "name": "EDITION_PROTO2", "number": 998 }, { "name": "EDITION_PROTO3", "number": 999 }, { "name": "EDITION_2023", "number": 1e3 }, { "name": "EDITION_2024", "number": 1001 }, { "name": "EDITION_UNSTABLE", "number": 9999 }, { "name": "EDITION_1_TEST_ONLY", "number": 1 }, { "name": "EDITION_2_TEST_ONLY", "number": 2 }, { "name": "EDITION_99997_TEST_ONLY", "number": 99997 }, { "name": "EDITION_99998_TEST_ONLY", "number": 99998 }, { "name": "EDITION_99999_TEST_ONLY", "number": 99999 }, { "name": "EDITION_MAX", "number": 2147483647 }] }, { "name": "SymbolVisibility", "value": [{ "name": "VISIBILITY_UNSET", "number": 0 }, { "name": "VISIBILITY_LOCAL", "number": 1 }, { "name": "VISIBILITY_EXPORT", "number": 2 }] }] });
+  const FileDescriptorProtoSchema = messageDesc(file_google_protobuf_descriptor, 1);
+  var ExtensionRangeOptions_VerificationState;
+  (function(ExtensionRangeOptions_VerificationState2) {
+    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["DECLARATION"] = 0] = "DECLARATION";
+    ExtensionRangeOptions_VerificationState2[ExtensionRangeOptions_VerificationState2["UNVERIFIED"] = 1] = "UNVERIFIED";
+  })(ExtensionRangeOptions_VerificationState || (ExtensionRangeOptions_VerificationState = {}));
+  var FieldDescriptorProto_Type;
+  (function(FieldDescriptorProto_Type2) {
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["DOUBLE"] = 1] = "DOUBLE";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FLOAT"] = 2] = "FLOAT";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT64"] = 3] = "INT64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT64"] = 4] = "UINT64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["INT32"] = 5] = "INT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED64"] = 6] = "FIXED64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["FIXED32"] = 7] = "FIXED32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BOOL"] = 8] = "BOOL";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["STRING"] = 9] = "STRING";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["GROUP"] = 10] = "GROUP";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["MESSAGE"] = 11] = "MESSAGE";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["BYTES"] = 12] = "BYTES";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["UINT32"] = 13] = "UINT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["ENUM"] = 14] = "ENUM";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED32"] = 15] = "SFIXED32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SFIXED64"] = 16] = "SFIXED64";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT32"] = 17] = "SINT32";
+    FieldDescriptorProto_Type2[FieldDescriptorProto_Type2["SINT64"] = 18] = "SINT64";
+  })(FieldDescriptorProto_Type || (FieldDescriptorProto_Type = {}));
+  var FieldDescriptorProto_Label;
+  (function(FieldDescriptorProto_Label2) {
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["OPTIONAL"] = 1] = "OPTIONAL";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REPEATED"] = 3] = "REPEATED";
+    FieldDescriptorProto_Label2[FieldDescriptorProto_Label2["REQUIRED"] = 2] = "REQUIRED";
+  })(FieldDescriptorProto_Label || (FieldDescriptorProto_Label = {}));
+  var FileOptions_OptimizeMode;
+  (function(FileOptions_OptimizeMode2) {
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["SPEED"] = 1] = "SPEED";
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["CODE_SIZE"] = 2] = "CODE_SIZE";
+    FileOptions_OptimizeMode2[FileOptions_OptimizeMode2["LITE_RUNTIME"] = 3] = "LITE_RUNTIME";
+  })(FileOptions_OptimizeMode || (FileOptions_OptimizeMode = {}));
+  var FieldOptions_CType;
+  (function(FieldOptions_CType2) {
+    FieldOptions_CType2[FieldOptions_CType2["STRING"] = 0] = "STRING";
+    FieldOptions_CType2[FieldOptions_CType2["CORD"] = 1] = "CORD";
+    FieldOptions_CType2[FieldOptions_CType2["STRING_PIECE"] = 2] = "STRING_PIECE";
+  })(FieldOptions_CType || (FieldOptions_CType = {}));
+  var FieldOptions_JSType;
+  (function(FieldOptions_JSType2) {
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_NORMAL"] = 0] = "JS_NORMAL";
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_STRING"] = 1] = "JS_STRING";
+    FieldOptions_JSType2[FieldOptions_JSType2["JS_NUMBER"] = 2] = "JS_NUMBER";
+  })(FieldOptions_JSType || (FieldOptions_JSType = {}));
+  var FieldOptions_OptionRetention;
+  (function(FieldOptions_OptionRetention2) {
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_UNKNOWN"] = 0] = "RETENTION_UNKNOWN";
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_RUNTIME"] = 1] = "RETENTION_RUNTIME";
+    FieldOptions_OptionRetention2[FieldOptions_OptionRetention2["RETENTION_SOURCE"] = 2] = "RETENTION_SOURCE";
+  })(FieldOptions_OptionRetention || (FieldOptions_OptionRetention = {}));
+  var FieldOptions_OptionTargetType;
+  (function(FieldOptions_OptionTargetType2) {
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_UNKNOWN"] = 0] = "TARGET_TYPE_UNKNOWN";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FILE"] = 1] = "TARGET_TYPE_FILE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_EXTENSION_RANGE"] = 2] = "TARGET_TYPE_EXTENSION_RANGE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_MESSAGE"] = 3] = "TARGET_TYPE_MESSAGE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_FIELD"] = 4] = "TARGET_TYPE_FIELD";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ONEOF"] = 5] = "TARGET_TYPE_ONEOF";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM"] = 6] = "TARGET_TYPE_ENUM";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_ENUM_ENTRY"] = 7] = "TARGET_TYPE_ENUM_ENTRY";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_SERVICE"] = 8] = "TARGET_TYPE_SERVICE";
+    FieldOptions_OptionTargetType2[FieldOptions_OptionTargetType2["TARGET_TYPE_METHOD"] = 9] = "TARGET_TYPE_METHOD";
+  })(FieldOptions_OptionTargetType || (FieldOptions_OptionTargetType = {}));
+  var MethodOptions_IdempotencyLevel;
+  (function(MethodOptions_IdempotencyLevel2) {
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENCY_UNKNOWN"] = 0] = "IDEMPOTENCY_UNKNOWN";
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["NO_SIDE_EFFECTS"] = 1] = "NO_SIDE_EFFECTS";
+    MethodOptions_IdempotencyLevel2[MethodOptions_IdempotencyLevel2["IDEMPOTENT"] = 2] = "IDEMPOTENT";
+  })(MethodOptions_IdempotencyLevel || (MethodOptions_IdempotencyLevel = {}));
+  var FeatureSet_VisibilityFeature_DefaultSymbolVisibility;
+  (function(FeatureSet_VisibilityFeature_DefaultSymbolVisibility2) {
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["DEFAULT_SYMBOL_VISIBILITY_UNKNOWN"] = 0] = "DEFAULT_SYMBOL_VISIBILITY_UNKNOWN";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["EXPORT_ALL"] = 1] = "EXPORT_ALL";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["EXPORT_TOP_LEVEL"] = 2] = "EXPORT_TOP_LEVEL";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["LOCAL_ALL"] = 3] = "LOCAL_ALL";
+    FeatureSet_VisibilityFeature_DefaultSymbolVisibility2[FeatureSet_VisibilityFeature_DefaultSymbolVisibility2["STRICT"] = 4] = "STRICT";
+  })(FeatureSet_VisibilityFeature_DefaultSymbolVisibility || (FeatureSet_VisibilityFeature_DefaultSymbolVisibility = {}));
+  var FeatureSet_FieldPresence;
+  (function(FeatureSet_FieldPresence2) {
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["FIELD_PRESENCE_UNKNOWN"] = 0] = "FIELD_PRESENCE_UNKNOWN";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["EXPLICIT"] = 1] = "EXPLICIT";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["IMPLICIT"] = 2] = "IMPLICIT";
+    FeatureSet_FieldPresence2[FeatureSet_FieldPresence2["LEGACY_REQUIRED"] = 3] = "LEGACY_REQUIRED";
+  })(FeatureSet_FieldPresence || (FeatureSet_FieldPresence = {}));
+  var FeatureSet_EnumType;
+  (function(FeatureSet_EnumType2) {
+    FeatureSet_EnumType2[FeatureSet_EnumType2["ENUM_TYPE_UNKNOWN"] = 0] = "ENUM_TYPE_UNKNOWN";
+    FeatureSet_EnumType2[FeatureSet_EnumType2["OPEN"] = 1] = "OPEN";
+    FeatureSet_EnumType2[FeatureSet_EnumType2["CLOSED"] = 2] = "CLOSED";
+  })(FeatureSet_EnumType || (FeatureSet_EnumType = {}));
+  var FeatureSet_RepeatedFieldEncoding;
+  (function(FeatureSet_RepeatedFieldEncoding2) {
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["REPEATED_FIELD_ENCODING_UNKNOWN"] = 0] = "REPEATED_FIELD_ENCODING_UNKNOWN";
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["PACKED"] = 1] = "PACKED";
+    FeatureSet_RepeatedFieldEncoding2[FeatureSet_RepeatedFieldEncoding2["EXPANDED"] = 2] = "EXPANDED";
+  })(FeatureSet_RepeatedFieldEncoding || (FeatureSet_RepeatedFieldEncoding = {}));
+  var FeatureSet_Utf8Validation;
+  (function(FeatureSet_Utf8Validation2) {
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["UTF8_VALIDATION_UNKNOWN"] = 0] = "UTF8_VALIDATION_UNKNOWN";
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["VERIFY"] = 2] = "VERIFY";
+    FeatureSet_Utf8Validation2[FeatureSet_Utf8Validation2["NONE"] = 3] = "NONE";
+  })(FeatureSet_Utf8Validation || (FeatureSet_Utf8Validation = {}));
+  var FeatureSet_MessageEncoding;
+  (function(FeatureSet_MessageEncoding2) {
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["MESSAGE_ENCODING_UNKNOWN"] = 0] = "MESSAGE_ENCODING_UNKNOWN";
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["LENGTH_PREFIXED"] = 1] = "LENGTH_PREFIXED";
+    FeatureSet_MessageEncoding2[FeatureSet_MessageEncoding2["DELIMITED"] = 2] = "DELIMITED";
+  })(FeatureSet_MessageEncoding || (FeatureSet_MessageEncoding = {}));
+  var FeatureSet_JsonFormat;
+  (function(FeatureSet_JsonFormat2) {
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["JSON_FORMAT_UNKNOWN"] = 0] = "JSON_FORMAT_UNKNOWN";
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["ALLOW"] = 1] = "ALLOW";
+    FeatureSet_JsonFormat2[FeatureSet_JsonFormat2["LEGACY_BEST_EFFORT"] = 2] = "LEGACY_BEST_EFFORT";
+  })(FeatureSet_JsonFormat || (FeatureSet_JsonFormat = {}));
+  var FeatureSet_EnforceNamingStyle;
+  (function(FeatureSet_EnforceNamingStyle2) {
+    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["ENFORCE_NAMING_STYLE_UNKNOWN"] = 0] = "ENFORCE_NAMING_STYLE_UNKNOWN";
+    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["STYLE2024"] = 1] = "STYLE2024";
+    FeatureSet_EnforceNamingStyle2[FeatureSet_EnforceNamingStyle2["STYLE_LEGACY"] = 2] = "STYLE_LEGACY";
+  })(FeatureSet_EnforceNamingStyle || (FeatureSet_EnforceNamingStyle = {}));
+  var GeneratedCodeInfo_Annotation_Semantic;
+  (function(GeneratedCodeInfo_Annotation_Semantic2) {
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["NONE"] = 0] = "NONE";
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["SET"] = 1] = "SET";
+    GeneratedCodeInfo_Annotation_Semantic2[GeneratedCodeInfo_Annotation_Semantic2["ALIAS"] = 2] = "ALIAS";
+  })(GeneratedCodeInfo_Annotation_Semantic || (GeneratedCodeInfo_Annotation_Semantic = {}));
+  var Edition;
+  (function(Edition2) {
+    Edition2[Edition2["EDITION_UNKNOWN"] = 0] = "EDITION_UNKNOWN";
+    Edition2[Edition2["EDITION_LEGACY"] = 900] = "EDITION_LEGACY";
+    Edition2[Edition2["EDITION_PROTO2"] = 998] = "EDITION_PROTO2";
+    Edition2[Edition2["EDITION_PROTO3"] = 999] = "EDITION_PROTO3";
+    Edition2[Edition2["EDITION_2023"] = 1e3] = "EDITION_2023";
+    Edition2[Edition2["EDITION_2024"] = 1001] = "EDITION_2024";
+    Edition2[Edition2["EDITION_UNSTABLE"] = 9999] = "EDITION_UNSTABLE";
+    Edition2[Edition2["EDITION_1_TEST_ONLY"] = 1] = "EDITION_1_TEST_ONLY";
+    Edition2[Edition2["EDITION_2_TEST_ONLY"] = 2] = "EDITION_2_TEST_ONLY";
+    Edition2[Edition2["EDITION_99997_TEST_ONLY"] = 99997] = "EDITION_99997_TEST_ONLY";
+    Edition2[Edition2["EDITION_99998_TEST_ONLY"] = 99998] = "EDITION_99998_TEST_ONLY";
+    Edition2[Edition2["EDITION_99999_TEST_ONLY"] = 99999] = "EDITION_99999_TEST_ONLY";
+    Edition2[Edition2["EDITION_MAX"] = 2147483647] = "EDITION_MAX";
+  })(Edition || (Edition = {}));
+  var SymbolVisibility;
+  (function(SymbolVisibility2) {
+    SymbolVisibility2[SymbolVisibility2["VISIBILITY_UNSET"] = 0] = "VISIBILITY_UNSET";
+    SymbolVisibility2[SymbolVisibility2["VISIBILITY_LOCAL"] = 1] = "VISIBILITY_LOCAL";
+    SymbolVisibility2[SymbolVisibility2["VISIBILITY_EXPORT"] = 2] = "VISIBILITY_EXPORT";
+  })(SymbolVisibility || (SymbolVisibility = {}));
+  const readDefaults = {
+    readUnknownFields: true
+  };
+  function makeReadOptions(options) {
+    return options ? Object.assign(Object.assign({}, readDefaults), options) : readDefaults;
+  }
+  function fromBinary(schema, bytes, options) {
+    const msg = reflect(schema, void 0, false);
+    readMessage(msg, new BinaryReader(bytes), makeReadOptions(options), false, bytes.byteLength);
+    return msg.message;
+  }
+  function readMessage(message, reader, options, delimited, lengthOrDelimitedFieldNo) {
+    var _a;
+    const end = delimited ? reader.len : reader.pos + lengthOrDelimitedFieldNo;
+    let fieldNo;
+    let wireType;
+    const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
+    while (reader.pos < end) {
+      [fieldNo, wireType] = reader.tag();
+      if (delimited && wireType == WireType.EndGroup) {
+        break;
+      }
+      const field = message.findNumber(fieldNo);
+      if (!field) {
+        const data = reader.skip(wireType, fieldNo);
+        if (options.readUnknownFields) {
+          unknownFields.push({ no: fieldNo, wireType, data });
+        }
+        continue;
+      }
+      readField(message, reader, field, wireType, options);
+    }
+    if (delimited) {
+      if (wireType != WireType.EndGroup || fieldNo !== lengthOrDelimitedFieldNo) {
+        throw new Error("invalid end group tag");
+      }
+    }
+    if (unknownFields.length > 0) {
+      message.setUnknown(unknownFields);
+    }
+  }
+  function readField(message, reader, field, wireType, options) {
+    var _a;
+    switch (field.fieldKind) {
+      case "scalar":
+        message.set(field, readScalar(reader, field.scalar, field.utf8Validation));
+        break;
+      case "enum":
+        const val = readScalar(reader, ScalarType.INT32);
+        if (field.enum.open) {
+          message.set(field, val);
+        } else {
+          const ok = field.enum.values.some((v) => v.number === val);
+          if (ok) {
+            message.set(field, val);
+          } else if (options.readUnknownFields) {
+            const bytes = [];
+            varint32write(val, bytes);
+            const unknownFields = (_a = message.getUnknown()) !== null && _a !== void 0 ? _a : [];
+            unknownFields.push({
+              no: field.number,
+              wireType,
+              data: new Uint8Array(bytes)
+            });
+            message.setUnknown(unknownFields);
+          }
+        }
+        break;
+      case "message":
+        message.set(field, readMessageField(reader, options, field, message.get(field)));
+        break;
+      case "list":
+        readListField(reader, wireType, message.get(field), options);
+        break;
+      case "map":
+        readMapEntry(reader, message.get(field), options);
+        break;
+    }
+  }
+  function readMapEntry(reader, map, options) {
+    const field = map.field();
+    let key;
+    let val;
+    const len = reader.uint32();
+    const end = reader.pos + len;
+    while (reader.pos < end) {
+      const [fieldNo] = reader.tag();
+      switch (fieldNo) {
+        case 1:
+          key = readScalar(reader, field.mapKey, field.utf8Validation);
+          break;
+        case 2:
+          switch (field.mapKind) {
+            case "scalar":
+              val = readScalar(reader, field.scalar, field.utf8Validation);
+              break;
+            case "enum":
+              val = reader.int32();
+              break;
+            case "message":
+              val = readMessageField(reader, options, field);
+              break;
+          }
+          break;
+      }
+    }
+    if (key === void 0) {
+      key = scalarZeroValue(field.mapKey, false);
+    }
+    if (val === void 0) {
+      switch (field.mapKind) {
+        case "scalar":
+          val = scalarZeroValue(field.scalar, false);
+          break;
+        case "enum":
+          val = field.enum.values[0].number;
+          break;
+        case "message":
+          val = reflect(field.message, void 0, false);
+          break;
+      }
+    }
+    map.set(key, val);
+  }
+  function readListField(reader, wireType, list, options) {
+    var _a;
+    const field = list.field();
+    if (field.listKind === "message") {
+      list.add(readMessageField(reader, options, field));
+      return;
+    }
+    const scalarType = (_a = field.scalar) !== null && _a !== void 0 ? _a : ScalarType.INT32;
+    const packed = wireType == WireType.LengthDelimited && scalarType != ScalarType.STRING && scalarType != ScalarType.BYTES;
+    if (!packed) {
+      list.add(readScalar(reader, scalarType, field.utf8Validation));
+      return;
+    }
+    const e = reader.uint32() + reader.pos;
+    while (reader.pos < e) {
+      list.add(readScalar(reader, scalarType, field.utf8Validation));
+    }
+  }
+  function readMessageField(reader, options, field, mergeMessage) {
+    const delimited = field.delimitedEncoding;
+    const message = mergeMessage !== null && mergeMessage !== void 0 ? mergeMessage : reflect(field.message, void 0, false);
+    readMessage(message, reader, options, delimited, delimited ? field.number : reader.uint32());
+    return message;
+  }
+  function readScalar(reader, type, validateUtf8 = false) {
+    switch (type) {
+      case ScalarType.STRING:
+        return reader.string(validateUtf8);
+      case ScalarType.BOOL:
+        return reader.bool();
+      case ScalarType.DOUBLE:
+        return reader.double();
+      case ScalarType.FLOAT:
+        return reader.float();
+      case ScalarType.INT32:
+        return reader.int32();
+      case ScalarType.INT64:
+        return reader.int64();
+      case ScalarType.UINT64:
+        return reader.uint64();
+      case ScalarType.FIXED64:
+        return reader.fixed64();
+      case ScalarType.BYTES:
+        return reader.bytes();
+      case ScalarType.FIXED32:
+        return reader.fixed32();
+      case ScalarType.SFIXED32:
+        return reader.sfixed32();
+      case ScalarType.SFIXED64:
+        return reader.sfixed64();
+      case ScalarType.SINT64:
+        return reader.sint64();
+      case ScalarType.UINT32:
+        return reader.uint32();
+      case ScalarType.SINT32:
+        return reader.sint32();
+    }
+  }
+  function fileDesc(b64, imports) {
+    var _a;
+    const root = fromBinary(FileDescriptorProtoSchema, base64Decode(b64));
+    root.messageType.forEach(restoreJsonNames);
+    root.dependency = (_a = imports === null || imports === void 0 ? void 0 : imports.map((f) => f.proto.name)) !== null && _a !== void 0 ? _a : [];
+    const reg = createFileRegistry(root, (protoFileName) => imports === null || imports === void 0 ? void 0 : imports.find((f) => f.proto.name === protoFileName));
+    return reg.getFile(root.name);
+  }
+  const file_google_protobuf_timestamp = fileDesc("Ch9nb29nbGUvcHJvdG9idWYvdGltZXN0YW1wLnByb3RvEg9nb29nbGUucHJvdG9idWYiKwoJVGltZXN0YW1wEg8KB3NlY29uZHMYASABKAMSDQoFbmFub3MYAiABKAVChQEKE2NvbS5nb29nbGUucHJvdG9idWZCDlRpbWVzdGFtcFByb3RvUAFaMmdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL3RpbWVzdGFtcHBi+AEBogIDR1BCqgIeR29vZ2xlLlByb3RvYnVmLldlbGxLbm93blR5cGVzYgZwcm90bzM");
+  const file_google_protobuf_duration = fileDesc("Ch5nb29nbGUvcHJvdG9idWYvZHVyYXRpb24ucHJvdG8SD2dvb2dsZS5wcm90b2J1ZiIqCghEdXJhdGlvbhIPCgdzZWNvbmRzGAEgASgDEg0KBW5hbm9zGAIgASgFQoMBChNjb20uZ29vZ2xlLnByb3RvYnVmQg1EdXJhdGlvblByb3RvUAFaMWdvb2dsZS5nb2xhbmcub3JnL3Byb3RvYnVmL3R5cGVzL2tub3duL2R1cmF0aW9ucGL4AQGiAgNHUEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnByb3RvMw");
+  const file_dwango_nicolive_chat_data_atoms = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIrwJCgRDaGF0Eg8KB2NvbnRlbnQYASABKAkSDAoEdnBvcxgDIAEoBRJFCg5hY2NvdW50X3N0YXR1cxgEIAEoDjItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5BY2NvdW50U3RhdHVzEhEKBG5hbWUYAiABKAlIAIgBARIYCgtyYXdfdXNlcl9pZBgFIAEoA0gBiAEBEhsKDmhhc2hlZF91c2VyX2lkGAYgASgJSAKIAQESOgoIbW9kaWZpZXIYByABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISCgoCbm8YCCABKAUa4wYKCE1vZGlmaWVyEj4KCHBvc2l0aW9uGAEgASgOMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlBvcxI7CgRzaXplGAIgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLlNpemUSSQoLbmFtZWRfY29sb3IYAyABKA4yMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXIuQ29sb3JOYW1lSAASSAoKZnVsbF9jb2xvchgEIAEoCzIyLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5GdWxsQ29sb3JIABI7CgRmb250GAUgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0Lk1vZGlmaWVyLkZvbnQSQQoHb3BhY2l0eRgGIAEoDjIwLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdC5Nb2RpZmllci5PcGFjaXR5GiwKCUZ1bGxDb2xvchIJCgFyGAEgASgFEgkKAWcYAiABKAUSCQoBYhgDIAEoBSIiCgNQb3MSCAoEbmFrYRAAEgkKBXNoaXRhEAESBgoCdWUQAiImCgRTaXplEgoKBm1lZGl1bRAAEgkKBXNtYWxsEAESBwoDYmlnEAIi7QEKCUNvbG9yTmFtZRIJCgV3aGl0ZRAAEgcKA3JlZBABEggKBHBpbmsQAhIKCgZvcmFuZ2UQAxIKCgZ5ZWxsb3cQBBIJCgVncmVlbhAFEggKBGN5YW4QBhIICgRibHVlEAcSCgoGcHVycGxlEAgSCQoFYmxhY2sQCRIKCgZ3aGl0ZTIQChIICgRyZWQyEAsSCQoFcGluazIQDBILCgdvcmFuZ2UyEA0SCwoHeWVsbG93MhAOEgoKBmdyZWVuMhAPEgkKBWN5YW4yEBASCQoFYmx1ZTIQERILCgdwdXJwbGUyEBISCgoGYmxhY2syEBMiKgoERm9udBIKCgZkZWZvbnQQABIKCgZtaW5jaG8QARIKCgZnb3RoaWMQAiImCgdPcGFjaXR5EgoKBk5vcm1hbBAAEg8KC1RyYW5zbHVjZW50EAFCBwoFY29sb3IiKgoNQWNjb3VudFN0YXR1cxIMCghTdGFuZGFyZBAAEgsKB1ByZW1pdW0QAUIHCgVfbmFtZUIOCgxfcmF3X3VzZXJfaWRCEQoPX2hhc2hlZF91c2VyX2lkIpYBCg9PcGVyYXRvckNvbW1lbnQSDwoHY29udGVudBgBIAEoCRIRCgRuYW1lGAIgASgJSACIAQESOgoIbW9kaWZpZXIYAyABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNoYXQuTW9kaWZpZXISEQoEbGluaxgEIAEoCUgBiAEBQgcKBV9uYW1lQgcKBV9saW5rIlEKBEp1bXASDwoHY29udGVudBgBIAEoCRIPCgdtZXNzYWdlGAIgASgJEicKBHdhaXQYBCABKAsyGS5nb29nbGUucHJvdG9idWYuRHVyYXRpb24iUQoIUmVkaXJlY3QSCwoDdXJpGAEgASgJEg8KB21lc3NhZ2UYAiABKAkSJwoEd2FpdBgEIAEoCzIZLmdvb2dsZS5wcm90b2J1Zi5EdXJhdGlvbiKAAgoSU2ltcGxlTm90aWZpY2F0aW9uEhAKBmljaGliYRgBIAEoCUgAEg8KBXF1b3RlGAIgASgJSAASEQoHZW1vdGlvbhgDIAEoCUgAEhAKBmNydWlzZRgEIAEoCUgAEhoKEHByb2dyYW1fZXh0ZW5kZWQYBSABKAlIABIUCgpyYW5raW5nX2luGAYgASgJSAASGQoPcmFua2luZ191cGRhdGVkGAggASgJSAASEQoHdmlzaXRlZBgHIAEoCUgAEh4KFHN1cHBvcnRlcl9yZWdpc3RlcmVkGAkgASgJSAASFwoNdXNlcl9sZXZlbF91cBgKIAEoCUgAQgkKB21lc3NhZ2Ui0QEKBEdpZnQSDwoHaXRlbV9pZBgBIAEoCRIfChJhZHZlcnRpc2VyX3VzZXJfaWQYAiABKANIAIgBARIXCg9hZHZlcnRpc2VyX25hbWUYAyABKAkSDQoFcG9pbnQYBCABKAMSDwoHbWVzc2FnZRgFIAEoCRIRCglpdGVtX25hbWUYBiABKAkSHgoRY29udHJpYnV0aW9uX3JhbmsYByABKAVIAYgBAUIVChNfYWR2ZXJ0aXNlcl91c2VyX2lkQhQKEl9jb250cmlidXRpb25fcmFuayKHBAoGTmljb2FkEjIKAnYwGAEgASgLMiQuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjBIABIyCgJ2MRgCIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYxSAAa2QIKAlYwEjsKBmxhdGVzdBgBIAEoCzIrLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkLlYwLkxhdGVzdBI9CgdyYW5raW5nGAIgAygLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvYWQuVjAuUmFua2luZxITCgt0b3RhbF9wb2ludBgDIAEoBRpNCgZMYXRlc3QSEgoKYWR2ZXJ0aXNlchgBIAEoCRINCgVwb2ludBgCIAEoBRIUCgdtZXNzYWdlGAMgASgJSACIAQFCCgoIX21lc3NhZ2UacwoHUmFua2luZxISCgphZHZlcnRpc2VyGAEgASgJEgwKBHJhbmsYAiABKAUSFAoHbWVzc2FnZRgDIAEoCUgAiAEBEhYKCXVzZXJfcmFuaxgEIAEoBUgBiAEBQgoKCF9tZXNzYWdlQgwKCl91c2VyX3JhbmsaLQoCVjESFgoOdG90YWxfYWRfcG9pbnQYASABKAUSDwoHbWVzc2FnZRgCIAEoCUIKCgh2ZXJzaW9ucyLHAgoLQ29tbWVudExvY2sSPQoGc3RhdHVzGAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5TdGF0dXMSWQoSZm9sbG93X3Jlc3RyaWN0aW9uGAIgASgLMjguZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TG9jay5Gb2xsb3dSZXN0cmljdGlvbkgAiAEBGk8KEUZvbGxvd1Jlc3RyaWN0aW9uEjoKF21pbmltdW1fZm9sbG93X2R1cmF0aW9uGAEgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uIjYKBlN0YXR1cxIQCgxVbnJlc3RyaWN0ZWQQABIKCgZMb2NrZWQQARIOCgpSZXN0cmljdGVkEAJCFQoTX2ZvbGxvd19yZXN0cmljdGlvbiKAAQoLQ29tbWVudE1vZGUSPQoGbGF5b3V0GAEgASgOMi0uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5Db21tZW50TW9kZS5MYXlvdXQiMgoGTGF5b3V0EgoKBk5vcm1hbBAAEgwKCFNwbGl0VG9wEAESDgoKQmFja2dyb3VuZBACIgwKCkdhbWVVcGRhdGUi5AEKClRyaWFsUGFuZWwSOgoFcGFuZWwYASABKA4yKy5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWwuUGFuZWwSRAoQdW5xdWFsaWZpZWRfdXNlchgCIAEoDjIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVHJpYWxQYW5lbC5Nb2RlIiAKBVBhbmVsEgoKBkhpZGRlbhAAEgsKB0Rpc3BsYXkQASIyCgRNb2RlEgsKB0FsbG93ZWQQABIOCgpSZXN0cmljdGVkEAESDQoJRm9yYmlkZGVuEAIibwoNUHJvZ3JhbVN0YXR1cxI9CgVzdGF0ZRgBIAEoDjIuLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1cy5TdGF0ZSIfCgVTdGF0ZRILCgdVbmtub3duEAASCQoFRW5kZWQQASLAAQoKVGFnVXBkYXRlZBI3CgR0YWdzGAEgAygLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5UYWdVcGRhdGVkLlRhZxIUCgxvd25lcl9sb2NrZWQYAiABKAgaYwoDVGFnEgwKBHRleHQYASABKAkSDgoGbG9ja2VkGAIgASgIEhAKCHJlc2VydmVkGAMgASgIEhoKDW5pY29wZWRpYV91cmkYBCABKAlIAIgBAUIQCg5fbmljb3BlZGlhX3VyaSLoAQoKU3RhdGlzdGljcxIUCgd2aWV3ZXJzGAEgASgDSACIAQESFQoIY29tbWVudHMYAiABKANIAYgBARIWCglhZF9wb2ludHMYAyABKANIAogBARIYCgtnaWZ0X3BvaW50cxgEIAEoA0gDiAEBEiMKFnRpbWVzaGlmdF9yZXNlcnZhdGlvbnMYBiABKANIBIgBAUIKCghfdmlld2Vyc0ILCglfY29tbWVudHNCDAoKX2FkX3BvaW50c0IOCgxfZ2lmdF9wb2ludHNCGQoXX3RpbWVzaGlmdF9yZXNlcnZhdGlvbnNKBAgFEAYi6AEKB01hcnF1ZWUSQAoHZGlzcGxheRgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZS5EaXNwbGF5SACIAQEajgEKB0Rpc3BsYXkSRAoQb3BlcmF0b3JfY29tbWVudBgBIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuT3BlcmF0b3JDb21tZW50EjAKCGR1cmF0aW9uGAMgASgLMhkuZ29vZ2xlLnByb3RvYnVmLkR1cmF0aW9uSACIAQFCCwoJX2R1cmF0aW9uQgoKCF9kaXNwbGF5IoMCCgdFbnF1ZXRlEhAKCHF1ZXN0aW9uGAEgASgJEjoKB2Nob2ljZXMYAiADKAsyKS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkVucXVldGUuQ2hvaWNlEjkKBnN0YXR1cxgDIAEoDjIpLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuRW5xdWV0ZS5TdGF0dXMaQwoGQ2hvaWNlEhMKC2Rlc2NyaXB0aW9uGAEgASgJEhYKCXBlcl9taWxsZRgDIAEoBUgAiAEBQgwKCl9wZXJfbWlsbGUiKgoGU3RhdHVzEgoKBkNsb3NlZBAAEggKBFBvbGwQARIKCgZSZXN1bHQQAiJ7CglNb3ZlT3JkZXISLwoEanVtcBgBIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuSnVtcEgAEjcKCHJlZGlyZWN0GAIgASgLMiMuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5SZWRpcmVjdEgAQgQKAnRvYgZwcm90bzM", [file_google_protobuf_duration]);
+  var Chat_Modifier_Pos;
+  (function(Chat_Modifier_Pos2) {
+    Chat_Modifier_Pos2[Chat_Modifier_Pos2["naka"] = 0] = "naka";
+    Chat_Modifier_Pos2[Chat_Modifier_Pos2["shita"] = 1] = "shita";
+    Chat_Modifier_Pos2[Chat_Modifier_Pos2["ue"] = 2] = "ue";
+  })(Chat_Modifier_Pos || (Chat_Modifier_Pos = {}));
+  var Chat_Modifier_Size;
+  (function(Chat_Modifier_Size2) {
+    Chat_Modifier_Size2[Chat_Modifier_Size2["medium"] = 0] = "medium";
+    Chat_Modifier_Size2[Chat_Modifier_Size2["small"] = 1] = "small";
+    Chat_Modifier_Size2[Chat_Modifier_Size2["big"] = 2] = "big";
+  })(Chat_Modifier_Size || (Chat_Modifier_Size = {}));
+  var Chat_Modifier_ColorName;
+  (function(Chat_Modifier_ColorName2) {
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["white"] = 0] = "white";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["red"] = 1] = "red";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["pink"] = 2] = "pink";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["orange"] = 3] = "orange";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["yellow"] = 4] = "yellow";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["green"] = 5] = "green";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["cyan"] = 6] = "cyan";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["blue"] = 7] = "blue";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["purple"] = 8] = "purple";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["black"] = 9] = "black";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["white2"] = 10] = "white2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["red2"] = 11] = "red2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["pink2"] = 12] = "pink2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["orange2"] = 13] = "orange2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["yellow2"] = 14] = "yellow2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["green2"] = 15] = "green2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["cyan2"] = 16] = "cyan2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["blue2"] = 17] = "blue2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["purple2"] = 18] = "purple2";
+    Chat_Modifier_ColorName2[Chat_Modifier_ColorName2["black2"] = 19] = "black2";
+  })(Chat_Modifier_ColorName || (Chat_Modifier_ColorName = {}));
+  var Chat_Modifier_Font;
+  (function(Chat_Modifier_Font2) {
+    Chat_Modifier_Font2[Chat_Modifier_Font2["defont"] = 0] = "defont";
+    Chat_Modifier_Font2[Chat_Modifier_Font2["mincho"] = 1] = "mincho";
+    Chat_Modifier_Font2[Chat_Modifier_Font2["gothic"] = 2] = "gothic";
+  })(Chat_Modifier_Font || (Chat_Modifier_Font = {}));
+  var Chat_Modifier_Opacity;
+  (function(Chat_Modifier_Opacity2) {
+    Chat_Modifier_Opacity2[Chat_Modifier_Opacity2["Normal"] = 0] = "Normal";
+    Chat_Modifier_Opacity2[Chat_Modifier_Opacity2["Translucent"] = 1] = "Translucent";
+  })(Chat_Modifier_Opacity || (Chat_Modifier_Opacity = {}));
+  var Chat_AccountStatus;
+  (function(Chat_AccountStatus2) {
+    Chat_AccountStatus2[Chat_AccountStatus2["Standard"] = 0] = "Standard";
+    Chat_AccountStatus2[Chat_AccountStatus2["Premium"] = 1] = "Premium";
+  })(Chat_AccountStatus || (Chat_AccountStatus = {}));
+  var CommentLock_Status;
+  (function(CommentLock_Status2) {
+    CommentLock_Status2[CommentLock_Status2["Unrestricted"] = 0] = "Unrestricted";
+    CommentLock_Status2[CommentLock_Status2["Locked"] = 1] = "Locked";
+    CommentLock_Status2[CommentLock_Status2["Restricted"] = 2] = "Restricted";
+  })(CommentLock_Status || (CommentLock_Status = {}));
+  var CommentMode_Layout;
+  (function(CommentMode_Layout2) {
+    CommentMode_Layout2[CommentMode_Layout2["Normal"] = 0] = "Normal";
+    CommentMode_Layout2[CommentMode_Layout2["SplitTop"] = 1] = "SplitTop";
+    CommentMode_Layout2[CommentMode_Layout2["Background"] = 2] = "Background";
+  })(CommentMode_Layout || (CommentMode_Layout = {}));
+  var TrialPanel_Panel;
+  (function(TrialPanel_Panel2) {
+    TrialPanel_Panel2[TrialPanel_Panel2["Hidden"] = 0] = "Hidden";
+    TrialPanel_Panel2[TrialPanel_Panel2["Display"] = 1] = "Display";
+  })(TrialPanel_Panel || (TrialPanel_Panel = {}));
+  var TrialPanel_Mode;
+  (function(TrialPanel_Mode2) {
+    TrialPanel_Mode2[TrialPanel_Mode2["Allowed"] = 0] = "Allowed";
+    TrialPanel_Mode2[TrialPanel_Mode2["Restricted"] = 1] = "Restricted";
+    TrialPanel_Mode2[TrialPanel_Mode2["Forbidden"] = 2] = "Forbidden";
+  })(TrialPanel_Mode || (TrialPanel_Mode = {}));
+  var ProgramStatus_State;
+  (function(ProgramStatus_State2) {
+    ProgramStatus_State2[ProgramStatus_State2["Unknown"] = 0] = "Unknown";
+    ProgramStatus_State2[ProgramStatus_State2["Ended"] = 1] = "Ended";
+  })(ProgramStatus_State || (ProgramStatus_State = {}));
+  var Enquete_Status;
+  (function(Enquete_Status2) {
+    Enquete_Status2[Enquete_Status2["Closed"] = 0] = "Closed";
+    Enquete_Status2[Enquete_Status2["Poll"] = 1] = "Poll";
+    Enquete_Status2[Enquete_Status2["Result"] = 2] = "Result";
+  })(Enquete_Status || (Enquete_Status = {}));
+  const file_dwango_nicolive_chat_data_atoms_forwarded = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL2ZvcndhcmRlZC5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyL7AQoNRm9yd2FyZGVkQ2hhdBItCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0EhIKCm1lc3NhZ2VfaWQYAiABKAkSFgoOc291cmNlX2xpdmVfaWQYAyABKAMSSwoEbW9kZRgEIAEoDjI9LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuRm9yd2FyZGVkQ2hhdC5Gb3J3YXJkaW5nTW9kZSJCCg5Gb3J3YXJkaW5nTW9kZRILCgdVTktOT1dOEAASDwoLRlJPTV9DUlVJU0UQARISCg5DT0xMQUJfU0hBUklORxACYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms]);
+  var ForwardedChat_ForwardingMode;
+  (function(ForwardedChat_ForwardingMode2) {
+    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["UNKNOWN"] = 0] = "UNKNOWN";
+    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["FROM_CRUISE"] = 1] = "FROM_CRUISE";
+    ForwardedChat_ForwardingMode2[ForwardedChat_ForwardingMode2["COLLAB_SHARING"] = 2] = "COLLAB_SHARING";
+  })(ForwardedChat_ForwardingMode || (ForwardedChat_ForwardingMode = {}));
+  const file_dwango_nicolive_chat_data_atoms_moderator = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL21vZGVyYXRvci5wcm90bxIfZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcyJqChFNb2RlcmF0b3JVc2VySW5mbxIPCgd1c2VyX2lkGAEgASgDEhUKCG5pY2tuYW1lGAIgASgJSACIAQESFAoHaWNvblVybBgDIAEoCUgBiAEBQgsKCV9uaWNrbmFtZUIKCghfaWNvblVybCKLAgoQTW9kZXJhdG9yVXBkYXRlZBJXCglvcGVyYXRpb24YASABKA4yRC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVwZGF0ZWQuTW9kZXJhdG9yT3BlcmF0aW9uEkQKCG9wZXJhdG9yGAIgASgLMjIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVc2VySW5mbxItCgl1cGRhdGVkQXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIikKEk1vZGVyYXRvck9wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASLFBAoLU1NOR1VwZGF0ZWQSTQoJb3BlcmF0aW9uGAEgASgOMjouZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZC5TU05HT3BlcmF0aW9uEg8KB3NzbmdfaWQYAiABKAMSRAoIb3BlcmF0b3IYAyABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLk1vZGVyYXRvclVzZXJJbmZvEkgKBHR5cGUYBCABKA4yNS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdUeXBlSACIAQESEwoGc291cmNlGAUgASgJSAGIAQESMgoJdXBkYXRlZEF0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgCiAEBElQKDW9wZXJhdG9yX3R5cGUYByABKA4yPS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNTTkdVcGRhdGVkLlNTTkdPcGVyYXRvclR5cGUiJAoNU1NOR09wZXJhdGlvbhIHCgNBREQQABIKCgZERUxFVEUQASIrCghTU05HVHlwZRIICgRVU0VSEAASCAoEV09SRBABEgsKB0NPTU1BTkQQAiIyChBTU05HT3BlcmF0b3JUeXBlEg0KCU1PREVSQVRPUhAAEg8KC0JST0FEQ0FTVEVSEAFCBwoFX3R5cGVCCQoHX3NvdXJjZUIMCgpfdXBkYXRlZEF0IqMCChZNb2RlcmF0aW9uQW5ub3VuY2VtZW50EhQKB21lc3NhZ2UYASABKAlIAIgBARJdCg5ndWlkZWxpbmVJdGVtcxgCIAMoDjJFLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuTW9kZXJhdGlvbkFubm91bmNlbWVudC5HdWlkZWxpbmVJdGVtEi0KCXVwZGF0ZWRBdBgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiWQoNR3VpZGVsaW5lSXRlbRILCgdVTktOT1dOEAASCgoGU0VYVUFMEAESCAoEU1BBTRACEgsKB1NMQU5ERVIQAxIYChRQRVJTT05BTF9JTkZPUk1BVElPThAEQgoKCF9tZXNzYWdlYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  var ModeratorUpdated_ModeratorOperation;
+  (function(ModeratorUpdated_ModeratorOperation2) {
+    ModeratorUpdated_ModeratorOperation2[ModeratorUpdated_ModeratorOperation2["ADD"] = 0] = "ADD";
+    ModeratorUpdated_ModeratorOperation2[ModeratorUpdated_ModeratorOperation2["DELETE"] = 1] = "DELETE";
+  })(ModeratorUpdated_ModeratorOperation || (ModeratorUpdated_ModeratorOperation = {}));
+  var SSNGUpdated_SSNGOperation;
+  (function(SSNGUpdated_SSNGOperation2) {
+    SSNGUpdated_SSNGOperation2[SSNGUpdated_SSNGOperation2["ADD"] = 0] = "ADD";
+    SSNGUpdated_SSNGOperation2[SSNGUpdated_SSNGOperation2["DELETE"] = 1] = "DELETE";
+  })(SSNGUpdated_SSNGOperation || (SSNGUpdated_SSNGOperation = {}));
+  var SSNGUpdated_SSNGType;
+  (function(SSNGUpdated_SSNGType2) {
+    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["USER"] = 0] = "USER";
+    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["WORD"] = 1] = "WORD";
+    SSNGUpdated_SSNGType2[SSNGUpdated_SSNGType2["COMMAND"] = 2] = "COMMAND";
+  })(SSNGUpdated_SSNGType || (SSNGUpdated_SSNGType = {}));
+  var SSNGUpdated_SSNGOperatorType;
+  (function(SSNGUpdated_SSNGOperatorType2) {
+    SSNGUpdated_SSNGOperatorType2[SSNGUpdated_SSNGOperatorType2["MODERATOR"] = 0] = "MODERATOR";
+    SSNGUpdated_SSNGOperatorType2[SSNGUpdated_SSNGOperatorType2["BROADCASTER"] = 1] = "BROADCASTER";
+  })(SSNGUpdated_SSNGOperatorType || (SSNGUpdated_SSNGOperatorType = {}));
+  var ModerationAnnouncement_GuidelineItem;
+  (function(ModerationAnnouncement_GuidelineItem2) {
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["UNKNOWN"] = 0] = "UNKNOWN";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SEXUAL"] = 1] = "SEXUAL";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SPAM"] = 2] = "SPAM";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["SLANDER"] = 3] = "SLANDER";
+    ModerationAnnouncement_GuidelineItem2[ModerationAnnouncement_GuidelineItem2["PERSONAL_INFORMATION"] = 4] = "PERSONAL_INFORMATION";
+  })(ModerationAnnouncement_GuidelineItem || (ModerationAnnouncement_GuidelineItem = {}));
+  const file_dwango_nicolive_chat_data_atoms_notifications = fileDesc("CjNkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL2F0b21zL25vdGlmaWNhdGlvbnMucHJvdG8SH2R3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMi0QIKFFNpbXBsZU5vdGlmaWNhdGlvblYyElQKBHR5cGUYASABKA4yRi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLmF0b21zLlNpbXBsZU5vdGlmaWNhdGlvblYyLk5vdGlmaWNhdGlvblR5cGUSDwoHbWVzc2FnZRgCIAEoCRIVCg1zaG93X2luX3RlbG9wGAMgASgIEhQKDHNob3dfaW5fbGlzdBgEIAEoCCKkAQoQTm90aWZpY2F0aW9uVHlwZRILCgdVTktOT1dOEAASCgoGSUNISUJBEAESCwoHRU1PVElPThACEgoKBkNSVUlTRRADEhQKEFBST0dSQU1fRVhURU5ERUQQBBIOCgpSQU5LSU5HX0lOEAUSCwoHVklTSVRFRBAGEhgKFFNVUFBPUlRFUl9SRUdJU1RFUkVEEAcSEQoNVVNFUl9MRVZFTF9VUBAIYgZwcm90bzM");
+  var SimpleNotificationV2_NotificationType;
+  (function(SimpleNotificationV2_NotificationType2) {
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["UNKNOWN"] = 0] = "UNKNOWN";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["ICHIBA"] = 1] = "ICHIBA";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["EMOTION"] = 2] = "EMOTION";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["CRUISE"] = 3] = "CRUISE";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["PROGRAM_EXTENDED"] = 4] = "PROGRAM_EXTENDED";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["RANKING_IN"] = 5] = "RANKING_IN";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["VISITED"] = 6] = "VISITED";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["SUPPORTER_REGISTERED"] = 7] = "SUPPORTER_REGISTERED";
+    SimpleNotificationV2_NotificationType2[SimpleNotificationV2_NotificationType2["USER_LEVEL_UP"] = 8] = "USER_LEVEL_UP";
+  })(SimpleNotificationV2_NotificationType || (SimpleNotificationV2_NotificationType = {}));
+  const file_dwango_nicolive_chat_data_message = fileDesc("Cidkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL21lc3NhZ2UucHJvdG8SGWR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEigQYKD05pY29saXZlTWVzc2FnZRIvCgRjaGF0GAEgASgLMh8uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5DaGF0SAASTAoTc2ltcGxlX25vdGlmaWNhdGlvbhgHIAEoCzItLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuU2ltcGxlTm90aWZpY2F0aW9uSAASLwoEZ2lmdBgIIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuR2lmdEgAEjMKBm5pY29hZBgJIAEoCzIhLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2FkSAASPAoLZ2FtZV91cGRhdGUYDSABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkdhbWVVcGRhdGVIABI8Cgt0YWdfdXBkYXRlZBgRIAEoCzIlLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuVGFnVXBkYXRlZEgAEk4KEW1vZGVyYXRvcl91cGRhdGVkGBIgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0b3JVcGRhdGVkSAASRAoMc3NuZ191cGRhdGVkGBMgASgLMiwuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5TU05HVXBkYXRlZEgAEjoKD292ZXJmbG93ZWRfY2hhdBgUIAEoCzIfLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ2hhdEgAEkgKDmZvcndhcmRlZF9jaGF0GBYgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Gb3J3YXJkZWRDaGF0SAASVwoWc2ltcGxlX25vdGlmaWNhdGlvbl92MhgXIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuYXRvbXMuU2ltcGxlTm90aWZpY2F0aW9uVjJIAEIGCgRkYXRhSgQIAhAHSgQIChANSgQIDhARYgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_forwarded, file_dwango_nicolive_chat_data_atoms_moderator, file_dwango_nicolive_chat_data_atoms_notifications]);
+  const file_dwango_nicolive_chat_data_origin = fileDesc("CiZkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL29yaWdpbi5wcm90bxIZZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YSJzCg5OaWNvbGl2ZU9yaWdpbhI+CgRjaGF0GAEgASgLMi4uZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbi5DaGF0SAAaFwoEQ2hhdBIPCgdsaXZlX2lkGAEgASgDQggKBm9yaWdpbmIGcHJvdG8z");
+  const file_dwango_nicolive_chat_data_state = fileDesc("CiVkd2FuZ28vbmljb2xpdmUvY2hhdC9kYXRhL3N0YXRlLnByb3RvEhlkd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhIoYGCg1OaWNvbGl2ZVN0YXRlEj4KCnN0YXRpc3RpY3MYASABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlN0YXRpc3RpY3NIAIgBARI4CgdlbnF1ZXRlGAIgASgLMiIuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5FbnF1ZXRlSAGIAQESPQoKbW92ZV9vcmRlchgDIAEoCzIkLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTW92ZU9yZGVySAKIAQESOAoHbWFycXVlZRgEIAEoCzIiLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTWFycXVlZUgDiAEBEkEKDGNvbW1lbnRfbG9jaxgFIAEoCzImLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuQ29tbWVudExvY2tIBIgBARJBCgxjb21tZW50X21vZGUYBiABKAsyJi5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLkNvbW1lbnRNb2RlSAWIAQESPwoLdHJpYWxfcGFuZWwYByABKAsyJS5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLlRyaWFsUGFuZWxIBogBARJFCg5wcm9ncmFtX3N0YXR1cxgJIAEoCzIoLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuUHJvZ3JhbVN0YXR1c0gHiAEBEl0KF21vZGVyYXRpb25fYW5ub3VuY2VtZW50GAogASgLMjcuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5hdG9tcy5Nb2RlcmF0aW9uQW5ub3VuY2VtZW50SAiIAQFCDQoLX3N0YXRpc3RpY3NCCgoIX2VucXVldGVCDQoLX21vdmVfb3JkZXJCCgoIX21hcnF1ZWVCDwoNX2NvbW1lbnRfbG9ja0IPCg1fY29tbWVudF9tb2RlQg4KDF90cmlhbF9wYW5lbEIRCg9fcHJvZ3JhbV9zdGF0dXNCGgoYX21vZGVyYXRpb25fYW5ub3VuY2VtZW50YgZwcm90bzM", [file_dwango_nicolive_chat_data_atoms, file_dwango_nicolive_chat_data_atoms_moderator]);
+  const file_dwango_nicolive_chat_service_edge_payload = fileDesc("Ci9kd2FuZ28vbmljb2xpdmUvY2hhdC9zZXJ2aWNlL2VkZ2UvcGF5bG9hZC5wcm90bxIhZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlIrUDCg5DaHVua2VkTWVzc2FnZRJECgRtZXRhGAEgASgLMjYuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLkNodW5rZWRNZXNzYWdlLk1ldGESPQoHbWVzc2FnZRgCIAEoCzIqLmR3YW5nby5uaWNvbGl2ZS5jaGF0LmRhdGEuTmljb2xpdmVNZXNzYWdlSAASOQoFc3RhdGUYBCABKAsyKC5kd2FuZ28ubmljb2xpdmUuY2hhdC5kYXRhLk5pY29saXZlU3RhdGVIABJKCgZzaWduYWwYBSABKA4yOC5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2UuU2lnbmFsSAAadQoETWV0YRIKCgJpZBgBIAEoCRImCgJhdBgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOQoGb3JpZ2luGAMgASgLMikuZHdhbmdvLm5pY29saXZlLmNoYXQuZGF0YS5OaWNvbGl2ZU9yaWdpbiIVCgZTaWduYWwSCwoHRmx1c2hlZBAAQgkKB3BheWxvYWQingIKDVBhY2tlZFNlZ21lbnQSQwoIbWVzc2FnZXMYASADKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQ2h1bmtlZE1lc3NhZ2USQwoEbmV4dBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90GhMKBE5leHQSCwoDdXJpGAEgASgJGhwKDVN0YXRlU25hcHNob3QSCwoDdXJpGAEgASgJItYCCgxDaHVua2VkRW50cnkSRgoIYmFja3dhcmQYAiABKAsyMi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuQmFja3dhcmRTZWdtZW50SAASRQoIcHJldmlvdXMYAyABKAsyMS5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuTWVzc2FnZVNlZ21lbnRIABJECgdzZWdtZW50GAEgASgLMjEuZHdhbmdvLm5pY29saXZlLmNoYXQuc2VydmljZS5lZGdlLk1lc3NhZ2VTZWdtZW50SAASTAoEbmV4dBgEIAEoCzI8LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5DaHVua2VkRW50cnkuUmVhZHlGb3JOZXh0SAAaGgoMUmVhZHlGb3JOZXh0EgoKAmF0GAEgASgDQgcKBWVudHJ5InIKDk1lc3NhZ2VTZWdtZW50EigKBGZyb20YASABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEikKBXVudGlsGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBILCgN1cmkYAyABKAki1gEKD0JhY2t3YXJkU2VnbWVudBIpCgV1bnRpbBgBIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASRgoHc2VnbWVudBgCIAEoCzI1LmR3YW5nby5uaWNvbGl2ZS5jaGF0LnNlcnZpY2UuZWRnZS5QYWNrZWRTZWdtZW50Lk5leHQSUAoIc25hcHNob3QYAyABKAsyPi5kd2FuZ28ubmljb2xpdmUuY2hhdC5zZXJ2aWNlLmVkZ2UuUGFja2VkU2VnbWVudC5TdGF0ZVNuYXBzaG90YgZwcm90bzM", [file_google_protobuf_timestamp, file_dwango_nicolive_chat_data_message, file_dwango_nicolive_chat_data_state, file_dwango_nicolive_chat_data_origin]);
+  const ChunkedMessageSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 0);
+  var ChunkedMessage_Signal;
+  (function(ChunkedMessage_Signal2) {
+    ChunkedMessage_Signal2[ChunkedMessage_Signal2["Flushed"] = 0] = "Flushed";
+  })(ChunkedMessage_Signal || (ChunkedMessage_Signal = {}));
+  const PackedSegmentSchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 1);
+  const ChunkedEntrySchema = messageDesc(file_dwango_nicolive_chat_service_edge_payload, 2);
+  function timestampLargeA(a, b) {
+    return a.seconds < b.seconds || a.seconds === b.seconds && a.nanos < b.nanos;
+  }
+  function isAbortError(error, signal) {
+    return signal?.aborted === true && error instanceof Error && error.name === "AbortError";
+  }
+  function createAbortError$1() {
+    return new DOMException("操作が中止されました", "AbortError");
+  }
+  async function sleep(ms, signal) {
+    if (signal?.aborted) {
+      await sleep(0);
+      return Promise.reject(createAbortError$1());
+    }
+    const { promise, resolve, reject } = promiser();
+    const id = setTimeout(timeouted, ms);
+    signal?.addEventListener("abort", aborted);
+    return promise;
+    function timeouted() {
+      signal?.removeEventListener("abort", aborted);
+      resolve();
+    }
+    function aborted() {
+      clearInterval(id);
+      signal.removeEventListener("abort", aborted);
+      reject(createAbortError$1());
+    }
+  }
+  function promiser() {
+    let resolve = null;
+    let reject = null;
+    const promise = new Promise(((res, rej) => [resolve, reject] = [res, rej]));
+    return { promise, resolve, reject };
+  }
+  function getProps(object, props, defaultValue) {
+    for (const prop of props) {
+      if (object == null)
+        break;
+      object = object[prop];
+    }
+    if (object !== void 0)
+      return object;
+    if (defaultValue !== void 0) {
+      console.warn(`値が存在しないので代替値を使用します: ${props.join(".")}`, defaultValue);
+      return defaultValue;
+    }
+    throw new Error(`値が存在しません: ${props.join(".")}`);
+  }
+  const AsyncIteratorSet = {
+create: (options) => {
+      let resolveNext;
+      let rejectNext;
+      let state = "iterating";
+      let error;
+      const queue = [];
+      let filter = options?.filter;
+      const iterable = {
+        next() {
+          if (queue.length > 0)
+            return Promise.resolve({ value: queue.shift(), done: false });
+          if (state === "iterating")
+            return nextPromise();
+          if (state === "closed")
+            return Promise.resolve({ value: void 0, done: true });
+          throw error;
+        },
+        [Symbol.asyncIterator]() {
+          return iterable;
+        },
+        return() {
+          if (state === "iterating")
+            options?.breaked?.();
+          return Promise.resolve({ value: void 0, done: true });
+        }
+      };
+      return { iterator: iterable, enqueue, throw: throwError, close };
+      function nextPromise() {
+        return new Promise((resolve, reject) => {
+          resolveNext = resolve;
+          rejectNext = reject;
+        });
+      }
+      function enqueue(value) {
+        if (state !== "iterating")
+          return;
+        if (filter != null) {
+          let res = filter(value);
+          if (res === false)
+            return;
+          if (res === true) ;
+          else {
+            [res, filter] = res;
+            if (!res)
+              return;
+          }
+        }
+        queue.push(value);
+        if (resolveNext != null) {
+          resolveNext({ value: queue.shift(), done: false });
+          resolveNext = void 0;
+        }
+      }
+      function throwError(reason) {
+        if (state !== "iterating")
+          return;
+        finishIterating("error", reason);
+      }
+      function close() {
+        finishIterating("closed");
+      }
+      function finishIterating(newState, e) {
+        if (state !== "iterating")
+          return;
+        state = newState;
+        if (newState === "closed") {
+          if (resolveNext != null)
+            resolveNext({ value: void 0, done: true });
+        } else {
+          error = e;
+          if (rejectNext != null)
+            rejectNext(error);
+        }
+      }
+    }
+  };
+  async function connectWsAndAsyncIterable(url, receiver, closed) {
+    const ws = new WebSocket(url);
+    const iteratorSet = AsyncIteratorSet.create({ breaked: () => iteratorSet.close() });
+    const onMessage = receiver == null ? (e) => iteratorSet.enqueue(e) : (e) => iteratorSet.enqueue(receiver(e));
+    const openPromiser = promiser();
+    ws.addEventListener("open", openPromiser.resolve);
+    ws.addEventListener("message", onMessage);
+    ws.addEventListener("close", cleanupAndCloseIter);
+    await openPromiser.promise;
+    ws.removeEventListener("open", openPromiser.resolve);
+    return [ws, iteratorSet];
+    function cleanupAndCloseIter(event) {
+      ws.removeEventListener("message", onMessage);
+      ws.removeEventListener("close", cleanupAndCloseIter);
+      openPromiser.reject(`code:${event.code}  reason:${event.reason}`);
+      closed?.();
+      iteratorSet.close();
+    }
+  }
+  const ResponseIteratorSet = {
+fetch: async (uri, desc, signal, transport = defaultResponseIteratorTransport) => {
+      const res = await transport.fetch(uri, signal);
+      return {
+        response: res.response,
+        iterator: sizeDelimitedDecodeStream(desc, res.iterator),
+        closed: res.closed
+      };
+    }
+  };
+  const defaultResponseIteratorTransport = {
+    async fetch(uri, signal) {
+      const res = await fetch(uri, { signal });
+      if (res.body == null)
+        throw new Error(`fetchで問題が発生しました
+uri:${uri} status:${res.status}`);
+      const reader = res.body.getReader();
+      return {
+        response: res,
+        iterator: readableStreamToAsyncIterable(reader),
+        closed: reader.closed
+      };
+    }
+  };
+  async function* readableStreamToAsyncIterable(reader) {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done)
+        return;
+      yield value;
+    }
+  }
+  async function* sizeDelimitedDecodeStream(messageDesc2, iterable, options) {
+    function append(buffer2, chunk) {
+      const n = new Uint8Array(buffer2.byteLength + chunk.byteLength);
+      n.set(buffer2);
+      n.set(chunk, buffer2.length);
+      return n;
+    }
+    let buffer = new Uint8Array(0);
+    for await (const chunk of iterable) {
+      buffer = append(buffer, chunk);
+      while (buffer.length > 0) {
+        const reader = new BinaryReader(buffer);
+        const size2 = reader.uint32();
+        const offset2 = reader.pos;
+        if (offset2 + size2 > buffer.byteLength) {
+          break;
+        }
+        yield fromBinary(messageDesc2, buffer.subarray(offset2, offset2 + size2), options);
+        buffer = buffer.subarray(offset2 + size2);
+      }
+    }
+  }
+  const NicoliveMessageServer = {
+fetchEntry: (entryUri, at, signal, transport) => {
+      return ResponseIteratorSet.fetch(`${entryUri}?at=${at}`, ChunkedEntrySchema, signal, transport);
+    },
+fetchMessage: (messageUri, signal, transport) => {
+      return ResponseIteratorSet.fetch(messageUri, ChunkedMessageSchema, signal, transport);
+    },
+fetchBackwardMessages: async (backwardUri, delayMs, maxSegmentCount, isSnapshot, signal) => {
+      if (maxSegmentCount <= 0)
+        maxSegmentCount = Number.MAX_SAFE_INTEGER;
+      const buf = [];
+      let nextUri = backwardUri;
+      let segmentUri;
+      let snapshotUri;
+      try {
+        while (true) {
+          const res = await fetch(nextUri, { signal });
+          const body = new Uint8Array(await res.arrayBuffer());
+          const packed = fromBinary(PackedSegmentSchema, body);
+          segmentUri = packed.next?.uri;
+          snapshotUri = packed.snapshot?.uri;
+          nextUri = isSnapshot ? snapshotUri : segmentUri;
+          buf.push(packed.messages);
+          if (nextUri == null || buf.length >= maxSegmentCount)
+            break;
+          await sleep(delayMs, signal);
+        }
+      } catch (e) {
+        if (!isAbortError(e, signal))
+          throw e;
+      }
+      const messages = buf.reverse().flat();
+      return { messages, segmentUri, snapshotUri };
+    }
+  };
+  const NicoliveWsSendMessage = {
+    startWatching: (data) => ({
+      type: "startWatching",
+      data
+    }),
+    keepSeat: () => ({ type: "keepSeat" }),
+    getAkashic: (data) => ({
+      type: "getAkashic",
+      data
+    }),
+    changeStream: (data) => ({
+      type: "changeStream",
+      data
+    }),
+    answerEnquete: (data) => ({
+      type: "answerEnquete",
+      data
+    }),
+    pong: () => ({ type: "pong" }),
+    postComment: (data) => ({
+      type: "postComment",
+      data
+    }),
+    getTaxonomy: () => ({ type: "getTaxonomy" }),
+    getStreamQualities: () => ({
+      type: "getStreamQualities"
+    })
+  };
+  const NicoliveDisconectReason = {
+takeover: "TAKEOVER",
+noPermission: "NO_PERMISSION",
+endProgram: "END_PROGRAM",
+pingTimeout: "PING_TIMEOUT",
+tooManyConnections: "TOO_MANY_CONNECTIONS",
+tooManyWatchings: "TOO_MANY_WATCHINGS",
+crowded: "CROWDED",
+maintenanceIn: "MAINTENANCE_IN",
+serviceTemporarilyUnavailable: "SERVICE_TEMPORARILY_UNAVAILABLE"
+  };
+  function getNicoliveDisconectReasonDescription(reason) {
+    if (reason == null)
+      return "終了メッセージを受信する前に切断された";
+    return NicoliveDisconectReasonDescription[reason];
+  }
+  const NicoliveDisconectReasonDescription = {
+    [NicoliveDisconectReason.takeover]: "追い出された",
+    [NicoliveDisconectReason.noPermission]: "座席を取れなかった",
+    [NicoliveDisconectReason.endProgram]: "番組が終了した",
+    [NicoliveDisconectReason.pingTimeout]: "接続生存確認に失敗した (pingTimeout)",
+    [NicoliveDisconectReason.tooManyConnections]: "同一ユーザからの接続数上限を越えている",
+    [NicoliveDisconectReason.tooManyWatchings]: "同一ユーザの視聴番組数上限を越えている",
+    [NicoliveDisconectReason.crowded]: "満席",
+    [NicoliveDisconectReason.maintenanceIn]: "メンテナンス中",
+    [NicoliveDisconectReason.serviceTemporarilyUnavailable]: "一時的なサーバエラー"
+  };
+  const NicoliveRejectReason = {
+    needLogin: "needLogin",
+    noTimeshiftProgram: "noTimeshiftProgram",
+    programNotBegun: "programNotBegun",
+    passwordAuthRequired: "passwordAuthRequired",
+    unknown: "unknown"
+  };
+  function getNicoliveId(liveIdOrUrl) {
+    const liveIdRegex = /.*((lv|ch|user\/)\d+).*/;
+    return liveIdRegex.exec(liveIdOrUrl)?.[1];
+  }
+  function checkCloseMessage(message) {
+    return message != null && message.payload.case === "state" && message.payload.value.programStatus?.state === ProgramStatus_State.Ended;
+  }
+  async function parseNicolivePageData(res) {
+    try {
+      let postBroadcasterComment2 = function(text, name, isPermanent, color) {
+        return NicoliveUtility.postBroadcasterComment(liveId, broadcasterCommentToken, text, name, isPermanent, color);
+      }, deleteBroadcasterComment2 = function() {
+        return NicoliveUtility.deleteBroadcasterComment(liveId, broadcasterCommentToken);
+      };
+      var postBroadcasterComment = postBroadcasterComment2, deleteBroadcasterComment = deleteBroadcasterComment2;
+      const dom = await res.text().then((data) => new DOMParser().parseFromString(data, "text/html"));
+      const embeddedString = dom.getElementById("embedded-data").getAttribute("data-props");
+      const embedded = JSON.parse(embeddedString);
+      const site = getProps(embedded, ["site"]);
+      const program = getProps(embedded, ["program"]);
+      const liveId = getProps(program, ["nicoliveProgramId"]);
+      const broadcasterCommentToken = getProps(site, ["relive", "csrfToken"]);
+      const websocketUrl = getProps(site, ["relive", "webSocketUrl"]);
+      return {
+        websocketUrl,
+        beginTime: getProps(program, ["beginTime"], -1),
+        endTime: getProps(program, ["endTime"], -1),
+        status: getProps(program, ["status"], "ON_AIR"),
+        nicoliveInfo: {
+          liveId,
+          title: getProps(program, ["title"]),
+          provider: parseProvider(embedded),
+          loginUser: parseLoginUser(embedded),
+          broadcasterCommentToken: getProps(site, ["relive", "csrfToken"], ""),
+rejectedReasons: websocketUrl ? [] : parseReasons(embedded)
+        },
+        postBroadcasterComment: postBroadcasterComment2,
+        deleteBroadcasterComment: deleteBroadcasterComment2
+      };
+    } catch (e) {
+      throw new NicolivePageParseError(res.url, e);
+    }
+  }
+  class NicoliveLiveIdError extends Error {
+    liveIdOrUrl;
+    constructor(liveIdOrUrl) {
+      super(`有効な放送IDを含んでいません. ${liveIdOrUrl}`);
+      this.liveIdOrUrl = liveIdOrUrl;
+      this.name = "NicoliveLiveIdError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicolivePageNotFoundError extends Error {
+    response;
+    liveId;
+    constructor(response, liveId) {
+      super(`放送ページが存在しません. lv:${liveId}`);
+      this.response = response;
+      this.liveId = liveId;
+      this.name = "NicolivePageNotFoundError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicolivePageParseError extends Error {
+    url;
+    innerError;
+    constructor(url, innerError) {
+      super(`放送ページの解析に失敗しました. url:${url}
+内部エラー:${innerError}`);
+      this.url = url;
+      this.innerError = innerError;
+      this.name = "NicolivePageParseError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicoliveAccessDeniedError extends Error {
+    pageData;
+    constructor(pageData) {
+      super(`放送が非公開または視聴する権限がありません. lv:${pageData.nicoliveInfo.liveId}`);
+      this.pageData = pageData;
+      this.name = "NicoliveAccessDeniedError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicoliveWebSocketReconnectError extends Error {
+    data;
+reconnectTime;
+    constructor(data) {
+      super(`ウェブソケット再接続要求を受け取りました`);
+      this.data = data;
+      this.reconnectTime = Date.now() + this.data.waitTimeSec * 1e3;
+      this.name = "NicoliveWebSocketReconnectError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+  }
+  class NicoliveWebSocketDisconnectError extends Error {
+    reason;
+    constructor(reason) {
+      super(`ウェブソケットから切断されました. 理由:${getNicoliveDisconectReasonDescription(reason)}`);
+      this.reason = reason;
+      this.name = "NicoliveWebSocketDisconnectError";
+      Object.setPrototypeOf(this, new.target.prototype);
+    }
+static createIfError(reason) {
+      if (reason !== NicoliveDisconectReason.endProgram)
+        return new NicoliveWebSocketDisconnectError(reason);
+    }
+  }
+  function parseProvider(embedded) {
+    try {
+      const program = getProps(embedded, ["program"]);
+      const socialGroup = getProps(embedded, ["socialGroup"]);
+      const supplier = getProps(program, ["supplier"]);
+      const providerType = getProps(program, ["providerType"]);
+      if (providerType === "community") {
+        return {
+          type: "user",
+          id: getProps(supplier, ["programProviderId"]) + "",
+          name: getProps(supplier, ["name"])
+        };
+      } else if (providerType === "official") {
+        return {
+          type: "official",
+          id: getProps(socialGroup, ["id"]),
+          name: getProps(socialGroup, ["name"]),
+          companyName: getProps(socialGroup, ["companyName"])
+        };
+      } else {
+        return {
+          type: "channel",
+          id: getProps(socialGroup, ["id"]),
+          name: getProps(socialGroup, ["name"]),
+          companyName: getProps(socialGroup, ["companyName"])
+        };
+      }
+    } catch (e) {
+      console.warn("放送の情報の解析に失敗しました", e);
+      return { type: "unknown" };
+    }
+  }
+  function parseLoginUser(embedded) {
+    const user = embedded.user;
+    if (user?.isLoggedIn === void 0) {
+      console.warn("embedded.user.isLoggedIn が存在しません");
+      return void 0;
+    }
+    if (!user.isLoggedIn)
+      return void 0;
+    const creatorCreatorSupportSummary = getProps(embedded, ["creatorCreatorSupportSummary"]);
+    return {
+      id: getProps(user, ["id"]) + "",
+      name: getProps(user, ["nickname"]),
+      isPremium: getProps(user, ["accountType"]) === "premium",
+      isBroadcaster: getProps(user, ["isBroadcaster"]),
+isOperator: getProps(user, ["isOperator"]),
+      isSupportable: creatorCreatorSupportSummary?.isSupportable === true
+    };
+  }
+  function parseReasons(embedded) {
+    const reasons = [];
+    const canWatch = getProps(embedded, ["userProgramWatch", "canWatch"], true);
+    if (canWatch === true)
+      return reasons;
+    if (getProps(embedded, ["programWatch", "condition", "needLogin"], false) === true) {
+      reasons.push(NicoliveRejectReason.needLogin);
+    }
+    const timeshiftStatus = getProps(embedded, ["programTimeshift", "publication", "status"], null);
+    switch (timeshiftStatus) {
+      case "Open":
+        break;
+      case "Before":
+        reasons.push(NicoliveRejectReason.programNotBegun);
+        break;
+      default:
+        reasons.push(NicoliveRejectReason.noTimeshiftProgram);
+        break;
+    }
+    if (!getProps(embedded, ["userProgramWatch", "passwordAuth", "isAuthorized"], true)) {
+      reasons.push(NicoliveRejectReason.passwordAuthRequired);
+    }
+    if (reasons.length === 0) {
+      reasons.push(NicoliveRejectReason.unknown);
+    }
+    return reasons;
+  }
+  const NicoliveWs = {
+connectWaitOpened: async (pageData, signal, reconnectData, nicolveStream) => {
+      const reconnect = reconnectData != null;
+      let websocketUrl = reconnectData?.websocketUrl ?? pageData.websocketUrl;
+      if (websocketUrl === "")
+        throw new NicoliveAccessDeniedError(pageData);
+      if (reconnect && reconnectData.reconnectTime != null) {
+        const waitTimeMs = reconnectData.reconnectTime - Date.now();
+        await sleep(waitTimeMs, signal);
+      }
+      let latestSchedule = reconnectData?.latestSchedule ?? {
+        begin: new Date(pageData.beginTime * 1e3),
+        end: new Date(pageData.endTime * 1e3)
+      };
+      signal.addEventListener("abort", aborted);
+      const [ws, iteratorSet] = await connectWsAndAsyncIterable(websocketUrl, onMessage, onClose);
+      sendStartWatching(ws, reconnect, nicolveStream);
+      const messageServerDataPromiser = reconnect ? void 0 : promiser();
+      const messageServerDataPromise = messageServerDataPromiser == null ? Promise.resolve(reconnectData.messageServerData) : messageServerDataPromiser.promise;
+      let _disconnectMessage;
+      return {
+        ws,
+        iterator: iteratorSet.iterator,
+        messageServerDataPromise,
+        getWebsocketUrl: () => websocketUrl,
+        getLatestSchedule: () => latestSchedule,
+        send: (message) => send(ws, message),
+        postComment: async (text, isAnonymous, options) => {
+          const data = await messageServerDataPromise;
+          NicoliveWs.postComment(ws, Math.round((Date.now() - data.vposBaseTime) / 10), text, isAnonymous, options);
+        }
+      };
+      function onMessage({ data }) {
+        const message = parseMessage(data);
+        if (message.type === "ping") {
+          sendKeepSeatAndPong(ws);
+        } else if (message.type === "schedule") {
+          latestSchedule = {
+            begin: new Date(message.data.begin),
+            end: new Date(message.data.end)
+          };
+        } else if (message.type === "messageServer") {
+          const { viewUri, vposBaseTime, hashedUserId } = message.data;
+          messageServerDataPromiser?.resolve({
+            viewUri,
+            vposBaseTime: new Date(vposBaseTime).getTime(),
+            hashedUserId
+          });
+        } else if (message.type === "reconnect") {
+          websocketUrl = replaceAudienceToken(websocketUrl, message.data.audienceToken);
+          iteratorSet.throw(new NicoliveWebSocketReconnectError(message.data));
+          ws.close();
+        } else if (message.type === "disconnect") {
+          _disconnectMessage = message.data.reason;
+        }
+        iteratorSet.enqueue(message);
+        return message;
+      }
+      function onClose() {
+        signal.removeEventListener("abort", aborted);
+        ws.close();
+        const disconnectError = NicoliveWebSocketDisconnectError.createIfError(_disconnectMessage);
+        if (disconnectError == null)
+          iteratorSet.close();
+        else
+          iteratorSet.throw(disconnectError);
+      }
+      function aborted() {
+        messageServerDataPromiser?.reject(createAbortError$1());
+        iteratorSet.throw(createAbortError$1());
+        onClose();
+      }
+    },
+    postComment: (ws, vpos, text, isAnonymous, options) => {
+      send(ws, NicoliveWsSendMessage.postComment({
+        text,
+        isAnonymous,
+        vpos,
+        ...options
+      }));
+    }
+  };
+  function parseMessage(data) {
+    return JSON.parse(data);
+  }
+  function send(ws, message) {
+    ws.send(JSON.stringify(message));
+  }
+  function sendStartWatching(ws, reconnect, stream) {
+    send(ws, NicoliveWsSendMessage.startWatching({ reconnect, stream }));
+  }
+  function sendKeepSeatAndPong(ws) {
+    send(ws, NicoliveWsSendMessage.pong());
+    send(ws, NicoliveWsSendMessage.keepSeat());
+  }
+  function replaceAudienceToken(websocketUrl, audieceToken) {
+    const parsedUrl = new URL(websocketUrl);
+    const searchParams = parsedUrl.searchParams;
+    searchParams.set("audience_token", audieceToken);
+    return parsedUrl.toString();
+  }
+  const NicoliveUtility = {
+postBroadcasterComment: async (liveId, broadcasterCommentToken, text, name = "", isPermanent = false, color) => {
+      text = encodeURIComponent(text);
+      name = encodeURIComponent(name);
+      await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
+        "headers": {
+          "accept": "application/json",
+          "content-type": "application/x-www-form-urlencoded",
+          "x-public-api-token": broadcasterCommentToken
+        },
+        "body": `text=${text}&name=${name}&isPermanent=${isPermanent}&command=${color}`,
+        "method": "PUT",
+        "credentials": "include"
+      });
+    },
+deleteBroadcasterComment: async (liveId, broadcasterCommentToken) => {
+      await fetch(`https://live2.nicovideo.jp/unama/api/v3/programs/${liveId}/broadcaster_comment`, {
+        "headers": {
+          "x-public-api-token": broadcasterCommentToken
+        },
+        "method": "DELETE",
+        "credentials": "include"
+      });
+    },
+fetchNicolivePageData: (liveIdOrUrl) => {
+      return AbortAndPromise.new(async (abortController) => {
+        const liveId = getNicoliveId(liveIdOrUrl);
+        if (liveId == null)
+          throw new NicoliveLiveIdError(liveIdOrUrl);
+        const res = await fetch(`https://live.nicovideo.jp/watch/${liveId}`, { signal: abortController.signal });
+        if (!res.ok)
+          throw new NicolivePageNotFoundError(res, liveId);
+        return await parseNicolivePageData(res);
+      });
+    },
+createWsServerConnector: (pageData, options) => {
+      return AbortAndPromise.new(async (abortController) => {
+        let connectSet = await createConnectSet(abortController, void 0);
+        return {
+          getPromise: () => connectSet.promise,
+          isClosed: () => connectSet.isClosed(),
+          getAbortController: () => connectSet.abortController,
+          reconnect: (abortController2, reconnectTime) => AbortAndPromise.newA(abortController2, async (abortController3) => {
+            if (!connectSet.isClosed())
+              return;
+            const reconnectData = {
+              messageServerData: await connectSet.wsData.messageServerDataPromise,
+              latestSchedule: connectSet.wsData.getLatestSchedule(),
+              websocketUrl: connectSet.wsData.getWebsocketUrl(),
+              reconnectTime
+            };
+            connectSet = await createConnectSet(abortController3, reconnectData);
+          }),
+          getIterator: () => connectSet.wsData.iterator,
+          getWsData: () => connectSet.wsData,
+          getMessageServerData: () => connectSet.wsData.messageServerDataPromise,
+          getLatestSchedule: () => connectSet.wsData.getLatestSchedule(),
+          send: (message) => connectSet.wsData.send(message),
+          postComment: (text, isAnonymous, options2) => connectSet.wsData.postComment(text, isAnonymous, options2)
+        };
+      });
+      async function createConnectSet(abortController, reconnectData) {
+        const wsData = await NicoliveWs.connectWaitOpened(pageData, abortController.signal, reconnectData, options?.streamMessage);
+        const { promise, resolve } = promiser();
+        wsData.ws.addEventListener("close", onClose);
+        return { promise, abortController, wsData, isClosed };
+        function isClosed() {
+          const readyState = wsData.ws.readyState;
+          return readyState === WebSocket.CLOSING || readyState === WebSocket.CLOSED || abortController.signal.aborted;
+        }
+        function onClose() {
+          wsData.ws.removeEventListener("close", onClose);
+          resolve();
+        }
+      }
+    },
+createMessageServerConnector: (messageServerData, options) => {
+      const entryUri = messageServerData.viewUri;
+      return AbortAndPromise.new(async (abortController) => {
+        let connectSet = await createConnectSet(abortController, options);
+        return {
+          getPromise: () => connectSet.promise,
+          isClosed: () => connectSet.entryFetcher.isClosed() && connectSet.messageFetcher.isClosed(),
+          getAbortController: () => connectSet.abortController,
+          reconnect: (abortController2) => AbortAndPromise.newA(abortController2, async (abortController3) => {
+            if (!connectSet.entryFetcher.isClosed() || !connectSet.messageFetcher.isClosed())
+              return;
+            connectSet = await createConnectSet(abortController3, {
+              at: connectSet.entryFetcher.getLastEntryAt(),
+              skipToMeta: connectSet.messageFetcher.getLastMeta(),
+              backwardUri: connectSet.messageFetcher.getBackwardUri()
+            });
+          }),
+          getIterator: () => connectSet.messageFetcher.iterator,
+          getBackwardMessages: (delayMs, maxSegmentCount, isSnapshot) => {
+            const res = connectSet.messageFetcher.getBackwardMessages(delayMs, maxSegmentCount, isSnapshot);
+            return res;
+          }
+        };
+      });
+      async function createConnectSet(abortController, options2) {
+        const entryAt = options2?.at ?? "now";
+        const transport = options2?.transport;
+        const entryFetcher = await createEntryFetcher(abortController, entryUri, entryAt, transport);
+        const backwardUri = options2?.backwardUri ?? {
+          segment: entryFetcher.backwardSegment?.segment?.uri,
+          snapshot: entryFetcher.backwardSegment?.snapshot?.uri
+        };
+        const messageFetcher = await createMessageFetcher(abortController, entryFetcher, options2?.skipToMeta, backwardUri, transport);
+        return {
+          promise: (async () => {
+            await entryFetcher.promise;
+            await messageFetcher.promise;
+          })(),
+          abortController,
+          entryFetcher,
+          messageFetcher
+        };
+      }
+    },
+postPasswordAuth: (liveId, password) => {
+      return fetch(`https://live2.nicovideo.jp/unama/api/v2/programs/${liveId}/password/permission`, {
+        headers: {
+          "content-type": "application/json",
+          "x-niconico-session": "cookie"
+        },
+        body: `{"password":"${password}"}`,
+        method: "POST"
+      });
+    }
+  };
+  const AbortAndPromise = {
+    new(func) {
+      const abortController = new AbortController();
+      return {
+        abortController,
+        promise: func(abortController)
+      };
+    },
+    newA(abortController, func) {
+      abortController ??= new AbortController();
+      return {
+        abortController,
+        promise: func(abortController)
+      };
+    }
+  };
+  async function createEntryFetcher(abortController, entryUri, entryAt, transport) {
+    const signal = abortController.signal;
+    const iteratorSet = AsyncIteratorSet.create({
+      breaked: () => iteratorSet.close()
+    });
+    const innerAbort = new AbortController();
+    const innerSignal = innerAbort.signal;
+    signal.addEventListener("abort", safeClose);
+    let lastEntryAt = entryAt;
+    let curretnEntryAt = lastEntryAt;
+    let closed = false;
+    let backwardSegment;
+    const promise = (async () => {
+      let receivedSegment = false;
+      try {
+        let fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
+        while (true) {
+          curretnEntryAt = void 0;
+          for await (const { entry: { value, case: _case } } of fetchEntry.iterator) {
+            if (_case === "next") {
+              curretnEntryAt = Number(value.at);
+              lastEntryAt = curretnEntryAt;
+            } else if (_case === "segment") {
+              receivedSegment = true;
+              iteratorSet.enqueue(value);
+            } else if (!receivedSegment) {
+              if (_case === "backward") {
+                backwardSegment = value;
+              } else if (_case === "previous") {
+                iteratorSet.enqueue(value);
+              }
+            }
+          }
+          if (curretnEntryAt == null)
+            break;
+          fetchEntry = await NicoliveMessageServer.fetchEntry(entryUri, curretnEntryAt, innerSignal, transport);
+        }
+      } catch (e) {
+        if (!signal.aborted && !isAbortError(e, innerSignal))
+          iteratorSet.throw(e);
+      } finally {
+        closed = true;
+        signal.removeEventListener("abort", safeClose);
+        iteratorSet.close();
+      }
+    })();
+    return {
+      promise,
+      iterator: iteratorSet.iterator,
+      isClosed: () => closed,
+      safeClose,
+      getLastEntryAt: () => lastEntryAt,
+      get backwardSegment() {
+        return backwardSegment;
+      }
+    };
+    function safeClose() {
+      closed = true;
+      innerAbort.abort();
+    }
+  }
+  async function createMessageFetcher(abortController, entryFetcher, skipToMeta, backwardUri, transport) {
+    const signal = abortController.signal;
+    const iteratorSet = AsyncIteratorSet.create({
+      breaked: () => iteratorSet.close(),
+      filter: skipToMeta == null ? metaFilter : (value) => {
+        metaFilter(value);
+        if (value.meta?.id === skipToMeta.id)
+          return [false, metaFilter];
+        if (value.meta?.at != null && timestampLargeA(skipToMeta.at, value.meta.at))
+          return [true, metaFilter];
+        return false;
+      }
+    });
+    const innerAbort = new AbortController();
+    const innerSignal = innerAbort.signal;
+    signal.addEventListener("abort", safeClose);
+    let closed = false;
+    let currentBackwardUri = backwardUri;
+    let fetchingBackwardSegment = false;
+    let lastMeta;
+    const firstPromiser = promiser();
+    const promise = (async () => {
+      try {
+        const { value, done } = await entryFetcher.iterator.next();
+        if (done) {
+          firstPromiser.resolve();
+          return;
+        }
+        const { iterator } = await NicoliveMessageServer.fetchMessage(value.uri, innerSignal, transport);
+        firstPromiser.resolve();
+        for await (const message of iterator) {
+          iteratorSet.enqueue(message);
+          if (checkCloseMessage(message))
+            return;
+        }
+        for await (const segment of entryFetcher.iterator) {
+          const { iterator: iterator2 } = await NicoliveMessageServer.fetchMessage(segment.uri, innerSignal, transport);
+          for await (const message of iterator2) {
+            iteratorSet.enqueue(message);
+            if (checkCloseMessage(message))
+              return;
+          }
+        }
+      } catch (e) {
+        firstPromiser.reject(e);
+        if (!signal.aborted && !isAbortError(e, innerSignal))
+          iteratorSet.throw(e);
+      } finally {
+        closed = true;
+        entryFetcher.safeClose();
+        signal.removeEventListener("abort", safeClose);
+        iteratorSet.close();
+      }
+    })();
+    await firstPromiser.promise;
+    return {
+      promise,
+      iterator: iteratorSet.iterator,
+      isClosed: () => closed,
+      safeClose,
+      getLastMeta: () => lastMeta,
+      getBackwardMessages,
+      getBackwardUri: () => currentBackwardUri
+    };
+    function metaFilter(message) {
+      updateMeta(message);
+      return true;
+    }
+    function updateMeta(message) {
+      if (message.meta?.at != null) {
+        lastMeta = message.meta;
+        return true;
+      }
+      return false;
+    }
+    function safeClose() {
+      closed = true;
+      innerAbort.abort();
+    }
+    function getBackwardMessages(delayMs, maxSegmentCount, isSnapshot = false) {
+      if (fetchingBackwardSegment)
+        return void 0;
+      const backwardUri2 = isSnapshot ? currentBackwardUri.snapshot : currentBackwardUri.segment;
+      if (backwardUri2 == null)
+        return;
+      fetchingBackwardSegment = true;
+      const abortController2 = new AbortController();
+      const messagePromise = (async () => {
+        const backward = await NicoliveMessageServer.fetchBackwardMessages(backwardUri2, delayMs, maxSegmentCount, isSnapshot, abortController2.signal);
+        currentBackwardUri = { segment: backward.segmentUri, snapshot: backward.snapshotUri };
+        if (lastMeta == null) {
+          for (let i = backward.messages.length - 1; i >= 0; i--) {
+            const message = backward.messages[i];
+            if (updateMeta(message))
+              break;
+          }
+        }
+        if (checkCloseMessage(backward.messages.at(-1))) {
+          safeClose();
+        }
+        const hasNext = currentBackwardUri.segment != null;
+        return [backward.messages, hasNext];
+      })();
+      fetchingBackwardSegment = false;
+      return {
+        abortController: abortController2,
+        messagePromise
+      };
+    }
+  }
+  class NicoLiveChatClient {
+    options;
+    abortControllers = [];
+    stopped = false;
+    wsConnector;
+    messageConnector;
+    constructor(options) {
+      this.options = options;
+    }
+    async start() {
+      const liveId = parseLiveId(this.options.liveId);
+      if (liveId == null) {
+        this.emitError(new Error(`Invalid NicoLive liveId or URL: ${this.options.liveId}`));
+        return;
+      }
+      try {
+        const pageResponse = await fetchTextAsResponse(`https://live.nicovideo.jp/watch/${liveId}`);
+        if (this.stopped)
+          return;
+        const pageData = await parseNicolivePageData(pageResponse);
+        const wsConnectorResult = NicoliveUtility.createWsServerConnector(pageData);
+        this.abortControllers.push(wsConnectorResult.abortController);
+        this.wsConnector = await wsConnectorResult.promise;
+        if (this.stopped)
+          return;
+        const messageServerData = await this.wsConnector.getMessageServerData();
+        const messageConnectorResult = NicoliveUtility.createMessageServerConnector(messageServerData, {
+          transport: createUserscriptStreamTransport()
+        });
+        this.abortControllers.push(messageConnectorResult.abortController);
+        this.messageConnector = await messageConnectorResult.promise;
+        if (this.stopped)
+          return;
+        this.options.onConnect?.({ liveId });
+        await Promise.race([
+          this.readWebSocketMessages(),
+          this.readServerMessages()
+        ]);
+      } catch (error) {
+        if (this.stopped && isAbortLikeError(error))
+          return;
+        this.emitError(toError(error));
+      }
+    }
+    stop() {
+      this.stopped = true;
+      this.messageConnector?.getAbortController().abort();
+      this.wsConnector?.getAbortController().abort();
+      for (const abortController of this.abortControllers.splice(0)) {
+        abortController.abort();
+      }
+    }
+    emitError(error) {
+      this.options.onError?.(error);
+    }
+    async readWebSocketMessages() {
+      while (!this.stopped && this.wsConnector != null) {
+        const signal = this.wsConnector.getAbortController().signal;
+        try {
+          for await (const _message of this.wsConnector.getIterator()) {
+            if (this.stopped)
+              return;
+          }
+        } catch (error) {
+          if (this.stopped || isAbortLikeError(error, signal))
+            return;
+          if (error instanceof NicoliveWebSocketReconnectError) {
+            const reconnect = this.wsConnector.reconnect(void 0, error.reconnectTime);
+            this.abortControllers.push(reconnect.abortController);
+            await reconnect.promise;
+            continue;
+          }
+          throw error;
+        }
+        return;
+      }
+    }
+    async readServerMessages() {
+      while (!this.stopped && this.messageConnector != null) {
+        const signal = this.messageConnector.getAbortController().signal;
+        try {
+          for await (const chunkedMessage of this.messageConnector.getIterator()) {
+            if (this.stopped)
+              return;
+            const chat = toChatMessage(chunkedMessage);
+            if (chat != null)
+              this.options.onChat?.([chat]);
+          }
+        } catch (error) {
+          if (this.stopped || isAbortLikeError(error, signal))
+            return;
+          const reconnect2 = this.messageConnector.reconnect();
+          this.abortControllers.push(reconnect2.abortController);
+          await reconnect2.promise;
+          continue;
+        }
+        const reconnect = this.messageConnector.reconnect();
+        this.abortControllers.push(reconnect.abortController);
+        await reconnect.promise;
+      }
+    }
+  }
+  function subscribeNicoLiveChat(options) {
+    const client2 = new NicoLiveChatClient(options);
+    void client2.start();
+    return () => client2.stop();
+  }
+  function toChatMessage(message) {
+    if (message.payload.case !== "message")
+      return;
+    const data = message.payload.value.data;
+    if (data.case !== "chat")
+      return;
+    const chat = data.value;
+    const userId = chat.rawUserId?.toString() ?? chat.hashedUserId ?? "";
+    const author = chat.name ?? chat.hashedUserId ?? chat.rawUserId?.toString() ?? "";
+    return {
+      userId,
+      author,
+      message: chat.content,
+      timestampUsec: timestampToUsecString(message.meta?.at),
+      isMember: chat.accountStatus === 1
+    };
+  }
+  function timestampToUsecString(timestamp) {
+    if (timestamp == null)
+      return `${Date.now() * 1e3}`;
+    return `${Number(timestamp.seconds) * 1e6 + Math.floor(timestamp.nanos / 1e3)}`;
+  }
+  function parseLiveId(value) {
+    return value.trim().match(/((?:lv|ch)\d+|user\/\d+)/)?.[1];
+  }
+  function createUserscriptStreamTransport() {
+    return {
+      async fetch(uri, signal) {
+        if (uri.includes("/data/segment/")) {
+          const chunk = await gmFetchArrayBuffer(uri, signal);
+          return {
+            iterator: singleChunkIterable(chunk),
+            closed: Promise.resolve()
+          };
+        }
+        const stream = await gmFetchReadableStream(uri, signal);
+        const reader = stream.getReader();
+        return {
+          iterator: readableStreamToAsyncIterable(reader),
+          closed: reader.closed
+        };
+      }
+    };
+  }
+  function gmFetchArrayBuffer(url, signal) {
+    const gm = getGmXmlhttpRequest();
+    if (gm == null) {
+      return fetch(url, { signal }).then(async (response) => new Uint8Array(await response.arrayBuffer()));
+    }
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const settleResolve = (value) => {
+        if (settled)
+          return;
+        settled = true;
+        resolve(value);
+      };
+      const settleReject = (error) => {
+        if (settled)
+          return;
+        settled = true;
+        reject(error);
+      };
+      const request = gm({
+        method: "GET",
+        url,
+        responseType: "arraybuffer",
+        fetch: true,
+        onload: (response) => {
+          if (response.response == null) {
+            settleReject(new Error(`GM_xmlhttpRequest arraybuffer response is unavailable: ${url}`));
+            return;
+          }
+          settleResolve(new Uint8Array(response.response));
+        },
+        onerror: settleReject,
+        onabort: () => settleReject(createAbortError()),
+        ontimeout: () => settleReject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
+      });
+      signal?.addEventListener("abort", () => {
+        request.abort?.();
+        settleReject(createAbortError());
+      }, { once: true });
+    });
+  }
+  async function fetchTextAsResponse(url, signal) {
+    const gm = getGmXmlhttpRequest();
+    if (gm == null)
+      return fetch(url, { signal });
+    return new Promise((resolve, reject) => {
+      gm({
+        method: "GET",
+        url,
+        responseType: "text",
+        onload: (response) => {
+          const res = new Response(response.responseText ?? "", {
+            status: response.status,
+            statusText: response.statusText
+          });
+          if (response.finalUrl != null) {
+            Object.defineProperty(res, "url", { value: response.finalUrl });
+          }
+          resolve(res);
+        },
+        onerror: reject,
+        onabort: () => reject(createAbortError()),
+        ontimeout: () => reject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
+      });
+    });
+  }
+  function gmFetchReadableStream(url, signal) {
+    const gm = getGmXmlhttpRequest();
+    if (gm == null) {
+      return fetch(url, { signal }).then((response) => {
+        if (response.body == null)
+          throw new Error(`fetch stream is unavailable: ${url}`);
+        return response.body;
+      });
+    }
+    return new Promise((resolve, reject) => {
+      let settled = false;
+      const settleResolve = (stream) => {
+        if (settled)
+          return;
+        settled = true;
+        resolve(stream);
+      };
+      const settleReject = (error) => {
+        if (settled)
+          return;
+        settled = true;
+        reject(error);
+      };
+      const request = gm({
+        method: "GET",
+        url,
+        responseType: "stream",
+        fetch: true,
+        onloadstart: (response) => {
+          const stream = response.response;
+          if (isReadableStream(stream)) {
+            settleResolve(stream);
+          }
+        },
+        onload: (response) => {
+          const stream = response.response;
+          if (isReadableStream(stream)) {
+            settleResolve(stream);
+            return;
+          }
+          settleReject(new Error("GM_xmlhttpRequest stream response is unavailable. Tampermonkey responseType:'stream' support is required."));
+        },
+        onerror: settleReject,
+        onabort: () => settleReject(createAbortError()),
+        ontimeout: () => settleReject(new Error(`GM_xmlhttpRequest timed out: ${url}`))
+      });
+      signal?.addEventListener("abort", () => {
+        request.abort?.();
+        settleReject(createAbortError());
+      }, { once: true });
+    });
+  }
+  async function* singleChunkIterable(chunk) {
+    yield chunk;
+  }
+  function getGmXmlhttpRequest() {
+    if (typeof GM_xmlhttpRequest === "function")
+      return GM_xmlhttpRequest;
+  }
+  function isReadableStream(value) {
+    return typeof value === "object" && value != null && "getReader" in value;
+  }
+  function createAbortError() {
+    return new DOMException("Operation aborted", "AbortError");
+  }
+  function isAbortLikeError(error, signal) {
+    return error instanceof Error && error.name === "AbortError" && signal?.aborted !== false;
+  }
+  function toError(error) {
+    return error instanceof Error ? error : new Error(String(error));
+  }
   const WS_URL = "wss://irc-ws.chat.twitch.tv:443";
   function parseTags(raw) {
     const tags = {};
@@ -24165,7 +24165,7 @@ jsxRuntimeExports.jsx(ItemText, { children }),
     }
     return void 0;
   }
-  const styles = `@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-animation-delay:0s;--tw-animation-direction:normal;--tw-animation-duration:initial;--tw-animation-fill-mode:none;--tw-animation-iteration-count:1;--tw-enter-blur:0;--tw-enter-opacity:1;--tw-enter-rotate:0;--tw-enter-scale:1;--tw-enter-translate-x:0;--tw-enter-translate-y:0;--tw-exit-blur:0;--tw-exit-opacity:1;--tw-exit-rotate:0;--tw-exit-scale:1;--tw-exit-translate-x:0;--tw-exit-translate-y:0}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-yellow-500:oklch(79.5% .184 86.047);--color-yellow-600:oklch(68.1% .162 75.834);--color-green-500:oklch(72.3% .219 149.579);--color-green-600:oklch(62.7% .194 149.214);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height: 1.5 ;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-wide:.025em;--radius-md:calc(var(--radius) - 2px);--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-scheme:var(--color-scheme);--opacity-word-correct:var(--opacity-word-correct)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.start{inset-inline-start:var(--spacing)}.end{inset-inline-end:var(--spacing)}.right-2{right:calc(var(--spacing) * 2)}.right-4{right:calc(var(--spacing) * 4)}.bottom-4{bottom:calc(var(--spacing) * 4)}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.container{width:100%}@media(min-width:40rem){.container{max-width:40rem}}@media(min-width:48rem){.container{max-width:48rem}}@media(min-width:64rem){.container{max-width:64rem}}@media(min-width:80rem){.container{max-width:80rem}}@media(min-width:96rem){.container{max-width:96rem}}.mx-1{margin-inline:calc(var(--spacing) * 1)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-3{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.size-3\\.5{width:calc(var(--spacing) * 3.5);height:calc(var(--spacing) * 3.5)}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-\\(--radix-select-trigger-height\\){height:var(--radix-select-trigger-height)}.h-8{height:calc(var(--spacing) * 8)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-\\[1\\.15rem\\]{height:1.15rem}.max-h-\\(--radix-select-content-available-height\\){max-height:var(--radix-select-content-available-height)}.w-8{width:calc(var(--spacing) * 8)}.w-48{width:calc(var(--spacing) * 48)}.w-fit{width:fit-content}.w-full{width:100%}.min-w-\\(--radix-select-trigger-width\\){min-width:var(--radix-select-trigger-width)}.min-w-0{min-width:calc(var(--spacing) * 0)}.min-w-8{min-width:calc(var(--spacing) * 8)}.min-w-36{min-width:calc(var(--spacing) * 36)}.min-w-\\[8rem\\]{min-width:8rem}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.origin-\\(--radix-select-content-transform-origin\\){transform-origin:var(--radix-select-content-transform-origin)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.cursor-default{cursor:default}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.resize{resize:both}.scroll-my-1{scroll-margin-block:calc(var(--spacing) * 1)}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-2{gap:calc(var(--spacing) * 2)}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-solid{--tw-border-style:solid;border-style:solid}.border-blue-500{border-color:var(--color-blue-500)}.border-border,.border-border\\/50{border-color:var(--border)}@supports (color:color-mix(in lab,red,red)){.border-border\\/50{border-color:color-mix(in oklab,var(--border) 50%,transparent)}}.border-destructive{border-color:var(--destructive)}.border-foreground{border-color:var(--foreground)}.border-green-500{border-color:var(--color-green-500)}.border-input{border-color:var(--input)}.border-transparent{border-color:#0000}.border-yellow-500{border-color:var(--color-yellow-500)}.bg-background{background-color:var(--background)}.bg-input{background-color:var(--input)}.bg-popover{background-color:var(--popover)}.bg-transparent{background-color:#0000}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.p-1{padding:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.pr-2{padding-right:calc(var(--spacing) * 2)}.pr-8{padding-right:calc(var(--spacing) * 8)}.pl-1{padding-left:calc(var(--spacing) * 1)}.pl-2{padding-left:calc(var(--spacing) * 2)}.text-center{text-align:center}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.text-header-foreground,.text-header-foreground\\/80{color:var(--header-foreground)}@supports (color:color-mix(in lab,red,red)){.text-header-foreground\\/80{color:color-mix(in oklab,var(--header-foreground) 80%,transparent)}}.text-muted-foreground{color:var(--muted-foreground)}.text-popover-foreground{color:var(--popover-foreground)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-50{opacity:.5}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-foreground{--tw-ring-color:var(--foreground)}.outline-hidden{--tw-outline-style:none;outline-style:none}@media(forced-colors:active){.outline-hidden{outline-offset:2px;outline:2px solid #0000}}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-100{--tw-duration:.1s;transition-duration:.1s}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.paused{animation-play-state:paused}.ring-inset{--tw-ring-inset:inset}.zoom-in{--tw-enter-scale:0}.zoom-out{--tw-exit-scale:0}@media(hover:hover){.group-hover\\:text-header-foreground:is(:where(.group):hover *){color:var(--header-foreground)}}.selection\\:bg-primary ::selection{background-color:var(--primary)}.selection\\:bg-primary::selection{background-color:var(--primary)}.selection\\:text-primary-foreground ::selection{color:var(--primary-foreground)}.selection\\:text-primary-foreground::selection{color:var(--primary-foreground)}.file\\:inline-flex::file-selector-button{display:inline-flex}.file\\:h-7::file-selector-button{height:calc(var(--spacing) * 7)}.file\\:border-0::file-selector-button{border-style:var(--tw-border-style);border-width:0}.file\\:bg-transparent::file-selector-button{background-color:#0000}.file\\:text-sm::file-selector-button{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.file\\:font-medium::file-selector-button{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.file\\:text-foreground::file-selector-button{color:var(--foreground)}.placeholder\\:text-muted-foreground::placeholder{color:var(--muted-foreground)}.focus\\:bg-accent:focus{background-color:var(--accent)}.focus\\:text-accent-foreground:focus{color:var(--accent-foreground)}.focus-visible\\:border-blue-600:focus-visible{border-color:var(--color-blue-600)}.focus-visible\\:border-green-600:focus-visible{border-color:var(--color-green-600)}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:border-yellow-600:focus-visible{border-color:var(--color-yellow-600)}.focus-visible\\:ring-\\[2px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:#3080ff80}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-blue-500) 50%, transparent)}}.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:#00c75880}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-green-500) 50%, transparent)}}.focus-visible\\:ring-ring:focus-visible,.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:#edb20080}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-yellow-500) 50%, transparent)}}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:pointer-events-none[data-disabled]{pointer-events:none}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[placeholder\\]\\:text-muted-foreground[data-placeholder]{color:var(--muted-foreground)}.data-\\[side\\=bottom\\]\\:translate-y-1[data-side=bottom]{--tw-translate-y:calc(var(--spacing) * 1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=bottom\\]\\:slide-in-from-top-2[data-side=bottom]{--tw-enter-translate-y:calc(2*var(--spacing)*-1)}.data-\\[side\\=left\\]\\:-translate-x-1[data-side=left]{--tw-translate-x:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=left\\]\\:slide-in-from-right-2[data-side=left]{--tw-enter-translate-x:calc(2*var(--spacing))}.data-\\[side\\=right\\]\\:translate-x-1[data-side=right]{--tw-translate-x:calc(var(--spacing) * 1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=right\\]\\:slide-in-from-left-2[data-side=right]{--tw-enter-translate-x:calc(2*var(--spacing)*-1)}.data-\\[side\\=top\\]\\:-translate-y-1[data-side=top]{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=top\\]\\:slide-in-from-bottom-2[data-side=top]{--tw-enter-translate-y:calc(2*var(--spacing))}.data-\\[size\\=default\\]\\:h-9[data-size=default]{height:calc(var(--spacing) * 9)}.data-\\[size\\=sm\\]\\:h-8[data-size=sm]{height:calc(var(--spacing) * 8)}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:line-clamp-1>*)[data-slot=select-value]{-webkit-line-clamp:1;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:flex>*)[data-slot=select-value]{display:flex}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:items-center>*)[data-slot=select-value]{align-items:center}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:gap-2>*)[data-slot=select-value]{gap:calc(var(--spacing) * 2)}.data-\\[state\\=checked\\]\\:translate-x-\\[calc\\(100\\%-2px\\)\\][data-state=checked]{--tw-translate-x: calc(100% - 2px) ;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=closed\\]\\:animate-out[data-state=closed]{animation:exit var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none)}.data-\\[state\\=closed\\]\\:fade-out-0[data-state=closed]{--tw-exit-opacity:0}.data-\\[state\\=closed\\]\\:zoom-out-95[data-state=closed]{--tw-exit-scale:.95}.data-\\[state\\=open\\]\\:animate-in[data-state=open]{animation:enter var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none)}.data-\\[state\\=open\\]\\:fade-in-0[data-state=open]{--tw-enter-opacity:0}.data-\\[state\\=open\\]\\:zoom-in-95[data-state=open]{--tw-enter-scale:.95}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * 0);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-input[data-state=unchecked]{background-color:var(--input)}@media(min-width:48rem){.md\\:text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}}@media(prefers-color-scheme:dark){.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab,var(--input) 30%,transparent)}}@media(hover:hover){.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab,var(--input) 50%,transparent)}}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=checked\\]\\:bg-primary-foreground[data-state=checked]{background-color:var(--primary-foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-foreground[data-state=unchecked]{background-color:var(--foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:color-mix(in oklab,var(--input) 80%,transparent)}}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'text-\\'\\]\\)\\]\\:text-muted-foreground svg:not([class*=text-]){color:var(--muted-foreground)}:is(.\\*\\:\\[span\\]\\:last\\:flex>*):is(span):last-child{display:flex}:is(.\\*\\:\\[span\\]\\:last\\:items-center>*):is(span):last-child{align-items:center}:is(.\\*\\:\\[span\\]\\:last\\:gap-2>*):is(span):last-child{gap:calc(var(--spacing) * 2)}}@property --tw-animation-delay{syntax:"*";inherits:false;initial-value:0s}@property --tw-animation-direction{syntax:"*";inherits:false;initial-value:normal}@property --tw-animation-duration{syntax:"*";inherits:false}@property --tw-animation-fill-mode{syntax:"*";inherits:false;initial-value:none}@property --tw-animation-iteration-count{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-translate-y{syntax:"*";inherits:false;initial-value:0}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@keyframes enter{0%{opacity:var(--tw-enter-opacity,1);transform:translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0)scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1))rotate(var(--tw-enter-rotate,0));filter:blur(var(--tw-enter-blur,0))}}@keyframes exit{to{opacity:var(--tw-exit-opacity,1);transform:translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0)scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1))rotate(var(--tw-exit-rotate,0));filter:blur(var(--tw-exit-blur,0))}}`;
+  const styles = `@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-pan-x:initial;--tw-pan-y:initial;--tw-pinch-zoom:initial;--tw-space-y-reverse:0;--tw-space-x-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial;--tw-duration:initial;--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-animation-delay:0s;--tw-animation-direction:normal;--tw-animation-duration:initial;--tw-animation-fill-mode:none;--tw-animation-iteration-count:1;--tw-enter-blur:0;--tw-enter-opacity:1;--tw-enter-rotate:0;--tw-enter-scale:1;--tw-enter-translate-x:0;--tw-enter-translate-y:0;--tw-exit-blur:0;--tw-exit-opacity:1;--tw-exit-rotate:0;--tw-exit-scale:1;--tw-exit-translate-x:0;--tw-exit-translate-y:0}}}@layer theme{:root,:host{--font-sans:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-yellow-500:oklch(79.5% .184 86.047);--color-yellow-600:oklch(68.1% .162 75.834);--color-green-500:oklch(72.3% .219 149.579);--color-green-600:oklch(62.7% .194 149.214);--color-blue-500:oklch(62.3% .214 259.815);--color-blue-600:oklch(54.6% .245 262.881);--spacing:.25rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height: 1.5 ;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--tracking-wide:.025em;--radius-md:calc(var(--radius) - 2px);--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--color-scheme:var(--color-scheme);--opacity-word-correct:var(--opacity-word-correct)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.not-sr-only{clip-path:none;white-space:normal;width:auto;height:auto;margin:0;padding:0;position:static;overflow:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.start{inset-inline-start:var(--spacing)}.end{inset-inline-end:var(--spacing)}.right-2{right:calc(var(--spacing) * 2)}.right-4{right:calc(var(--spacing) * 4)}.bottom-4{bottom:calc(var(--spacing) * 4)}.isolate{isolation:isolate}.isolation-auto{isolation:auto}.z-10{z-index:10}.z-50{z-index:50}.container{width:100%}@media(min-width:40rem){.container{max-width:40rem}}@media(min-width:48rem){.container{max-width:48rem}}@media(min-width:64rem){.container{max-width:64rem}}@media(min-width:80rem){.container{max-width:80rem}}@media(min-width:96rem){.container{max-width:96rem}}.mx-1{margin-inline:calc(var(--spacing) * 1)}.block{display:block}.contents{display:contents}.flex{display:flex}.flow-root{display:flow-root}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.inline-table{display:inline-table}.list-item{display:list-item}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-column{display:table-column}.table-column-group{display:table-column-group}.table-footer-group{display:table-footer-group}.table-header-group{display:table-header-group}.table-row{display:table-row}.table-row-group{display:table-row-group}.size-3{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.size-3\\.5{width:calc(var(--spacing) * 3.5);height:calc(var(--spacing) * 3.5)}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.h-\\(--radix-select-trigger-height\\){height:var(--radix-select-trigger-height)}.h-8{height:calc(var(--spacing) * 8)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-\\[1\\.15rem\\]{height:1.15rem}.max-h-\\(--radix-select-content-available-height\\){max-height:var(--radix-select-content-available-height)}.w-8{width:calc(var(--spacing) * 8)}.w-48{width:calc(var(--spacing) * 48)}.w-fit{width:fit-content}.w-full{width:100%}.min-w-\\(--radix-select-trigger-width\\){min-width:var(--radix-select-trigger-width)}.min-w-0{min-width:calc(var(--spacing) * 0)}.min-w-8{min-width:calc(var(--spacing) * 8)}.min-w-36{min-width:calc(var(--spacing) * 36)}.min-w-\\[8rem\\]{min-width:8rem}.shrink{flex-shrink:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.border-collapse{border-collapse:collapse}.origin-\\(--radix-select-content-transform-origin\\){transform-origin:var(--radix-select-content-transform-origin)}.translate-none{translate:none}.scale-3d{scale:var(--tw-scale-x) var(--tw-scale-y) var(--tw-scale-z)}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.cursor-default{cursor:default}.cursor-not-allowed{cursor:not-allowed}.cursor-pointer{cursor:pointer}.touch-pinch-zoom{--tw-pinch-zoom:pinch-zoom;touch-action:var(--tw-pan-x,) var(--tw-pan-y,) var(--tw-pinch-zoom,)}.resize{resize:both}.scroll-my-1{scroll-margin-block:calc(var(--spacing) * 1)}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-1{gap:calc(var(--spacing) * 1)}.gap-2{gap:calc(var(--spacing) * 2)}:where(.space-y-reverse>:not(:last-child)){--tw-space-y-reverse:1}:where(.space-x-reverse>:not(:last-child)){--tw-space-x-reverse:1}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-y-reverse>:not(:last-child)){--tw-divide-y-reverse:1}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:.25rem}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-s{border-start-start-radius:.25rem;border-end-start-radius:.25rem}.rounded-ss{border-start-start-radius:.25rem}.rounded-e{border-start-end-radius:.25rem;border-end-end-radius:.25rem}.rounded-se{border-start-end-radius:.25rem}.rounded-ee{border-end-end-radius:.25rem}.rounded-es{border-end-start-radius:.25rem}.rounded-t{border-top-left-radius:.25rem;border-top-right-radius:.25rem}.rounded-l{border-top-left-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-tl{border-top-left-radius:.25rem}.rounded-r{border-top-right-radius:.25rem;border-bottom-right-radius:.25rem}.rounded-tr{border-top-right-radius:.25rem}.rounded-b{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.rounded-br{border-bottom-right-radius:.25rem}.rounded-bl{border-bottom-left-radius:.25rem}.border{border-style:var(--tw-border-style);border-width:1px}.border-x{border-inline-style:var(--tw-border-style);border-inline-width:1px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-s{border-inline-start-style:var(--tw-border-style);border-inline-start-width:1px}.border-e{border-inline-end-style:var(--tw-border-style);border-inline-end-width:1px}.border-bs{border-block-start-style:var(--tw-border-style);border-block-start-width:1px}.border-be{border-block-end-style:var(--tw-border-style);border-block-end-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-solid{--tw-border-style:solid;border-style:solid}.border-blue-500{border-color:var(--color-blue-500)}.border-border,.border-border\\/50{border-color:var(--border)}@supports (color:color-mix(in lab,red,red)){.border-border\\/50{border-color:color-mix(in oklab,var(--border) 50%,transparent)}}.border-destructive{border-color:var(--destructive)}.border-foreground{border-color:var(--foreground)}.border-green-500{border-color:var(--color-green-500)}.border-input{border-color:var(--input)}.border-transparent{border-color:#0000}.border-yellow-500{border-color:var(--color-yellow-500)}.bg-background{background-color:var(--background)}.bg-input{background-color:var(--input)}.bg-popover{background-color:var(--popover)}.bg-transparent{background-color:#0000}.bg-repeat{background-repeat:repeat}.mask-no-clip{-webkit-mask-clip:no-clip;mask-clip:no-clip}.mask-repeat{-webkit-mask-repeat:repeat;mask-repeat:repeat}.p-1{padding:calc(var(--spacing) * 1)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-4{padding-inline:calc(var(--spacing) * 4)}.py-1{padding-block:calc(var(--spacing) * 1)}.py-1\\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.pr-2{padding-right:calc(var(--spacing) * 2)}.pr-8{padding-right:calc(var(--spacing) * 8)}.pl-1{padding-left:calc(var(--spacing) * 1)}.pl-2{padding-left:calc(var(--spacing) * 2)}.text-center{text-align:center}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-wide{--tw-tracking:var(--tracking-wide);letter-spacing:var(--tracking-wide)}.text-wrap{text-wrap:wrap}.text-clip{text-overflow:clip}.text-ellipsis{text-overflow:ellipsis}.whitespace-nowrap{white-space:nowrap}.text-header-foreground,.text-header-foreground\\/80{color:var(--header-foreground)}@supports (color:color-mix(in lab,red,red)){.text-header-foreground\\/80{color:color-mix(in oklab,var(--header-foreground) 80%,transparent)}}.text-muted-foreground{color:var(--muted-foreground)}.text-popover-foreground{color:var(--popover-foreground)}.capitalize{text-transform:capitalize}.lowercase{text-transform:lowercase}.normal-case{text-transform:none}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.diagonal-fractions{--tw-numeric-fraction:diagonal-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.lining-nums{--tw-numeric-figure:lining-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.oldstyle-nums{--tw-numeric-figure:oldstyle-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.ordinal{--tw-ordinal:ordinal;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.proportional-nums{--tw-numeric-spacing:proportional-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.slashed-zero{--tw-slashed-zero:slashed-zero;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.stacked-fractions{--tw-numeric-fraction:stacked-fractions;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.normal-nums{font-variant-numeric:normal}.line-through{text-decoration-line:line-through}.no-underline{text-decoration-line:none}.overline{text-decoration-line:overline}.underline{text-decoration-line:underline}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.subpixel-antialiased{-webkit-font-smoothing:auto;-moz-osx-font-smoothing:auto}.opacity-50{opacity:.5}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a), 0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.inset-ring{--tw-inset-ring-shadow:inset 0 0 0 1px var(--tw-inset-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-foreground{--tw-ring-color:var(--foreground)}.outline-hidden{--tw-outline-style:none;outline-style:none}@media(forced-colors:active){.outline-hidden{outline-offset:2px;outline:2px solid #0000}}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.invert{--tw-invert:invert(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.sepia{--tw-sepia:sepia(100%);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-grayscale{--tw-backdrop-grayscale:grayscale(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-invert{--tw-backdrop-invert:invert(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-sepia{--tw-backdrop-sepia:sepia(100%);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-\\[color\\,box-shadow\\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-100{--tw-duration:.1s;transition-duration:.1s}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}:where(.divide-x-reverse>:not(:last-child)){--tw-divide-x-reverse:1}.paused{animation-play-state:paused}.ring-inset{--tw-ring-inset:inset}.zoom-in{--tw-enter-scale:0}.zoom-out{--tw-exit-scale:0}@media(hover:hover){.group-hover\\:text-header-foreground:is(:where(.group):hover *){color:var(--header-foreground)}}.selection\\:bg-primary ::selection{background-color:var(--primary)}.selection\\:bg-primary::selection{background-color:var(--primary)}.selection\\:text-primary-foreground ::selection{color:var(--primary-foreground)}.selection\\:text-primary-foreground::selection{color:var(--primary-foreground)}.file\\:inline-flex::file-selector-button{display:inline-flex}.file\\:h-7::file-selector-button{height:calc(var(--spacing) * 7)}.file\\:border-0::file-selector-button{border-style:var(--tw-border-style);border-width:0}.file\\:bg-transparent::file-selector-button{background-color:#0000}.file\\:text-sm::file-selector-button{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.file\\:font-medium::file-selector-button{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.file\\:text-foreground::file-selector-button{color:var(--foreground)}.placeholder\\:text-muted-foreground::placeholder{color:var(--muted-foreground)}@media(hover:hover){.hover\\:bg-accent:hover{background-color:var(--accent)}.hover\\:text-accent-foreground:hover{color:var(--accent-foreground)}}.focus\\:bg-accent:focus{background-color:var(--accent)}.focus\\:text-accent-foreground:focus{color:var(--accent-foreground)}.focus-visible\\:border-blue-600:focus-visible{border-color:var(--color-blue-600)}.focus-visible\\:border-green-600:focus-visible{border-color:var(--color-green-600)}.focus-visible\\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\\:border-yellow-600:focus-visible{border-color:var(--color-yellow-600)}.focus-visible\\:ring-\\[2px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-\\[3px\\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:#3080ff80}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-blue-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-blue-500) 50%, transparent)}}.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:#00c75880}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-green-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-green-500) 50%, transparent)}}.focus-visible\\:ring-ring:focus-visible,.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:var(--ring)}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-ring\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--ring) 50%, transparent)}}.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:#edb20080}@supports (color:color-mix(in lab,red,red)){.focus-visible\\:ring-yellow-500\\/50:focus-visible{--tw-ring-color:color-mix(in oklab, var(--color-yellow-500) 50%, transparent)}}.disabled\\:pointer-events-none:disabled{pointer-events:none}.disabled\\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\\:opacity-50:disabled{opacity:.5}.aria-invalid\\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.aria-invalid\\:ring-destructive\\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 20%, transparent)}}.data-\\[disabled\\]\\:pointer-events-none[data-disabled]{pointer-events:none}.data-\\[disabled\\]\\:opacity-50[data-disabled]{opacity:.5}.data-\\[placeholder\\]\\:text-muted-foreground[data-placeholder]{color:var(--muted-foreground)}.data-\\[side\\=bottom\\]\\:translate-y-1[data-side=bottom]{--tw-translate-y:calc(var(--spacing) * 1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=bottom\\]\\:slide-in-from-top-2[data-side=bottom]{--tw-enter-translate-y:calc(2*var(--spacing)*-1)}.data-\\[side\\=left\\]\\:-translate-x-1[data-side=left]{--tw-translate-x:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=left\\]\\:slide-in-from-right-2[data-side=left]{--tw-enter-translate-x:calc(2*var(--spacing))}.data-\\[side\\=right\\]\\:translate-x-1[data-side=right]{--tw-translate-x:calc(var(--spacing) * 1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=right\\]\\:slide-in-from-left-2[data-side=right]{--tw-enter-translate-x:calc(2*var(--spacing)*-1)}.data-\\[side\\=top\\]\\:-translate-y-1[data-side=top]{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[side\\=top\\]\\:slide-in-from-bottom-2[data-side=top]{--tw-enter-translate-y:calc(2*var(--spacing))}.data-\\[size\\=default\\]\\:h-9[data-size=default]{height:calc(var(--spacing) * 9)}.data-\\[size\\=sm\\]\\:h-8[data-size=sm]{height:calc(var(--spacing) * 8)}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:line-clamp-1>*)[data-slot=select-value]{-webkit-line-clamp:1;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:flex>*)[data-slot=select-value]{display:flex}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:items-center>*)[data-slot=select-value]{align-items:center}:is(.\\*\\:data-\\[slot\\=select-value\\]\\:gap-2>*)[data-slot=select-value]{gap:calc(var(--spacing) * 2)}.data-\\[state\\=checked\\]\\:translate-x-\\[calc\\(100\\%-2px\\)\\][data-state=checked]{--tw-translate-x: calc(100% - 2px) ;translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=checked\\]\\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\\[state\\=closed\\]\\:animate-out[data-state=closed]{animation:exit var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none)}.data-\\[state\\=closed\\]\\:fade-out-0[data-state=closed]{--tw-exit-opacity:0}.data-\\[state\\=closed\\]\\:zoom-out-95[data-state=closed]{--tw-exit-scale:.95}.data-\\[state\\=open\\]\\:animate-in[data-state=open]{animation:enter var(--tw-animation-duration,var(--tw-duration,.15s))var(--tw-ease,ease)var(--tw-animation-delay,0s)var(--tw-animation-iteration-count,1)var(--tw-animation-direction,normal)var(--tw-animation-fill-mode,none)}.data-\\[state\\=open\\]\\:fade-in-0[data-state=open]{--tw-enter-opacity:0}.data-\\[state\\=open\\]\\:zoom-in-95[data-state=open]{--tw-enter-scale:.95}.data-\\[state\\=unchecked\\]\\:translate-x-0[data-state=unchecked]{--tw-translate-x:calc(var(--spacing) * 0);translate:var(--tw-translate-x) var(--tw-translate-y)}.data-\\[state\\=unchecked\\]\\:bg-input[data-state=unchecked]{background-color:var(--input)}@media(min-width:48rem){.md\\:text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}}@media(prefers-color-scheme:dark){.dark\\:bg-input\\/30{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:bg-input\\/30{background-color:color-mix(in oklab,var(--input) 30%,transparent)}}@media(hover:hover){.dark\\:hover\\:bg-input\\/50:hover{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:hover\\:bg-input\\/50:hover{background-color:color-mix(in oklab,var(--input) 50%,transparent)}}}.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:var(--destructive)}@supports (color:color-mix(in lab,red,red)){.dark\\:aria-invalid\\:ring-destructive\\/40[aria-invalid=true]{--tw-ring-color:color-mix(in oklab, var(--destructive) 40%, transparent)}}.dark\\:data-\\[state\\=checked\\]\\:bg-primary-foreground[data-state=checked]{background-color:var(--primary-foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-foreground[data-state=unchecked]{background-color:var(--foreground)}.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:var(--input)}@supports (color:color-mix(in lab,red,red)){.dark\\:data-\\[state\\=unchecked\\]\\:bg-input\\/80[data-state=unchecked]{background-color:color-mix(in oklab,var(--input) 80%,transparent)}}}.\\[\\&_svg\\]\\:pointer-events-none svg{pointer-events:none}.\\[\\&_svg\\]\\:shrink-0 svg{flex-shrink:0}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'size-\\'\\]\\)\\]\\:size-4 svg:not([class*=size-]){width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.\\[\\&_svg\\:not\\(\\[class\\*\\=\\'text-\\'\\]\\)\\]\\:text-muted-foreground svg:not([class*=text-]){color:var(--muted-foreground)}:is(.\\*\\:\\[span\\]\\:last\\:flex>*):is(span):last-child{display:flex}:is(.\\*\\:\\[span\\]\\:last\\:items-center>*):is(span):last-child{align-items:center}:is(.\\*\\:\\[span\\]\\:last\\:gap-2>*):is(span):last-child{gap:calc(var(--spacing) * 2)}}@property --tw-animation-delay{syntax:"*";inherits:false;initial-value:0s}@property --tw-animation-direction{syntax:"*";inherits:false;initial-value:normal}@property --tw-animation-duration{syntax:"*";inherits:false}@property --tw-animation-fill-mode{syntax:"*";inherits:false;initial-value:none}@property --tw-animation-iteration-count{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-enter-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-enter-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-blur{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-opacity{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-rotate{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-scale{syntax:"*";inherits:false;initial-value:1}@property --tw-exit-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-exit-translate-y{syntax:"*";inherits:false;initial-value:0}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,d09GMgABAAAAADvMABQAAAAAg3wAADtWAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGoUmG6sGHIEsP0hWQVKFBT9NVkFSPAZgP1NUQVSBOACEeC9+EQgKxEC5JAuDPAAw3iwBNgIkA4Z0BCAFiCIHjjIMBxvHegfYNo2eh9oJUM1lv6+pG4nQ4wiELxgVwcYBgGrelP3/n5JUZMykQNJuHejUHwpkOUpnUo2iDMowlJpCQsoWvNBuV0JGj3ugMB6Ryxgyhkt+ie4yummK5sAQF1mcSsHCU1ykKNuHh+Kp6C3WMmcGAyv90J5h12d+8aWqoGEHhh0YjrSxdHBhK35HutSPdc6f6MXa3E6dM4/XBVULi7IhIfF/5YSjHVpxYtF9xgyP0NgnuSTxz/v39bX2ff16ej40oH8GIYKVOXImOBSQzZyf57f55xItLTMRFRULmyhp4YmAiAiIMRNjc9Eu3OYiXeWPqMWPcjgXLn9u+7mIVKpkMGfvLQkaQ8B4vKuRtXDNirN3rBwlLKH0ZEQZtf6h3Kyhddquwar4ufzuJ/a6W5qe+O9e5z/zNa3YIAlpgASZkEzECfjS/6up9QsbJbYsmaPYIXuI4DbLl3Nakt/u7bizN0aHyJmxZRJgqxqoOgCgVhM3P0kF5aAiukrZvVy2zaXdzE2u58rXoqBrlEN4hMrud2cYX12rwiLR8IdufS+ihASJOBpgxVhxqf6ZVfe7M2Gb8or65jrRVsSRdVYUfNGmSXdOQbKTFJi2R1htX4FgWOr1sj4QDxtDkhKp289OWHe0Au0HEyAsCVN6Nam6lC9Vf1Xok1aR92BY4R1/pT6lJYSI07A5S0mbR3H7HTwBBQAGz42lBGfa8coCCPi/pSnVeHZiWXKRvHdufVMblhRA9iXILA0go9X8nZud3Z1rK1krra7qzqVUSW46l4Z8Rg2lVnRySimoNGgYmtCKA0gArpwGhZAABgJQ4L/a+83ufYepJqSpJmoK9Y2ZRbis9E9D6k35FTLkrFYvKBQSFYUCIxxXqml7S4DGPZX44ICCM9SdMxympwU6slKo3qrkok0M/iGY5kEqfXAA6QTn078D6AwoJKf4L4eYj5LDvdRAMRSdXbo1i9YuKjWlU13HojP0Iur+nZQBW9SAS1OTGiP6p21G1ZR+57h25whhkRAkBBERN33cj6mfw0j3tJZ/IYQg4gVxlPhS/tr/UhJ4XAAZA7IITjaEBKGgQ6IwIWw8iEACRCgJkiwNkiEDkikLkiMPUqAYIiOHKKkhWkaIWRnEzglxq4JU80OCQpB6DZDxWiBtOiBduiETTYFMMwcy1zzIAv2QpZZBVlgNWWs9ZKNNkC22QXZ4CfKK1yFveg/ygY8hn/oc8qU9kH32Q370I2TQILyIIXhHjcBDEDAMQjQoYshRIxDIkfAg+4GsAEZYBRSQl/dSBOTDdygzetgutb1tf3YL9skzlUnKfGWRslqdqVkDv94yXGmuMNebuy0+fc427Jq9am/OjFlmVp1dEFhwsShWxZrYEFuO6qw4dfd2oV0YFFxXdXW37FbcFe9RX/jU5/7XT6hBITgf4pCH+XA5+neVRdW4VxMxjbPxWdmrj+q+jCWWVKryAbSBthsm2MUhjrHEKtaJR3tNgsYUU52dNA+aAxaxmFFmcJsL7nKfx5yq7TZfjVVVzbN73ra35x14J7qrB3qsS53riq7rRbbM2aab1bMFgeaM/MEkp3zi1/zeswVYAgAGyG3NsGzhuH4QRrHElCuqbubyog5ZKMkCChDwv8QRSTTuGxDcC34A2IweBBhOx4+w1TYOL6QfMntKN8QdMaW1C+KOHT9tIqQjANp4oKFtGbhjDpsyEfj/FX3ABLkCLa0BFdKknZxjA8J7ctTbi2FT985bommb1qb55cRc3zl36k6ahces3exGkW/WX4zYdzs/qpfKtWl+mtjUD5aMO5F0kibxQfwRNqD7nM+nM1juX/de/3G2HbCVaU7ZmYJgqPqP/86Cz5IicBHwAiig9kG7nY/jbmCfRE2UfkLEDn0GiwS91pRugog2BHME0iKKGdQUBKSqiaSlObiXUhuY51kpGwqmSZFwfUgyzuDxz1wQRbwoZDTcDazHuG9OwrFBHBXxkIj6K2X1oRHSQ9DrO+InY+IiYVIEou13YixArPEpsyA8K8RllQhtMmKbxjhbBNFsZNpfjXEbLGto23C/N7ANtcK1CaRZN6mmRTJiWmGcBrZO4swpSi87uHMBkKDBgM04YhGSRDJpZJKNlGIU6DBixU45JLqoopog42mmgy56mMp0ZjGPhSxjFWtZ373qIhHYp2gbrdKsS6PgfVa3DetgsnZbDklFIpXKgs+bioPOx6IJz6vKXfDzxqFAKHBDnzCDdd9d5ysJBIBxj1qfWJhO71G9YaGX4BTk2Dbw2LZ4g0yri7UUOqpTn/XmmGwacuKabJhXpuf8JNw1iQtJTBawoCsBysdLq7mB3sIyT5pZKR1mB9kptObO/e8VrF78XoWeL6ecH65cOpVID967pjg8c8X3TswxFAXw6uIsXcznMmv1Yc14W2ZMNN/1apvxPLX5F+7vdlo9yWV6w6RHBtlG7MPKGOMPIA/bn87d+AuRt7XG9/miH2XAxuwjKr5zABgFZJYeN2mYpcWvabsLa8so57q5y5ZmxZWr1+yH/tcps7hVIBaFnBINdj/dtN0I2ywwzWCMjYWSwXz2y2uwekcxxvOVOwpOC7Nj+plxLrmtoTEjHr19bwbkF9d4R5m3/civzPcts5QmuKJY01lYfnTtXKYVwimy13nj1mjNGCCXQPM1rVFruF6ZxZN8ZHjbZU3bZ6+KwNk+/1Het0Tmx6FWD6kiaYyJMoYEW4Onktz3BZ7FSB1s564pYWKocCs3x1CRi5tNRhn7s7IKfp3L5snV+CX+y39Lzmrwqy7HI7BtebHclot9WJNFiIFGXb26foRDOToOM9jPd6LMXHTdMXXzMGvsFYIftZCuFskxKNfjs7Gg0agoY/BAWuTBMB+gg+Ot2iwJK/JK1Qbweq7DDktsAvgqWWtO3j5mLa0sLzlPVlHapwX1yrJIGstF5SPkR6OGCJZC5nrly5lR08J+Jp0t19g1swGd+OnqQOOGzO8CC/vRSiqVn75gRj6mxapcozl1QCZZgeRpP0GG+l3VscvFX6WuGp4z8gs4elmsWktPOyrw3Nnqs1uhuP7ulVMc4b3CPcXW4UzdQWryS73Dv+7rg1UhnR2hOH/bj2rX9XnwY0gpvy/Zf+YCMTqS6m8O6fSFCp3W+p+0egPZSVkr7jmcH7XTQQKvcN/z0wiMn1NF63XglffAOW56ruPxSn3uZtqgDfuELXxrxb+0oNEcz/W25xcIUPzXX1XfynomHxbujZ1/GjV5j9c4d/eeuXDXc1yvNdh75uJdjJT+ocUT1ZljZjiuVV7Dwn8Sq++fk6r+Pn9/8trn2Tv9NV6rdOveiI/39Xps1Pac1uGwg42qn84joa/H6huop7Yd2F1f+ZHrk+Y+nFDrNlfv7f7CegO9IdLUOPHhEEMcSYhIIZ0scsijBCWlmCgDwyH3/93FO8vf+rbFIe8UBLohhx5W4mcOWhXmEHjRyZ4juqX3pBhVHyinS00eNMV7mQ+HRSyRZZxdsZjRj4lAmGwMFFBELKSoBqqYiY8gC1iGkqlo6KaXNuqw0ajZHpToAxrIZYqwHHhnAA8LWQ6bpcyiWe0eKKQAiQ64UQI4SdZ0DwZsvFrhgZO+BajWSyeT6FeeB4sKcTyiYAYPlOJlRshAkz2oMQ0iUIKIOUwglQefOLW2xQGCTFo6QM54CJEPqvRSzwRqNC/HOA+yWpyCHqEb5kbeCABZ+NNRbp7FhE/yXubjw48G4EEg+KJezEUlfclI3ofRaV/DXzfAMyZ/YUCDDrNkQwQHDpzhtOjbxfpxU8CwIICDAI4oKJAgidf1zLI/E3x7mhOAA2KgiNUyxVJSkpepkj3TZASNDEV1yXy5y/GkfMinoeTCODAbnqK9Hh+SkHeJKVEQXBez65lk5XKMVVaSQHCEumSBVy/EeM3r24AScBAhMq4kjcclYPfZNMFFcdL1L0yg23lzmwiEO7scb3sFe7gqahr20ygd+yh17AnN3cBnNRULjKANJAmdwg1OE0Kipun/jECqyCrr0E6DMi95vbOU1S6vPSNvAyOcf3+kc1SIuaWQbQkHF0v3RLz9JKCvZCQWb7GkJXqZt5tLPlpkcTYu5USU5skisILlDMbyYQmMznSx1ETNeknkShi4k8lUICsJynxxgg8fS8EYiZ0Kg6VVGKHg5yIaQQwZJgYD5WxrBI+CjObN+M1waLpYvxcgOP6f8bVP2P62xR9QAwXk3uM/XfDtrB/cQ/aD7ScLKQ6loXRRHp1FF9Le39IYCeP53f+n5wzzzN7msQnsGS6UJux17r+BWO35aDc6g2YKMcImYQvehHfivfgANuBKySiXK2L1Ya1Bl5lHLdcd3z3Hfdt97AH2KPzYBWcZHmDAxywcbbQ54a+XoNmSM49snwZ7CDlrM3dUAaRR1QvoDwdCWbLOtoW6tPzAjncPnv0VRuf8hjeAC4Dype2zh8kBPxDdvrq7sSYG0P2LSCJwLaA2XASYggB1nncCRqABM+DOOCI8DQH4YXFfCkqD8InkULDxatRtln4IkI20gKfxIx2Mjy4HdTMqsa3L1TPirvHdh/ET56+djI+feqJg+vXrQagzHUBWaXdGiOldnFAt39Rd6BExiRi84sfwyi4/ebpsqUhl5mcgGzKSKxU/+QK1r76pg3WuQ3gCniL8CpcIXxLeEwaiNdF7oi9E+0Tfvn15S+l6ZUCjklaYMkOwuOOdXXQ05ysGDcUB38U/wj79XaGPLnva/+1PJDSD8/41223z4et5f7SWKVIIsDp6EUmGkmuAr24B4Mvr98amGf8M/dOjAtlkG9222GH8+h/5xk8GARmRINEsl0ksNqa4lZmW2Pk/7kwABjTDG4+kBUUbmjC6DlTtonRh6sY1CUcPnsnYJooxg8A0cWaJNVOSeYTmSrNQqgXE+qRItkiGflmWybGC1Cq5VsqzWoG1iqxTaECx9eQ2kdlIaQu1bVS20tpBb7dSu+jsZPUai1eZvcLpPeXeZvemCu/CvMXhHZU+VO1TPkFfCtmj1lcImiSYY5zpMi1l8JIyr/vDWfFmq/Ixtw94fKTGZ/w+V2cvBKwPB+GjovWTMLTQ8IYQXVugjUD5kiOKBt5Ye1TjQBbQ7cZKTsy44u1/oVQi6NHFSSX1kwmZUrLXTfGNm6r3fGQGBLX0CfAZIE8Bp4B+D2DYCWDwWNA7FaAH184ba8db0e2JAx5HmxgXcM5lMQ6vmkpVqFrYtbbaeCVUM9J5cE+8xC3cW1bfVPdx8PC8Og8QGC5OGe4GootbxEFlloo9LuITyvKrsjXZ3CTW46IoFSIZjxdlP1KbVVYaZTTKlbxoNbOyzqhmnlLUnxcmmxaralzmOyWdhVhXL1AF4vnCFpWUCDObGI1GKWySlRWVslQoV3qFAj65DI7ExLSKyLHWrGW53JbwBI+RlXqEh6d0T8jS6PgeJ6jRpxehkCQBTXGCByZJG0ekLi4GhOxuBjpG1KdAwlWwI1OLlfYQnVrpT7vd00PljYhRyE5EjK2haj7EXh2h8sgWXPt8lxlUMGnLAW4s5sFuhep7B9Q+nwX5++VBr7XF6j0byPSjzx7fYoFn52hYA2qk6a1YutXRsmg1+P0ZMSKDJBt55W1br1pXgWxEQWt/4fF5jCF740fk+bSYmXM7736PLjtrSa+M18UH4eamVuGz7/olBZN9DWzM8wnzV8KZCgoBzBHCGJBrUKuKk95xHpu4/LijND7K/jAPjfCgx7giUcGighGLDNqE6986CByjEJTbimwK7QrMcM64Xad7gwXXQD0fCvWHwbcJghp9p8Jg0q8zt5Zy5KE6kAXZZxSlp0oCvSQRa1WZJBlW6CZT4YQubwse2x/pVXgsEnZRz7nDLiFXKLdpERfL1A13SIqur7cyuP6lxcNnErx60EzW8N384O78/gtQwaw0DaNi4c3dstLkOxG0utU0csJHL+4Cam8T9RBZL/wJelxmWC3z00Ts/MrF1JM7h50xH9T0AtVbJJ1zm4x8+nIrQ5t5vJILaoPr4dHtvG8nGuudgdLQFfpK9I3CDwi/Dpzbb7VYKsmrd8Z5VFAUk+XuVgLWo6JjTdgOS4KwYK99aOTSoDA8aBokKOuj8haj1z7EuCAJ31rByDAyDPIHX3JkjxsDFDrFg0liR3BQCFgTag8/9aG6qNVzfrd1PdDz2W+96LSiXlGU5+SwbO0ykx1UmI1WA5KdsqjmsTvOLmxnJdSSQ825Xl8M1ktDRdgbAzojLIqyj+fob46IxAQysIcmjmXZTASsRzK105DNTCjg0UTIavl6y4m+im+Rxkbo8ERDAI4k/E31KHQO6674qvGB1VdOd7/SyobzJmfSDphABSVb+0vABNRtr/erPHvZ5WVbtB7lfR/fguBL7+PQ7W1dp/c9krtPaUTVikEtBAVUaYbK84YAfvMn9UntSpd6eP5h8jrHsaUO/tLXTHWAP3bfP6hr63DWD6s58fbMEHSxGgb8rjenTnW9NRBoWLhmYXRPkMgsH18TMLeZlX3BoHJBm8lc19rI8ASJDEf51Ll6CEXOvvHJ3vff+3DPq6uqls6bt3TZijm9ZHr/ld95wxdCntClSV5wFkQoDnlHjUylb9doZ/pFNbrZ7aWlWTbhfGmQwje6G3qKTU0DwYq3Jvuly70N0wrKVN051f6CJf7CVOhgtaxpwN7q6ip/e21jS/U0rbmDYQgQGeaAr7ayxSVdVFGZ19da7iqtVRQ0kI94Etr1xNe//d6E1WfBhE1Wj7X6jfbVTba328PY2wPNbbNX9fHDAWJvjrVCovW0qrZY2II5TUF5Xn2suDlhw8Y+J4QivsCn334a8FWoK9a9CBqBJSxjq07RA7YaIlSW1RjMtjrfyMuVlfIZLaXoGsbrGidEF0nWdzyprG25Uaq/9P5ab13NnPqeSb5In7+55VlkYs9WNzWf2ewOi/5NCPj8BneFBSaxWtf5K96cOrXirXWB1raStsxmvrnntVZhYZN8QTAo7wubMbunPePmAv/rhlAkqryrSNVozM/BLNmVfgOmJhp4x2s4Q+oO3Yhwyk+GcoNWV2HE9oCL5ZmttXYTywLEljy7O01ZaIk1iJP/82V5+ZX8xoKsshKNIthRaHf2qAytZH2AGMwy2tNKjBW6ouSrLhHG9UeHNTmuIl1psCcfQg/Gd/WEUkOkWyfWrOxsMWmbJskcS71LMV+ZzlBncbVVwJ15N+Ufax+AfHHOy/aemwJ+lmdWqX5G5THfS199Xc1a8J3Myt0qZ5bCv1cH6te71rmars2Gs97uVWlPOniQ8vT1tu/LzbbanAIJ/t7YHu+J5Ue21AuKOvqtWb5Z9FuQDDyN5Wazq8LH+jrFpDOUym9/6ycxsSmhYFvXlNYz3BFWNJbPpokj+ZL1430uodhegkkyrDnp7ycFlien2UBIx7pN6rler7q324xp67PUlStriP12hcxeGQ6FFtP+HES9qoa4Uu2rzwM63dJiKumtriZd/3xpKanJ8Y96Iw6cKxjIT3fl6fOS/Rpdco1emmf1hEO1ng4Q0su7Taq5Xq+qt9Nst3ToVb2B2IUEr7vaUmzMHwqQ+NZpwZvmNKLDUabWOjHoOpH9PEPU76+s1VM9LRn3WPkxMzO2zHyP2XZgNRYn8dvGiptVvbG5naaxYb16Ar660qsz5P3+G9zyCptK5yyHmFeVtWlay4c1xC8OaW0OpcqXWVVQbAobVFPLHcopbQajwl8U73Xf1Mn97VIsylxZD5UksdOcJbU66j0eZz1c+T9Rb5VuPf2s3RFv5vqdj6S4LKWzUBJUV3u1FTK7Ql9RgWnAzfVygbAZy457nCz2Sqx/2A4/ygmUMOn4P3/kt33wKJqwEvZKXy5u8taygS3F1l8bFbil215KsCZmap0l6UFFtVdbIDByJVqnA9NC1GasKlGc1OxtyhbrjSlS5mboFdLtE1pMqNqoE+z2blOdaq96brfJ5rK770NuFjh/kcDNxfBLplBNRp2i2F0kcbyTowc2vawpV+YuqiEuMChMMn1KRrR604ryKJ/EkVXWHmw0+KWFjnk1xNqnCrGyNiWub9old1QgQ5lVIDOHUoFrMxusJC9B/CzZgUmHsDzs5fedP2TOMUN6RuIRb9ERTwb2CcEL+kf1nfXVXl2FzKYsLXOXabxc9+IISx+wwv7XOaHeffP2BQ+bzN0Xep3TOX3D9KLQthnTJrzSlJz4Izm0e9+Wi/V/9V7dUwJKr3OqBXv17W++BoPayXS82+Om40GD6ROuZeV/RzZiJiP4wF4ffz2r4DuSsdxkgriDmB2DjH9z/6+W/Q+1iDty64BjnQNk/djAuY94hSa9SWXVzKynCPy9bY1lbflyv5b36hwNFr/O1JIj9yj4PUENlo2t79rJybVqVAqfXNdEHle5ohEyZmOLsKjZkbF9TW41q5t6ilzv8sPvut0mk8FtcL8LSzN53p9kZYmanBxlWYLsJ9dPlsn5ppBZro5Dynsj4mA6oj67eztAyPb9/k3inYQSX77F5bbsjbD3Xmqzb0fi7cRvpkJ2S5O/yVfMsyFhSTCwoN6wALKrDTUUWL0gkjjqLRptw4H+Rf1WrJl9KEL2n/fCeuF9w56gttySqTJ8nJL6coEq026BZaUZ5gw2bTx3JvczB8J4npARpWZxw7ziWEwSkxf1PMjgqcTFEh1kT7IxbJAd9GjCKlmjOAjZt25FS2/7ZcIrZ/J3vZK65FRs3Bc83t78b2v1ieifjIThcbD8RDYvJdGh/m1hXua3DMaLy0wBetXFOY88rvsdN2RkGC/MNEJvsTPshAyBo+hlBxSeSrxTVXQH9pyKetPhdzDezEiAmwUBg4a8gEc6/WFb9Ids14/YNfNkjgCXvCCcWA79IV8mD6sHwsWM8YesXdz363XKIlkiXm6S/oAL40asAhO4TUabx1+Q6No9lDysHfcCUEuYL6OX4/1OIoqnV99voA99EoJFarqniigqTxFFWxSLjjr5/4x6tF3H6epwMqXELN4oJfbwVZytDpHh7K6DqZfpFDlIOf7br7dkfi64gOTLox0ooiGgEmt2KuwcTONGXKKO+F4qFmEgCrxLUUTdcDUU9S/R1M7rLjphFxg4LKvH/eqa6iC/bQDcYIrRE0exefy6tOWPX5U2R+QAthFb7dvdRScTBfgTjzghB0cNALv0Q1mmH06qfjCZaiRF2Ksf1qUfNFkf0ase5cMB/ZAh/SHN6gE/VKbPU8UINZ7Sd3j/NubQQaqRQ5n/uB/I1p1ypIP5mqPb8GG6fcIQgDvVg0UyeeYpu0OTE9RylEGRa3UxMnKcM5XGHz4Exh86HIYPP8igY77WNR7wM6yBOri9u8PtC84zh1svr7jzZ9Ab0EqzHJh2muhHNpjr6AMAy2Zb7OqmaBLw4sjwe3jJkkOtl9UdywF/hZf7QzL7Ei100Ec4pe/4ihb/5XO2XDMfnAQMMcjjGdbiz9AGNFuuqqTLFFicCPDm3NApTefQepHjQ3L7JvyJsr1lJ+ic2N8dlpgBvM19eaJmU44cPwu/ET18KDNJlmO68oY8GlA+XGQ+NR6xiSJydGv5vhrbTdIPu6AfdE2NeOB+Yr1lv6YTOTJydEv5RQj4Z+ULeQCgZAO+yWx/U9MIkUNP7mId4Mv6Dmzy/71783qmzjw2/9H1OWcG/v9L787vNr41sxHAm/igLu5WfqUaCE0Ysknr/YrIbbe3NcOQamDNXiFQV2govIr0aJoJ0hua0N+kZVklV2qrUIidrV972Yv8BByXT64cdpxB2+HaxbXAw5mZCGSdGSlN6pc6TQYy49YymWy3YJ/0FW5stqI48lbCgEpAKh9QyMtG8jKNXGXZ+gr25UwYyYNnyMGoCcmR3SQ0EBIfXb/2mL2YAWpCFijdCxhtnQ3DeVGRRS0myEo0IVSQrSGWH2C1tdJB9z8zkAHSe9WBFlLb7K+X42slWD1jRAZaeqNpiuDh5bT74+8MoX1LpSWfsO8A3PtI9Ql+Xb63QlrQSMT9QQ6gPXeifjjcmSxewHII59qHBvIfjjT7YSLpbfeF3jX5TWqohhq7+ej9ydk6e8VE1Qq8nZndpCZfO3djE17kUsB/pKk1eziVRriHSGkDdPyHf0XoTLixmWfMoXD2jcSuraMmI4NKDGwuwv3DgM4gca2wx2wh7+Xbaq1htnCP0C0T5Fe0zy1fIy3uuAg/pv8kAN3ETDeFzyw11D9r6xwemWuQEufXboTPpKlURJD3Wiuft9xXQefnNCT5z1gxC2n0S0He/DQlvPt/8qAMMhZezSb70qBT/nMHxZWZIk/GZ1IWZE0ul24VFaquml3La2vdhY5fwEvwcnwZvhrfgp+KX4hfh/8OfxR/Cz9KMAliQhHBQHAR6ghzCCsI2whvEc4Qk4j5xFLicuJW4lvEL0hJJClJS8JIAVI76UvSIdLvpEukB2RCLiIbyVXkJvIk8nzyavLH5O/IR8lnydcoJEo0RUwpohgpdZRuSi9lJeV1yqeU76lSqoaKUf3UNuoH1P3Ug9RfqedpOTQ1zU7bQHuV9gnte3oJfT79guXfe40YLEZiZ7Wi3+5zfa2fhh4VG0lkKUt35mRX3s++nM21PBkyM3ocE5zwzJjIkljRm7oVG9zwztize3Uf/8B+ZaRyIPokB8/hcEQcKUfDwTh+zgLOGs5OzrucPZzznLtc4EZxJVwZ18z1cLu4s7nLuGu5m7knuBe5T3kdvDd5od3nP8K38Kv4bfzZ/NX8t/k/8eXoWdGB6Pbovujt0acFHYKXIEOgFJQJAoJ2wVTBcsEmwQd6+EFfgIIIWYd40ZUXFjDEQOKAtXv0b1/J3Zv/HCScd/Ci1kDyF679kk0wRmVHx5hwu/YGSrH2i/p779/t1h/6sal/oApkTJvSd2E9+EkbtwshHGK05yEi3TQS33WCmnT5xOkRspAb2XXtIrasvDqGATwepzcRkoVbislBJj1zRvXdIkcJRPKWrNX+y/AKEOxKUZxWikXEBLi4O8LCHgr17pUEGomdGmVieOQb0p6/sNaprfHkRF/+b2Dn9pYAFFtI6xKSpJGJ3cTIRRF/F8DMZ+bfVV6iyaGW9QoGuQnTx/NI8r7k/RIlDSGMw0BllNoDwQjN2XHIsh6zd4Biq36hqsD/JJnK2qhjoYHQXR/T8RXzpFZBPDTnTU1B313097BiwtUUu0t6WASVxXUQhgoAmiPM6px24dwSXeA92RlDAZXe9IA+ZdLr/N3xvZMBbYoE/z3o3nxT4fSKdhGpKIQ+ISNr8F+8CquwBVst5qe/7KMckg8mghfxY859CFsZpSSYjKVzPEmiIGWMOty38mWLOhjVoFRZmdF6K9JJgkaaIYLXkRCEkJorefYxMb/76muN+uyk8h68yuLZvo2WrsdPaTXRMroqnalYkjBdUG5ug1Psfa6y+UgrxtXs7+9dhPNXzp46SUNSGpT8uN4A5Xp2XvELrOOVOLNJSJhxoCAO2TSa7bsVY3ZUe4PTjSLJFK9FG7WoVCtSsA9pKQCVNywnjrfyuIgOE648IwGi+Votwwd410Rx9O4so6FIHJyrOd3jltO/lxaff7BTW12rTCK+Gw3PmDFt4bFqpiWBHqJqvG2RdyJEL4q44kLh0fn2ZT7ez0ye/AY/KXhxC5QanEwwXs4jkmg0M5TyPpV52I/5Qe9Vkhhh7MOkgpDxhoPLce5zRpWy4NBEtDNo9jRCiNneqIYkFKNslMldJ8RLAOHSoTw1IG4F5DKNaq4WN2fcE4Y3wtZbFlO8nFfVMX0SG2aHFAMtU8z3K25cGLjHEUKKOOKIZFtKUkFt8ZDjhN4QKwWENKpgncP15/CYmsvKZCwRtxLkEMIh4CWU7kC725W5NdaV6drb1oAEIsRAa25yth5mW0kbPfBA5oUbd1tbxTpaSRWYX6r8hsNfernLOrqARGSOljaiex4fUGcCepg6hYc/x383ARhgitKKK0HEhhmzoPDo6zP5M/DbNIZgolKDqymGm3ryiGB4debUMkzDgELpVspCjJsAgMz2gNKdoOjAfKD/2YIGBKhWYiQPR7QeiGDluJUt1iWEzp0vjq+1nepzGyS3g1FzLUactiH0vTAsj9NoKw9fGD95FAxsQNHQRC1NUWhZta4JYAS/OxjHGisto5+6WvuO72IhVai8jE6g4kq+993TQ1K4n4hknIJ18GIvFH3Dq3a6MkAI54eGenxzV9AXhYH1aXjkHbsRpQTtFNOc/BtAsTSY6BWLHuHOP8hUpe3RDjqZiDSQ9vUKAASU/jot/sWuhRCkEQwUHOkgjdZdu7lwIfvAA8Cw6GX+qTOrdipXsDfhcmf+eIUokrdUZuC/+C2Y0Iw67gOlNVfWYhcXnwZYrWgZ6reP8r+Kj0kqg4NyYbuspHP1ajw8CFo1u0GpMPztLPQFJ35uiULvU6gz0AgjMIV715y+CBGDQKEYiogQdTfNxxGeutsdGyXHZIAh2ggLxg8YlyIEX11xB3JntnDQZYNI8kj9CvgwCRGMafC8iEURWR2YMKrI18htr3Rq+yIEpSnoVoi9I7h68Xeas0AD94vofP0GTqwvktwmoLUcunWbY+n4wjBMwsT8fUo7ipQNOz48koDmfNPkugaJSmBOYPwYAtpCxw1TYyiRUthWWNJrwvB/f1Gvb7mgvr1ibd8InGmTTDVlMmiPUDTOf6zokyuhoGrTx5BlLTWMERQJx7E9K/wnRgmDuSo+oC4uvzkBDf+S4mjVCv1IHuQS3IxT0AiPw+Ocyg6SlL31BkUnLNSdsDykrjEOTq0yHInzlgR5yN0iwmNxrCscWQMmLKPUd2bfj2h9Yhaw3LwqCWaWN/MoUY2SHwPqdDobGrqZ90PZOlwV0jD6SZP72Osap43QOjdNIuDQhaahpUr3lRu1+c3JZhG1+tSiKYxtKQQLKjMju9Y/I7cyVSQnu5Ew9SOWEzXyaNoR2f4rtP2WUeYlOxwyZIH1IkWAsxTsjRXZSIWAfgKTxxyweFUMAt7elztJMGAWz8Ya0jjWUFOU5M3nTIeg4FpNf/Htn6gs5KMwEIhzyNLf1En9RDdVo9iIvpAaN1pq0fy0bVrS3h22dR2vz5kzy+pu1TU6VW63KrGgr79stcqUU2XuQODh0BdaN//0vi4tVo4b0bzUNEq3r+buTdQqQzSBa34XgKQI28+EzqPufgk/CTJLnMtPGly4i3DRjcmhgtIMLm+8CD9+kPQjWspuJSHuJxblBAsSuGnNsbZIaKCd89MOi3ERyToMqiVNsYfEoVXZMhygg0UR3eiIaQzRAw9kMwe2bWtSXw/wLPDveIblUouVChyNiareEeQA9QqOZuD7eSCm51ZVSHwjhLqY80jzXl9MKoRSD3GJAVWiySjWkWLDnAlTPvKCPWqYx//p2EvevBV/7kTUnV8gM6P3g72/GOb3M0mjnUahv4g+o4enboZpquthx8Ly6ov1Y9uOI+F/J/Cm5ZHkuVKi0SOJLGUDxxkHYHjskwmDt2L/OH0aOFwMkQ3t0aPR7rzb9W1tEFrYB5cRHAvhck9W2HAuBTnUE8+MrklEoyTpuSQGVom7O4gQICZOgrvy85VrhIgMVOLiR/fh3XpYhaqrCJo9MHjrvystXpsWwlctfCaRpTHgBuQCGHxBZCdO/AE0Ir5mIdLwF+/IZ88CgRrw1v766+ouL56++IplBvwTfwydEIYOe/kLPI/ROMA3XWyN8Y5GYQuLvCGvqFnucfKRNqcofrdGvdisKVqc7HAQcC3MoNKdjnLVR8XSsJSRYqC4RykasIhOkJnNcGh4rOysVmXKP6aII4oEoxHaU5rX+7dq7z8w1yf8YoZCHk+FXNod5bPF2fEm1UKP6L6nmzlWsMGHMFUVXZvclaaUvKyuGfEzj7RHYTSkvTQLVQneLgsLjy2BsyvtKaflCoiYAHNesegzvBNvDb2inmDBKIw5XTGLuVvxrLp7WWnBdFocQbZGcNXlyLGk5WBqIaU1uAsaaSwVYzkpVYar++a4EEjU6m4oBLHRvNOz2dJ072FxY7yZQIY0XmH2o1afEnxwAVPGVV2E7Kc4Bqp689Lgu2p1HI1u2SgTcBGrwpdecbJispLIJBRhGKadASGMG4MRUjRVNY1mSGPsKFPV3JG9D9kZgO3Q3wNE/GwAzikuB8pqkhYSXNvEYGjmhPTToTtQ1SefvKzpiycX+o1S4fRYA7DAADWEMq7p8BTejKWE555rEFiwF9TT1ea1wd4gMJ1XcOs9omXQZ/GUXj3GHnLQI+NoI0zAZL0X+OkzlXgBBGPfEjgsls26c2IUdlatVYvtAZDfhK7c9dQ5qbSDnneDBE5+sOkqotmryydONda37CNIy3hTOsuZfuWTt9x+UDwzcg+w+/2WaOy7Q33yDvSWl5dgGEN6nk5YGqPXYFD5BmGATYLe9UfCmnEx7EsKPGvdj6unSw0tZHdSPW1TU6zGL1BgpOI81xZ9BNcLnkK6GEeGY4k3IssdmWKj2KdbOg3JSWGrvNLzBVZWYDYzZpU1Fde7FoEVR76hIS2b96u8cU2+dgSBeZ/aceKOjSjK2In42s82eio9MtSupmcPD7C14hZoRQ80ldY1v6+2PIre5BQKWq0OzQr2ua55H4S9UOyritGP5bb1oa3AvQel46cek4u5IXzF6hpnjDRytShaVuEqeq0cm3qaLhWXTYCHuQ8HYM8LErXwe0gtshqEyIYh4jqcSKMoSZlVYcvlC5oqwO3JGNICSLBECJa9xinOn5WqtmFhBBg3WJYKxCWewZdLAt76mLK2y4vYu8C4vvuTemMWvQdRzRaOPTZyx24+xershdmevKZWa5szo63biC4kIS43otn6cS46TBAhouocU9eXOAStD0qYe8DoNfTGamsqvRHqxEwwesWiaIgnK4n0ZCICEWJW2FAQC4LtjXYvJva0UZN/GDEuHil+2t/Mo/fKKyup/zAqLX6Zz19ugNwcWqFj9RVjl4LRIJkSJBENwDY75oKRfe+GTbJIKTVYNWlKZovR3KhVdaTHHrMaDUZjGSZ0Vi1nt3YsKExSWjWQTEenKdxSVzdvDn/H6Bk/hatjSknv1EZxwf748FFgMLdWlBa6AGVDUIT9XXUe2wc0y3vyKaDiXtABXaIn6gfUU0hWr04NYO1VEu8SRGBCriZRv8mDS+7n843W3gd9tqb+wICQg3xulAL9rUMGQBz9gZ2pWKyUbCucrkSD6p+Agdzt3zfDTE4d5f0ZmaB5X01ZktSPtcNMT1It6zq1PNWrrFFqFWiGRtF9HPVlNwd1v619/BOxWdBgGnmO5i2cfnqawsJJl943yC/bcD2uQwOYYA6YidP4jWBcZBJibkSFQUDk2EhoPSaKd9BjVkN7qYKjj+2J3nVLqfmbjpehbfC+/Du4HpuAWV4mE5AeUQJHTFbzac9fDgrfRylogu6vrRm7TjIknRKFbFhf5EXsvOlmYIe/kPTyTS+3XU8nPHlOr1GPTpWaLlE8ubPQ5AxWP0q6fMV5T13/Ge6dh/1fosdCGYf92Dk86hUn6xfdCTxMwQo1QShWq4HSK4tzcV1qTgu5d6P09cl23KoXNdH1gwzr6NRKm0qyXbS0VqyoVV4ApbGGu9ANw/1t4Y+CVyBfTDqLI1mCLoaKi0PIzAIZwfgJ44LmAgVM23I9n2hvRG6n4nQt1LiGFacxnYH2jfFtNlSOazjClDpjFE99JjFcYnrzUr5XdyfyQt3nON4BykEuQDeuQDmEwVlDwtg1KsSwmKaTqbEGZLAI/yeY3bI91sNm1FbSkZ56xlcbrPf7a/2+5kEOOsPqx0JVB/3p2UYSmZ7UUIgdwQ8O/95VQSziCRI8lIv1LF8Sxv8/IJeK9SBszguwwebeGAvCvPkq6Y9ITYry+bFiuxFMOExRBsI+CMQ7oTanKn63rjZyqmcy5ViS4AEysQeyatjCS1p7656yEN/UmdKYAxEOqzKBYGcfn6lrb32Bsuuda80iApZizUot26sBF7yAMMHFZrWyGBzYI9NwQnpHa6ltj8Uk7bdjpWyFokGJ10grKofOV8gmee6qIhZ5w5a7qepLiICT83zvwFMO9A/Fi5FIMytMwEB0sRtQfzERGGCdBeuaSZVwhX5itbaBL19mgh9m/I3uzOv6Uq6Bw1P/byhCC25ZW67V+eyN5F5CL0u09vHZp1OhGxA/CCOEzczfys3TU3rBuSozmLLztwHaf5sOAe9ohWf1on+S2acECQ7lhG4XXt0+1PJMqxvvvhpnXxxha+NHn8zCb7FW8HvFoj8hCgloqRXsHF1ScVFdcR9I82b7DS/cyNj8tkPxdfp4efwc1yoGYuSw1SJ8jwDnzt2+4oQhPGmRgel6tWNRnzZXxOqWF2/2BZKMQ34EN/TE+gOCZRieQWYDkJVrSoLgJxZVQ02kDRVRTLDBAOf7CAvoP0zvjjSJ6u0YjAAaQR/oK3iww1v5g5zRx5WrW/aUas9AoeUQq78Ma2+Gt+DLCCNX4KbhxV3lmKgY/iwiCQxEoeFm6XS6q5aA1uBWU2g4TFKAmeDsZMptQh+GpdupaS5rksQ48ieZNx95uc5tAs9BY2jINN3A/f7wi+w2XaHfR0Bh47jMiBP0MFEmHg4sOCHXchOd/sue0f+sA7Kriv7OW233ClxxEHZ86b26PxDeoatpILB0V7VM5IWqfypu0jUyARiUhORZdiRJBw7oQCKqT0gFx+TgSgQaCNGzAGtRyKks1TP14YzyTFF42KdpI0tTYactQraMV13p0WU2Qi0F3PJ1lwDPMNp6A9Y0647EJxOJcFjAK1Z0iRoZaW74+NYpSLAcX4F0O+/ebqh36G9/leUt/lau/LVJ4IFv4UTlnyHQD0oHs9lo1+84wV5w6XZ4OewnFzZGvd20m+5mrUC4vAUtarI89j8cnoanqSPG1HIgmJzTgcGJBTLwR4J0CejYUYyo3iwQzLZvhobWg69WNhMHQgk8y/j3sdGU2YVmGQhgDV2nho33TF/AYpyqhWGcmaUh48HRx8SbayhoHUWRDIJZfnytcxonurFjJtQq3DlBVYg5jNMovfV2dPWwPl61uDL7UZsbwswNQtFYJj/ptLVOmDR0xZ05EiHHsjwvCyRNjSBNaaI2zfF0CSvLJ1DQ7cbiq5Fq1OWTqBlB7o3KtYpZ+eCBMVw+UqYRMdULugWGS2pVX+5hpLBa8GZ4/+I+qW22uB4l8kNOtvkTSPsB+gPFnclhkhoFg2mPqR6OfkEUzDHnAjAo4/REqWXoi3v41IdiFDaLf3p4rN3nrmhAc0ulvBGuZEa9B9WJOGGlUOQqSJ7NTr25uAa//EGz24Zp9HrbYhqt3LPourmpMHM17T909GiWHdZ6l662GSH7KfLOFRQRbl9Ix8duC+JfNl60oGgZdOL+tWL7EzuzsfMRnmLMtkLsmDmfZZ98MUYvkS+DJRPQuA33m1zu1sBukn8rrROC0WPG1gFjurA2a+ZMA+yB/7PS775nlw5L0cN2cTyVEHeFdKIuFQhIxEUEcRF+mfmRX+XuGVh8rNDDJl/oyn+3I50wPcsQJH6CfHkGHHAsHvP/hAguEJJ7U6/Fu7qBu/l59zwSNjcvx/e408rQ0dnX1c3c3I3mPPwyi9Zb65tbtPauFY1URgBEEF2a099dHfJcyq05Qkyz6OM+dNfy01BKYmfrp76pVG4cxhwFcpfjs1duaB0jSXKbBfLBx6zwPc9oeqqRnHUzCEIwsHFTQx1j2w2ZcsLrhBFyGiHhMJwKIVqu5XhQIdbrioeWyQMPWLLzejkDyqGMGWTv/KV+TWvAziGEccnzFrmQc7vHcWo+Rh0bhjkxj82OxRzJ3/lSg31P1xBGPjIJG6ilQmSrKil5VpPZii1TFZ5nT6AP9QWAeqw7TujOxprWosSz2bTlqqqm6ySZJeqyKKmqbppflskw4goUbKVSTkGLVcTcKKqGfm1H2WxJ8TJUyri+oV1DTSZDpyegKY6dLqlBKxJ3gqpKT1hAiKg2OvE98xw6lY4SpnLO9P9piiKU0AkGBWHikbwW09PnYrEheZ9Xr2lEeaWJWZr+fxQddraggFIenLXG9lw4zVGPEolWZV+BLuhildOY8r6k2l4aOuGQ6BaXSLGyGpHmPZgUnq3190BR1TgMhWN5mJ5PlQrxRcZU2XDngow/9s8PBWiWXc3wRDNcnLRVhuH2G1RL0TSBWV8zCO3QbttxnTspE+9yjKM3O5lBPGJombBFH6OSKPZBNaXdeRfYSdkKLiD7krF175TGNdjb3ZPs6wr20su34myBpTrwVUWWkrgLoredD5Ko5/fcWek56hX/pIvAjONZF2APcv/y6W0mIKYRwdVLu9o84ZfnPld+8eK8Xm0APJ0ZzzbfE/1eFb99uX9z6S8u3vCovzTMH/tl8p/gr/gyLAACCAfhluUremBZiJ+kDJLLNKCQT+9rSlZ7sQ80CArQowzUeJgM7CD/GhAI9IxfDTG9Gm0sAQlAz2y7Xg8Bz2Lf5Cx2tUMAYADAfvZO7+n/PznfPTcqIZ08GuCbuT9cAnyzyS9L29ONPZRyHwB9OICA7rc1MYChA5titZmacpedf/bPyk9Su/Cvpv69XGW/0Mz5VStUGB7f1W8ALpeGZYqcuyOECaHOVag1QCjlCGPdU800sU9o8uaZ8+uS0MT/5U75itC0+8gLX9jwEgyYrk9VoG6y6V2Xvj2dQiThBj6RW2Y7h8+QA0YpUFXZcndXCiBZD0zqtHAjGtHu+Bd2q6YuMOLm7HWTM4SxCNQ5uWvtDswJHUAn0CskHT4Q18o5OL3coD7TkmJAzv5ZTj5QkoEsBzNUpdxddkUEp1exU6RRznLX3lBFw1MA65AGP6dIyiZU28nr0IbesToiXQELYNnJsQDOhRGVOUDPSa+cdCLXL2xEkacwxx55EPCZWdjqESFw7vSKm09MEzzUo3rjbRWnIbRiazjMwml4+TmpEcRlLyKSlxCJ9M9hksV5BQSwdowaDyUqjY+fdBRNuJqAyF1tHJrLWgyBkzWxdh2F4kxeAcVjiGgJYnykJWJ7SRNKsEhLQjFHE+Fr05JxebUUQjItFU2OJiYgQGmE9lbS0YDj+FUBSq2vV88TpJC2bpd/51cEarKHSuya0qFvwT1UOc4qZPnJLsUi2LqKBHhxV3LIQngQLbJKXJgP+Sg2DrtjN8cqyruWF8OHrqS865oQGXplLJesu/9PUW2CjEX4UCx7YqH0XTvyUbWR5rxPcCjJ+Xa8oNZJVPPsd/7Wf1/fKdhyXAzs0fUFc6C/slAu4wiWdx1bxxazP18l+GMdH0xYG4Sby1fpzkE84CgdTmX/ydknaqwIQNem8AOFYfC5c5hS5OQ4zziFkgZSpVImnPM7bF8XCn8mmGF42v2/YwIiQroX0DxAZMgIBVFBEhqiIwaKQkzI8hixEDtO3HjxZSc6gZyM8xTFFFuc3MSTJqFEeRGWlMh/CpJcSqmJFSatdCXJSFImWbKc9wxll1MueaTllV8BRQorqriSZMmpokiZKjVNNP5yV8PI3piY5PIF5mKpXGE1Ghi1pqyeAWqj2Wp3YJ509/qDwyPlxyd+S8/OLy6vOK9vuG6D0P8+ieJkyDMaq55MZ3xzF8QnLNWs1pst/26f3t0/CD4+Pb8Ivb69q/twKcuLEp5R3qotatquH8ZpXtZtP07ny/V2fzxf74+/7X9/f9XAAB/rz5pouW/aMCKumC8f1wtx1fZ6WR9T4W+yavrf9yxKBHx9Degv3u2BiOaJ9LsxWfMGS7lEwrIkrUKRzFWXzASK1FGpotF8/RTGEkUx/bmvHbOGLRqLgQqvOCpV+fKeppOmXdGeLrR+f1qtU11rZmxgEVcwQbf1tX4H80zQ4GEn2psK2ZfKbe7EjbWl+30+zYcZctaWgS+b6JekQpAdLw3WHWYtOLLIjgdDmD4aw2WyiuGBw8gDx+YjY3JUP2XUPRy1+4GHUS0zmKwtYXLXeIL3679u1/hiQvSYfxJmHmYvzYqUJgbzZY9N5g2+3GnjS0rs6rvgF//crDhayGMAWkvjmAABiSgBKdglQZJACEkkc5i0iFJHN8uTiLRj5SBOiLOU7JMEJ8Vekq7lzFynabAQ26CRJ+UNAWVSGVd9klyRSmmT2gaNLnVXsIM+S+oJb/CgyZRQQjFVqLJP3A/fK/vEY9KxweKU8kRCqnCBgur2Na7Br9SmrJ81XtyRkWIjzk1teGM8HVeh8t9Gd2Lj9MFNxT2hmp8cniS7I4Godhc7DgoKuYLJVjrLFBCtmFFcEjVSZ7b8S9bZM6xNj2R9YIrdMpj/YyoRawAAAAA=)format("woff2-variations");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}@font-face{font-family:Geist Variable;font-style:normal;font-display:swap;font-weight:100 900;src:url(data:font/woff2;base64,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)format("woff2-variations");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-pan-x{syntax:"*";inherits:false}@property --tw-pan-y{syntax:"*";inherits:false}@property --tw-pinch-zoom{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@keyframes enter{0%{opacity:var(--tw-enter-opacity,1);transform:translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0)scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1))rotate(var(--tw-enter-rotate,0));filter:blur(var(--tw-enter-blur,0))}}@keyframes exit{to{opacity:var(--tw-exit-opacity,1);transform:translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0)scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1))rotate(var(--tw-exit-rotate,0));filter:blur(var(--tw-exit-blur,0))}}`;
   const styleSheetCache = new Map();
   function getStyleSheet(css) {
     if (!styleSheetCache.has(css)) {
@@ -24263,6 +24263,9 @@ jsxRuntimeExports.jsx(ItemText, { children }),
     const [platform2, setPlatform] = reactExports.useState(
       () => localStorage.getItem(STORAGE_KEY_PLATFORM) ?? "youtube"
     );
+    const [liveChatValue, setLiveChatValue] = reactExports.useState(
+      () => getStorageValue(platform2)
+    );
     const mountEl = usePortalMount("body", { position: "beforeend" });
     const { isStarted } = useLiveChatSession(
       inputRef,
@@ -24272,6 +24275,8 @@ jsxRuntimeExports.jsx(ItemText, { children }),
       onChat,
       onError
     );
+    const resultHistoryLiveId = extractLiveId(platform2, liveChatValue);
+    const resultHistoryHref = resultHistoryLiveId ? `https://namaytyping.vercel.app/live/${encodeURIComponent(resultHistoryLiveId)}` : void 0;
     if (isStarted || !mountEl) return null;
     return reactDomExports.createPortal(
 jsxRuntimeExports.jsxs("div", { className: "fixed bottom-4 right-4 flex flex-col gap-1", children: [
@@ -24279,14 +24284,17 @@ jsxRuntimeExports.jsx(
           Input,
           {
             ref: inputRef,
-            defaultValue: getStorageValue(platform2),
-            onChange: (e) => setStorageValue(platform2, e.target.value),
+            value: liveChatValue,
+            onChange: (e) => {
+              setLiveChatValue(e.target.value);
+              setStorageValue(platform2, e.target.value);
+            },
             onPaste: (e) => {
               const value = e.clipboardData.getData("text");
               const liveId = extractLiveId(platform2, value);
               e.preventDefault();
               if (!liveId) return;
-              e.currentTarget.value = liveId;
+              setLiveChatValue(liveId);
               setStorageValue(platform2, liveId);
             },
             placeholder: getPlaceholder(platform2),
@@ -24295,28 +24303,40 @@ jsxRuntimeExports.jsx(
           },
           platform2
         ),
+jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
 jsxRuntimeExports.jsxs(
-          Select,
-          {
-            value: platform2,
-            onValueChange: (v) => {
-              const p = v;
-              setPlatform(p);
-              localStorage.setItem(STORAGE_KEY_PLATFORM, p);
-              if (inputRef.current) {
-                inputRef.current.value = getStorageValue(p);
-              }
-            },
-            children: [
+            Select,
+            {
+              value: platform2,
+              onValueChange: (v) => {
+                const p = v;
+                const nextValue = getStorageValue(p);
+                setPlatform(p);
+                setLiveChatValue(nextValue);
+                localStorage.setItem(STORAGE_KEY_PLATFORM, p);
+              },
+              children: [
 jsxRuntimeExports.jsx(SelectTrigger, { size: "sm", children: jsxRuntimeExports.jsx(SelectValue, {}) }),
 jsxRuntimeExports.jsxs(SelectContent, { children: [
 jsxRuntimeExports.jsx(SelectItem, { value: "youtube", children: "YouTube" }),
 jsxRuntimeExports.jsx(SelectItem, { value: "twitch", children: "Twitch" }),
 jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
-              ] })
-            ]
-          }
-        )
+                ] })
+              ]
+            }
+          ),
+          resultHistoryHref ? jsxRuntimeExports.jsx(
+            "a",
+            {
+              "aria-label": "リザルト履歴 外部URL",
+              className: "inline-flex h-8 items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground",
+              href: resultHistoryHref,
+              rel: "noopener noreferrer",
+              target: "_blank",
+              children: "リザルト履歴"
+            }
+          ) : jsxRuntimeExports.jsx("span", { className: "inline-flex h-8 cursor-not-allowed items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium opacity-50 shadow-xs", children: "リザルト履歴" })
+        ] })
       ] }),
       mountEl
     );
@@ -24390,7 +24410,10 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
           case "twitch": {
             const channelName = extractTwitchLiveId(rawValue);
             if (!channelName) return;
-            activeSessionRef.current = { liveId: channelName, platform: "twitch" };
+            activeSessionRef.current = {
+              liveId: channelName,
+              platform: "twitch"
+            };
             unsubscribeRef.current = subscribeTwitchLiveChat({
               channelName,
               onChat: (messages) => onChat(withPlatform(messages, "twitch")),
@@ -24452,9 +24475,9 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
     }
   }
   const saveLiveResultEndpoint = "https://saveliveresult-qx5y7pofqa-an.a.run.app";
-  const createResultWithUser = async (liveId, input) => {
+  const createResultWithUser = async (input) => {
     const response = await fetch(saveLiveResultEndpoint, {
-      body: JSON.stringify({ liveId, ...input }),
+      body: JSON.stringify(input),
       headers: {
         "Content-Type": "application/json"
       },
@@ -24494,14 +24517,13 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
     if (!builtMap || !mapInfo) {
       throw new Error("保存する譜面情報を取得できませんでした");
     }
-    await createResultWithUser(liveId, {
+    await createResultWithUser({
+      liveId,
       map: {
-        id: String(mapInfo.id),
         mapId: mapInfo.id,
         rating: mapInfo.difficulty.rating,
         totalNotes: builtMap.totalNotes,
         flatWords: builtMap.flatWords,
-        createdAt: mapInfo.createdAt,
         media: mapInfo.media,
         info: {
           title: mapInfo.info.title,
