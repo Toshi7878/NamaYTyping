@@ -109,7 +109,7 @@ export const ImeLiveChatConnector = ({
           </SelectContent>
         </Select>
         {resultHistoryHref ? (
-          <Button variant="link" size="sm" asChild>
+          <Button variant="outline" className="text-sm" size="xs" asChild>
             <a
               aria-label="リザルト履歴 外部URL"
               href={resultHistoryHref}
@@ -120,7 +120,7 @@ export const ImeLiveChatConnector = ({
             </a>
           </Button>
         ) : (
-          <Button variant="link" size="sm" disabled>
+          <Button variant="outline" size="xs" disabled>
             リザルト履歴
           </Button>
         )}
