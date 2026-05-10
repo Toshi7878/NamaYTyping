@@ -3,17 +3,16 @@ import { cn } from "@repo/ui";
 import { Slider } from "@repo/ui/slider";
 import type { HTMLAttributes } from "react";
 import { IoMdVolumeHigh, IoMdVolumeLow, IoMdVolumeMute } from "react-icons/io";
+import { getPreviewYTPlayer } from "@/store/preview-yt-player";
 import { useIsMobileDeviceState } from "@/store/user-agent";
 import { setVolume, useVolume } from "@/store/volume";
 
 interface VolumeRangeProps {
-  YTPlayer: YT.Player | null;
   size?: "sm" | "md";
   sliderClassName?: string;
 }
 
 export const VolumeRange = ({
-  YTPlayer,
   className,
   size = "md",
   sliderClassName,
@@ -25,12 +24,13 @@ export const VolumeRange = ({
   if (isMobile) return null;
 
   const handleChange = (value: number[]) => {
+    const player = getPreviewYTPlayer();
     const newVolume = value[0];
     if (!newVolume) return;
 
     setVolume(newVolume);
-    if (YTPlayer) {
-      YTPlayer.setVolume(newVolume);
+    if (player) {
+      player.setVolume(newVolume);
     }
   };
 

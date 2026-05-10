@@ -5,6 +5,7 @@ import { TooltipWrapper } from "@repo/ui/tooltip";
 import type { HTMLAttributes } from "react";
 import { nolink } from "@/utils/no-link";
 import { getYouTubeThumbnailUrl } from "@/utils/youtube";
+import { Button } from "../../../../../../../../../packages/ui/src/button";
 import { RatingBadge } from "./rating-badge";
 import { MapThumbnailImage } from "./thumbnail-image";
 
@@ -29,9 +30,6 @@ export const ResultCard = ({
       <CardContentWithThumbnail
         src={src}
         className="relative flex items-center gap-4 py-2"
-        onClick={() => {
-          onSelect();
-        }}
       >
         <MapThumbnailImage
           alt={result.map.info.title}
@@ -40,7 +38,13 @@ export const ResultCard = ({
           priority={initialInView}
         />
 
-        <MapInfo map={result.map} className="flex-1" />
+        <MapInfo
+          map={result.map}
+          className="flex-1 cursor-pointer"
+          onClick={() => {
+            onSelect();
+          }}
+        />
       </CardContentWithThumbnail>
     </Card>
   );
@@ -59,16 +63,28 @@ const MapInfo = ({
 
   return (
     <div className={cn("flex flex-col gap-2 truncate", className)} {...rest}>
-      <TooltipWrapper
-        label={nolink(
-          `${map.info.title} / ${map.info.artistName}${musicSource}`,
-        )}
-        asChild
-      >
-        <div className="truncate font-bold text-sm sm:text-base">
-          {nolink(`${map.info.title} / ${map.info.artistName}`)}
-        </div>
-      </TooltipWrapper>
+      <div className="flex items-center gap-2 justify-between">
+        <TooltipWrapper
+          label={nolink(
+            `${map.info.title} / ${map.info.artistName}${musicSource}`,
+          )}
+          asChild
+        >
+          <div className="truncate font-bold text-sm sm:text-base">
+            {nolink(`${map.info.title} / ${map.info.artistName}`)}
+          </div>
+        </TooltipWrapper>
+        <Button variant="link" asChild>
+          <a
+            href={`https://ytyping.net/type/${map.mapId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-cyan-500 hover:underline"
+          >
+            譜面ページを開く
+          </a>
+        </Button>
+      </div>
 
       <RatingBadge rating={map.rating} />
     </div>
