@@ -1,3 +1,4 @@
+import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
 import {
   Select,
@@ -108,19 +109,20 @@ export const ImeLiveChatConnector = ({
           </SelectContent>
         </Select>
         {resultHistoryHref ? (
-          <a
-            aria-label="リザルト履歴 外部URL"
-            className="inline-flex h-8 items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
-            href={resultHistoryHref}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            リザルト履歴
-          </a>
+          <Button variant="link" size="sm" asChild>
+            <a
+              aria-label="リザルト履歴 外部URL"
+              href={resultHistoryHref}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              リザルト履歴
+            </a>
+          </Button>
         ) : (
-          <span className="inline-flex h-8 cursor-not-allowed items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium opacity-50 shadow-xs">
+          <Button variant="link" size="sm" disabled>
             リザルト履歴
-          </span>
+          </Button>
         )}
       </div>
     </div>,

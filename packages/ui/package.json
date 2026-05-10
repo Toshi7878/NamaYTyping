@@ -8,6 +8,7 @@
     "./dialog": "./src/dialog.tsx",
     "./icons": "./src/icons.ts",
     "./input": "./src/input.tsx",
+    "./button": "./src/button.tsx",
     "./select": "./src/select.tsx",
     "./switch": "./src/switch.tsx",
     "./radio-group": "./src/radio-group.tsx",

@@ -1,11 +1,11 @@
 import type { ResultModel } from "@repo/firestore";
 import { cn } from "@repo/ui";
+import { Button } from "@repo/ui/button";
 import { Card, CardContentWithThumbnail } from "@repo/ui/card";
 import { TooltipWrapper } from "@repo/ui/tooltip";
 import type { HTMLAttributes } from "react";
 import { nolink } from "@/utils/no-link";
 import { getYouTubeThumbnailUrl } from "@/utils/youtube";
-import { Button } from "../../../../../../../../../packages/ui/src/button";
 import { RatingBadge } from "./rating-badge";
 import { MapThumbnailImage } from "./thumbnail-image";
 
