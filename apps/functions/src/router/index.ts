@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase-admin/app";
 import { FieldValue, getFirestore, Timestamp } from "firebase-admin/firestore";
 import * as v from "valibot";
-import { onRequest } from "../https/on-request";
-import { saveLiveResultRequestSchema } from "../validator";
+import { onRequest } from "../https/on-request.js";
+import { saveLiveResultRequestSchema } from "../validator.js";
 
 initializeApp();
 

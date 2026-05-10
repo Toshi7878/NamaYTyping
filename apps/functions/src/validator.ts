@@ -23,11 +23,11 @@ const wordEvaluationSchema = v.union([
   v.literal("Skip"),
   v.literal("None"),
 ]);
-const wordResultSchema = v.strictObject({
+const wordResultSchema = v.object({
   inputs: v.pipe(v.array(shortStringSchema), v.maxLength(maxStringLength)),
   evaluation: wordEvaluationSchema,
 });
-const mapSchema = v.strictObject({
+const mapSchema = v.object({
   mapId: finiteNumberSchema,
   rating: finiteNumberSchema,
   totalNotes: finiteNumberSchema,
@@ -35,25 +35,25 @@ const mapSchema = v.strictObject({
     v.array(v.pipe(v.string(), v.maxLength(100))),
     v.maxLength(maxFlatWords),
   ),
-  media: v.strictObject({
+  media: v.object({
     previewTime: finiteNumberSchema,
     thumbnailQuality: thumbnailQualitySchema,
     videoId: v.pipe(v.string(), v.maxLength(128)),
   }),
-  info: v.strictObject({
+  info: v.object({
     title: shortStringSchema,
     artistName: shortStringSchema,
     source: shortStringSchema,
   }),
 });
-const userResultSchema = v.strictObject({
+const userResultSchema = v.object({
   userId: safeIdSchema,
   name: v.pipe(v.string(), v.maxLength(100)),
   typeCount: finiteNumberSchema,
   wordResults: v.pipe(v.array(wordResultSchema), v.maxLength(maxWordResults)),
   currentWordIndex: finiteNumberSchema,
 });
-export const saveLiveResultRequestSchema = v.strictObject({
+export const saveLiveResultRequestSchema = v.object({
   liveId: safeIdSchema,
   map: mapSchema,
   userResults: v.pipe(v.array(userResultSchema), v.maxLength(maxUserResults)),

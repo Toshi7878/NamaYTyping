@@ -4,11 +4,12 @@ import {
   type HttpsOptions,
   type Request,
 } from "firebase-functions/v2/https";
-import { assertRateLimit, getClientIp, RateLimitError } from "./rate-limit";
+import { assertRateLimit, getClientIp, RateLimitError } from "./rate-limit.js";
 
 const defaultMaxPayloadBytes = 256 * 1024;
 const defaultHttpsOptions = {
   cors: ["https://ytyping.net"],
+  invoker: "public",
   region: "asia-northeast1",
 } satisfies HttpsOptions;
 
@@ -70,7 +71,7 @@ const assertPayloadSize = (request: Request, maxPayloadBytes: number) => {
   }
 };
 
-const handleLimitError = (error: unknown, res: Response) => {
+const handleLimitError = (error: Error, res: Response) => {
   if (error instanceof PayloadTooLargeError) {
     res.status(413).json({ error: error.message });
     return true;
@@ -98,7 +99,7 @@ const wrapRequestHandler = (
       assertPayloadSize(req, limitOptions.maxPayloadBytes);
       assertRateLimit(limitOptions.rateLimitKey(req));
     } catch (error) {
-      if (handleLimitError(error, res)) return;
+      if (error instanceof Error && handleLimitError(error, res)) return;
       throw error;
     }
 
