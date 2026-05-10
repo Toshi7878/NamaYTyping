@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@fontsource-variable/geist": "^5.2.8",
-    "@mujurin/nicolive-api-ts": "file:C:/Users/toshi/Desktop/NDGRClient-ts",
+    "@toshi7878/nicolive-api-ts": "0.0.1",
     "@repo/functions": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/ui": "workspace:*",
