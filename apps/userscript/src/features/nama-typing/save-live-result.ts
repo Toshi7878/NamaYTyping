@@ -1,50 +1,22 @@
-import type { UserResult } from "lyrics-ime-typing-engine";
+import type { SaveLiveResultRequest } from "@repo/functions";
 
-const saveLiveResultEndpoint =
-	"https://asia-northeast1-namaytyping.cloudfunctions.net/saveLiveResult";
+const saveLiveResultEndpoint = "https://saveliveresult-qx5y7pofqa-an.a.run.app";
 
-export type ResultMapInput = {
-	id: string;
-	mapId: number;
-	rating: number;
-	totalNotes: number;
-	flatWords: string[];
-	createdAt: unknown;
-	media: {
-		previewTime: number;
-		thumbnailQuality: "mqdefault" | "maxresdefault";
-		videoId: string;
-	};
-	info: {
-		title: string;
-		artistName: string;
-		source: string;
-	};
-};
+export const createResultWithUser = async (input: SaveLiveResultRequest) => {
+  const response = await fetch(saveLiveResultEndpoint, {
+    body: JSON.stringify(input),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
 
-type SaveLiveResultInput = {
-	map: ResultMapInput;
-	userResults: UserResult[];
-};
-
-export const createResultWithUser = async (
-	liveId: string,
-	input: SaveLiveResultInput,
-) => {
-	const response = await fetch(saveLiveResultEndpoint, {
-		body: JSON.stringify({ liveId, ...input }),
-		headers: {
-			"Content-Type": "application/json",
-		},
-		method: "POST",
-	});
-
-	if (!response.ok) {
-		const body = (await response.json().catch(() => null)) as {
-			error?: string;
-		} | null;
-		throw new Error(
-			body?.error ?? `Failed to save live result: ${response.status}`,
-		);
-	}
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+    throw new Error(
+      body?.error ?? `Failed to save live result: ${response.status}`,
+    );
+  }
 };

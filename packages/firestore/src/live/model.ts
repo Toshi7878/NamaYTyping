@@ -1,43 +1,32 @@
 import type { SaveLiveResultRequest } from "@repo/functions";
 import type {
-	FirestoreDataConverter,
-	QueryDocumentSnapshot,
-	SnapshotOptions,
-	Timestamp,
-	WithFieldValue,
+  FirestoreDataConverter,
+  QueryDocumentSnapshot,
+  SnapshotOptions,
+  Timestamp,
+  WithFieldValue,
 } from "firebase/firestore";
 
-export type ResultMapWithResultId = SaveLiveResultRequest["map"];
+export interface ResultModel {
+  id: string;
+  map: SaveLiveResultRequest["map"];
+  createdAt: Timestamp;
+  expireAt: Timestamp;
+  userResults: SaveLiveResultRequest["userResults"];
+}
 
-export type UserResult = {
-	userId: string;
-	expireAt: Timestamp;
-} & SaveLiveResultRequest["userResults"];
-
-type ResultMap = Omit<ResultMapWithResultId, "id">;
+type ResultDocument = Omit<ResultModel, "id">;
 
 export const resultConverter: FirestoreDataConverter<
-	ResultMapWithResultId,
-	ResultMap
+  ResultModel,
+  ResultDocument
 > = {
-	toFirestore: ({ id: _id, ...data }: WithFieldValue<ResultMapWithResultId>) =>
-		data,
-	fromFirestore: (
-		snapshot: QueryDocumentSnapshot<ResultMap>,
-		options: SnapshotOptions,
-	) => {
-		const data = snapshot.data(options);
-		return { id: snapshot.id, ...data };
-	},
-};
-
-export const userResultConverter: FirestoreDataConverter<
-	UserResult,
-	UserResult
-> = {
-	toFirestore: (data: WithFieldValue<UserResult>) => data,
-	fromFirestore: (
-		snapshot: QueryDocumentSnapshot<UserResult>,
-		options: SnapshotOptions,
-	) => snapshot.data(options),
+  toFirestore: ({ id: _id, ...data }: WithFieldValue<ResultModel>) => data,
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot<ResultDocument>,
+    options: SnapshotOptions,
+  ) => {
+    const data = snapshot.data(options);
+    return { id: snapshot.id, ...data };
+  },
 };

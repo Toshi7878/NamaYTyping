@@ -4,12 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    "./cn": "./src/cn.ts",
+    ".": "./src/index.ts",
     "./dialog": "./src/dialog.tsx",
     "./icons": "./src/icons.ts",
     "./input": "./src/input.tsx",
     "./select": "./src/select.tsx",
-    "./switch": "./src/switch.tsx"
+    "./switch": "./src/switch.tsx",
+    "./radio-group": "./src/radio-group.tsx",
+    "./table": "./src/table.tsx",
+    "./badge": "./src/badge.tsx",
+    "./card": "./src/card.tsx",
+    "./tooltip": "./src/tooltip.tsx",
+    "./slider": "./src/slider.tsx",
+    "./image": "./src/image.tsx"
   },
   "peerDependencies": {
     "react": "catalog:"
@@ -26,6 +33,7 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "next": "catalog:",
     "@types/react": "catalog:",
     "typescript": "catalog:"
   }

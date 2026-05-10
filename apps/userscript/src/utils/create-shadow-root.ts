@@ -4,21 +4,21 @@
  * @returns `host`（Shadow DOM のルート要素）と `mountPoint`（React のマウント先）
  */
 export function createShadowRoot(styles: string): {
-	host: HTMLDivElement;
-	mountPoint: HTMLDivElement;
+  host: HTMLDivElement;
+  mountPoint: HTMLDivElement;
 } {
-	const host = document.createElement("div");
+  const host = document.createElement("div");
 
-	const shadow = host.attachShadow({ mode: "open" });
+  const shadow = host.attachShadow({ mode: "open" });
 
-	const styleEl = document.createElement("style");
-	styleEl.textContent = styles;
-	shadow.appendChild(styleEl);
+  const styleEl = document.createElement("style");
+  styleEl.textContent = styles;
+  shadow.appendChild(styleEl);
 
-	const mountPoint = document.createElement("div");
-	shadow.appendChild(mountPoint);
+  const mountPoint = document.createElement("div");
+  shadow.appendChild(mountPoint);
 
-	document.documentElement.appendChild(host);
+  document.documentElement.appendChild(host);
 
-	return { host, mountPoint };
+  return { host, mountPoint };
 }

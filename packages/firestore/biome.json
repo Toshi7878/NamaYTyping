@@ -1,12 +1,12 @@
 {
-	"root": false,
-	"extends": "//",
-	"overrides": [
-		{
-			"includes": ["src/live/path.ts"],
-			"formatter": {
-				"lineWidth": 140
-			}
-		}
-	]
+  "root": false,
+  "extends": "//",
+  "overrides": [
+    {
+      "includes": ["src/live/path.ts"],
+      "formatter": {
+        "lineWidth": 140
+      }
+    }
+  ]
 }

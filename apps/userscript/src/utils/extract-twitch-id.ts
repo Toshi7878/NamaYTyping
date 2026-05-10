@@ -12,25 +12,25 @@ const TWITCH_HOST_PATTERN = /(^|\.)twitch\.tv$/i;
  * - channel_name
  */
 export function extractTwitchLiveId(input: string): string | undefined {
-	const trimmed = input.trim();
+  const trimmed = input.trim();
 
-	if (CHANNEL_NAME_PATTERN.test(trimmed)) return trimmed.toLowerCase();
+  if (CHANNEL_NAME_PATTERN.test(trimmed)) return trimmed.toLowerCase();
 
-	const normalized = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed)
-		? trimmed
-		: `https://${trimmed}`;
+  const normalized = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
 
-	let url: URL;
-	try {
-		url = new URL(normalized);
-	} catch {
-		return undefined;
-	}
+  let url: URL;
+  try {
+    url = new URL(normalized);
+  } catch {
+    return undefined;
+  }
 
-	if (!TWITCH_HOST_PATTERN.test(url.hostname)) return undefined;
+  if (!TWITCH_HOST_PATTERN.test(url.hostname)) return undefined;
 
-	const channelName = url.pathname.split("/").filter(Boolean)[0];
-	if (!channelName || !CHANNEL_NAME_PATTERN.test(channelName)) return undefined;
+  const channelName = url.pathname.split("/").filter(Boolean)[0];
+  if (!channelName || !CHANNEL_NAME_PATTERN.test(channelName)) return undefined;
 
-	return channelName.toLowerCase();
+  return channelName.toLowerCase();
 }

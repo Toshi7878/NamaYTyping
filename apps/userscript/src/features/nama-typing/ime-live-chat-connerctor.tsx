@@ -1,11 +1,11 @@
 import { subscribeNicoLiveChat } from "@mujurin/nicolive-api-ts";
 import { Input } from "@repo/ui/input";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@repo/ui/select";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -25,223 +25,226 @@ const STORAGE_KEY_NICONICO = "nama-typing:niconico-live-id";
 type Platform = ChatMessage["platform"];
 
 export type LiveChatDisconnectInfo = {
-	liveId: string;
-	platform: Platform;
+  liveId: string;
+  platform: Platform;
 };
 
 interface ImeLiveChatConnectorProps {
-	onConnect: () => void;
-	onDisconnect: (info: LiveChatDisconnectInfo) => void;
-	onChat: (messages: ChatMessage[]) => void;
-	onError: (error: Error) => void;
+  onConnect: () => void;
+  onDisconnect: (info: LiveChatDisconnectInfo) => void;
+  onChat: (messages: ChatMessage[]) => void;
+  onError: (error: Error) => void;
 }
 
 export const ImeLiveChatConnector = ({
-	onConnect,
-	onDisconnect,
-	onChat,
-	onError,
+  onConnect,
+  onDisconnect,
+  onChat,
+  onError,
 }: ImeLiveChatConnectorProps) => {
-	const inputRef = useRef<HTMLInputElement>(null);
-	const [platform, setPlatform] = useState<Platform>(
-		() => (localStorage.getItem(STORAGE_KEY_PLATFORM) as Platform) ?? "youtube",
-	);
-	const mountEl = usePortalMount("body", { position: "beforeend" });
-	const { isStarted } = useLiveChatSession(
-		inputRef,
-		platform,
-		onConnect,
-		onDisconnect,
-		onChat,
-		onError,
-	);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [platform, setPlatform] = useState<Platform>(
+    () => (localStorage.getItem(STORAGE_KEY_PLATFORM) as Platform) ?? "youtube",
+  );
+  const mountEl = usePortalMount("body", { position: "beforeend" });
+  const { isStarted } = useLiveChatSession(
+    inputRef,
+    platform,
+    onConnect,
+    onDisconnect,
+    onChat,
+    onError,
+  );
 
-	if (isStarted || !mountEl) return null;
+  if (isStarted || !mountEl) return null;
 
-	return createPortal(
-		<div className="fixed bottom-4 right-4 flex flex-col gap-1">
-			<Input
-				key={platform}
-				ref={inputRef}
-				defaultValue={getStorageValue(platform)}
-				onChange={(e) => setStorageValue(platform, e.target.value)}
-				onPaste={(e) => {
-					const value = e.clipboardData.getData("text");
-					const liveId = extractLiveId(platform, value);
-					e.preventDefault();
-					if (!liveId) return;
-					e.currentTarget.value = liveId;
-					setStorageValue(platform, liveId);
-				}}
-				placeholder={getPlaceholder(platform)}
-				className="w-48"
-				size="sm"
-			/>
-			<Select
-				value={platform}
-				onValueChange={(v) => {
-					const p = v as Platform;
-					setPlatform(p);
-					localStorage.setItem(STORAGE_KEY_PLATFORM, p);
-					if (inputRef.current) {
-						inputRef.current.value = getStorageValue(p);
-					}
-				}}
-			>
-				<SelectTrigger size="sm">
-					<SelectValue />
-				</SelectTrigger>
-				<SelectContent>
-					<SelectItem value="youtube">YouTube</SelectItem>
-					<SelectItem value="twitch">Twitch</SelectItem>
-					<SelectItem value="niconico">Niconico</SelectItem>
-				</SelectContent>
-			</Select>
-		</div>,
-		mountEl,
-	);
+  return createPortal(
+    <div className="fixed bottom-4 right-4 flex flex-col gap-1">
+      <Input
+        key={platform}
+        ref={inputRef}
+        defaultValue={getStorageValue(platform)}
+        onChange={(e) => setStorageValue(platform, e.target.value)}
+        onPaste={(e) => {
+          const value = e.clipboardData.getData("text");
+          const liveId = extractLiveId(platform, value);
+          e.preventDefault();
+          if (!liveId) return;
+          e.currentTarget.value = liveId;
+          setStorageValue(platform, liveId);
+        }}
+        placeholder={getPlaceholder(platform)}
+        className="w-48"
+        size="sm"
+      />
+      <Select
+        value={platform}
+        onValueChange={(v) => {
+          const p = v as Platform;
+          setPlatform(p);
+          localStorage.setItem(STORAGE_KEY_PLATFORM, p);
+          if (inputRef.current) {
+            inputRef.current.value = getStorageValue(p);
+          }
+        }}
+      >
+        <SelectTrigger size="sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="youtube">YouTube</SelectItem>
+          <SelectItem value="twitch">Twitch</SelectItem>
+          <SelectItem value="niconico">Niconico</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>,
+    mountEl,
+  );
 };
 
 const getStorageValue = (platform: Platform) => {
-	switch (platform) {
-		case "youtube":
-			return sessionStorage.getItem(STORAGE_KEY_YT) ?? "";
-		case "twitch":
-			return localStorage.getItem(STORAGE_KEY_TWITCH) ?? "";
-		case "niconico":
-			return sessionStorage.getItem(STORAGE_KEY_NICONICO) ?? "";
-	}
+  switch (platform) {
+    case "youtube":
+      return sessionStorage.getItem(STORAGE_KEY_YT) ?? "";
+    case "twitch":
+      return localStorage.getItem(STORAGE_KEY_TWITCH) ?? "";
+    case "niconico":
+      return sessionStorage.getItem(STORAGE_KEY_NICONICO) ?? "";
+  }
 };
 
 const setStorageValue = (platform: Platform, value: string) => {
-	switch (platform) {
-		case "youtube":
-			return sessionStorage.setItem(STORAGE_KEY_YT, value);
-		case "twitch":
-			return localStorage.setItem(STORAGE_KEY_TWITCH, value);
-		case "niconico":
-			return sessionStorage.setItem(STORAGE_KEY_NICONICO, value);
-	}
+  switch (platform) {
+    case "youtube":
+      return sessionStorage.setItem(STORAGE_KEY_YT, value);
+    case "twitch":
+      return localStorage.setItem(STORAGE_KEY_TWITCH, value);
+    case "niconico":
+      return sessionStorage.setItem(STORAGE_KEY_NICONICO, value);
+  }
 };
 
 const getPlaceholder = (platform: Platform) => {
-	switch (platform) {
-		case "youtube":
-			return "YouTube Live URL or ID";
-		case "twitch":
-			return "Twitch channel name";
-		case "niconico":
-			return "Niconico Live URL or ID";
-	}
+  switch (platform) {
+    case "youtube":
+      return "YouTube Live URL or ID";
+    case "twitch":
+      return "Twitch channel name";
+    case "niconico":
+      return "Niconico Live URL or ID";
+  }
 };
 
 const extractLiveId = (platform: Platform, value: string) => {
-	switch (platform) {
-		case "youtube":
-			return extractYouTubeLiveId(value);
-		case "twitch":
-			return extractTwitchLiveId(value);
-		case "niconico":
-			return extractNiconicoLiveId(value);
-	}
+  switch (platform) {
+    case "youtube":
+      return extractYouTubeLiveId(value);
+    case "twitch":
+      return extractTwitchLiveId(value);
+    case "niconico":
+      return extractNiconicoLiveId(value);
+  }
 };
 
 const useLiveChatSession = (
-	inputRef: RefObject<HTMLInputElement | null>,
-	platform: Platform,
-	onConnect: () => void,
-	onDisconnect: (info: LiveChatDisconnectInfo) => void,
-	onChat: (messages: ChatMessage[]) => void,
-	onError: (error: Error) => void,
+  inputRef: RefObject<HTMLInputElement | null>,
+  platform: Platform,
+  onConnect: () => void,
+  onDisconnect: (info: LiveChatDisconnectInfo) => void,
+  onChat: (messages: ChatMessage[]) => void,
+  onError: (error: Error) => void,
 ) => {
-	const [isStarted, setIsStarted] = useState(false);
-	const activeSessionRef = useRef<LiveChatDisconnectInfo | null>(null);
-	const unsubscribeRef = useRef<(() => void) | null>(null);
-	const ime = useWindowProperty("__ytyping_ime");
-	const platformRef = useRef(platform);
-	platformRef.current = platform;
+  const [isStarted, setIsStarted] = useState(false);
+  const activeSessionRef = useRef<LiveChatDisconnectInfo | null>(null);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
+  const ime = useWindowProperty("__ytyping_ime");
+  const platformRef = useRef(platform);
+  platformRef.current = platform;
 
-	useEffect(() => {
-		if (!ime) return;
+  useEffect(() => {
+    if (!ime) return;
 
-		function startClient(_event: Event) {
-			const rawValue = inputRef.current?.value ?? "";
-			setIsStarted(true);
+    function startClient(_event: Event) {
+      const rawValue = inputRef.current?.value ?? "";
+      setIsStarted(true);
 
-			unsubscribeRef.current?.();
+      unsubscribeRef.current?.();
 
-			switch (platformRef.current) {
-				case "youtube": {
-					const liveId = extractYouTubeLiveId(rawValue);
-					if (!liveId) return;
-					activeSessionRef.current = { liveId, platform: "youtube" };
-					unsubscribeRef.current = subscribeYTLiveChat({
-						liveId,
-						onChat: (messages) => onChat(withPlatform(messages, "youtube")),
-						onConnect,
-						onError,
-					});
-					break;
-				}
-				case "twitch": {
-					const channelName = extractTwitchLiveId(rawValue);
-					if (!channelName) return;
-					activeSessionRef.current = { liveId: channelName, platform: "twitch" };
-					unsubscribeRef.current = subscribeTwitchLiveChat({
-						channelName,
-						onChat: (messages) => onChat(withPlatform(messages, "twitch")),
-						onConnect,
-						onError,
-					});
-					break;
-				}
-				case "niconico": {
-					const liveId = extractNiconicoLiveId(rawValue);
-					if (!liveId) return;
-					activeSessionRef.current = { liveId, platform: "niconico" };
-					unsubscribeRef.current = subscribeNicoLiveChat({
-						liveId,
-						onChat: (messages) => onChat(withPlatform(messages, "niconico")),
-						onConnect,
-						onError,
-					});
-					break;
-				}
-			}
-		}
+      switch (platformRef.current) {
+        case "youtube": {
+          const liveId = extractYouTubeLiveId(rawValue);
+          if (!liveId) return;
+          activeSessionRef.current = { liveId, platform: "youtube" };
+          unsubscribeRef.current = subscribeYTLiveChat({
+            liveId,
+            onChat: (messages) => onChat(withPlatform(messages, "youtube")),
+            onConnect,
+            onError,
+          });
+          break;
+        }
+        case "twitch": {
+          const channelName = extractTwitchLiveId(rawValue);
+          if (!channelName) return;
+          activeSessionRef.current = {
+            liveId: channelName,
+            platform: "twitch",
+          };
+          unsubscribeRef.current = subscribeTwitchLiveChat({
+            channelName,
+            onChat: (messages) => onChat(withPlatform(messages, "twitch")),
+            onConnect,
+            onError,
+          });
+          break;
+        }
+        case "niconico": {
+          const liveId = extractNiconicoLiveId(rawValue);
+          if (!liveId) return;
+          activeSessionRef.current = { liveId, platform: "niconico" };
+          unsubscribeRef.current = subscribeNicoLiveChat({
+            liveId,
+            onChat: (messages) => onChat(withPlatform(messages, "niconico")),
+            onConnect,
+            onError,
+          });
+          break;
+        }
+      }
+    }
 
-		function handleEnd() {
-			const activeSession = activeSessionRef.current;
-			unsubscribeRef.current?.();
-			unsubscribeRef.current = null;
-			activeSessionRef.current = null;
-			setIsStarted(false);
-			if (activeSession) onDisconnect(activeSession);
-		}
+    function handleEnd() {
+      const activeSession = activeSessionRef.current;
+      unsubscribeRef.current?.();
+      unsubscribeRef.current = null;
+      activeSessionRef.current = null;
+      setIsStarted(false);
+      if (activeSession) onDisconnect(activeSession);
+    }
 
-		ime.removeEventListener("start", startClient);
-		ime.addEventListener("start", startClient);
-		ime.removeEventListener("end", handleEnd);
-		ime.addEventListener("end", handleEnd);
+    ime.removeEventListener("start", startClient);
+    ime.addEventListener("start", startClient);
+    ime.removeEventListener("end", handleEnd);
+    ime.addEventListener("end", handleEnd);
 
-		return () => {
-			unsubscribeRef.current?.();
-			unsubscribeRef.current = null;
-			activeSessionRef.current = null;
-			ime.removeEventListener("start", startClient);
-			ime.removeEventListener("end", handleEnd);
-		};
-	}, [ime, inputRef, onChat, onConnect, onDisconnect, onError]);
+    return () => {
+      unsubscribeRef.current?.();
+      unsubscribeRef.current = null;
+      activeSessionRef.current = null;
+      ime.removeEventListener("start", startClient);
+      ime.removeEventListener("end", handleEnd);
+    };
+  }, [ime, inputRef, onChat, onConnect, onDisconnect, onError]);
 
-	return { isStarted };
+  return { isStarted };
 };
 
 const withPlatform = (
-	messages: Omit<ChatMessage, "platform">[],
-	platform: Platform,
+  messages: Omit<ChatMessage, "platform">[],
+  platform: Platform,
 ): ChatMessage[] =>
-	messages.map((message) => ({
-		...message,
-		name: message.author || "名無し",
-		platform,
-	}));
+  messages.map((message) => ({
+    ...message,
+    name: message.author || "名無し",
+    platform,
+  }));

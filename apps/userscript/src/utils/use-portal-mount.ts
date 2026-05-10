@@ -4,19 +4,19 @@ import styles from "@/index.css?inline";
 const styleSheetCache = new Map<string, CSSStyleSheet>();
 
 function getStyleSheet(css: string): CSSStyleSheet {
-	if (!styleSheetCache.has(css)) {
-		const sheet = new CSSStyleSheet();
-		sheet.replaceSync(css);
-		styleSheetCache.set(css, sheet);
-	}
-	// biome-ignore lint/style/noNonNullAssertion: <>
-	return styleSheetCache.get(css)!;
+  if (!styleSheetCache.has(css)) {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(css);
+    styleSheetCache.set(css, sheet);
+  }
+  // biome-ignore lint/style/noNonNullAssertion: <>
+  return styleSheetCache.get(css)!;
 }
 
 function attachShadowWithStyles(host: HTMLDivElement): ShadowRoot {
-	const shadow = host.attachShadow({ mode: "open" });
-	shadow.adoptedStyleSheets = [getStyleSheet(styles)];
-	return shadow;
+  const shadow = host.attachShadow({ mode: "open" });
+  shadow.adoptedStyleSheets = [getStyleSheet(styles)];
+  return shadow;
 }
 
 /**
@@ -29,56 +29,56 @@ function attachShadowWithStyles(host: HTMLDivElement): ShadowRoot {
  * @returns マウント先の要素。対象要素が未検出の間は `null`
  */
 export function usePortalMount(
-	selector: string,
-	options: { position: InsertPosition },
+  selector: string,
+  options: { position: InsertPosition },
 ): Element | ShadowRoot | null {
-	const position = options?.position;
-	const [mountEl, setMountEl] = useState<Element | ShadowRoot | null>(null);
+  const position = options?.position;
+  const [mountEl, setMountEl] = useState<Element | ShadowRoot | null>(null);
 
-	useEffect(() => {
-		if (position !== undefined) {
-			let host: HTMLDivElement | null = null;
-			let shadow: ShadowRoot | null = null;
+  useEffect(() => {
+    if (position !== undefined) {
+      let host: HTMLDivElement | null = null;
+      let shadow: ShadowRoot | null = null;
 
-			function update() {
-				const target = document.querySelector(selector);
-				if (!target) {
-					setMountEl(null);
-					return;
-				}
-				if (host?.isConnected) return;
+      function update() {
+        const target = document.querySelector(selector);
+        if (!target) {
+          setMountEl(null);
+          return;
+        }
+        if (host?.isConnected) return;
 
-				if (!host) {
-					host = document.createElement("div");
-					shadow = attachShadowWithStyles(host);
-				}
-				target.insertAdjacentElement(position, host);
-				setMountEl(shadow);
-			}
+        if (!host) {
+          host = document.createElement("div");
+          shadow = attachShadowWithStyles(host);
+        }
+        target.insertAdjacentElement(position, host);
+        setMountEl(shadow);
+      }
 
-			update();
+      update();
 
-			const observer = new MutationObserver(update);
-			observer.observe(document.body, { childList: true, subtree: true });
+      const observer = new MutationObserver(update);
+      observer.observe(document.body, { childList: true, subtree: true });
 
-			return () => {
-				observer.disconnect();
-				host?.remove();
-				setMountEl(null);
-			};
-		}
+      return () => {
+        observer.disconnect();
+        host?.remove();
+        setMountEl(null);
+      };
+    }
 
-		function update() {
-			setMountEl(document.querySelector(selector));
-		}
+    function update() {
+      setMountEl(document.querySelector(selector));
+    }
 
-		update();
+    update();
 
-		const observer = new MutationObserver(update);
-		observer.observe(document.body, { childList: true, subtree: true });
+    const observer = new MutationObserver(update);
+    observer.observe(document.body, { childList: true, subtree: true });
 
-		return () => observer.disconnect();
-	}, [selector, position]);
+    return () => observer.disconnect();
+  }, [selector, position]);
 
-	return mountEl;
+  return mountEl;
 }

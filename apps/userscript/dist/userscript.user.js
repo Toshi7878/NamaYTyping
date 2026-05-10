@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      2.1.5
+// @version      2.1.7
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -24451,7 +24451,7 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
       return message.author;
     }
   }
-  const saveLiveResultEndpoint = "https://asia-northeast1-namaytyping.cloudfunctions.net/saveLiveResult";
+  const saveLiveResultEndpoint = "https://saveliveresult-qx5y7pofqa-an.a.run.app";
   const createResultWithUser = async (liveId, input) => {
     const response = await fetch(saveLiveResultEndpoint, {
       body: JSON.stringify({ liveId, ...input }),
@@ -24462,7 +24462,9 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
     });
     if (!response.ok) {
       const body = await response.json().catch(() => null);
-      throw new Error(body?.error ?? `Failed to save live result: ${response.status}`);
+      throw new Error(
+        body?.error ?? `Failed to save live result: ${response.status}`
+      );
     }
   };
   const NamaTypingContainer = () => {

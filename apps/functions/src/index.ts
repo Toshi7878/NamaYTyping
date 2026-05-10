@@ -1,1 +1,1 @@
-export { SaveLiveResultRequest } from "./validator";
+export type { SaveLiveResultRequest } from "./validator";

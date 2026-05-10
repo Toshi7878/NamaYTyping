@@ -1,12 +1,12 @@
 {
-	"functions": {
-		"source": "apps/functions",
-		"predeploy": ["pnpm --dir apps/functions build:functions"]
-	},
-	"firestore": {
-		"database": "(default)",
-		"location": "asia-northeast1",
-		"rules": "firestore.rules",
-		"indexes": "firestore.indexes.json"
-	}
+  "functions": {
+    "source": "apps/functions",
+    "predeploy": ["pnpm --dir apps/functions build:functions"]
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "asia-northeast1",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
 }
