@@ -37,7 +37,7 @@ export const ResultDialog = ({ result, onClose }: ResultDialogProps) => {
         <DialogHeader>
           <DialogTitle>採点結果</DialogTitle>
         </DialogHeader>
-        <div className="flex gap-4">
+        <div className="flex min-h-0 gap-4 overflow-hidden">
           <ResultRanking
             resultRanking={resultRanking}
             selectedResultIndex={selectedResultIndex}
@@ -84,7 +84,7 @@ const ResultRanking = ({
     <RadioGroup
       value={String(selectedResultIndex)}
       onValueChange={(value) => onSelect(Number(value))}
-      className="flex w-[170px] shrink-0 flex-col gap-px"
+      className="flex max-h-[calc(85vh-7rem)] w-[170px] shrink-0 flex-col gap-px overflow-y-auto pr-1"
     >
       {resultRanking.map((userResult, index) => {
         const isPerfect = userResult.score === 1000;
@@ -236,7 +236,6 @@ const ResultWordsTable = ({
               (currentWordIndex === index && result.evaluation !== "Skip");
 
             return (
-              // biome-ignore lint/suspicious/noArrayIndexKey: 配列の長さ・順序が不変のため安全
               <TableRow
                 key={index}
                 className="even:bg-background/50 hover:bg-accent/30 [&>td]:px-2.5 [&>td]:py-2"
@@ -250,7 +249,6 @@ const ResultWordsTable = ({
                 </TableCell>
                 <TableCell className="whitespace-pre-wrap break-all leading-[1.4]">
                   {result.inputs.map((input, i) => (
-                    // biome-ignore lint/suspicious/noArrayIndexKey: 配列の長さ・順序が不変のため安全
                     <div key={i}>{input}</div>
                   ))}
                 </TableCell>

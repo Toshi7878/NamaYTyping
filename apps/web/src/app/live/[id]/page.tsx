@@ -14,7 +14,7 @@ export default async function Page({
 
   return (
     <JotaiProvider>
-      <div className="mx-auto max-w-7xl space-y-3 lg:px-24">
+      <div className="mx-auto max-w-4xl space-y-3 ">
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold">リザルト一覧</h1>
