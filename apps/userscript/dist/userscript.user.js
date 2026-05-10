@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         namaYTyping
 // @namespace    https://greasyfork.org/users/302934
-// @version      2.1.8
+// @version      2.1.9
 // @description  変換ありタイピングで配信プラットフォームのチャットに接続し対戦を可能にするスクリプト
 // @license      MIT
 // @match        https://ytyping.net/*
@@ -14364,47 +14364,6 @@ stroke: [{
   function cn(...inputs) {
     return twMerge(clsx(inputs));
   }
-  const inputVariants = cva(
-    [
-      "bg-input placeholder:text-muted-foreground selection:bg-primary",
-      "selection:text-primary-foreground border-input flex h-9 w-full min-w-0",
-      "rounded-sm border border-solid px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none",
-      "file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium",
-      "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-      "md:text-sm focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-[2px]"
-    ],
-    {
-      variants: {
-        variant: {
-          default: "border-border/50",
-          error: "border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-          success: "border-green-500 focus-visible:border-green-600 focus-visible:ring-green-500/50",
-          warning: "border-yellow-500 focus-visible:border-yellow-600 focus-visible:ring-yellow-500/50",
-          info: "border-blue-500 focus-visible:border-blue-600 focus-visible:ring-blue-500/50"
-        },
-        size: {
-          default: "h-10 px-3 py-1",
-          sm: "h-8 px-2 py-1 text-sm",
-          lg: "h-11 px-4 py-2"
-        }
-      },
-      defaultVariants: {
-        variant: "default",
-        size: "default"
-      }
-    }
-  );
-  function Input({ className, type, variant, size: size2, ...props }) {
-    return jsxRuntimeExports.jsx(
-      "input",
-      {
-        type,
-        "data-slot": "input",
-        className: cn(inputVariants({ variant, size: size2 }), className),
-        ...props
-      }
-    );
-  }
   var reactExports = requireReact();
   const React = getDefaultExportFromCjs(reactExports);
   const React$1 = _mergeNamespaces$1({
@@ -14490,12 +14449,14 @@ stroke: [{
     Component.displayName = toPascalCase(iconName);
     return Component;
   };
-  const __iconNode$2 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-  const Check = createLucideIcon("check", __iconNode$2);
-  const __iconNode$1 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
-  const ChevronDown = createLucideIcon("chevron-down", __iconNode$1);
-  const __iconNode = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
-  const ChevronUp = createLucideIcon("chevron-up", __iconNode);
+  const __iconNode$3 = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+  const Check = createLucideIcon("check", __iconNode$3);
+  const __iconNode$2 = [["path", { d: "m6 9 6 6 6-6", key: "qrunsl" }]];
+  const ChevronDown = createLucideIcon("chevron-down", __iconNode$2);
+  const __iconNode$1 = [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]];
+  const ChevronUp = createLucideIcon("chevron-up", __iconNode$1);
+  const __iconNode = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+  const LoaderCircle = createLucideIcon("loader-circle", __iconNode);
   var reactDomExports = requireReactDom();
   const ReactDOM = getDefaultExportFromCjs(reactDomExports);
   function setRef(ref, value) {
@@ -14555,6 +14516,7 @@ function createSlot(ownerName) {
     Slot2.displayName = `${ownerName}.Slot`;
     return Slot2;
   }
+  var Slot$1 = createSlot("Slot");
 function createSlotClone(ownerName) {
     const SlotClone = reactExports.forwardRef((props, forwardedRef) => {
       const { children, ...slotProps } = props;
@@ -19601,6 +19563,133 @@ jsxRuntimeExports.jsx(
   }
   var Root = Switch$1;
   var Thumb = SwitchThumb;
+  const buttonVariants = cva(
+    "inline-flex items-center cursor-pointer justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+    {
+      variants: {
+        variant: {
+          default: "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          "primary-hover-light": "bg-primary text-primary-foreground shadow-xs hover:bg-primary-light border border-accent-foreground",
+          destructive: "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+          secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          link: "text-primary underline-offset-4 hover:underline",
+          unstyled: "",
+          success: "bg-success text-success-foreground shadow-xs hover:bg-success/90",
+          warning: "bg-warning text-warning-foreground shadow-xs hover:bg-warning/90",
+          info: "bg-info text-info-foreground shadow-xs hover:bg-info/90",
+          accent: "bg-accent text-accent-foreground shadow-xs hover:bg-accent/90",
+          outline: "border bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground border-border",
+          "outline-success": "border border-success text-success shadow-xs hover:bg-success/50",
+          "outline-destructive": "border border-destructive text-destructive shadow-xs hover:bg-destructive/50",
+          "outline-warning": "border border-warning text-warning shadow-xs hover:bg-warning/50",
+          "outline-info": "border border-info text-info shadow-xs hover:bg-info/50",
+          "outline-accent": "border shadow-xs bg-accent text-accent-foreground hover:bg-accent/90",
+          "level-easy": "bg-level-easy shadow-xs hover:bg-level-easy/80",
+          "level-normal": "bg-level-normal shadow-xs hover:bg-level-normal/80",
+          "level-hard": "bg-level-hard shadow-xs hover:bg-level-hard/80",
+          "level-expert": "bg-level-expert shadow-xs hover:bg-level-expert/80",
+          "level-master": "bg-level-master shadow-xs hover:bg-level-master/80",
+          "level-ultra": "bg-level-ultra shadow-xs hover:bg-level-ultra/80"
+        },
+        size: {
+          default: "h-9 px-4 py-2 has-[>svg]:px-3",
+          xs: "h-6 px-2 py-1 has-[>svg]:px-1.5",
+          sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+          lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+          xl: "h-12 rounded-md px-8 has-[>svg]:px-4 text-lg",
+          "4xl": "h-26 rounded-md w-88 has-[>svg]:px-8 text-2xl font-bold",
+          icon: "size-9"
+        }
+      },
+      defaultVariants: {
+        variant: "default",
+        size: "default"
+      }
+    }
+  );
+  const loadingVariants = cva(
+    "text-primary-foreground animate-spin rounded-full",
+    {
+      variants: {
+        size: {
+          default: "size-6",
+          xs: "size-2",
+          sm: "size-6",
+          lg: "size-8",
+          xl: "size-8",
+          "4xl": "size-12",
+          icon: "size-6"
+        }
+      },
+      defaultVariants: {
+        size: "default"
+      }
+    }
+  );
+  function Button({
+    className,
+    variant,
+    size: size2,
+    asChild = false,
+    loading = false,
+    children,
+    disabled,
+    ...props
+  }) {
+    const Comp = asChild ? Slot$1 : "button";
+    return jsxRuntimeExports.jsx(
+      Comp,
+      {
+        "data-slot": "button",
+        className: cn(buttonVariants({ variant, size: size2, className })),
+        ...props,
+        disabled: loading || disabled,
+        children: loading ? jsxRuntimeExports.jsx(LoaderCircle, { className: loadingVariants({ size: size2 }) }) : children
+      }
+    );
+  }
+  const inputVariants = cva(
+    [
+      "bg-input placeholder:text-muted-foreground selection:bg-primary",
+      "selection:text-primary-foreground border-input flex h-9 w-full min-w-0",
+      "rounded-sm border border-solid px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none",
+      "file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium",
+      "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+      "md:text-sm focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-[2px]"
+    ],
+    {
+      variants: {
+        variant: {
+          default: "border-border/50",
+          error: "border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+          success: "border-green-500 focus-visible:border-green-600 focus-visible:ring-green-500/50",
+          warning: "border-yellow-500 focus-visible:border-yellow-600 focus-visible:ring-yellow-500/50",
+          info: "border-blue-500 focus-visible:border-blue-600 focus-visible:ring-blue-500/50"
+        },
+        size: {
+          default: "h-10 px-3 py-1",
+          sm: "h-8 px-2 py-1 text-sm",
+          lg: "h-11 px-4 py-2"
+        }
+      },
+      defaultVariants: {
+        variant: "default",
+        size: "default"
+      }
+    }
+  );
+  function Input({ className, type, variant, size: size2, ...props }) {
+    return jsxRuntimeExports.jsx(
+      "input",
+      {
+        type,
+        "data-slot": "input",
+        className: cn(inputVariants({ variant, size: size2 }), className),
+        ...props
+      }
+    );
+  }
   function Select({
     ...props
   }) {
@@ -24325,17 +24414,16 @@ jsxRuntimeExports.jsx(SelectItem, { value: "niconico", children: "Niconico" })
               ]
             }
           ),
-          resultHistoryHref ? jsxRuntimeExports.jsx(
+          resultHistoryHref ? jsxRuntimeExports.jsx(Button, { variant: "link", size: "sm", asChild: true, children: jsxRuntimeExports.jsx(
             "a",
             {
               "aria-label": "リザルト履歴 外部URL",
-              className: "inline-flex h-8 items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground",
               href: resultHistoryHref,
               rel: "noopener noreferrer",
               target: "_blank",
               children: "リザルト履歴"
             }
-          ) : jsxRuntimeExports.jsx("span", { className: "inline-flex h-8 cursor-not-allowed items-center whitespace-nowrap rounded-md border border-border bg-transparent px-3 text-sm font-medium opacity-50 shadow-xs", children: "リザルト履歴" })
+          ) }) : jsxRuntimeExports.jsx(Button, { variant: "link", size: "sm", disabled: true, children: "リザルト履歴" })
         ] })
       ] }),
       mountEl
