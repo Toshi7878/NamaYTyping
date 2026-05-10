@@ -15,18 +15,35 @@ export interface ResultModel {
   userResults: SaveLiveResultRequest["userResults"];
 }
 
-type ResultDocument = Omit<ResultModel, "id">;
+export type UserResultModel = SaveLiveResultRequest["userResults"][number];
+
+type ResultDocument = Omit<ResultModel, "id" | "userResults">;
 
 export const resultConverter: FirestoreDataConverter<
   ResultModel,
   ResultDocument
 > = {
-  toFirestore: ({ id: _id, ...data }: WithFieldValue<ResultModel>) => data,
+  toFirestore: ({
+    id: _id,
+    userResults: _userResults,
+    ...data
+  }: WithFieldValue<ResultModel>) => data,
   fromFirestore: (
     snapshot: QueryDocumentSnapshot<ResultDocument>,
     options: SnapshotOptions,
   ) => {
     const data = snapshot.data(options);
-    return { id: snapshot.id, ...data };
+    return { id: snapshot.id, ...data, userResults: [] };
   },
+};
+
+export const userResultConverter: FirestoreDataConverter<
+  UserResultModel,
+  UserResultModel
+> = {
+  toFirestore: (data: WithFieldValue<UserResultModel>) => data,
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot<UserResultModel>,
+    options: SnapshotOptions,
+  ) => snapshot.data(options),
 };

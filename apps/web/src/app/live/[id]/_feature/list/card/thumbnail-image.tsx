@@ -49,6 +49,7 @@ export const MapThumbnailImage = (props: MapThumbnailImageProps) => {
             size={size}
             className={imageClassName}
             priority={priority}
+            unoptimized={true}
           />
         </>
       ) : (

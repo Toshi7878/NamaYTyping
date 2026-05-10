@@ -11,11 +11,13 @@ import { MapThumbnailImage } from "./thumbnail-image";
 interface ResultCardProps {
   result: ResultModel;
   initialInView?: boolean;
+  onSelect: () => void;
 }
 
 export const ResultCard = ({
   result,
   initialInView = false,
+  onSelect,
 }: ResultCardProps) => {
   const src = getYouTubeThumbnailUrl(
     result.map.media.videoId,
@@ -27,6 +29,9 @@ export const ResultCard = ({
       <CardContentWithThumbnail
         src={src}
         className="relative flex items-center gap-4 py-2"
+        onClick={() => {
+          onSelect();
+        }}
       >
         <MapThumbnailImage
           alt={result.map.info.title}

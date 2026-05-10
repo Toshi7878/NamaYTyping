@@ -139,7 +139,7 @@ const ResultRanking = ({
 const getResultRanking = (result: ResultModel) => {
   const { map, userResults } = result;
 
-  const scored = userResults
+  const scored = [...userResults]
     .sort((a, b) => b.typeCount - a.typeCount)
     .map(({ name, typeCount, wordResults, currentWordIndex }) => ({
       name,

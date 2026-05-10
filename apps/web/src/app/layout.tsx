@@ -32,21 +32,22 @@ export default async function RootLayout({
   return (
     <html
       lang="ja"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="default"
-        enableColorScheme
-        disableTransitionOnChange
-        themes={[
-          ...THEME_LIST.dark.map((theme) => theme.class),
-          ...THEME_LIST.light.map((theme) => theme.class),
-        ]}
-      >
-        <AppAtomsHydrator userAgent={userAgent}>
-          <TooltipProvider>
-            <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="default"
+          enableColorScheme
+          disableTransitionOnChange
+          themes={[
+            ...THEME_LIST.dark.map((theme) => theme.class),
+            ...THEME_LIST.light.map((theme) => theme.class),
+          ]}
+        >
+          <AppAtomsHydrator userAgent={userAgent}>
+            <TooltipProvider>
               <main
                 className="min-h-screen pt-12 pb-6 md:pt-16"
                 id="main_content"
@@ -54,10 +55,10 @@ export default async function RootLayout({
                 {children}
               </main>
               <PreviewYouTubePlayer />
-            </body>
-          </TooltipProvider>
-        </AppAtomsHydrator>
-      </ThemeProvider>
+            </TooltipProvider>
+          </AppAtomsHydrator>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

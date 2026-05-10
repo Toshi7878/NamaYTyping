@@ -24,6 +24,7 @@ interface ThumbnailImageBaseProps {
   size: VariantProps<typeof thumbnailImageVariants>["size"];
   className?: string;
   priority?: boolean;
+  unoptimized?: boolean;
 }
 
 type ThumbnailImageProps = ThumbnailImageBaseProps &
@@ -33,7 +34,15 @@ type ThumbnailImageProps = ThumbnailImageBaseProps &
   );
 
 export const ThumbnailImage = (props: ThumbnailImageProps) => {
-  const { src, alt, size, className, priority = false, fallback } = props;
+  const {
+    src,
+    alt,
+    size,
+    className,
+    priority = false,
+    fallback,
+    unoptimized = false,
+  } = props;
   const [isImageLoaded, setIsImageLoaded] = useState(priority);
 
   if (!src || typeof alt !== "string") {
@@ -58,6 +67,7 @@ export const ThumbnailImage = (props: ThumbnailImageProps) => {
         preload={priority}
         src={src}
         fill
+        unoptimized={unoptimized}
         onLoad={() => setIsImageLoaded(true)}
         onError={() => setIsImageLoaded(true)}
         className={cn(

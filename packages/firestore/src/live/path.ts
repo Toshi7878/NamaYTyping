@@ -1,7 +1,7 @@
 import type { Firestore } from "firebase/firestore";
 
 import { typedCollection, typedDoc } from "../firestore";
-import { resultConverter } from "./model";
+import { resultConverter, userResultConverter } from "./model";
 
 export const livePaths = {
   lives: () => "lives",
@@ -15,8 +15,8 @@ export const livePaths = {
 export const liveRefs = {
   results: (db: Firestore, liveId: string) => typedCollection(db, livePaths.results(liveId), resultConverter),
   result: (db: Firestore, liveId: string, resultId: string) => typedDoc(db, livePaths.result(liveId, resultId), resultConverter),
-  // resultUsers: (db: Firestore, liveId: string, resultId: string) =>
-  // 	typedCollection(db, livePaths.resultUsers(liveId, resultId), userResultConverter),
-  // resultUser: (db: Firestore, liveId: string, resultId: string, userId: string) =>
-  // 	typedDoc(db, livePaths.resultUser(liveId, resultId, userId), userResultConverter),
+  resultUsers: (db: Firestore, liveId: string, resultId: string) =>
+    typedCollection(db, livePaths.resultUsers(liveId, resultId), userResultConverter),
+  resultUser: (db: Firestore, liveId: string, resultId: string, userId: string) =>
+    typedDoc(db, livePaths.resultUser(liveId, resultId, userId), userResultConverter),
 };
